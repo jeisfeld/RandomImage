@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,11 +10,17 @@ import android.view.View;
 import android.widget.GridView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 
 /**
  * The main activity of the app.
  */
 public class DisplayAllImagesActivity extends Activity {
+	/**
+	 * Request code for getting images from gallery.
+	 */
+	private static final int REQUEST_CODE_GET_IMAGES = 1;
+
 	/**
 	 * The names of the files to be displayed.
 	 */
@@ -35,6 +42,11 @@ public class DisplayAllImagesActivity extends Activity {
 	private CurrentAction currentAction = CurrentAction.DISPLAY;
 
 	/**
+	 * Flag indicating if the list of pictures needs to be refreshed.
+	 */
+	private boolean needsRefresh = false;
+
+	/**
 	 * Static helper method to start the activity.
 	 *
 	 * @param activity
@@ -51,16 +63,26 @@ public class DisplayAllImagesActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_delete_images);
 
-		fileNames = ImageRegistry.getInstance().getFileNames();
-		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
+		gridView = (GridView) findViewById(R.id.gridViewDeleteimages);
+
+		fillListOfImages();
 
 		if (savedInstanceState != null) {
 			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
 			adapter.setSelectedFiles(selectedFiles);
+			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
+			if (currentAction == CurrentAction.DELETE) {
+				adapter.setSelectionMode(SelectionMode.MULTIPLE);
+			}
 		}
+	}
 
-		// Prepare the view
-		gridView = (GridView) findViewById(R.id.gridViewDeleteimages);
+	/**
+	 * Fill the view with the current list of images.
+	 */
+	private void fillListOfImages() {
+		fileNames = ImageRegistry.getInstance().getFileNames();
+		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
 		gridView.setAdapter(adapter);
 	}
 
@@ -94,6 +116,10 @@ public class DisplayAllImagesActivity extends Activity {
 				currentAction = CurrentAction.DELETE;
 				adapter.setSelectionMode(SelectionMode.MULTIPLE);
 			}
+			if (id == R.id.action_add_images) {
+				needsRefresh = false;
+				triggerAddImage();
+			}
 			break;
 		case DELETE:
 			if (id == R.id.action_delete_images) {
@@ -102,9 +128,7 @@ public class DisplayAllImagesActivity extends Activity {
 					imageRegistry.remove(fileName);
 				}
 				imageRegistry.save();
-				fileNames = ImageRegistry.getInstance().getFileNames();
-				adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
-				gridView.setAdapter(adapter);
+				fillListOfImages();
 			}
 			else if (id == R.id.action_cancel) {
 				unselectAllImages();
@@ -116,7 +140,16 @@ public class DisplayAllImagesActivity extends Activity {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
 
+	/**
+	 * Trigger an intent for getting an image for addition.
+	 */
+	private void triggerAddImage() {
+		Intent intent = new Intent();
+		intent.setType("image/*");
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(intent, REQUEST_CODE_GET_IMAGES);
 	}
 
 	/**
@@ -135,8 +168,31 @@ public class DisplayAllImagesActivity extends Activity {
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
+		outState.putSerializable("currentAction", currentAction);
 		if (adapter != null) {
 			outState.putStringArray("selectedFiles", adapter.getSelectedFiles());
+		}
+	}
+
+	@Override
+	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQUEST_CODE_GET_IMAGES) {
+			if (resultCode == RESULT_OK) {
+				Uri selectedImageUri = data.getData();
+				String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
+				boolean isAdded = ImageRegistry.getInstance().add(fileName);
+				if (isAdded) {
+					needsRefresh = true;
+				}
+				triggerAddImage();
+			}
+			else {
+				// Finally, refresh list of images
+				if (needsRefresh) {
+					ImageRegistry.getInstance().save();
+					fillListOfImages();
+				}
+			}
 		}
 	}
 

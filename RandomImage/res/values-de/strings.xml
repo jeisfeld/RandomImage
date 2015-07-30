@@ -7,7 +7,8 @@
 
     <!-- Strings for menus -->
     <string name="menu_select_images_for_deletion">Bilder zum löschen auswählen</string>
-    <string name="menu_delete_images">Fotos löschen</string>
+    <string name="menu_delete_images">Bilder löschen</string>
+    <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_cancel">Abbrechen</string>
 
 </resources>

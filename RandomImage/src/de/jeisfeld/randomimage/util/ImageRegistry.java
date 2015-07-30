@@ -118,10 +118,15 @@ public final class ImageRegistry {
 	 *
 	 * @param fileName
 	 *            The file name to be added.
+	 * @return true if the file was not in the list before and hence has been added.
 	 */
-	public void add(final String fileName) {
+	public boolean add(final String fileName) {
 		if (fileName != null && !fileNames.contains(fileName)) {
 			fileNames.add(fileName);
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 
