@@ -64,14 +64,18 @@ public final class ImageRegistry {
 		fileNames.clear();
 		try {
 			if (IMAGES_FILE.exists()) {
-				Scanner s = new Scanner(IMAGES_FILE);
-				while (s.hasNext()) {
-					String fileName = s.next();
+				Scanner scanner = new Scanner(IMAGES_FILE);
+				scanner.useDelimiter("\n");
+				while (scanner.hasNext()) {
+					String fileName = scanner.next();
 					if (new File(fileName).exists()) {
 						fileNames.add(fileName);
 					}
+					else {
+						Log.w(Application.TAG, "Cannot find file " + fileName);
+					}
 				}
-				s.close();
+				scanner.close();
 			}
 		}
 		catch (FileNotFoundException e) {
@@ -167,6 +171,15 @@ public final class ImageRegistry {
 		else {
 			return null;
 		}
+	}
+
+	/**
+	 * Get the number of files in the registry.
+	 *
+	 * @return The number of files.
+	 */
+	public int size() {
+		return fileNames.size();
 	}
 
 }

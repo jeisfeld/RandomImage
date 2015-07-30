@@ -16,11 +16,11 @@ import android.widget.ImageView;
 /**
  * Array adapter class to display an eye photo pair in a list.
  */
-public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
+public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * The activity holding this adapter.
 	 */
-	private final DeleteImagesActivity activity;
+	private final DisplayAllImagesActivity activity;
 
 	/**
 	 * The names of the files.
@@ -33,6 +33,15 @@ public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
 	private Set<String> selectedFileNames = new HashSet<String>();
 
 	/**
+	 * Flag indicating how selection is handled.
+	 */
+	private SelectionMode selectionMode = SelectionMode.NONE;
+
+	public final void setSelectionMode(final SelectionMode selectionMode) {
+		this.selectionMode = selectionMode;
+	}
+
+	/**
 	 * Constructor for the adapter.
 	 *
 	 * @param activity
@@ -40,7 +49,7 @@ public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param fileNames
 	 *            The names of files to be displayed.
 	 */
-	public DeleteImagesArrayAdapter(final DeleteImagesActivity activity, final String[] fileNames) {
+	public DisplayAllImagesArrayAdapter(final DisplayAllImagesActivity activity, final String[] fileNames) {
 		super(activity, R.layout.text_view_initializing, fileNames);
 		this.activity = activity;
 		this.fileNames = fileNames;
@@ -52,9 +61,9 @@ public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param context
 	 *            The Context the view is running in.
 	 */
-	public DeleteImagesArrayAdapter(final Context context) {
+	public DisplayAllImagesArrayAdapter(final Context context) {
 		super(context, R.layout.text_view_initializing);
-		this.activity = (DeleteImagesActivity) context;
+		this.activity = (DisplayAllImagesActivity) context;
 	}
 
 	/*
@@ -89,14 +98,24 @@ public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
 			public void onClick(final View v) {
 				ThumbImageView view = (ThumbImageView) v;
 
-				if (view.isMarked()) {
-					view.setMarked(false);
-					selectedFileNames.remove(view.getFileName());
+				switch (selectionMode) {
+				case NONE:
+					break;
+				case ONE:
+					break;
+				case MULTIPLE:
+					if (view.isMarked()) {
+						view.setMarked(false);
+						selectedFileNames.remove(view.getFileName());
 
-				}
-				else {
-					view.setMarked(true);
-					selectedFileNames.add(view.getFileName());
+					}
+					else {
+						view.setMarked(true);
+						selectedFileNames.add(view.getFileName());
+					}
+					break;
+				default:
+					break;
 				}
 			}
 		});
@@ -126,6 +145,24 @@ public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
 		else {
 			selectedFileNames = new HashSet<String>(Arrays.asList(selectedFiles));
 		}
+	}
+
+	/**
+	 * Mode defining how selection works.
+	 */
+	public enum SelectionMode {
+		/**
+		 * No selection possible.
+		 */
+		NONE,
+		/**
+		 * One file can be selected.
+		 */
+		ONE,
+		/**
+		 * Multiple files can be selected.
+		 */
+		MULTIPLE
 	}
 
 }

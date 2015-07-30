@@ -93,8 +93,8 @@ public class MainActivity extends Activity {
 	@Override
 	public final boolean onOptionsItemSelected(final MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_delete_images) {
-			DeleteImagesActivity.startActivity(this, ImageRegistry.getInstance().getFileNames());
+		if (id == R.id.action_display_all_images) {
+			DisplayAllImagesActivity.startActivity(this);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

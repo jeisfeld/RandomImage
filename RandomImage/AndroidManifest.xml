@@ -44,7 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DeleteImagesActivity"
+            android:name=".DisplayAllImagesActivity"
             android:label="@string/title_activity_delete_images"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize" >
