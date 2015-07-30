@@ -15,9 +15,24 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
  * The main activity of the app.
  */
 public class MainActivity extends Activity {
+	/**
+	 * The name of the displayed file.
+	 */
+	private String displayFileName;
+
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (savedInstanceState != null) {
+			displayFileName = savedInstanceState.getString("displayFileName");
+
+			if (displayFileName != null) {
+				displayImage(displayFileName);
+				return;
+			}
+		}
+
 		ImageRegistry imageRegistry = ImageRegistry.getInstance();
 		imageRegistry.load();
 		Intent intent = getIntent();
@@ -43,11 +58,29 @@ public class MainActivity extends Activity {
 			Log.d(Application.TAG, "Launched application");
 		}
 
+		displayImage(imageRegistry.getRandomFileName());
+	}
+
+	/**
+	 * Display an Image on this view.
+	 *
+	 * @param fileName
+	 *            The image file.
+	 */
+	private void displayImage(final String fileName) {
+		displayFileName = fileName;
+
 		PinchImageView imageView = new PinchImageView(this);
 		setContentView(imageView);
-
-		String displayFileName = imageRegistry.getRandomFileName();
 		imageView.setImage(displayFileName, this, 1);
+	}
+
+	@Override
+	protected final void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (displayFileName != null) {
+			outState.putString("displayFileName", displayFileName);
+		}
 	}
 
 	@Override

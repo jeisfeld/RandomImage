@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,6 +55,11 @@ public class DeleteImagesActivity extends Activity {
 		fileNames = getIntent().getStringArrayExtra(STRING_EXTRA_FILENAMES);
 		adapter = new DeleteImagesArrayAdapter(this, fileNames);
 
+		if (savedInstanceState != null) {
+			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
+			adapter.setSelectedFiles(selectedFiles);
+		}
+
 		// Prepare the view
 		gridView = (GridView) findViewById(R.id.gridViewDeleteimages);
 		gridView.setAdapter(adapter);
@@ -70,10 +76,22 @@ public class DeleteImagesActivity extends Activity {
 	public final boolean onOptionsItemSelected(final MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_delete_images) {
-			adapter.removeMarkedFiles();
+			ImageRegistry imageRegistry = ImageRegistry.getInstance();
+			for (String fileName : adapter.getSelectedFiles()) {
+				imageRegistry.remove(fileName);
+			}
+			imageRegistry.save();
 			finish();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected final void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (adapter != null) {
+			outState.putStringArray("selectedFiles", adapter.getSelectedFiles());
+		}
 	}
 }

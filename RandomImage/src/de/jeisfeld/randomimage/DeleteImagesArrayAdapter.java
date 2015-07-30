@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
  * Array adapter class to display an eye photo pair in a list.
@@ -104,14 +105,27 @@ public class DeleteImagesArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
-	 * Delete the files which have been marked from the list of files to be displayed.
+	 * Get the list of selected files.
+	 *
+	 * @return The selected files.
 	 */
-	public final void removeMarkedFiles() {
-		ImageRegistry imageRegistry = ImageRegistry.getInstance();
-		for (String fileName : selectedFileNames) {
-			imageRegistry.remove(fileName);
+	public final String[] getSelectedFiles() {
+		return new ArrayList<String>(selectedFileNames).toArray(new String[0]);
+	}
+
+	/**
+	 * Set the list of selected files.
+	 *
+	 * @param selectedFiles
+	 *            The names of the files.
+	 */
+	public final void setSelectedFiles(final String[] selectedFiles) {
+		if (selectedFiles == null) {
+			selectedFileNames.clear();
 		}
-		imageRegistry.save();
+		else {
+			selectedFileNames = new HashSet<String>(Arrays.asList(selectedFiles));
+		}
 	}
 
 }
