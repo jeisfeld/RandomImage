@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Zufallsfoto</string>
-    <string name="title_activity_delete_images">Fotos löschen</string>
+    <string name="title_activity_display_images">Liste der Fotos</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
 
     <!-- Strings for menus -->

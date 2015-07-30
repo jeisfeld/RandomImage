@@ -45,7 +45,7 @@
         </activity>
         <activity
             android:name=".DisplayAllImagesActivity"
-            android:label="@string/title_activity_delete_images"
+            android:label="@string/title_activity_display_images"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize" >
             <meta-data
