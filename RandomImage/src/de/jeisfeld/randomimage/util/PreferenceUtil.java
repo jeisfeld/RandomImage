@@ -1,0 +1,201 @@
+package de.jeisfeld.randomimage.util;
+
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import de.jeisfeld.randomimage.Application;
+
+/**
+ * Utility class for handling the shared preferences.
+ */
+public final class PreferenceUtil {
+	/**
+	 * Hide default constructor.
+	 */
+	private PreferenceUtil() {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Retrieve the default shared preferences of the application.
+	 *
+	 * @return the default shared preferences.
+	 */
+	public static SharedPreferences getSharedPreferences() {
+		return PreferenceManager.getDefaultSharedPreferences(Application.getAppContext());
+	}
+
+	/**
+	 * Retrieve a String shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static String getSharedPreferenceString(final int preferenceId) {
+		return getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), "");
+	}
+
+	/**
+	 * Retrieve a String shared preference, setting a default value if the preference is not set.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param defaultId
+	 *            the String key of the default value.
+	 * @return the corresponding preference value.
+	 */
+	public static String getSharedPreferenceString(final int preferenceId, final int defaultId) {
+		String result = getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), null);
+		if (result == null) {
+			result = Application.getAppContext().getString(defaultId);
+			setSharedPreferenceString(preferenceId, result);
+		}
+		return result;
+	}
+
+	/**
+	 * Set a String shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param s
+	 *            the target value of the preference.
+	 */
+	public static void setSharedPreferenceString(final int preferenceId, final String s) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putString(Application.getAppContext().getString(preferenceId), s);
+		editor.commit();
+	}
+
+	/**
+	 * Retrieve an Uri shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static Uri getSharedPreferenceUri(final int preferenceId) {
+		String uriString = getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), null);
+
+		if (uriString == null) {
+			return null;
+		}
+		else {
+			return Uri.parse(uriString);
+		}
+	}
+
+	/**
+	 * Set a shared preference for an Uri.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param uri
+	 *            the target value of the preference.
+	 */
+	public static void setSharedPreferenceUri(final int preferenceId, final Uri uri) {
+		Editor editor = getSharedPreferences().edit();
+		if (uri == null) {
+			editor.putString(Application.getAppContext().getString(preferenceId), null);
+		}
+		else {
+			editor.putString(Application.getAppContext().getString(preferenceId), uri.toString());
+		}
+		editor.commit();
+	}
+
+	/**
+	 * Retrieve a boolean shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static boolean getSharedPreferenceBoolean(final int preferenceId) {
+		return getSharedPreferences().getBoolean(Application.getAppContext().getString(preferenceId), false);
+	}
+
+	/**
+	 * Set a Boolean shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param b
+	 *            the target value of the preference.
+	 */
+	public static void setSharedPreferenceBoolean(final int preferenceId, final boolean b) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putBoolean(Application.getAppContext().getString(preferenceId), b);
+		editor.commit();
+	}
+
+	/**
+	 * Retrieve an integer shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param defaultValue
+	 *            the default value of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static int getSharedPreferenceInt(final int preferenceId, final int defaultValue) {
+		return getSharedPreferences().getInt(Application.getAppContext().getString(preferenceId), defaultValue);
+	}
+
+	/**
+	 * Set an integer shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param i
+	 *            the target value of the preference.
+	 */
+	public static void setSharedPreferenceInt(final int preferenceId, final int i) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putInt(Application.getAppContext().getString(preferenceId), i);
+		editor.commit();
+	}
+
+	/**
+	 * Increment a counter shared preference, and return the new value.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @return the new value.
+	 */
+	public static int incrementCounter(final int preferenceId) {
+		int newValue = getSharedPreferenceInt(preferenceId, 0) + 1;
+		setSharedPreferenceInt(preferenceId, newValue);
+		return newValue;
+	}
+
+	/**
+	 * Retrieve a long shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param defaultValue
+	 *            the default value of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static long getSharedPreferenceLong(final int preferenceId, final long defaultValue) {
+		return getSharedPreferences().getLong(Application.getAppContext().getString(preferenceId), defaultValue);
+	}
+
+	/**
+	 * Set a long shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param i
+	 *            the target value of the preference.
+	 */
+	public static void setSharedPreferenceLong(final int preferenceId, final long i) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putLong(Application.getAppContext().getString(preferenceId), i);
+		editor.commit();
+	}
+
+}

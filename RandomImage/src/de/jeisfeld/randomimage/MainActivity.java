@@ -1,0 +1,69 @@
+package de.jeisfeld.randomimage;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import de.jeisfeld.randomimage.util.ImageRegistry;
+
+/**
+ * The main activity of the app.
+ */
+public class MainActivity extends Activity {
+	@Override
+	protected final void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		ImageRegistry imageRegistry = ImageRegistry.getInstance();
+		imageRegistry.load();
+		Intent intent = getIntent();
+		if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+			// Application was started from other application by passing one image
+			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+			imageRegistry.add(imageUri);
+			imageRegistry.save();
+		}
+		else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null
+				&& intent.hasExtra(Intent.EXTRA_STREAM)) {
+			// Application was started from other application by passing a list of images
+			ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+			if (imageUris != null) {
+				for (int i = 0; i < imageUris.size(); i++) {
+					imageRegistry.add(imageUris.get(i));
+				}
+				ImageRegistry.getInstance().save();
+			}
+		}
+		else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState == null) {
+			// Application was started from launcher
+			Log.d(Application.TAG, "Launched application");
+		}
+
+		PinchImageView imageView = new PinchImageView(this);
+		setContentView(imageView);
+
+		String displayFileName = imageRegistry.getRandomFileName();
+		imageView.setImage(displayFileName, this, 1);
+	}
+
+	@Override
+	public final boolean onCreateOptionsMenu(final Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public final boolean onOptionsItemSelected(final MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_delete_images) {
+			DeleteImagesActivity.startActivity(this, ImageRegistry.getInstance().getFileNames());
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}

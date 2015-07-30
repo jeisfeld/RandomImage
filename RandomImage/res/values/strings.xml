@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RandomImage</string>
+    <string name="title_activity_delete_images">Delete images</string>
+    <string name="text_initializing">Initializing&#8230;</string>
+
+    <!-- Strings for menus -->
+    <string name="menu_delete_images">Delete images</string>
+
+    <!-- Keys for shared preferences -->
+
+</resources>

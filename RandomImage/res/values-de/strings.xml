@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Zufallsfoto</string>
+    <string name="title_activity_delete_images">Fotos löschen</string>
+    <string name="text_initializing">Ladevorgang&#8230;</string>
+
+    <!-- Strings for menus -->
+    <string name="menu_delete_images">Fotos löschen</string>
+
+</resources>
