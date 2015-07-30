@@ -3,10 +3,10 @@
     tools:context="de.jeisfeld.randomimage.MainActivity" >
 
     <item
-        android:id="@+id/action_delete_images"
+        android:id="@+id/action_remove_images"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/menu_delete_images"/>
+        android:title="@string/menu_remove_images"/>
     <item
         android:id="@+id/action_cancel"
         android:orderInCategory="100"

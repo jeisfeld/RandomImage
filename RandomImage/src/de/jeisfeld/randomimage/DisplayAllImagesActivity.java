@@ -112,7 +112,7 @@ public class DisplayAllImagesActivity extends Activity {
 
 		switch (currentAction) {
 		case DISPLAY:
-			if (id == R.id.action_select_images_for_deletion) {
+			if (id == R.id.action_select_images_for_removal) {
 				currentAction = CurrentAction.DELETE;
 				adapter.setSelectionMode(SelectionMode.MULTIPLE);
 			}
@@ -122,13 +122,15 @@ public class DisplayAllImagesActivity extends Activity {
 			}
 			break;
 		case DELETE:
-			if (id == R.id.action_delete_images) {
+			if (id == R.id.action_remove_images) {
 				ImageRegistry imageRegistry = ImageRegistry.getInstance();
 				for (String fileName : adapter.getSelectedFiles()) {
 					imageRegistry.remove(fileName);
 				}
 				imageRegistry.save();
 				fillListOfImages();
+				currentAction = CurrentAction.DISPLAY;
+				adapter.setSelectionMode(SelectionMode.NONE);
 			}
 			else if (id == R.id.action_cancel) {
 				unselectAllImages();

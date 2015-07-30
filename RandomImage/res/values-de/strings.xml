@@ -6,8 +6,8 @@
     <string name="text_initializing">Ladevorgang&#8230;</string>
 
     <!-- Strings for menus -->
-    <string name="menu_select_images_for_deletion">Bilder zum löschen auswählen</string>
-    <string name="menu_delete_images">Bilder löschen</string>
+    <string name="menu_select_images_for_removal">Bilder entfernen</string>
+    <string name="menu_remove_images">Gewählte Bilder entfernen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_cancel">Abbrechen</string>
 

@@ -8,9 +8,9 @@
         android:showAsAction="never"
         android:title="@string/menu_add_images"/>
     <item
-        android:id="@+id/action_select_images_for_deletion"
+        android:id="@+id/action_select_images_for_removal"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/menu_select_images_for_deletion"/>
+        android:title="@string/menu_select_images_for_removal"/>
 
 </menu>
