@@ -6,7 +6,6 @@
     <string name="text_initializing">Ladevorgang&#8230;</string>
 
     <!-- Strings for menus -->
-    <string name="menu_display_all_images">Alle Fotos zeigen</string>
     <string name="menu_select_images_for_deletion">Bilder zum löschen auswählen</string>
     <string name="menu_delete_images">Fotos löschen</string>
     <string name="menu_cancel">Abbrechen</string>

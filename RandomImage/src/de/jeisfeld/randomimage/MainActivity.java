@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
@@ -84,19 +83,9 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public final boolean onCreateOptionsMenu(final Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+	public final boolean onPrepareOptionsMenu(final Menu menu) {
+		DisplayAllImagesActivity.startActivity(this);
 		return true;
 	}
 
-	@Override
-	public final boolean onOptionsItemSelected(final MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_display_all_images) {
-			DisplayAllImagesActivity.startActivity(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 }
