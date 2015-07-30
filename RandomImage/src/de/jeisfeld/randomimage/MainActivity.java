@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MotionEvent;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
@@ -70,8 +72,41 @@ public class MainActivity extends Activity {
 		displayFileName = fileName;
 
 		PinchImageView imageView = new PinchImageView(this);
+		imageView.setGestureDetector(createGestureDetector());
 		setContentView(imageView);
 		imageView.setImage(displayFileName, this, 1);
+	}
+
+	/**
+	 * Create a gesture detector that displays a new image on double tap.
+	 *
+	 * @return The gesture detector.
+	 */
+	private GestureDetector createGestureDetector() {
+		GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener());
+
+		gestureDetector.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
+
+			@Override
+			public boolean onSingleTapConfirmed(final MotionEvent e) {
+				// do nothing
+				return false;
+			}
+
+			@Override
+			public boolean onDoubleTapEvent(final MotionEvent e) {
+				// do nothing
+				return false;
+			}
+
+			@Override
+			public boolean onDoubleTap(final MotionEvent e) {
+				displayImage(ImageRegistry.getInstance().getRandomFileName());
+				return true;
+			}
+		});
+
+		return gestureDetector;
 	}
 
 	@Override
