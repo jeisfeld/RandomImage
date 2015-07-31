@@ -103,7 +103,7 @@ public class DisplayAllImagesActivity extends Activity {
 		case DISPLAY:
 			if (id == R.id.action_select_images_for_removal) {
 				currentAction = CurrentAction.DELETE;
-				adapter.setSelectionMode(SelectionMode.MULTIPLE);
+				setMarkabilityStatus(true);
 			}
 			if (id == R.id.action_add_images) {
 				AddImagesFromGalleryActivity.startActivity(this);
@@ -124,13 +124,12 @@ public class DisplayAllImagesActivity extends Activity {
 					imageRegistry.save();
 				}
 				fillListOfImages();
+				setMarkabilityStatus(false);
 				currentAction = CurrentAction.DISPLAY;
-				adapter.setSelectionMode(SelectionMode.NONE);
 			}
 			else if (id == R.id.action_cancel) {
-				unselectAllImages();
+				setMarkabilityStatus(false);
 				currentAction = CurrentAction.DISPLAY;
-				adapter.setSelectionMode(SelectionMode.NONE);
 			}
 			break;
 		default:
@@ -140,14 +139,18 @@ public class DisplayAllImagesActivity extends Activity {
 	}
 
 	/**
-	 * Unselect all images.
+	 * Set the markability status of all views in the grid.
+	 *
+	 * @param markable
+	 *            The markability status.
 	 */
-	private void unselectAllImages() {
-		adapter.setSelectedFiles(null);
+	private void setMarkabilityStatus(final boolean markable) {
+		adapter.setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.NONE);
+
 		for (int i = 0; i < gridView.getChildCount(); i++) {
 			View imageView = gridView.getChildAt(i);
 			if (imageView instanceof ThumbImageView) {
-				((ThumbImageView) imageView).setMarked(false);
+				((ThumbImageView) imageView).setMarkable(markable);
 			}
 		}
 	}

@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -16,14 +18,19 @@ import de.jeisfeld.randomimage.util.MediaStoreUtil;
  */
 public class ThumbImageView extends FrameLayout {
 	/**
-	 * The color used as background for highlighted images.
+	 * Background color when highlighted.
 	 */
-	private static final int COLOR_HIGHLIGHT = Color.CYAN;
+	private static final int COLOR_MARKED = Color.CYAN;
 
 	/**
 	 * Flag indicating if the view is marked. (Similar to selection, but more stable)
 	 */
 	private boolean isMarked = false;
+
+	/**
+	 * Flag indicating if it is possible to mark the view.
+	 */
+	private boolean isMarkable = false;
 
 	/**
 	 * The EyePhoto shown in the view.
@@ -38,6 +45,11 @@ public class ThumbImageView extends FrameLayout {
 	 * The imageView displaying the thumb.
 	 */
 	private ImageView imageView;
+
+	/**
+	 * The checkbox for marking.
+	 */
+	private CheckBox checkBoxMarked;
 
 	// JAVADOC:OFF
 	/**
@@ -70,6 +82,7 @@ public class ThumbImageView extends FrameLayout {
 		layoutInflater.inflate(R.layout.view_thumb_image, this, true);
 
 		imageView = (ImageView) findViewById(R.id.imageViewThumb);
+		checkBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
 	}
 
 	// JAVADOC:ON
@@ -147,6 +160,20 @@ public class ThumbImageView extends FrameLayout {
 	}
 
 	/**
+	 * Set the markability status of the view.
+	 *
+	 * @param markable
+	 *            if true, the view is markable.
+	 */
+	public final void setMarkable(final boolean markable) {
+		isMarkable = markable;
+		if (!isMarkable && isMarked) {
+			setMarked(false);
+		}
+		checkBoxMarked.setVisibility(isMarkable ? View.VISIBLE : View.INVISIBLE);
+	}
+
+	/**
 	 * Set the marking status of the view.
 	 *
 	 * @param marked
@@ -154,12 +181,8 @@ public class ThumbImageView extends FrameLayout {
 	 */
 	public final void setMarked(final boolean marked) {
 		isMarked = marked;
-		if (marked) {
-			imageView.setBackgroundColor(COLOR_HIGHLIGHT);
-		}
-		else {
-			imageView.setBackgroundColor(Color.TRANSPARENT);
-		}
+		checkBoxMarked.setChecked(marked);
+		imageView.setBackgroundColor(marked ? COLOR_MARKED : Color.TRANSPARENT);
 	}
 
 	public final boolean isMarked() {

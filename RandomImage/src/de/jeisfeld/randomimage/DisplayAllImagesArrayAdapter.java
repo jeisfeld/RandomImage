@@ -47,8 +47,18 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 */
 	private SelectionMode selectionMode = SelectionMode.NONE;
 
+	/**
+	 * Set the selection mode.
+	 *
+	 * @param selectionMode
+	 *            The selection mode.
+	 */
 	public final void setSelectionMode(final SelectionMode selectionMode) {
 		this.selectionMode = selectionMode;
+
+		if (selectionMode == SelectionMode.NONE) {
+			selectedFileNames.clear();
+		}
 	}
 
 	/**
@@ -101,9 +111,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		thumbImageView.setImage(activity, fileName, new Runnable() {
 			@Override
 			public void run() {
-				if (selectedFileNames.contains(fileName)) {
-					thumbImageView.setMarked(true);
-				}
+				thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
+				thumbImageView.setMarked(selectedFileNames.contains(fileName));
 			}
 		});
 
@@ -199,6 +208,11 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		private int plannedSize;
 
 		/**
+		 * The current number of views on the grid.
+		 */
+		private int currentViewSize = 1;
+
+		/**
 		 * The maximum position.
 		 */
 		private int maxPosition;
@@ -252,6 +266,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				int startPosition;
 				int endPosition;
 
+				adjustPlannedSize();
+
 				// Skipping 0, because this is frequently loaded.
 				if (atEnd) {
 					startPosition = Math.max(1, Math.min(position + preloadSize, maxPosition) - plannedSize + 1);
@@ -260,7 +276,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 					startPosition = Math.max(1, position - preloadSize);
 				}
 				endPosition = Math.min(startPosition + plannedSize - 1, maxPosition);
-				currentCenter = (startPosition + endPosition) / 2;
+
+				currentCenter = atEnd ? position - currentViewSize / 2 : position + currentViewSize / 2;
 
 				// clean up, ignoring the first index which carries position 0.
 				int index = 1;
@@ -328,7 +345,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		 * Adjust the planned size according to the size of the view.
 		 */
 		private void adjustPlannedSize() {
-			int currentViewSize = parentView.getChildCount();
+			currentViewSize = parentView.getChildCount();
 			int wishSize = Math.max(currentViewSize * 2, currentViewSize + 2 * preloadSize);
 			if (plannedSize < wishSize) {
 				plannedSize = wishSize;
@@ -352,8 +369,6 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				parentView = parent;
 				cache.clear();
 			}
-
-			adjustPlannedSize();
 
 			ThumbImageView thumbImageView;
 			if (cache.indexOfKey(position) >= 0) {

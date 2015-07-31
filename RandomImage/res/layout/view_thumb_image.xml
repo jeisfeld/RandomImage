@@ -1,6 +1,25 @@
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageViewThumb"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutThumbImageView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:contentDescription="@string/text_initializing"
-    android:padding="5dp" />
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/imageViewThumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/text_initializing"
+        android:padding="3dp" />
+
+    <CheckBox
+        android:id="@+id/checkBoxMark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:checked="false"
+        android:clickable="false"
+        android:visibility="invisible" />
+
+</RelativeLayout>
