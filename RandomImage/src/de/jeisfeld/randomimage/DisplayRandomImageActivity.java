@@ -31,6 +31,9 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 		}
 
+		// Reload the file when starting the app.
+		ImageRegistry.getInstance().load();
+
 		displayRandomImage();
 
 		test();
@@ -43,6 +46,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 *            The image file.
 	 */
 	private void displayImage(final String fileName) {
+		displayFileName = fileName;
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setGestureDetector(createGestureDetector());
 		setContentView(imageView);
