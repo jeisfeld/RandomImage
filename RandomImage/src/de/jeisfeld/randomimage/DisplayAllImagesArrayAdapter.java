@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 /**
  * Array adapter class to display an eye photo pair in a list.
@@ -75,12 +74,12 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		final String fileName = fileNames[position];
 
 		final ThumbImageView thumbImageView;
-		if (convertView != null && convertView instanceof ImageView) {
+		if (convertView != null && convertView instanceof ThumbImageView) {
 			thumbImageView = (ThumbImageView) convertView;
 			thumbImageView.cleanImage();
 		}
 		else {
-			thumbImageView = (ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_delete_images,
+			thumbImageView = (ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
 					parent, false);
 		}
 

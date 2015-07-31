@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -12,7 +14,7 @@ import de.jeisfeld.randomimage.util.MediaStoreUtil;
 /**
  * A view for displaying a thumbnail.
  */
-public class ThumbImageView extends ImageView {
+public class ThumbImageView extends FrameLayout {
 	/**
 	 * The color used as background for highlighted images.
 	 */
@@ -31,6 +33,11 @@ public class ThumbImageView extends ImageView {
 	 * Indicates if the view is initialized.
 	 */
 	private boolean initialized = false;
+
+	/**
+	 * The imageView displaying the thumb.
+	 */
+	private ImageView imageView;
 
 	// JAVADOC:OFF
 	/**
@@ -58,6 +65,11 @@ public class ThumbImageView extends ImageView {
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+
+		LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		layoutInflater.inflate(R.layout.view_thumb_image, this, true);
+
+		imageView = (ImageView) findViewById(R.id.imageViewThumb);
 	}
 
 	// JAVADOC:ON
@@ -86,9 +98,9 @@ public class ThumbImageView extends ImageView {
 				activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						setImageBitmap(imageBitmap);
+						imageView.setImageBitmap(imageBitmap);
+						imageView.invalidate();
 						setMarked(false);
-						invalidate();
 						initialized = true;
 						if (postActivities != null) {
 							postActivities.run();
@@ -105,7 +117,7 @@ public class ThumbImageView extends ImageView {
 	 */
 	public final void cleanImage() {
 		this.fileName = null;
-		setImageBitmap(null);
+		imageView.setImageBitmap(null);
 		isMarked = false;
 	}
 
@@ -143,10 +155,10 @@ public class ThumbImageView extends ImageView {
 	public final void setMarked(final boolean marked) {
 		isMarked = marked;
 		if (marked) {
-			setBackgroundColor(COLOR_HIGHLIGHT);
+			imageView.setBackgroundColor(COLOR_HIGHLIGHT);
 		}
 		else {
-			setBackgroundColor(Color.TRANSPARENT);
+			imageView.setBackgroundColor(Color.TRANSPARENT);
 		}
 	}
 

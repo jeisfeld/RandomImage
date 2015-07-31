@@ -50,7 +50,7 @@ public class DisplayAllImagesActivity extends Activity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		setContentView(R.layout.activity_delete_images);
+		setContentView(R.layout.activity_display_images);
 
 		gridView = (GridView) findViewById(R.id.gridViewDeleteimages);
 
