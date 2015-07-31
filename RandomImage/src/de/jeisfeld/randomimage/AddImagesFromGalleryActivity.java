@@ -11,7 +11,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 /**
  * Activity to add images to the repository from the gallery.
  */
-public class AddImagesActivity extends Activity {
+public class AddImagesFromGalleryActivity extends Activity {
 	/**
 	 * Request code with which this activity is started.
 	 */
@@ -37,7 +37,7 @@ public class AddImagesActivity extends Activity {
 	 *            The activity starting this activity.
 	 */
 	public static final void startActivity(final Activity activity) {
-		Intent intent = new Intent(activity, AddImagesActivity.class);
+		Intent intent = new Intent(activity, AddImagesFromGalleryActivity.class);
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 

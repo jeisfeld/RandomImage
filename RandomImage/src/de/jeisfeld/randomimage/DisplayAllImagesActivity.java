@@ -106,7 +106,7 @@ public class DisplayAllImagesActivity extends Activity {
 				adapter.setSelectionMode(SelectionMode.MULTIPLE);
 			}
 			if (id == R.id.action_add_images) {
-				AddImagesActivity.startActivity(this);
+				AddImagesFromGalleryActivity.startActivity(this);
 			}
 			break;
 		case DELETE:
@@ -163,8 +163,8 @@ public class DisplayAllImagesActivity extends Activity {
 
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		if (requestCode == AddImagesActivity.REQUEST_CODE) {
-			int addedImagesCount = AddImagesActivity.getResult(resultCode, data);
+		if (requestCode == AddImagesFromGalleryActivity.REQUEST_CODE) {
+			int addedImagesCount = AddImagesFromGalleryActivity.getResult(resultCode, data);
 			if (addedImagesCount > 0) {
 				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
 				fillListOfImages();

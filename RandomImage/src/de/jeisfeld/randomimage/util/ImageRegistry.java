@@ -43,6 +43,7 @@ public final class ImageRegistry {
 	 * Hidden constructor.
 	 */
 	private ImageRegistry() {
+		load();
 	}
 
 	/**

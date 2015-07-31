@@ -24,7 +24,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".DisplayRandomImageActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
             <intent-filter>
@@ -32,6 +32,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".AddSentImagesActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 
@@ -50,14 +52,14 @@
         <activity
             android:name=".DisplayAllImagesActivity"
             android:label="@string/title_activity_display_images"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".DisplayRandomImageActivity"
             android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"
                 tools:ignore="UnusedAttribute" />
         </activity>
-        <activity android:name=".AddImagesActivity" >
+        <activity android:name=".AddImagesFromGalleryActivity" >
         </activity>
     </application>
 
