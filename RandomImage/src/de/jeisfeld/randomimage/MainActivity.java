@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
+import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
@@ -40,18 +41,28 @@ public class MainActivity extends Activity {
 		if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
 			// Application was started from other application by passing one image
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-			imageRegistry.add(imageUri);
-			imageRegistry.save();
+			String addedFileName = imageRegistry.add(imageUri);
+			if (addedFileName != null) {
+				DialogUtil.displayToast(this, R.string.toast_added_picture, addedFileName);
+				imageRegistry.save();
+			}
 		}
 		else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null
 				&& intent.hasExtra(Intent.EXTRA_STREAM)) {
 			// Application was started from other application by passing a list of images
 			ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 			if (imageUris != null) {
+				int addedFileCount = 0;
 				for (int i = 0; i < imageUris.size(); i++) {
-					imageRegistry.add(imageUris.get(i));
+					String addedFileName = imageRegistry.add(imageUris.get(i));
+					if (addedFileName != null) {
+						addedFileCount++;
+					}
 				}
-				ImageRegistry.getInstance().save();
+				if (addedFileCount > 0) {
+					DialogUtil.displayToast(this, R.string.toast_added_picture_count, addedFileCount);
+					imageRegistry.save();
+				}
 			}
 		}
 		else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState == null) {

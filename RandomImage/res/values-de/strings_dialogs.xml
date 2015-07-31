@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="toast_added_picture">Bild %1$s wurde hinzugefügt</string>
+    <string name="toast_added_picture_count">Es wurden %1$d Bilder hinzugefügt</string>
+    <string name="toast_removed_picture_count">Es wurden %1$d Bilder entfernt</string>
+    <string name="dialog_info_add_images">Bitte wählen Sie in der Galerie einige Bilder, die sie in dieser App verwenden wollen. Gehen Sie zurück zur App, wenn Sie keine Bilder mehr hinzufügen wollen.</string>
+
+</resources>

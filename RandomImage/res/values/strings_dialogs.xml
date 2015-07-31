@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="toast_added_picture">Added image %1$s</string>
+    <string name="toast_added_picture_count">Added %1$d images</string>
+    <string name="toast_removed_picture_count">Removed %1$d images</string>
+    <string name="dialog_info_add_images">Please choose from the gallery some images that you want to use in this app. Go back to the app if you do not want to add more images.</string>
+
+    <!-- Shared preference keys -->
+    <string name="key_info_add_images" translatable="false">info_add_images</string>
+
+</resources>

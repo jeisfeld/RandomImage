@@ -24,7 +24,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * The default maximum resolution of a bitmap.
 	 */
-	private static final int DEFAULT_MAX_BITMAP_SIZE = 4096;
+	private static final int DEFAULT_MAX_BITMAP_SIZE = 2048;
 
 	/**
 	 * One half - the relative middle position.

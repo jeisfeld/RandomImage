@@ -3,7 +3,10 @@
 
     <string name="app_name">RandomImage</string>
     <string name="title_activity_display_images">Image list</string>
+    <string name="title_dialog_info">Information</string>
     <string name="text_initializing">Initializing&#8230;</string>
+    <string name="button_ok">OK</string>
+    <string name="button_dont_show">Do not show again</string>
 
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Remove images</string>

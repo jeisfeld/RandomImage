@@ -135,11 +135,16 @@ public final class ImageRegistry {
 	 *
 	 * @param imageUri
 	 *            The uri of the file to be added.
+	 * @return the file name, if it was added.
 	 */
-	public void add(final Uri imageUri) {
+	public String add(final Uri imageUri) {
 		if (imageUri != null && ImageUtil.getMimeType(imageUri).startsWith("image/")) {
 			String fileName = MediaStoreUtil.getRealPathFromUri(imageUri);
-			add(fileName);
+			boolean isAdded = add(fileName);
+			return isAdded ? fileName : null;
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -148,9 +153,10 @@ public final class ImageRegistry {
 	 *
 	 * @param fileName
 	 *            The file name to be removed.
+	 * @return true if a file was removed.
 	 */
-	public void remove(final String fileName) {
-		fileNames.remove(fileName);
+	public boolean remove(final String fileName) {
+		return fileNames.remove(fileName);
 	}
 
 	/**

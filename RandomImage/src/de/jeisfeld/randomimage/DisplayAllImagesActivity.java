@@ -9,8 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
-import de.jeisfeld.randomimage.util.MediaStoreUtil;
 
 /**
  * The main activity of the app.
@@ -118,16 +119,33 @@ public class DisplayAllImagesActivity extends Activity {
 			}
 			if (id == R.id.action_add_images) {
 				needsRefresh = false;
-				triggerAddImage();
+				DialogUtil.displayInfo(this, new MessageDialogListener() {
+					/**
+					 * The serial version uid.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogFinished() {
+						triggerAddImage();
+					}
+				}, R.string.dialog_info_add_images, R.string.key_info_add_images);
 			}
 			break;
 		case DELETE:
 			if (id == R.id.action_remove_images) {
 				ImageRegistry imageRegistry = ImageRegistry.getInstance();
+				int removedFileCount = 0;
 				for (String fileName : adapter.getSelectedFiles()) {
-					imageRegistry.remove(fileName);
+					boolean isRemoved = imageRegistry.remove(fileName);
+					if (isRemoved) {
+						removedFileCount++;
+					}
 				}
-				imageRegistry.save();
+				if (removedFileCount > 0) {
+					DialogUtil.displayToast(this, R.string.toast_removed_picture_count, removedFileCount);
+					imageRegistry.save();
+				}
 				fillListOfImages();
 				currentAction = CurrentAction.DISPLAY;
 				adapter.setSelectionMode(SelectionMode.NONE);
@@ -181,9 +199,9 @@ public class DisplayAllImagesActivity extends Activity {
 		if (requestCode == REQUEST_CODE_GET_IMAGES) {
 			if (resultCode == RESULT_OK) {
 				Uri selectedImageUri = data.getData();
-				String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
-				boolean isAdded = ImageRegistry.getInstance().add(fileName);
-				if (isAdded) {
+				String addedFileName = ImageRegistry.getInstance().add(selectedImageUri);
+				if (addedFileName != null) {
+					DialogUtil.displayToast(this, R.string.toast_added_picture, addedFileName);
 					needsRefresh = true;
 				}
 				triggerAddImage();

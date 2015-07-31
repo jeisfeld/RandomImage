@@ -3,7 +3,10 @@
 
     <string name="app_name">Zufallsfoto</string>
     <string name="title_activity_display_images">Liste der Fotos</string>
+    <string name="title_dialog_info">Information</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
+    <string name="button_ok">OK</string>
+    <string name="button_dont_show">Nicht mehr zeigen</string>
 
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Bilder entfernen</string>
