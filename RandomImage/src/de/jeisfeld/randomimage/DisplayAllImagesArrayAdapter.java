@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.content.Context;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +17,16 @@ import android.widget.ArrayAdapter;
  * Array adapter class to display an eye photo pair in a list.
  */
 public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
+	/**
+	 * Number of views to be preloaded.
+	 */
+	private static final int PRELOAD_SIZE = 15;
+
+	/**
+	 * The cache where views of the displays are stored for smoother scrolling.
+	 */
+	private ViewCache viewCache;
+
 	/**
 	 * The activity holding this adapter.
 	 */
@@ -52,6 +63,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		super(activity, R.layout.text_view_initializing, fileNames);
 		this.activity = activity;
 		this.fileNames = fileNames;
+		this.viewCache = new ViewCache(fileNames.length - 1, PRELOAD_SIZE);
 	}
 
 	/**
@@ -65,23 +77,26 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		this.activity = (DisplayAllImagesActivity) context;
 	}
 
-	/*
-	 * Fill the display of the view (date and pictures) Details on selection are handled within the
-	 * TwoImageSelectionHandler class.
-	 */
 	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {
+		return viewCache.get(position, parent);
+	}
+
+	/**
+	 * Create a new ThumbImageView for the file on a certain position.
+	 *
+	 * @param position
+	 *            The position.
+	 * @param parent
+	 *            The parent view.
+	 * @return The ThumbImageView.
+	 */
+	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent) {
 		final String fileName = fileNames[position];
 
-		final ThumbImageView thumbImageView;
-		if (convertView != null && convertView instanceof ThumbImageView) {
-			thumbImageView = (ThumbImageView) convertView;
-			thumbImageView.cleanImage();
-		}
-		else {
-			thumbImageView = (ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
-					parent, false);
-		}
+		final ThumbImageView thumbImageView =
+				(ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
+						parent, false);
 
 		thumbImageView.setImage(activity, fileName, new Runnable() {
 			@Override
@@ -162,6 +177,196 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		 * Multiple files can be selected.
 		 */
 		MULTIPLE
+	}
+
+	/**
+	 * Cache to store views from the GridView.
+	 */
+	private final class ViewCache {
+		/**
+		 * The map from positions to views.
+		 */
+		private SparseArray<ThumbImageView> cache;
+
+		/**
+		 * The preload size.
+		 */
+		private int preloadSize;
+
+		/**
+		 * The planned size of the cache.
+		 */
+		private int plannedSize;
+
+		/**
+		 * The maximum position.
+		 */
+		private int maxPosition;
+
+		/**
+		 * Center position of the cache.
+		 */
+		private volatile int currentCenter;
+
+		/**
+		 * Flag indicating if a preload thread is running.
+		 */
+		private boolean isPreloadRunning = false;
+
+		/**
+		 * The parentView view h olding the cached views.
+		 */
+		private ViewGroup parentView = null;
+
+		/**
+		 * Waiting preload thread.
+		 */
+		private Thread[] waitingThreads = new Thread[1];
+
+		/**
+		 * Constructor of the cache.
+		 *
+		 * @param maxPosition
+		 *            The maximum position that can be stored.
+		 * @param preloadSize
+		 *            The number of views to be preloaded.
+		 */
+		private ViewCache(final int maxPosition, final int preloadSize) {
+			this.preloadSize = preloadSize;
+			this.maxPosition = maxPosition;
+			plannedSize = 2 * preloadSize;
+			cache = new SparseArray<ThumbImageView>(plannedSize);
+		}
+
+		/**
+		 * Preload a range of views and clean the cache.
+		 *
+		 * @param position
+		 *            The position from where to do the preload
+		 * @param atEnd
+		 *            Flag indicating if we are at the end of the view or of the start.
+		 */
+		private void doPreload(final int position, final boolean atEnd) {
+			synchronized (cache) {
+				isPreloadRunning = true;
+				int startPosition;
+				int endPosition;
+
+				// Skipping 0, because this is frequently loaded.
+				if (atEnd) {
+					startPosition = Math.max(1, Math.min(position + preloadSize, maxPosition) - plannedSize + 1);
+				}
+				else {
+					startPosition = Math.max(1, position - preloadSize);
+				}
+				endPosition = Math.min(startPosition + plannedSize - 1, maxPosition);
+				currentCenter = (startPosition + endPosition) / 2;
+
+				// clean up, ignoring the first index which carries position 0.
+				int index = 1;
+				while (index < cache.size()) {
+					if (cache.keyAt(index) < startPosition || cache.keyAt(index) > endPosition) {
+						cache.removeAt(index);
+					}
+					else {
+						index++;
+					}
+				}
+
+				// preload.
+				for (int i = startPosition; i <= endPosition; i++) {
+					if (cache.indexOfKey(i) < 0) {
+						ThumbImageView view = createThumbImageView(i, parentView);
+						cache.put(i, view);
+					}
+				}
+
+				synchronized (waitingThreads) {
+					if (waitingThreads[0] != null) {
+						waitingThreads[0].start();
+						waitingThreads[0] = null;
+					}
+				}
+
+				isPreloadRunning = false;
+			}
+		}
+
+		/**
+		 * Trigger a preload thread, ensuring that only one such thread is running at a time.
+		 *
+		 * @param position
+		 *            The position from where to do the preload
+		 * @param atEnd
+		 *            Flag indicating if we are at the end of the view or of the start.
+		 */
+		private void triggerPreload(final int position, final boolean atEnd) {
+			if (position == 0) {
+				return;
+			}
+
+			Thread preloadThread = new Thread() {
+				@Override
+				public void run() {
+					doPreload(position, atEnd);
+				}
+			};
+
+			synchronized (waitingThreads) {
+				if (isPreloadRunning) {
+					waitingThreads[0] = preloadThread;
+				}
+				else {
+					waitingThreads[0] = null;
+					preloadThread.start();
+				}
+
+			}
+		}
+
+		/**
+		 * Adjust the planned size according to the size of the view.
+		 */
+		private void adjustPlannedSize() {
+			int currentViewSize = parentView.getChildCount();
+			int wishSize = Math.max(currentViewSize * 2, currentViewSize + 2 * preloadSize);
+			if (plannedSize < wishSize) {
+				plannedSize = wishSize;
+			}
+		}
+
+		/**
+		 * Get a view from the cache.
+		 *
+		 * @param position
+		 *            The position of the view.
+		 * @param parent
+		 *            the parentView view.
+		 * @return The view from cache, if existing. Otherwise a new view.
+		 */
+		private ThumbImageView get(final int position, final ViewGroup parent) {
+			if (parentView == null) {
+				parentView = parent;
+			}
+			else if (parentView != parent) {
+				parentView = parent;
+				cache.clear();
+			}
+
+			adjustPlannedSize();
+
+			ThumbImageView thumbImageView;
+			if (cache.indexOfKey(position) >= 0) {
+				thumbImageView = cache.get(position);
+			}
+			else {
+				thumbImageView = createThumbImageView(position, parentView);
+				cache.put(position, thumbImageView);
+			}
+			triggerPreload(position, position > currentCenter);
+
+			return thumbImageView;
+		}
 	}
 
 }
