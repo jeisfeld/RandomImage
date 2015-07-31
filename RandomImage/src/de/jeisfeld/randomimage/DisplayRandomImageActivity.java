@@ -68,27 +68,35 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return The gesture detector.
 	 */
 	private GestureDetector createGestureDetector() {
-		GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener());
-
-		gestureDetector.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
-
-			@Override
-			public boolean onSingleTapConfirmed(final MotionEvent e) {
-				// do nothing
-				return false;
-			}
-
-			@Override
-			public boolean onDoubleTapEvent(final MotionEvent e) {
-				// do nothing
-				return false;
-			}
+		GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+			/**
+			 * The speed which is accepted as fling.
+			 */
+			private static final int FLING_SPEED = 3000;
 
 			@Override
 			public boolean onDoubleTap(final MotionEvent e) {
 				displayImage(ImageRegistry.getInstance().getRandomFileName());
 				return true;
 			}
+
+			@Override
+			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
+					final float velocityY) {
+				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
+					displayImage(ImageRegistry.getInstance().getRandomFileName());
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+
+			@Override
+			public void onLongPress(final MotionEvent e) {
+				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this);
+			}
+
 		});
 
 		return gestureDetector;
