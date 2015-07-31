@@ -2,7 +2,6 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,18 +9,12 @@ import android.view.View;
 import android.widget.GridView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
- * The main activity of the app.
+ * Activity to display the list of images configured for this app.
  */
 public class DisplayAllImagesActivity extends Activity {
-	/**
-	 * Request code for getting images from gallery.
-	 */
-	private static final int REQUEST_CODE_GET_IMAGES = 1;
-
 	/**
 	 * The names of the files to be displayed.
 	 */
@@ -41,11 +34,6 @@ public class DisplayAllImagesActivity extends Activity {
 	 * The current action within this activity.
 	 */
 	private CurrentAction currentAction = CurrentAction.DISPLAY;
-
-	/**
-	 * Flag indicating if the list of pictures needs to be refreshed.
-	 */
-	private boolean needsRefresh = false;
 
 	/**
 	 * Static helper method to start the activity.
@@ -118,18 +106,7 @@ public class DisplayAllImagesActivity extends Activity {
 				adapter.setSelectionMode(SelectionMode.MULTIPLE);
 			}
 			if (id == R.id.action_add_images) {
-				needsRefresh = false;
-				DialogUtil.displayInfo(this, new MessageDialogListener() {
-					/**
-					 * The serial version uid.
-					 */
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onDialogFinished() {
-						triggerAddImage();
-					}
-				}, R.string.dialog_info_add_images, R.string.key_info_add_images);
+				AddImagesActivity.startActivity(this);
 			}
 			break;
 		case DELETE:
@@ -143,7 +120,7 @@ public class DisplayAllImagesActivity extends Activity {
 					}
 				}
 				if (removedFileCount > 0) {
-					DialogUtil.displayToast(this, R.string.toast_removed_picture_count, removedFileCount);
+					DialogUtil.displayToast(this, R.string.toast_removed_images_count, removedFileCount);
 					imageRegistry.save();
 				}
 				fillListOfImages();
@@ -160,16 +137,6 @@ public class DisplayAllImagesActivity extends Activity {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * Trigger an intent for getting an image for addition.
-	 */
-	private void triggerAddImage() {
-		Intent intent = new Intent();
-		intent.setType("image/*");
-		intent.setAction(Intent.ACTION_GET_CONTENT);
-		startActivityForResult(intent, REQUEST_CODE_GET_IMAGES);
 	}
 
 	/**
@@ -196,22 +163,11 @@ public class DisplayAllImagesActivity extends Activity {
 
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		if (requestCode == REQUEST_CODE_GET_IMAGES) {
-			if (resultCode == RESULT_OK) {
-				Uri selectedImageUri = data.getData();
-				String addedFileName = ImageRegistry.getInstance().add(selectedImageUri);
-				if (addedFileName != null) {
-					DialogUtil.displayToast(this, R.string.toast_added_picture, addedFileName);
-					needsRefresh = true;
-				}
-				triggerAddImage();
-			}
-			else {
-				// Finally, refresh list of images
-				if (needsRefresh) {
-					ImageRegistry.getInstance().save();
-					fillListOfImages();
-				}
+		if (requestCode == AddImagesActivity.REQUEST_CODE) {
+			int addedImagesCount = AddImagesActivity.getResult(resultCode, data);
+			if (addedImagesCount > 0) {
+				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
+				fillListOfImages();
 			}
 		}
 	}

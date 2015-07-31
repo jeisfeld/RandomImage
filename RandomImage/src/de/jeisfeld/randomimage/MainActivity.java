@@ -43,9 +43,10 @@ public class MainActivity extends Activity {
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			String addedFileName = imageRegistry.add(imageUri);
 			if (addedFileName != null) {
-				DialogUtil.displayToast(this, R.string.toast_added_picture, addedFileName);
+				DialogUtil.displayToast(this, R.string.toast_added_image, addedFileName);
 				imageRegistry.save();
 			}
+			finish();
 		}
 		else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null
 				&& intent.hasExtra(Intent.EXTRA_STREAM)) {
@@ -60,17 +61,20 @@ public class MainActivity extends Activity {
 					}
 				}
 				if (addedFileCount > 0) {
-					DialogUtil.displayToast(this, R.string.toast_added_picture_count, addedFileCount);
+					DialogUtil.displayToast(this, R.string.toast_added_images_count, addedFileCount);
 					imageRegistry.save();
 				}
 			}
+			finish();
 		}
 		else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState == null) {
 			// Application was started from launcher
 			Log.d(Application.TAG, "Launched application");
 		}
 
-		displayImage(imageRegistry.getRandomFileName());
+		displayRandomImage();
+
+		test();
 	}
 
 	/**
@@ -80,12 +84,23 @@ public class MainActivity extends Activity {
 	 *            The image file.
 	 */
 	private void displayImage(final String fileName) {
-		displayFileName = fileName;
-
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setGestureDetector(createGestureDetector());
 		setContentView(imageView);
-		imageView.setImage(displayFileName, this, 1);
+		imageView.setImage(fileName, this, 1);
+	}
+
+	/**
+	 * Display a random image.
+	 */
+	private void displayRandomImage() {
+		String fileToDisplay = ImageRegistry.getInstance().getRandomFileName();
+		if (fileToDisplay == null) {
+			AddImagesActivity.startActivity(this);
+		}
+		else {
+			displayImage(fileToDisplay);
+		}
 	}
 
 	/**
@@ -134,4 +149,24 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == AddImagesActivity.REQUEST_CODE) {
+			int addedImagesCount = AddImagesActivity.getResult(resultCode, data);
+			if (addedImagesCount > 0) {
+				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
+				displayRandomImage();
+			}
+			else {
+				finish();
+			}
+		}
+	}
+
+	/**
+	 * Method for temporary tests.
+	 */
+	private void test() {
+		// PreferenceUtil.setSharedPreferenceBoolean(R.string.key_info_add_images, false);
+	}
 }

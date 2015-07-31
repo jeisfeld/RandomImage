@@ -57,6 +57,8 @@
                 android:value=".MainActivity"
                 tools:ignore="UnusedAttribute" />
         </activity>
+        <activity android:name=".AddImagesActivity" >
+        </activity>
     </application>
 
 </manifest>
