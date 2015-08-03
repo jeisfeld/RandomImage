@@ -29,6 +29,11 @@ public final class ImageUtil {
 	// JAVADOC:ON
 
 	/**
+	 * The maximum resolution handled by this app.
+	 */
+	public static final int MAX_BITMAP_SIZE = 2048;
+
+	/**
 	 * Number of milliseconds for retry of getting bitmap.
 	 */
 	private static final long BITMAP_RETRY = 50;

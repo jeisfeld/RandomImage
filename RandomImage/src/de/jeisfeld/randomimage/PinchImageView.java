@@ -22,11 +22,6 @@ import android.widget.ImageView;
  */
 public class PinchImageView extends ImageView {
 	/**
-	 * The default maximum resolution of a bitmap.
-	 */
-	private static final int DEFAULT_MAX_BITMAP_SIZE = 2048;
-
-	/**
 	 * One half - the relative middle position.
 	 */
 	protected static final float ONE_HALF = 0.5f;
@@ -117,7 +112,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * The maximum allowed resolution of the bitmap. The image is scaled to this size.
 	 */
-	protected static int maxBitmapSize = DEFAULT_MAX_BITMAP_SIZE;
+	protected static int maxBitmapSize = ImageUtil.MAX_BITMAP_SIZE;
 
 	// PUBLIC_FIELDS:END
 
