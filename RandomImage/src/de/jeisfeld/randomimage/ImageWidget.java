@@ -15,6 +15,11 @@ import de.jeisfeld.randomimage.util.ImageUtil;
  */
 public class ImageWidget extends AppWidgetProvider {
 	/**
+	 * The file name of the currently displayed image.
+	 */
+	private String currentFileName;
+
+	/**
 	 * Number of pixels per dip.
 	 */
 	private static final int PIXELS_PER_DIP = Application.getAppContext().getResources()
@@ -25,27 +30,35 @@ public class ImageWidget extends AppWidgetProvider {
 			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
-
 		for (int i = 0; i < appWidgetIds.length; i++) {
 			int appWidgetId = appWidgetIds[i];
+
+			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
 
 			Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 			int width = PIXELS_PER_DIP * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
 			int height = PIXELS_PER_DIP * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
-			remoteViews.setImageViewBitmap(
-					R.id.imageViewWidget,
-					ImageUtil.getImageBitmap(ImageRegistry
-							.getInstance().getRandomFileName(),
-							Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height))));
 
-			Intent intent = new Intent(context, DisplayRandomImageActivity.class);
+			currentFileName = ImageRegistry.getInstance().getRandomFileName();
+
+			if (currentFileName == null) {
+				remoteViews.setImageViewResource(
+						R.id.imageViewWidget,
+						R.drawable.ic_launcher);
+			}
+			else {
+				remoteViews.setImageViewBitmap(
+						R.id.imageViewWidget,
+						ImageUtil.getImageBitmap(currentFileName,
+								Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height))));
+			}
+
+			Intent intent = DisplayRandomImageActivity.createIntent(context, currentFileName);
 			PendingIntent pendingIntent =
-					PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+					PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 			remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
-
-			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+			appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 		}
 	}
 

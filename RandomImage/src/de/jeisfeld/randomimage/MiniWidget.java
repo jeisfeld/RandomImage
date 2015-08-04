@@ -16,18 +16,17 @@ public class MiniWidget extends AppWidgetProvider {
 			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
-
 		for (int i = 0; i < appWidgetIds.length; i++) {
 			int appWidgetId = appWidgetIds[i];
 
+			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
+
 			Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 			PendingIntent pendingIntent =
-					PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+					PendingIntent.getActivity(context, 0, intent, 0);
 
 			remoteViews.setOnClickPendingIntent(R.id.textViewWidget, pendingIntent);
-
-			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+			appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 		}
 	}
 

@@ -62,7 +62,9 @@
         <activity android:name=".AddImagesFromGalleryActivity" >
         </activity>
 
-        <receiver android:name=".MiniWidget" >
+        <receiver
+            android:name=".MiniWidget"
+            android:label="@string/mini_widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -71,7 +73,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_mini" />
         </receiver>
-        <receiver android:name=".ImageWidget" >
+        <receiver
+            android:name=".ImageWidget"
+            android:label="@string/image_widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

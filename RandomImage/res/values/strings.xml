@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RandomImage</string>
+    <string name="app_name">Random Image</string>
+    <string name="mini_widget_name">Mini Widget</string>
+    <string name="image_widget_name">Random Image Frame</string>
     <string name="title_activity_display_images">Image list</string>
     <string name="title_dialog_info">Information</string>
     <string name="text_initializing">Initializing&#8230;</string>
