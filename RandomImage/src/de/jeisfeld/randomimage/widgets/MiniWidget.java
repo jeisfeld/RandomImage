@@ -31,7 +31,7 @@ public class MiniWidget extends AppWidgetProvider {
 					PendingIntent.getActivity(context, 0, intent, 0);
 
 			remoteViews.setOnClickPendingIntent(R.id.textViewWidget, pendingIntent);
-			appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
+			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 		}
 	}
 

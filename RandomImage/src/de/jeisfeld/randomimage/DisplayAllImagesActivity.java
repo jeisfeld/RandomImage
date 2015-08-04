@@ -61,9 +61,7 @@ public class DisplayAllImagesActivity extends Activity {
 			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
 			adapter.setSelectedFiles(selectedFiles);
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
-			if (currentAction == CurrentAction.DELETE) {
-				adapter.setSelectionMode(SelectionMode.MULTIPLE);
-			}
+			changeAction(currentAction);
 		}
 	}
 
@@ -78,12 +76,6 @@ public class DisplayAllImagesActivity extends Activity {
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
-		return onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public final boolean onPrepareOptionsMenu(final Menu menu) {
-		menu.clear();
 		switch (currentAction) {
 		case DISPLAY:
 			getMenuInflater().inflate(R.menu.display_images, menu);
@@ -103,8 +95,9 @@ public class DisplayAllImagesActivity extends Activity {
 		switch (currentAction) {
 		case DISPLAY:
 			if (id == R.id.action_select_images_for_removal) {
-				currentAction = CurrentAction.DELETE;
-				setMarkabilityStatus(true);
+				changeAction(CurrentAction.DELETE);
+
+				DialogUtil.displayInfo(this, null, R.string.dialog_info_delete_images, R.string.key_info_delete_images);
 			}
 			if (id == R.id.action_add_images) {
 				AddImagesFromGalleryActivity.startActivity(this);
@@ -125,18 +118,30 @@ public class DisplayAllImagesActivity extends Activity {
 					imageList.save();
 				}
 				fillListOfImages();
-				setMarkabilityStatus(false);
-				currentAction = CurrentAction.DISPLAY;
+				changeAction(CurrentAction.DISPLAY);
 			}
 			else if (id == R.id.action_cancel) {
-				setMarkabilityStatus(false);
-				currentAction = CurrentAction.DISPLAY;
+				changeAction(CurrentAction.DISPLAY);
 			}
 			break;
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Change the action within this activity.
+	 *
+	 * @param action
+	 *            the new action.
+	 */
+	private void changeAction(final CurrentAction action) {
+		if (action != null) {
+			currentAction = action;
+			setMarkabilityStatus(action == CurrentAction.DELETE);
+			invalidateOptionsMenu();
+		}
 	}
 
 	/**

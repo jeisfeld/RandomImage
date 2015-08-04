@@ -3,14 +3,16 @@
     tools:context="de.jeisfeld.randomimage.DisplayRandomImageActivity" >
 
     <item
-        android:id="@+id/action_remove_images"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/menu_remove_images"/>
-    <item
         android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_action_cancel"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_cancel"/>
+    <item
+        android:id="@+id/action_remove_images"
+        android:icon="@drawable/ic_action_trash"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_remove_images"/>
 
 </menu>

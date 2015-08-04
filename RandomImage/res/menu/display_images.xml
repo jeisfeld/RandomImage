@@ -4,13 +4,15 @@
 
     <item
         android:id="@+id/action_add_images"
+        android:icon="@drawable/ic_action_plus"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_add_images"/>
     <item
         android:id="@+id/action_select_images_for_removal"
+        android:icon="@drawable/ic_action_minus"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_select_images_for_removal"/>
 
 </menu>

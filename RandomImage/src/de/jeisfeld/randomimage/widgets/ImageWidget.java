@@ -95,7 +95,7 @@ public class ImageWidget extends AppWidgetProvider {
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
-		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
+		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 
 }

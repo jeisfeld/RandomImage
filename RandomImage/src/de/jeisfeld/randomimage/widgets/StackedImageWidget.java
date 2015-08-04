@@ -66,7 +66,7 @@ public class StackedImageWidget extends AppWidgetProvider {
 					PendingIntent.getActivity(context, appWidgetId, nestedIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			remoteViews.setPendingIntentTemplate(R.id.stackViewWidget, pendingIntent);
 
-			appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
+			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 		}
 	}
 

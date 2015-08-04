@@ -5,8 +5,10 @@
     <string name="toast_added_images_count">Added %1$d images</string>
     <string name="toast_removed_images_count">Removed %1$d images</string>
     <string name="dialog_info_add_images">Please choose from the gallery some images that you want to use in this app. Go back to the app if you do not want to add more images.</string>
+    <string name="dialog_info_delete_images">Select images that you want to remove from the list. Then press the trash icon to remove, or press the cross icon to abort.</string>
 
     <!-- Shared preference keys -->
     <string name="key_info_add_images" translatable="false">info_add_images</string>
+    <string name="key_info_delete_images" translatable="false">info_delete_images</string>
 
 </resources>
