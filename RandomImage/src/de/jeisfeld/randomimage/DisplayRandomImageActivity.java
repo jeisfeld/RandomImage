@@ -17,7 +17,7 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The resource key for the input folder.
 	 */
-	private static final String STRING_EXTRA_FILENAME = "de.eisfeldj.augendiagnose.FILENAME";
+	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
 
 	/**
 	 * The name of the displayed file.
@@ -160,7 +160,6 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Method for temporary tests.
 	 */
 	private void test() {
-		ImageRegistry.getCurrentImageList().setListName("Schnusy & Schnurpsi");
 		// PreferenceUtil.setSharedPreferenceBoolean(R.string.key_info_add_images, false);
 	}
 }

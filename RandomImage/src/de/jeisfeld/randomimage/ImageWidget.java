@@ -22,8 +22,7 @@ public class ImageWidget extends AppWidgetProvider {
 	/**
 	 * Number of pixels per dip.
 	 */
-	private static final int PIXELS_PER_DIP = Application.getAppContext().getResources()
-			.getDimensionPixelSize(R.dimen.dip);
+	private static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
 
 	@Override
 	public final void
@@ -36,9 +35,8 @@ public class ImageWidget extends AppWidgetProvider {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
 
 			Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
-			int width = PIXELS_PER_DIP * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
-			int height = PIXELS_PER_DIP * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
-
+			int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
+			int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
 			currentFileName = ImageRegistry.getCurrentImageList().getRandomFileName();
 
 			if (currentFileName == null) {

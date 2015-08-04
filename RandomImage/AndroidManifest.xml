@@ -84,6 +84,21 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_image" />
         </receiver>
+        <receiver
+            android:name=".StackedImageWidget"
+            android:label="@string/stacked_image_widget_name" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_stacked_image" />
+        </receiver>
+
+        <service
+            android:name=".StackedImageWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>
