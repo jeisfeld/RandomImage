@@ -9,6 +9,7 @@
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="button_ok">OK</string>
     <string name="button_dont_show">Nicht mehr zeigen</string>
+    <string name="default_list_name">Neue Liste</string>
 
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Bilder entfernen</string>

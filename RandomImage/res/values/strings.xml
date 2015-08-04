@@ -9,6 +9,7 @@
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="button_ok">OK</string>
     <string name="button_dont_show">Do not show again</string>
+    <string name="default_list_name">New List</string>
 
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Remove images</string>

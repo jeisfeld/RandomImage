@@ -160,6 +160,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Method for temporary tests.
 	 */
 	private void test() {
+		ImageRegistry.getCurrentImageList().setListName("Schnusy & Schnurpsi");
 		// PreferenceUtil.setSharedPreferenceBoolean(R.string.key_info_add_images, false);
 	}
 }

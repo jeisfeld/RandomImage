@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -20,6 +21,8 @@ public class MiniWidget extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
+
+			remoteViews.setTextViewText(R.id.textViewWidget, ImageRegistry.getCurrentImageList().getListName());
 
 			Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 			PendingIntent pendingIntent =
