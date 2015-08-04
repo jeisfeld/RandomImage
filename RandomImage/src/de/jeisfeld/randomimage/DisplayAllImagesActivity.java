@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.GridView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
@@ -70,7 +71,7 @@ public class DisplayAllImagesActivity extends Activity {
 	 * Fill the view with the current list of images.
 	 */
 	private void fillListOfImages() {
-		fileNames = ImageRegistry.getInstance().getFileNames();
+		fileNames = ImageRegistry.getCurrentImageList().getFileNames();
 		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
 		gridView.setAdapter(adapter);
 	}
@@ -111,17 +112,17 @@ public class DisplayAllImagesActivity extends Activity {
 			break;
 		case DELETE:
 			if (id == R.id.action_remove_images) {
-				ImageRegistry imageRegistry = ImageRegistry.getInstance();
+				ImageList imageList = ImageRegistry.getCurrentImageList();
 				int removedFileCount = 0;
 				for (String fileName : adapter.getSelectedFiles()) {
-					boolean isRemoved = imageRegistry.remove(fileName);
+					boolean isRemoved = imageList.remove(fileName);
 					if (isRemoved) {
 						removedFileCount++;
 					}
 				}
 				if (removedFileCount > 0) {
 					DialogUtil.displayToast(this, R.string.toast_removed_images_count, removedFileCount);
-					imageRegistry.save();
+					imageList.save();
 				}
 				fillListOfImages();
 				setMarkabilityStatus(false);

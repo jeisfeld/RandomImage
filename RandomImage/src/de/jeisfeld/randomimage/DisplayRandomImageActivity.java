@@ -55,7 +55,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 		if (currentFileName == null) {
 			// Reload the file when starting the app.
-			ImageRegistry.getInstance().load();
+			ImageRegistry.getCurrentImageList().load();
 			displayRandomImage();
 		}
 		else {
@@ -79,7 +79,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Display a random image.
 	 */
 	private void displayRandomImage() {
-		currentFileName = ImageRegistry.getInstance().getRandomFileName();
+		currentFileName = ImageRegistry.getCurrentImageList().getRandomFileName();
 		if (currentFileName == null) {
 			AddImagesFromGalleryActivity.startActivity(this);
 		}

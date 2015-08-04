@@ -78,7 +78,7 @@ public class AddImagesFromGalleryActivity extends Activity {
 		if (requestCode == REQUEST_CODE_GALLERY) {
 			if (resultCode == RESULT_OK) {
 				Uri selectedImageUri = data.getData();
-				String addedFileName = ImageRegistry.getInstance().add(selectedImageUri);
+				String addedFileName = ImageRegistry.getCurrentImageList().add(selectedImageUri);
 				if (addedFileName != null) {
 					DialogUtil.displayToast(this, R.string.toast_added_image, addedFileName);
 					addedImageCount++;
@@ -88,7 +88,7 @@ public class AddImagesFromGalleryActivity extends Activity {
 			else {
 				// Finally, refresh list of images
 				if (addedImageCount > 0) {
-					ImageRegistry.getInstance().save();
+					ImageRegistry.getCurrentImageList().save();
 				}
 				returnResult();
 			}

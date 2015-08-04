@@ -39,7 +39,7 @@ public class ImageWidget extends AppWidgetProvider {
 			int width = PIXELS_PER_DIP * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
 			int height = PIXELS_PER_DIP * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
 
-			currentFileName = ImageRegistry.getInstance().getRandomFileName();
+			currentFileName = ImageRegistry.getCurrentImageList().getRandomFileName();
 
 			if (currentFileName == null) {
 				remoteViews.setImageViewResource(

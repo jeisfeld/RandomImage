@@ -16,6 +16,4 @@
     <string name="menu_add_images">Add images</string>
     <string name="menu_cancel">Cancel</string>
 
-    <!-- Keys for shared preferences -->
-
 </resources>
