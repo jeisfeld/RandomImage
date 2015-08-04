@@ -1,12 +1,14 @@
-package de.jeisfeld.randomimage;
+package de.jeisfeld.randomimage.widgets;
 
-import de.jeisfeld.randomimage.util.ImageRegistry;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
  * The base widget, allowing to open the app for a specific list.

@@ -1,10 +1,13 @@
-package de.jeisfeld.randomimage;
+package de.jeisfeld.randomimage.widgets;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -26,7 +29,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		/**
 		 * The number of stacked images.
 		 */
-		private static final int COUNT = 2;
+		private int stackSize = 1;
+
+		/**
+		 * The file names of the stacked images.
+		 */
+		private String[] fileNames;
 
 		/**
 		 * The application context.
@@ -54,6 +62,9 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public final void onCreate() {
+			ImageList imageList = ImageRegistry.getCurrentImageList();
+			stackSize = imageList.size();
+			fileNames = imageList.getShuffledFileNames();
 		}
 
 		@Override
@@ -62,14 +73,15 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public final int getCount() {
-			return COUNT;
+			return stackSize;
 		}
 
 		@Override
 		public final RemoteViews getViewAt(final int position) {
+
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_stacked_image_item);
 
-			String currentFileName = ImageRegistry.getCurrentImageList().getRandomFileName();
+			String currentFileName = fileNames[position];
 
 			if (currentFileName == null) {
 				remoteViews.setImageViewResource(
@@ -82,7 +94,6 @@ public class StackedImageWidgetService extends RemoteViewsService {
 						ImageUtil.getImageBitmap(currentFileName,
 								Math.min(ImageUtil.MAX_BITMAP_SIZE, viewWidth)));
 			}
-
 
 			// Next, we set a fill-intent which will be used to fill-in the pending intent template
 			// which is set on the collection view in StackedImageWidget.

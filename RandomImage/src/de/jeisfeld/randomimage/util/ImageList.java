@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
@@ -33,7 +33,7 @@ public final class ImageList {
 	/**
 	 * The list of image files.
 	 */
-	private List<String> fileNames = new ArrayList<String>();
+	private ArrayList<String> fileNames = new ArrayList<String>();
 
 	/**
 	 * Configuration properties of the file list.
@@ -132,6 +132,19 @@ public final class ImageList {
 	 */
 	public String[] getFileNames() {
 		return fileNames.toArray(new String[0]);
+
+	}
+
+	/**
+	 * Get the list of file names in shuffled order.
+	 *
+	 * @return The list of file names.
+	 */
+	public String[] getShuffledFileNames() {
+		@SuppressWarnings("unchecked")
+		ArrayList<String> clonedList = (ArrayList<String>) fileNames.clone();
+		Collections.shuffle(clonedList);
+		return clonedList.toArray(new String[0]);
 	}
 
 	/**

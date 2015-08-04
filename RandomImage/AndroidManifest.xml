@@ -63,7 +63,7 @@
         </activity>
 
         <receiver
-            android:name=".MiniWidget"
+            android:name=".widgets.MiniWidget"
             android:label="@string/mini_widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -74,7 +74,7 @@
                 android:resource="@xml/widget_mini" />
         </receiver>
         <receiver
-            android:name=".ImageWidget"
+            android:name=".widgets.ImageWidget"
             android:label="@string/image_widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -85,7 +85,7 @@
                 android:resource="@xml/widget_image" />
         </receiver>
         <receiver
-            android:name=".StackedImageWidget"
+            android:name=".widgets.StackedImageWidget"
             android:label="@string/stacked_image_widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -97,7 +97,7 @@
         </receiver>
 
         <service
-            android:name=".StackedImageWidgetService"
+            android:name=".widgets.StackedImageWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 

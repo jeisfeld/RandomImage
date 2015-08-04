@@ -1,4 +1,4 @@
-package de.jeisfeld.randomimage;
+package de.jeisfeld.randomimage.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
+import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.R;
 
 /**
  * The stacked widget, showing a stack of images.
