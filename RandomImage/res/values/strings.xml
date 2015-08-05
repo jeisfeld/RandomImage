@@ -16,7 +16,14 @@
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Remove images</string>
     <string name="menu_remove_images">Remove selected images</string>
-    <string name="menu_add_images">Add images</string>
     <string name="menu_cancel">Cancel</string>
+    <string name="menu_add_images">Add images</string>
+    <string name="menu_manage_lists">Manage image lists</string>
+    <string name="menu_backup_list">Backup image list</string>
+    <string name="menu_restore_list">Restore image list</string>
+    <string name="menu_rename_list">Rename image list</string>
+    <string name="menu_clone_list">Clone image list</string>
+    <string name="menu_create_list">Create new image list</string>
+    <string name="menu_switch_list">Switch image list</string>
 
 </resources>

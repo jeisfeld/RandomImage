@@ -3,6 +3,33 @@
     tools:context="de.jeisfeld.randomimage.DisplayRandomImageActivity" >
 
     <item
+        android:id="@+id/action_manage_lists"
+        android:icon="@drawable/ic_action_folder"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_manage_lists">
+        <menu>
+            <item
+                android:id="@+id/action_backup_list"
+                android:title="@string/menu_backup_list"/>
+            <item
+                android:id="@+id/action_restore_list"
+                android:title="@string/menu_restore_list"/>
+            <item
+                android:id="@+id/action_rename_list"
+                android:title="@string/menu_rename_list"/>
+            <item
+                android:id="@+id/action_clone_list"
+                android:title="@string/menu_clone_list"/>
+            <item
+                android:id="@+id/action_create_list"
+                android:title="@string/menu_create_list"/>
+            <item
+                android:id="@+id/action_switch_list"
+                android:title="@string/menu_switch_list"/>
+        </menu>
+    </item>
+    <item
         android:id="@+id/action_add_images"
         android:icon="@drawable/ic_action_plus"
         android:orderInCategory="100"

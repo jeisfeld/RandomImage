@@ -94,40 +94,84 @@ public class DisplayAllImagesActivity extends Activity {
 
 		switch (currentAction) {
 		case DISPLAY:
-			if (id == R.id.action_select_images_for_removal) {
-				changeAction(CurrentAction.DELETE);
-
-				DialogUtil.displayInfo(this, null, R.string.dialog_info_delete_images, R.string.key_info_delete_images);
-			}
-			if (id == R.id.action_add_images) {
-				AddImagesFromGalleryActivity.startActivity(this);
-			}
-			break;
+			return onOptionsItemSelectedDisplay(id);
 		case DELETE:
-			if (id == R.id.action_remove_images) {
-				ImageList imageList = ImageRegistry.getCurrentImageList();
-				int removedFileCount = 0;
-				for (String fileName : adapter.getSelectedFiles()) {
-					boolean isRemoved = imageList.remove(fileName);
-					if (isRemoved) {
-						removedFileCount++;
-					}
-				}
-				if (removedFileCount > 0) {
-					DialogUtil.displayToast(this, R.string.toast_removed_images_count, removedFileCount);
-					imageList.save();
-				}
-				fillListOfImages();
-				changeAction(CurrentAction.DISPLAY);
-			}
-			else if (id == R.id.action_cancel) {
-				changeAction(CurrentAction.DISPLAY);
-			}
-			break;
+			return onOptionsItemSelectedDelete(id);
 		default:
-			break;
+			return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Handler for options selected while in display mode.
+	 *
+	 * @param menuId
+	 *            The selected menu item.
+	 * @return true if menu item was consumed.
+	 */
+	private boolean onOptionsItemSelectedDisplay(final int menuId) {
+		switch (menuId) {
+		case R.id.action_select_images_for_removal:
+			changeAction(CurrentAction.DELETE);
+			DialogUtil.displayInfo(this, null, R.string.dialog_info_delete_images, R.string.key_info_delete_images);
+			return true;
+		case R.id.action_add_images:
+			AddImagesFromGalleryActivity.startActivity(this);
+			return true;
+		case R.id.action_backup_list:
+			// TODO
+			return true;
+		case R.id.action_restore_list:
+			// TODO
+			return true;
+		case R.id.action_rename_list:
+			// TODO
+			return true;
+		case R.id.action_clone_list:
+			// TODO
+			return true;
+		case R.id.action_create_list:
+			// TODO
+			return true;
+		case R.id.action_switch_list:
+			// TODO
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * Handler for options selected while in delete mode.
+	 *
+	 * @param menuId
+	 *            The selected menu item.
+	 * @return true if menu item was consumed.
+	 */
+	private boolean onOptionsItemSelectedDelete(final int menuId) {
+		switch (menuId) {
+		case R.id.action_remove_images:
+			ImageList imageList = ImageRegistry.getCurrentImageList();
+			int removedFileCount = 0;
+			for (String fileName : adapter.getSelectedFiles()) {
+				boolean isRemoved = imageList.remove(fileName);
+				if (isRemoved) {
+					removedFileCount++;
+				}
+			}
+			if (removedFileCount > 0) {
+				DialogUtil.displayToast(this, R.string.toast_removed_images_count, removedFileCount);
+				imageList.save();
+			}
+			fillListOfImages();
+			changeAction(CurrentAction.DISPLAY);
+			return true;
+		case R.id.action_cancel:
+			changeAction(CurrentAction.DISPLAY);
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	/**

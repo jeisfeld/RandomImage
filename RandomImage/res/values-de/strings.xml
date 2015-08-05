@@ -16,7 +16,14 @@
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Bilder entfernen</string>
     <string name="menu_remove_images">Gewählte Bilder entfernen</string>
-    <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_cancel">Abbrechen</string>
+    <string name="menu_add_images">Bilder hinzufügen</string>
+    <string name="menu_manage_lists">Bildlisten verwalten</string>
+    <string name="menu_backup_list">Bildliste sichern</string>
+    <string name="menu_restore_list">Bildliste wiederherstellen</string>
+    <string name="menu_rename_list">Bildliste umbenennen</string>
+    <string name="menu_clone_list">Bildliste duplizieren</string>
+    <string name="menu_create_list">Neue Bildliste erstellen</string>
+    <string name="menu_switch_list">Bildliste wechseln</string>
 
 </resources>
