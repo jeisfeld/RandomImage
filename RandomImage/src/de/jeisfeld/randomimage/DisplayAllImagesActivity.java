@@ -159,6 +159,9 @@ public class DisplayAllImagesActivity extends Activity {
 				((ThumbImageView) imageView).setMarkable(markable);
 			}
 		}
+		for (ThumbImageView view : adapter.getCachedImages()) {
+			view.setMarkable(markable);
+		}
 	}
 
 	@Override

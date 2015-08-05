@@ -171,6 +171,15 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
+	 * Get all cached images.
+	 *
+	 * @return the array of cached images.
+	 */
+	public final ThumbImageView[] getCachedImages() {
+		return viewCache.getCachedImages();
+	}
+
+	/**
 	 * Mode defining how selection works.
 	 */
 	public enum SelectionMode {
@@ -381,6 +390,19 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 			triggerPreload(position, position > currentCenter);
 
 			return thumbImageView;
+		}
+
+		/**
+		 * Get all cached images.
+		 *
+		 * @return the array of cached images.
+		 */
+		private ThumbImageView[] getCachedImages() {
+			ThumbImageView[] result = new ThumbImageView[cache.size()];
+			for (int i = 0; i < cache.size(); i++) {
+				result[i] = cache.valueAt(i);
+			}
+			return result;
 		}
 	}
 

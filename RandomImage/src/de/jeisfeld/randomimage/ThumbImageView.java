@@ -3,7 +3,6 @@ package de.jeisfeld.randomimage;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +16,6 @@ import de.jeisfeld.randomimage.util.MediaStoreUtil;
  * A view for displaying a thumbnail.
  */
 public class ThumbImageView extends FrameLayout {
-	/**
-	 * Background color when highlighted.
-	 */
-	private static final int COLOR_MARKED = Color.CYAN;
-
 	/**
 	 * Flag indicating if the view is marked. (Similar to selection, but more stable)
 	 */
@@ -163,7 +157,7 @@ public class ThumbImageView extends FrameLayout {
 	 * Set the markability status of the view.
 	 *
 	 * @param markable
-	 *            if true, the view is markable.
+	 *            if true, the view is set markable, otherwise not markable.
 	 */
 	public final void setMarkable(final boolean markable) {
 		isMarkable = markable;
@@ -182,7 +176,6 @@ public class ThumbImageView extends FrameLayout {
 	public final void setMarked(final boolean marked) {
 		isMarked = marked;
 		checkBoxMarked.setChecked(marked);
-		imageView.setBackgroundColor(marked ? COLOR_MARKED : Color.TRANSPARENT);
 	}
 
 	public final boolean isMarked() {
