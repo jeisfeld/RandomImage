@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.jeisfeld.randomimage.util.SystemUtil;
 import android.content.Context;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Number of views to be preloaded.
 	 */
-	private static final int PRELOAD_SIZE = 15;
+	private static final int PRELOAD_SIZE;
 
 	/**
 	 * The cache where views of the displays are stored for smoother scrolling.
@@ -46,6 +47,21 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * Flag indicating how selection is handled.
 	 */
 	private SelectionMode selectionMode = SelectionMode.NONE;
+
+	static {
+		// Set cache size in dependence of device memory.
+		int memoryClass = SystemUtil.getLargeMemoryClass();
+
+		if (memoryClass >= 512) { // MAGIC_NUMBER
+			PRELOAD_SIZE = 50; // MAGIC_NUMBER
+		}
+		else if (memoryClass >= 256) { // MAGIC_NUMBER
+			PRELOAD_SIZE = 20; // MAGIC_NUMBER
+		}
+		else {
+			PRELOAD_SIZE = 5; // MAGIC_NUMBER
+		}
+	}
 
 	/**
 	 * Set the selection mode.

@@ -39,8 +39,6 @@ public class ImageWidget extends AppWidgetProvider {
 			String fileName = ImageRegistry.getCurrentImageList().getRandomFileName();
 
 			setImage(context, appWidgetManager, appWidgetId, fileName);
-
-			currentFileNames.put(appWidgetId, fileName);
 		}
 	}
 
@@ -84,6 +82,7 @@ public class ImageWidget extends AppWidgetProvider {
 					R.drawable.ic_launcher);
 		}
 		else {
+			currentFileNames.put(appWidgetId, fileName);
 			remoteViews.setImageViewBitmap(
 					R.id.imageViewWidget,
 					ImageUtil.getImageBitmap(fileName,
