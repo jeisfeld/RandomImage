@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage.widgets;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -95,6 +96,21 @@ public class ImageWidget extends AppWidgetProvider {
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+	}
+
+	/**
+	 * Update all instances of the widget.
+	 */
+	public static final void updateAllInstances() {
+		Context context = Application.getAppContext();
+		Intent intent = new Intent(context, ImageWidget.class);
+		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+		int[] ids =
+				AppWidgetManager.getInstance(context).getAppWidgetIds(
+						new ComponentName(Application.getAppContext(), ImageWidget.class));
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		context.sendBroadcast(intent);
 	}
 
 }

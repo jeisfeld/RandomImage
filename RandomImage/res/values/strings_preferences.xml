@@ -2,9 +2,9 @@
 <resources>
 
     <!-- Keys for shared preferences -->
-    <string name="key_current_image_list">current_image_list</string>
+    <string name="key_current_image_list" translatable="false">current_image_list</string>
 
     <!-- Default values for shared preferences -->
-    <string name="pref_default_current_image_list">fileNames.txt</string>
+    <string name="pref_default_current_image_list" translatable="false">fileNames.txt</string>
 
 </resources>

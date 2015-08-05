@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage.widgets;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -77,6 +78,21 @@ public class StackedImageWidget extends AppWidgetProvider {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
 		onUpdate(context, appWidgetManager, new int[] { appWidgetId });
+	}
+
+	/**
+	 * Update all instances of the widget.
+	 */
+	public static final void updateAllInstances() {
+		Context context = Application.getAppContext();
+		Intent intent = new Intent(context, StackedImageWidget.class);
+		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+		int[] ids =
+				AppWidgetManager.getInstance(context).getAppWidgetIds(
+						new ComponentName(context, StackedImageWidget.class));
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		context.sendBroadcast(intent);
 	}
 
 }
