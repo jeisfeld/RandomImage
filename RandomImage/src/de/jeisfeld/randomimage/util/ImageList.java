@@ -236,6 +236,10 @@ public final class ImageList {
 		String listName = properties.getProperty(PROP_LIST_NAME);
 
 		if (listName == null) {
+			listName = ImageRegistry.getListNameFromFileName(configFile);
+		}
+
+		if (listName == null) {
 			listName = Application.getResourceString(R.string.default_list_name);
 		}
 
