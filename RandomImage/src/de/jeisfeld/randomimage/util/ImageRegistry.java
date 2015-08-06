@@ -68,7 +68,7 @@ public final class ImageRegistry {
 		}
 
 		if (currentImageList == null && configFileMap.size() > 0) {
-			String firstName = getImageListNames()[0];
+			String firstName = getImageListNames().get(0);
 			switchToImageList(firstName, false);
 		}
 
@@ -84,10 +84,10 @@ public final class ImageRegistry {
 	 *
 	 * @return The names of all available image lists.
 	 */
-	public static String[] getImageListNames() {
+	public static ArrayList<String> getImageListNames() {
 		ArrayList<String> nameList = new ArrayList<String>(configFileMap.keySet());
 		Collections.sort(nameList);
-		return nameList.toArray(new String[0]);
+		return nameList;
 	}
 
 	/**
@@ -125,6 +125,26 @@ public final class ImageRegistry {
 			currentImageList = new ImageList(configFile);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 			return true;
+		}
+	}
+
+	/**
+	 * Delete the image list of the given name.
+	 *
+	 * @param name
+	 *            The name of the list to be deleted.
+	 * @return true if successfully deleted.
+	 */
+	public static boolean deleteImageList(final String name) {
+		File fileToBeDeleted = getConfigFile(name);
+
+		if (fileToBeDeleted == null) {
+			return false;
+		}
+		else {
+			boolean success = fileToBeDeleted.delete();
+			checkConfigFiles();
+			return success;
 		}
 	}
 

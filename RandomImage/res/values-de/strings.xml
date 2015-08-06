@@ -6,10 +6,11 @@
     <string name="image_widget_name">Zufallsbilderrahmen</string>
     <string name="stacked_image_widget_name">Stapelbilderrahmen</string>
     <string name="title_activity_display_images">Liste der Fotos</string>
-    <string name="title_dialog_info">Information</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="text_no_image">Kein Bild</string>
     <string name="button_ok">OK</string>
+    <string name="button_cancel">Abbrechen</string>
+    <string name="button_delete">Löschen</string>
     <string name="button_dont_show">Nicht mehr zeigen</string>
     <string name="default_list_name">Neue Liste</string>
 
@@ -25,5 +26,6 @@
     <string name="menu_clone_list">Bildliste duplizieren</string>
     <string name="menu_create_list">Neue Bildliste erstellen</string>
     <string name="menu_switch_list">Bildliste wechseln</string>
+    <string name="menu_delete_list">Bildliste löschen</string>
 
 </resources>

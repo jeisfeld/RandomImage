@@ -60,7 +60,7 @@ public class AddImagesFromGalleryActivity extends Activity {
 			public void onDialogFinished() {
 				triggerAddImage();
 			}
-		}, R.string.dialog_info_add_images, R.string.key_info_add_images);
+		}, R.string.key_info_add_images, R.string.dialog_info_add_images);
 	}
 
 	/**

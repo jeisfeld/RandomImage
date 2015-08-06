@@ -1,6 +1,9 @@
 package de.jeisfeld.randomimage;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +12,10 @@ import android.view.View;
 import android.widget.GridView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
+import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
+import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
@@ -79,6 +86,12 @@ public class DisplayAllImagesActivity extends Activity {
 		switch (currentAction) {
 		case DISPLAY:
 			getMenuInflater().inflate(R.menu.display_images, menu);
+
+			if (ImageRegistry.getImageListNames().size() < 2) {
+				menu.findItem(R.id.action_switch_list).setEnabled(false);
+				menu.findItem(R.id.action_delete_list).setEnabled(false);
+			}
+
 			return true;
 		case DELETE:
 			getMenuInflater().inflate(R.menu.delete_images, menu);
@@ -113,7 +126,7 @@ public class DisplayAllImagesActivity extends Activity {
 		switch (menuId) {
 		case R.id.action_select_images_for_removal:
 			changeAction(CurrentAction.DELETE);
-			DialogUtil.displayInfo(this, null, R.string.dialog_info_delete_images, R.string.key_info_delete_images);
+			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
 		case R.id.action_add_images:
 			AddImagesFromGalleryActivity.startActivity(this);
@@ -131,10 +144,13 @@ public class DisplayAllImagesActivity extends Activity {
 			// TODO
 			return true;
 		case R.id.action_create_list:
-			// TODO
+			createNewImageList();
 			return true;
 		case R.id.action_switch_list:
-			// TODO
+			switchImageList();
+			return true;
+		case R.id.action_delete_list:
+			deleteImageList();
 			return true;
 		default:
 			return false;
@@ -175,7 +191,137 @@ public class DisplayAllImagesActivity extends Activity {
 	}
 
 	/**
-	 * Change the action within this activity.
+	 * Create a new image list after requesting to enter its name.
+	 */
+	private void createNewImageList() {
+		DialogUtil
+				.displayInputDialog(this, new RequestInputDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+						if (text == null || text.length() == 0) {
+							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void onDialogFinished() {
+									createNewImageList();
+								}
+
+							}, 0, R.string.dialog_info_name_too_short);
+						}
+						else if (ImageRegistry.getImageListNames().contains(text)) {
+							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void onDialogFinished() {
+									createNewImageList();
+								}
+
+							}, 0, R.string.dialog_info_name_already_existing, text);
+						}
+						else {
+							ImageRegistry.switchToImageList(text, true);
+							invalidateOptionsMenu();
+							fillListOfImages();
+						}
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_enter_list_name, R.string.button_ok, "",
+						R.string.dialog_input_enter_list_name_new);
+	}
+
+	/**
+	 * Switch to another image list after selecting the list.
+	 */
+	private void switchImageList() {
+		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		String currentName = ImageRegistry.getCurrentImageList().getListName();
+		listNames.remove(currentName);
+
+		DialogUtil
+				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+						ImageRegistry.switchToImageList(text, false);
+						fillListOfImages();
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_select_list_name, listNames,
+						R.string.dialog_select_list_for_switch);
+	}
+
+	/**
+	 * Delete an image list after selecting the list.
+	 */
+	private void deleteImageList() {
+		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		String currentName = ImageRegistry.getCurrentImageList().getListName();
+		listNames.remove(currentName);
+
+		DialogUtil
+				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+						DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+								new ConfirmDialogListener() {
+									/**
+									 * The serial version id.
+									 */
+									private static final long serialVersionUID = 1L;
+
+									@Override
+									public void onDialogPositiveClick(final DialogFragment dialog1) {
+										ImageRegistry.deleteImageList(text);
+										invalidateOptionsMenu();
+									}
+
+									@Override
+									public void onDialogNegativeClick(final DialogFragment dialog1) {
+										// do nothing.
+									}
+								}, R.string.button_delete, R.string.dialog_confirmation_delete_list, text);
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_select_list_name, listNames,
+						R.string.dialog_select_list_for_delete);
+	}
+
+	/**
+	 * Change the action within this activity (display or delete).
 	 *
 	 * @param action
 	 *            the new action.

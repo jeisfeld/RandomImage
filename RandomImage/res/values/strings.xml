@@ -6,10 +6,11 @@
     <string name="image_widget_name">Random Image Frame</string>
     <string name="stacked_image_widget_name">Stacked Image Frame</string>
     <string name="title_activity_display_images">Image list</string>
-    <string name="title_dialog_info">Information</string>
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="text_no_image">No image</string>
     <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
     <string name="button_dont_show">Do not show again</string>
     <string name="default_list_name">New List</string>
 
@@ -25,5 +26,6 @@
     <string name="menu_clone_list">Clone image list</string>
     <string name="menu_create_list">Create new image list</string>
     <string name="menu_switch_list">Switch image list</string>
+    <string name="menu_delete_list">Delete image list</string>
 
 </resources>
