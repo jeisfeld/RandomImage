@@ -19,6 +19,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.Reques
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 
 /**
  * Activity to display the list of images configured for this app.
@@ -151,10 +152,10 @@ public class DisplayAllImagesActivity extends Activity {
 			renameImageList();
 			return true;
 		case R.id.action_clone_list:
-			cloneImageList();
+			createNewImageList(CreationStyle.CLONE_CURRENT);
 			return true;
 		case R.id.action_create_list:
-			createNewImageList();
+			createNewImageList(CreationStyle.CREATE_EMPTY);
 			return true;
 		case R.id.action_switch_list:
 			switchImageList();
@@ -177,20 +178,40 @@ public class DisplayAllImagesActivity extends Activity {
 	private boolean onOptionsItemSelectedDelete(final int menuId) {
 		switch (menuId) {
 		case R.id.action_remove_images:
-			ImageList imageList = ImageRegistry.getCurrentImageList();
-			int removedFileCount = 0;
-			for (String fileName : adapter.getSelectedFiles()) {
-				boolean isRemoved = imageList.remove(fileName);
-				if (isRemoved) {
-					removedFileCount++;
-				}
+			final ImageList imageList = ImageRegistry.getCurrentImageList();
+
+			final int imagesToBeRemoved = adapter.getSelectedFiles().length;
+			if (imagesToBeRemoved > 0) {
+				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						int removedFileCount = 0;
+						for (String fileName : adapter.getSelectedFiles()) {
+							boolean isRemoved = imageList.remove(fileName);
+							if (isRemoved) {
+								removedFileCount++;
+							}
+						}
+						DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_images_count,
+								removedFileCount);
+						imageList.save();
+						fillListOfImages();
+						changeAction(CurrentAction.DISPLAY);
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing.
+					}
+				}, R.string.button_remove, R.string.dialog_confirmation_remove_images, imagesToBeRemoved,
+						ImageRegistry.getCurrentListName());
+
 			}
-			if (removedFileCount > 0) {
-				DialogUtil.displayToast(this, R.string.toast_removed_images_count, removedFileCount);
-				imageList.save();
-			}
-			fillListOfImages();
-			changeAction(CurrentAction.DISPLAY);
 			return true;
 		case R.id.action_cancel:
 			changeAction(CurrentAction.DISPLAY);
@@ -202,8 +223,11 @@ public class DisplayAllImagesActivity extends Activity {
 
 	/**
 	 * Create a new image list after requesting to enter its name.
+	 *
+	 * @param creationStyle
+	 *            flag indicating if the list should be empty or cloned.
 	 */
-	private void createNewImageList() {
+	private void createNewImageList(final CreationStyle creationStyle) {
 		DialogUtil
 				.displayInputDialog(this, new RequestInputDialogListener() {
 					/**
@@ -224,7 +248,7 @@ public class DisplayAllImagesActivity extends Activity {
 
 								@Override
 								public void onDialogFinished() {
-									createNewImageList();
+									createNewImageList(creationStyle);
 								}
 
 							}, 0, R.string.dialog_info_name_too_short);
@@ -238,13 +262,13 @@ public class DisplayAllImagesActivity extends Activity {
 
 								@Override
 								public void onDialogFinished() {
-									createNewImageList();
+									createNewImageList(creationStyle);
 								}
 
 							}, 0, R.string.dialog_info_name_already_existing, name);
 						}
 						else {
-							ImageRegistry.switchToImageList(name, true);
+							ImageRegistry.switchToImageList(name, creationStyle);
 							invalidateOptionsMenu();
 							fillListOfImages();
 						}
@@ -255,7 +279,8 @@ public class DisplayAllImagesActivity extends Activity {
 						// do nothing
 					}
 				}, R.string.title_dialog_enter_list_name, R.string.button_ok, "",
-						R.string.dialog_input_enter_list_name_new);
+						creationStyle == CreationStyle.CREATE_EMPTY ? R.string.dialog_input_enter_list_name_new
+								: R.string.dialog_input_enter_list_name_cloned);
 	}
 
 	/**
@@ -275,7 +300,7 @@ public class DisplayAllImagesActivity extends Activity {
 
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
-						ImageRegistry.switchToImageList(text, false);
+						ImageRegistry.switchToImageList(text, CreationStyle.NONE);
 						fillListOfImages();
 					}
 
@@ -333,13 +358,6 @@ public class DisplayAllImagesActivity extends Activity {
 	}
 
 	/**
-	 * Clone the current image list after selecting a name.
-	 */
-	private void cloneImageList() {
-		// TODO
-	}
-
-	/**
 	 * Rename the current image list after selecting a name.
 	 */
 	private void renameImageList() {
@@ -385,7 +403,7 @@ public class DisplayAllImagesActivity extends Activity {
 						else {
 							boolean success = ImageRegistry.renameCurrentList(name);
 							if (success) {
-								ImageRegistry.switchToImageList(name, true);
+								ImageRegistry.switchToImageList(name, CreationStyle.NONE);
 								invalidateOptionsMenu();
 								fillListOfImages();
 							}
@@ -404,14 +422,118 @@ public class DisplayAllImagesActivity extends Activity {
 	 * Backup an image list after selecting the list to backup.
 	 */
 	private void backupImageList() {
-		// TODO
+		final ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
+
+		DialogUtil
+				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+						if (backupNames.contains(text)) {
+							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+									new ConfirmDialogListener() {
+										/**
+										 * The serial version id.
+										 */
+										private static final long serialVersionUID = 1L;
+
+										@Override
+										public void onDialogPositiveClick(final DialogFragment dialog2) {
+											boolean success = ImageRegistry.backupImageList(text);
+											DialogUtil.displayToast(DisplayAllImagesActivity.this,
+													success ? R.string.toast_backup_of_list
+															: R.string.toast_failed_to_backup_list, text);
+										}
+
+										@Override
+										public void onDialogNegativeClick(final DialogFragment dialog2) {
+											// do nothing
+										}
+									}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, text);
+
+						}
+						else {
+							boolean success = ImageRegistry.backupImageList(text);
+							DialogUtil.displayToast(DisplayAllImagesActivity.this,
+									success ? R.string.toast_backup_of_list
+											: R.string.toast_failed_to_backup_list, text);
+						}
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_select_list_name, listNames,
+						R.string.dialog_select_list_for_backup);
 	}
 
 	/**
 	 * Restore an image list after selecting the list to backup.
 	 */
 	private void restoreImageList() {
-		// TODO
+		final ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
+
+		DialogUtil
+				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+						if (listNames.contains(text)) {
+							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+									new ConfirmDialogListener() {
+										/**
+										 * The serial version id.
+										 */
+										private static final long serialVersionUID = 1L;
+
+										@Override
+										public void onDialogPositiveClick(final DialogFragment dialog2) {
+											boolean success = ImageRegistry.restoreImageList(text);
+											DialogUtil.displayToast(DisplayAllImagesActivity.this,
+													success ? R.string.toast_restore_of_list
+															: R.string.toast_failed_to_restore_list, text);
+											invalidateOptionsMenu();
+											if (text.equals(ImageRegistry.getCurrentListName())) {
+												fillListOfImages();
+											}
+										}
+
+										@Override
+										public void onDialogNegativeClick(final DialogFragment dialog2) {
+											// do nothing
+										}
+									}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, text);
+
+						}
+						else {
+							boolean success = ImageRegistry.restoreImageList(text);
+							DialogUtil.displayToast(DisplayAllImagesActivity.this,
+									success ? R.string.toast_restore_of_list
+											: R.string.toast_failed_to_restore_list, text);
+							invalidateOptionsMenu();
+							if (text.equals(ImageRegistry.getCurrentListName())) {
+								fillListOfImages();
+							}
+						}
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_select_list_name, backupNames,
+						R.string.dialog_select_list_for_restore);
 	}
 
 	/**
@@ -443,9 +565,7 @@ public class DisplayAllImagesActivity extends Activity {
 				((ThumbImageView) imageView).setMarkable(markable);
 			}
 		}
-		for (ThumbImageView view : adapter.getCachedImages()) {
-			view.setMarkable(markable);
-		}
+		adapter.setMarkabilityStatus(markable);
 	}
 
 	@Override

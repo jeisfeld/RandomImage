@@ -46,7 +46,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Flag indicating how selection is handled.
 	 */
-	private SelectionMode selectionMode = SelectionMode.NONE;
+	private volatile SelectionMode selectionMode = SelectionMode.NONE;
 
 	static {
 		// Set cache size in dependence of device memory.
@@ -189,12 +189,14 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
-	 * Get all cached images.
+	 * Set the markability status for all images in the cache.
 	 *
-	 * @return the array of cached images.
+	 * @param markable the new markability status.
 	 */
-	public final ThumbImageView[] getCachedImages() {
-		return viewCache.getCachedImages();
+	public final void setMarkabilityStatus(final boolean markable) {
+		for (ThumbImageView view : viewCache.getCachedImages()) {
+			view.setMarkable(markable);
+		}
 	}
 
 	/**

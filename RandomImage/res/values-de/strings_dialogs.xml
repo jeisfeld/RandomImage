@@ -9,14 +9,24 @@
     <string name="toast_added_images_count">Es wurden %1$d Bilder hinzugefügt</string>
     <string name="toast_removed_images_count">Es wurden %1$d Bilder entfernt</string>
     <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s“</string>
+    <string name="toast_backup_of_list">Die Liste „%1$s“ wurde gesichert</string>
+    <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
+    <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
+    <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
     <string name="dialog_info_add_images">Bitte wählen Sie in der Galerie einige Bilder, die sie in dieser App verwenden wollen. Gehen Sie zurück zur App, wenn Sie keine Bilder mehr hinzufügen wollen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>
+    <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>
     <string name="dialog_select_list_for_switch">Bitte wählen Sie die Bildliste, zu der Sie wechseln wollen.</string>
     <string name="dialog_select_list_for_delete">Bitte wählen Sie die Bildliste, die Sie löschen wollen.</string>
+    <string name="dialog_select_list_for_backup">Bitte wählen Sie die Bildliste, die Sie sichern wollen.</string>
+    <string name="dialog_select_list_for_restore">Bitte wählen Sie die Bildliste, die Sie wiederherstellen wollen.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Liste „%1$s“ wirklich löschen?</string>
+    <string name="dialog_confirmation_remove_images">Wollen Sie wirklich %1$d Bilder von der Liste „%2$s“ entfernen?</string>
+    <string name="dialog_confirmation_overwrite_list">Die Bildliste „%1$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
+    <string name="dialog_confirmation_overwrite_backup">Das Backup von „%1$s“ existiert bereits. Wollen Sie es überschreiben?</string>
 
 </resources>

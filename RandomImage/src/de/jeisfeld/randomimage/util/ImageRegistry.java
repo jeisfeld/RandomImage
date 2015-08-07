@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.os.Environment;
 import android.util.Log;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
@@ -19,6 +20,11 @@ public final class ImageRegistry {
 	 * The folder where config files are stored.
 	 */
 	private static final File CONFIG_FILE_FOLDER = Application.getAppContext().getExternalFilesDir(null);
+
+	/**
+	 * The folder where backup files are stored.
+	 */
+	private static final File BACKUP_FILE_FOLDER = new File(Environment.getExternalStorageDirectory(), "RandomImage");
 
 	/**
 	 * The suffix for config files.
@@ -46,7 +52,7 @@ public final class ImageRegistry {
 	private static Map<String, File> configFileMap = new HashMap<String, File>();
 
 	static {
-		checkConfigFiles();
+		parseConfigFiles();
 	}
 
 	/**
@@ -64,17 +70,17 @@ public final class ImageRegistry {
 		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
 
 		if (currentImageList == null && currentListName != null) {
-			switchToImageList(currentListName, false);
+			switchToImageList(currentListName, CreationStyle.NONE);
 		}
 
 		if (currentImageList == null && configFileMap.size() > 0) {
 			String firstName = getImageListNames().get(0);
-			switchToImageList(firstName, false);
+			switchToImageList(firstName, CreationStyle.NONE);
 		}
 
 		if (currentImageList == null) {
 			String newName = getNewListName();
-			switchToImageList(newName, true);
+			switchToImageList(newName, CreationStyle.CREATE_EMPTY);
 		}
 		return currentImageList;
 	}
@@ -100,16 +106,28 @@ public final class ImageRegistry {
 	}
 
 	/**
+	 * Get the names of all available image lists in the backup.
+	 *
+	 * @return The names of all available image lists in the backup.
+	 */
+	public static ArrayList<String> getBackupImageListNames() {
+		Map<String, File> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
+		ArrayList<String> nameList = new ArrayList<String>(backupConfigFileMap.keySet());
+		Collections.sort(nameList);
+		return nameList;
+	}
+
+	/**
 	 * Switch to the image list with the given name.
 	 *
 	 * @param name
 	 *            The name of the target image list.
-	 * @param create
+	 * @param creationStyle
 	 *            Flag indicating if the list should be created if non-existing.
 	 *
 	 * @return true if successful.
 	 */
-	public static boolean switchToImageList(final String name, final boolean create) {
+	public static boolean switchToImageList(final String name, final CreationStyle creationStyle) {
 		if (name == null) {
 			return false;
 		}
@@ -117,17 +135,18 @@ public final class ImageRegistry {
 		File configFile = getConfigFile(name);
 
 		if (configFile == null) {
-			if (create) {
-				File newFile = getFileForListName(name);
-				configFileMap.put(name, newFile);
-				currentImageList = new ImageList(newFile);
-				currentImageList.setListName(name);
-				PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
-				return true;
-			}
-			else {
+			if (creationStyle == CreationStyle.NONE) {
 				Log.w(Application.TAG, "Could not switch to non-existing file list " + name);
 				return false;
+			}
+			else {
+				File newFile = getFileForListName(name);
+				configFileMap.put(name, newFile);
+				currentImageList =
+						new ImageList(newFile, name, creationStyle == CreationStyle.CREATE_EMPTY ? null
+								: configFileMap.get(getCurrentListName()));
+				PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
+				return true;
 			}
 		}
 		else {
@@ -152,9 +171,75 @@ public final class ImageRegistry {
 		}
 		else {
 			boolean success = fileToBeDeleted.delete();
-			checkConfigFiles();
+			parseConfigFiles();
 			return success;
 		}
+	}
+
+	/**
+	 * Backup the image list of the given name.
+	 *
+	 * @param name
+	 *            The name of the list
+	 * @return true if successful.
+	 */
+	public static boolean backupImageList(final String name) {
+		File configFile = configFileMap.get(name);
+		File oldBackupFile = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+
+		if (configFile == null) {
+			Log.e(Application.TAG, "Could not find config file of " + name + " for backup.");
+			return false;
+		}
+
+		if (!BACKUP_FILE_FOLDER.exists()) {
+			boolean success = BACKUP_FILE_FOLDER.mkdir();
+			if (!success) {
+				Log.e(Application.TAG, "Could not create backup dir " + BACKUP_FILE_FOLDER.getAbsolutePath());
+				return false;
+			}
+		}
+
+		File backupFile = new File(BACKUP_FILE_FOLDER, configFile.getName());
+		if (oldBackupFile != null && !oldBackupFile.equals(backupFile)) {
+			oldBackupFile.delete();
+		}
+
+		return FileUtil.copyFile(configFile, backupFile);
+	}
+
+	/**
+	 * Restore the image list of the given name.
+	 *
+	 * @param name
+	 *            The name of the list
+	 * @return true if successful.
+	 */
+	public static boolean restoreImageList(final String name) {
+		File oldConfigFile = configFileMap.get(name);
+		File backupFile = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+
+		if (backupFile == null) {
+			Log.e(Application.TAG, "Could not find backup file of " + name + " for restore.");
+			return false;
+		}
+
+		File tempBackupFile = null;
+		if (oldConfigFile != null) {
+			tempBackupFile = new File(CONFIG_FILE_FOLDER, oldConfigFile.getName() + ".bak");
+			oldConfigFile.renameTo(tempBackupFile);
+		}
+
+		File newConfigFile = getFileForListName(name);
+		boolean success = FileUtil.copyFile(backupFile, newConfigFile);
+		if (success) {
+			if (tempBackupFile != null) {
+				tempBackupFile.delete();
+			}
+			parseConfigFiles();
+			switchToImageList(name, CreationStyle.NONE);
+		}
+		return success;
 	}
 
 	/**
@@ -187,7 +272,7 @@ public final class ImageRegistry {
 		File configFile = configFileMap.get(name);
 
 		if (configFile == null) {
-			checkConfigFiles();
+			parseConfigFiles();
 			configFile = configFileMap.get(name);
 		}
 
@@ -197,8 +282,19 @@ public final class ImageRegistry {
 	/**
 	 * Get the list of available config files.
 	 */
-	private static void checkConfigFiles() {
-		File[] configFiles = CONFIG_FILE_FOLDER.listFiles(new FileFilter() {
+	private static void parseConfigFiles() {
+		configFileMap = parseConfigFiles(CONFIG_FILE_FOLDER);
+	}
+
+	/**
+	 * Get the image lists from the config file folder.
+	 *
+	 * @param configFileFolder
+	 *            The config file folder.
+	 * @return The map from list names to image list files.
+	 */
+	private static Map<String, File> parseConfigFiles(final File configFileFolder) {
+		File[] configFiles = configFileFolder.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(final File file) {
 				return file.isFile() && file.getName().endsWith(CONFIG_FILE_SUFFIX);
@@ -208,18 +304,20 @@ public final class ImageRegistry {
 		if (configFiles == null) {
 			configFiles = new File[0];
 		}
-		configFileMap.clear();
+
+		Map<String, File> fileMap = new HashMap<String, File>();
 
 		for (File configFile : configFiles) {
 			String name = new ImageList(configFile).getListName();
 
-			if (configFileMap.containsKey(name)) {
+			if (fileMap.containsKey(name)) {
 				Log.e(Application.TAG, "Duplicate config list name " + name);
 			}
 			else {
-				configFileMap.put(name, configFile);
+				fileMap.put(name, configFile);
 			}
 		}
+		return fileMap;
 	}
 
 	/**
@@ -228,7 +326,7 @@ public final class ImageRegistry {
 	 * @return A new list name.
 	 */
 	private static String getNewListName() {
-		checkConfigFiles();
+		parseConfigFiles();
 
 		String baseListName = Application.getResourceString(R.string.default_list_name);
 		String listName = baseListName;
@@ -296,6 +394,24 @@ public final class ImageRegistry {
 		}
 
 		return listName;
+	}
+
+	/**
+	 * Enumeration indicating what should happen when switching to a non-existing list.
+	 */
+	public enum CreationStyle {
+		/**
+		 * Do not switch.
+		 */
+		NONE,
+		/**
+		 * Create empty list.
+		 */
+		CREATE_EMPTY,
+		/**
+		 * Clone the current list.
+		 */
+		CLONE_CURRENT
 	}
 
 }

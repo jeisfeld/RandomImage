@@ -11,6 +11,8 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_delete">Delete</string>
+    <string name="button_remove">Remove</string>
+    <string name="button_overwrite">Overwrite</string>
     <string name="button_dont_show">Do not show again</string>
     <string name="default_list_name">New List</string>
 

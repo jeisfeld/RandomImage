@@ -53,6 +53,34 @@ public final class ImageList {
 	}
 
 	/**
+	 * Create a new image list.
+	 *
+	 * @param configFile
+	 *            the configuration file of this list.
+	 * @param listName
+	 *            the name of the list.
+	 * @param cloneFile
+	 *            If existing, then the new list will be cloned from this file.
+	 *
+	 */
+	protected ImageList(final File configFile, final String listName, final File cloneFile) {
+		if (configFile.exists()) {
+			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
+			this.configFile = configFile;
+			load();
+		}
+		else {
+			if (cloneFile != null) {
+				this.configFile = cloneFile;
+				load();
+			}
+			this.configFile = configFile;
+			setListName(listName);
+			save();
+		}
+	}
+
+	/**
 	 * Load the list if image file names from the config file.
 	 */
 	public synchronized void load() {
