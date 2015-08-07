@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.TextView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
@@ -32,6 +33,11 @@ public class DisplayAllImagesActivity extends Activity {
 	 * The view showing the photos.
 	 */
 	private GridView gridView;
+
+	/**
+	 * The view showing the name of the list.
+	 */
+	private TextView textViewListName;
 
 	/**
 	 * The adapter handling the list of images.
@@ -57,10 +63,10 @@ public class DisplayAllImagesActivity extends Activity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_display_images);
 
-		gridView = (GridView) findViewById(R.id.gridViewDeleteimages);
+		gridView = (GridView) findViewById(R.id.gridViewDisplayImages);
+		textViewListName = (TextView) findViewById(R.id.textViewListName);
 
 		fillListOfImages();
 
@@ -82,6 +88,7 @@ public class DisplayAllImagesActivity extends Activity {
 		}
 		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
 		gridView.setAdapter(adapter);
+		textViewListName.setText(ImageRegistry.getCurrentImageList().getListName());
 	}
 
 	@Override
