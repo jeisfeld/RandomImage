@@ -77,6 +77,9 @@ public class DisplayAllImagesActivity extends Activity {
 	 */
 	private void fillListOfImages() {
 		fileNames = ImageRegistry.getCurrentImageList().getFileNames();
+		if (adapter != null) {
+			adapter.cleanupCache();
+		}
 		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
 		gridView.setAdapter(adapter);
 	}

@@ -88,35 +88,56 @@ public class ThumbImageView extends FrameLayout {
 	 *            The activity holding the view.
 	 * @param newFileName
 	 *            The image to be displayed.
+	 * @param sameThread
+	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 * @param postActivities
 	 *            Activities that may be run on the UI thread after loading the image.
 	 */
-	public final void setImage(final Activity activity, final String newFileName, final Runnable postActivities) {
+	public final void setImage(final Activity activity, final String newFileName, final boolean sameThread,
+			final Runnable postActivities) {
 		if (newFileName == null || newFileName.equals(this.fileName)) {
 			return;
 		}
 		this.fileName = newFileName;
 
-		// Fill pictures in separate thread, for performance reasons
-		Thread thread = new Thread() {
+		if (sameThread) {
+			loadImage(activity, postActivities);
+		}
+		else {
+			// Fill pictures in separate thread, for performance reasons
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					loadImage(activity, postActivities);
+				}
+			};
+			thread.start();
+		}
+
+	}
+
+	/**
+	 * Inner helper method of set Image, handling the loading of the image.
+	 *
+	 * @param activity
+	 *            The activity triggering the load.
+	 * @param postActivities
+	 *            Actions to be done after loading the image.
+	 */
+	private void loadImage(final Activity activity, final Runnable postActivities) {
+		final Bitmap imageBitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				final Bitmap imageBitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
-				activity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						imageView.setImageBitmap(imageBitmap);
-						imageView.invalidate();
-						setMarked(false);
-						initialized = true;
-						if (postActivities != null) {
-							postActivities.run();
-						}
-					}
-				});
+				imageView.setImageBitmap(imageBitmap);
+				imageView.invalidate();
+				setMarked(false);
+				initialized = true;
+				if (postActivities != null) {
+					postActivities.run();
+				}
 			}
-		};
-		thread.start();
+		});
 	}
 
 	/**

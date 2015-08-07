@@ -115,16 +115,18 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 *            The position.
 	 * @param parent
 	 *            The parent view.
+	 * @param sameThread
+	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 * @return The ThumbImageView.
 	 */
-	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent) {
+	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent, final boolean sameThread) {
 		final String fileName = fileNames[position];
 
 		final ThumbImageView thumbImageView =
 				(ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
 						parent, false);
 
-		thumbImageView.setImage(activity, fileName, new Runnable() {
+		thumbImageView.setImage(activity, fileName, sameThread, new Runnable() {
 			@Override
 			public void run() {
 				thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
@@ -196,6 +198,13 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
+	 * Cleanup the adapter cache and stop further preloading.
+	 */
+	public final void cleanupCache() {
+		viewCache.interrupt();
+	}
+
+	/**
 	 * Mode defining how selection works.
 	 */
 	public enum SelectionMode {
@@ -258,9 +267,15 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		private ViewGroup parentView = null;
 
 		/**
-		 * Waiting preload thread.
+		 * Waiting preload thread. Always contains one element - this is done so that the array can be used as
+		 * synchronization object.
 		 */
 		private Thread[] waitingThreads = new Thread[1];
+
+		/**
+		 * Flad indicating if the preload thread is interrupted and the thread is in the process of deletion.
+		 */
+		private boolean isInterrupted = false;
 
 		/**
 		 * Constructor of the cache.
@@ -318,7 +333,11 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				// preload.
 				for (int i = startPosition; i <= endPosition; i++) {
 					if (cache.indexOfKey(i) < 0) {
-						ThumbImageView view = createThumbImageView(i, parentView);
+						ThumbImageView view = createThumbImageView(i, parentView, true);
+						if (isInterrupted) {
+							isPreloadRunning = false;
+							return;
+						}
 						cache.put(i, view);
 					}
 				}
@@ -343,7 +362,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		 *            Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void triggerPreload(final int position, final boolean atEnd) {
-			if (position == 0) {
+			if (position == 0 || isInterrupted) {
 				return;
 			}
 
@@ -364,6 +383,14 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				}
 
 			}
+		}
+
+		/**
+		 * Interrupt the preloading thread and clean the cache.
+		 */
+		private void interrupt() {
+			isInterrupted = true;
+			cache.clear();
 		}
 
 		/**
@@ -400,7 +427,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				thumbImageView = cache.get(position);
 			}
 			else {
-				thumbImageView = createThumbImageView(position, parentView);
+				thumbImageView = createThumbImageView(position, parentView, false);
 				cache.put(position, thumbImageView);
 			}
 			triggerPreload(position, position > currentCenter);

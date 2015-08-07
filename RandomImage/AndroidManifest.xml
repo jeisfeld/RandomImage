@@ -32,6 +32,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".AddSentImagesActivity" >
@@ -53,12 +54,12 @@
         <activity
             android:name=".DisplayAllImagesActivity"
             android:label="@string/title_activity_display_images"
-            android:parentActivityName=".DisplayRandomImageActivity"
             android:windowSoftInputMode="adjustResize" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"
-                tools:ignore="UnusedAttribute" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".AddImagesFromGalleryActivity" >
         </activity>
