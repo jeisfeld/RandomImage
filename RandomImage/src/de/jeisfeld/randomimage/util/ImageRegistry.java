@@ -80,6 +80,15 @@ public final class ImageRegistry {
 	}
 
 	/**
+	 * Get the name of the current list.
+	 *
+	 * @return The name of the current list.
+	 */
+	public static String getCurrentListName() {
+		return getCurrentImageList().getListName();
+	}
+
+	/**
 	 * Get the names of all available image lists.
 	 *
 	 * @return The names of all available image lists.
@@ -146,6 +155,25 @@ public final class ImageRegistry {
 			checkConfigFiles();
 			return success;
 		}
+	}
+
+	/**
+	 * Rename the current list.
+	 *
+	 * @param newName
+	 *            The new name.
+	 * @return true if successful.
+	 */
+	public static boolean renameCurrentList(final String newName) {
+		String currentName = getCurrentListName();
+		File newConfigFile = getFileForListName(newName);
+		boolean success = currentImageList.changeListName(newName, newConfigFile);
+		if (success) {
+			configFileMap.remove(currentName);
+			configFileMap.put(newName, newConfigFile);
+			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
+		}
+		return success;
 	}
 
 	/**

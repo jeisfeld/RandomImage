@@ -24,7 +24,7 @@ public class MiniWidget extends AppWidgetProvider {
 
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
 
-			remoteViews.setTextViewText(R.id.textViewWidget, ImageRegistry.getCurrentImageList().getListName());
+			remoteViews.setTextViewText(R.id.textViewWidget, ImageRegistry.getCurrentListName());
 
 			Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 			PendingIntent pendingIntent =

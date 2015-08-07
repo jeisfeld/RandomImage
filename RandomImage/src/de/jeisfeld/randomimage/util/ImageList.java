@@ -99,8 +99,21 @@ public final class ImageList {
 
 	/**
 	 * Save the list of image file names to the config file.
+	 *
+	 * @return true if successful.
 	 */
-	public synchronized void save() {
+	public synchronized boolean save() {
+		File backupFile = new File(configFile.getParentFile(), configFile.getName() + ".bak");
+
+		if (configFile.exists()) {
+			boolean success = configFile.renameTo(backupFile);
+			if (!success) {
+				Log.e(Application.TAG, "Could not backup config file to " + backupFile.getAbsolutePath());
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
+				return false;
+			}
+		}
+
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new FileWriter(configFile));
@@ -114,15 +127,28 @@ public final class ImageList {
 			for (String fileName : fileNames) {
 				writer.println(fileName);
 			}
+
+			writer.close();
+
+			if (backupFile.exists()) {
+				boolean success = backupFile.delete();
+				if (!success) {
+					Log.e(Application.TAG, "Could not delete backup file " + backupFile.getAbsolutePath());
+					return false;
+				}
+			}
 		}
 		catch (IOException e) {
-			Log.e(Application.TAG, "Could not store configuration to file", e);
+			Log.e(Application.TAG, "Could not store configuration to file " + configFile.getAbsolutePath(), e);
+			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
+			return false;
 		}
 		finally {
 			if (writer != null) {
 				writer.close();
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -247,7 +273,7 @@ public final class ImageList {
 	}
 
 	/**
-	 * Set the name of the list.
+	 * Set the name of the list without changing the file name.
 	 *
 	 * @param listName
 	 *            The new name of the list.
@@ -260,5 +286,34 @@ public final class ImageList {
 			properties.setProperty(PROP_LIST_NAME, listName);
 		}
 		save();
+	}
+
+	/**
+	 * Change the list name, also renaming the config file accordingly.
+	 *
+	 * @param listName
+	 *            The new name of the list.
+	 * @param newConfigFile
+	 *            The new config file.
+	 * @return true if successful.
+	 */
+	public boolean changeListName(final String listName, final File newConfigFile) {
+		File oldConfigFile = configFile;
+		configFile = newConfigFile;
+		setListName(listName);
+		boolean success = save();
+
+		if (success) {
+			success = oldConfigFile.delete();
+			if (!success) {
+				Log.e(Application.TAG, "Could not delete old config file " + oldConfigFile.getAbsolutePath());
+			}
+			return success;
+		}
+		else {
+			Log.e(Application.TAG, "Could not save to new config file " + configFile.getAbsolutePath());
+			configFile = oldConfigFile;
+			return false;
+		}
 	}
 }

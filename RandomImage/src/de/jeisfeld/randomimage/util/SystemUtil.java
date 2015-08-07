@@ -65,7 +65,7 @@ public final class SystemUtil {
 	}
 
 	/**
-	 * Determine if the screen is shown in landscape mode (i.e. width > height)
+	 * Determine if the screen is shown in landscape mode (i.e. width &gt; height)
 	 *
 	 * @return true if the app runs in landscape mode
 	 */

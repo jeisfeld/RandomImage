@@ -88,7 +88,7 @@ public class DisplayAllImagesActivity extends Activity {
 		}
 		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
 		gridView.setAdapter(adapter);
-		textViewListName.setText(ImageRegistry.getCurrentImageList().getListName());
+		textViewListName.setText(ImageRegistry.getCurrentListName());
 	}
 
 	@Override
@@ -142,16 +142,16 @@ public class DisplayAllImagesActivity extends Activity {
 			AddImagesFromGalleryActivity.startActivity(this);
 			return true;
 		case R.id.action_backup_list:
-			// TODO
+			backupImageList();
 			return true;
 		case R.id.action_restore_list:
-			// TODO
+			restoreImageList();
 			return true;
 		case R.id.action_rename_list:
-			// TODO
+			renameImageList();
 			return true;
 		case R.id.action_clone_list:
-			// TODO
+			cloneImageList();
 			return true;
 		case R.id.action_create_list:
 			createNewImageList();
@@ -213,7 +213,9 @@ public class DisplayAllImagesActivity extends Activity {
 
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
-						if (text == null || text.length() == 0) {
+						String name = text == null ? null : text.trim();
+
+						if (name == null || name.length() == 0) {
 							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
 								/**
 								 * The serial version id.
@@ -227,7 +229,7 @@ public class DisplayAllImagesActivity extends Activity {
 
 							}, 0, R.string.dialog_info_name_too_short);
 						}
-						else if (ImageRegistry.getImageListNames().contains(text)) {
+						else if (ImageRegistry.getImageListNames().contains(name)) {
 							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
 								/**
 								 * The serial version id.
@@ -239,10 +241,10 @@ public class DisplayAllImagesActivity extends Activity {
 									createNewImageList();
 								}
 
-							}, 0, R.string.dialog_info_name_already_existing, text);
+							}, 0, R.string.dialog_info_name_already_existing, name);
 						}
 						else {
-							ImageRegistry.switchToImageList(text, true);
+							ImageRegistry.switchToImageList(name, true);
 							invalidateOptionsMenu();
 							fillListOfImages();
 						}
@@ -261,7 +263,7 @@ public class DisplayAllImagesActivity extends Activity {
 	 */
 	private void switchImageList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		String currentName = ImageRegistry.getCurrentImageList().getListName();
+		String currentName = ImageRegistry.getCurrentListName();
 		listNames.remove(currentName);
 
 		DialogUtil
@@ -290,7 +292,7 @@ public class DisplayAllImagesActivity extends Activity {
 	 */
 	private void deleteImageList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		String currentName = ImageRegistry.getCurrentImageList().getListName();
+		String currentName = ImageRegistry.getCurrentListName();
 		listNames.remove(currentName);
 
 		DialogUtil
@@ -328,6 +330,88 @@ public class DisplayAllImagesActivity extends Activity {
 					}
 				}, R.string.title_dialog_select_list_name, listNames,
 						R.string.dialog_select_list_for_delete);
+	}
+
+	/**
+	 * Clone the current image list after selecting a name.
+	 */
+	private void cloneImageList() {
+		// TODO
+	}
+
+	/**
+	 * Rename the current image list after selecting a name.
+	 */
+	private void renameImageList() {
+		DialogUtil
+				.displayInputDialog(this, new RequestInputDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+						String name = text == null ? null : text.trim();
+
+						if (name == null || name.length() == 0) {
+							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void onDialogFinished() {
+									renameImageList();
+								}
+
+							}, 0, R.string.dialog_info_name_too_short);
+						}
+						else if (ImageRegistry.getImageListNames().contains(name)) {
+							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void onDialogFinished() {
+									renameImageList();
+								}
+
+							}, 0, R.string.dialog_info_name_already_existing, name);
+						}
+						else {
+							boolean success = ImageRegistry.renameCurrentList(name);
+							if (success) {
+								ImageRegistry.switchToImageList(name, true);
+								invalidateOptionsMenu();
+								fillListOfImages();
+							}
+						}
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_enter_list_name, R.string.button_ok, ImageRegistry.getCurrentListName(),
+						R.string.dialog_input_enter_list_name_changed);
+	}
+
+	/**
+	 * Backup an image list after selecting the list to backup.
+	 */
+	private void backupImageList() {
+		// TODO
+	}
+
+	/**
+	 * Restore an image list after selecting the list to backup.
+	 */
+	private void restoreImageList() {
+		// TODO
 	}
 
 	/**
