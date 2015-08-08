@@ -5,7 +5,7 @@
     <string name="mini_widget_name">Mini-Widget</string>
     <string name="image_widget_name">Zufallsbilderrahmen</string>
     <string name="stacked_image_widget_name">Stapelbilderrahmen</string>
-    <string name="title_activity_display_images">Liste der Fotos</string>
+    <string name="title_activity_display_images">Zufallsbild konfigurieren</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="text_no_image">Kein Bild</string>
     <string name="button_ok">OK</string>

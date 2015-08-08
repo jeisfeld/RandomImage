@@ -5,7 +5,7 @@
     <string name="mini_widget_name">Mini Widget</string>
     <string name="image_widget_name">Random Image Frame</string>
     <string name="stacked_image_widget_name">Stacked Image Frame</string>
-    <string name="title_activity_display_images">Image list</string>
+    <string name="title_activity_display_images">Random Image Setup</string>
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="text_no_image">No image</string>
     <string name="button_ok">OK</string>

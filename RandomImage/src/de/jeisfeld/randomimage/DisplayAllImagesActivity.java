@@ -26,6 +26,11 @@ import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
  */
 public class DisplayAllImagesActivity extends Activity {
 	/**
+	 * The resource key for the input folder.
+	 */
+	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+
+	/**
 	 * The names of the files to be displayed.
 	 */
 	private String[] fileNames;
@@ -53,11 +58,17 @@ public class DisplayAllImagesActivity extends Activity {
 	/**
 	 * Static helper method to start the activity.
 	 *
+	 * @param listName
+	 *            the image list which should be displayed first.
 	 * @param activity
 	 *            The activity starting this activity.
+	 *
 	 */
-	public static final void startActivity(final Activity activity) {
+	public static final void startActivity(final Activity activity, final String listName) {
 		Intent intent = new Intent(activity, DisplayAllImagesActivity.class);
+		if (listName != null) {
+			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		}
 		activity.startActivity(intent);
 	}
 
@@ -65,6 +76,11 @@ public class DisplayAllImagesActivity extends Activity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_images);
+
+		String listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+		if (listName != null && !listName.equals(ImageRegistry.getCurrentListName())) {
+			ImageRegistry.switchToImageList(listName, CreationStyle.NONE);
+		}
 
 		gridView = (GridView) findViewById(R.id.gridViewDisplayImages);
 		textViewListName = (TextView) findViewById(R.id.textViewListName);

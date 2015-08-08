@@ -18,11 +18,11 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The resource key for the input folder.
 	 */
-	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
+	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 	/**
 	 * The resource key for the input folder.
 	 */
-	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
 
 	/**
 	 * The name of the used image list.
@@ -154,7 +154,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this);
+				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
 			}
 
 		});
@@ -173,7 +173,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 	@Override
 	public final boolean onPrepareOptionsMenu(final Menu menu) {
-		DisplayAllImagesActivity.startActivity(this);
+		DisplayAllImagesActivity.startActivity(this, listName);
 		return true;
 	}
 
