@@ -14,6 +14,7 @@ import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * The extended widget, also displaying a changing image.
@@ -29,6 +30,11 @@ public class ImageWidget extends AppWidgetProvider {
 	 */
 	private static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
 
+	/**
+	 * The names of the image lists associated to the widget.
+	 */
+	private static SparseArray<String> listNames = new SparseArray<String>();
+
 	@Override
 	public final void
 			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
@@ -37,9 +43,11 @@ public class ImageWidget extends AppWidgetProvider {
 		for (int i = 0; i < appWidgetIds.length; i++) {
 			int appWidgetId = appWidgetIds[i];
 
-			String fileName = ImageRegistry.getCurrentImageList().getRandomFileName();
+			String listName = getListName(appWidgetId);
 
-			setImage(context, appWidgetManager, appWidgetId, fileName);
+			String fileName = ImageRegistry.getImageListByName(listName).getRandomFileName();
+
+			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 		}
 	}
 
@@ -49,12 +57,33 @@ public class ImageWidget extends AppWidgetProvider {
 			final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
+		String listName = getListName(appWidgetId);
+
 		String fileName = currentFileNames.get(appWidgetId);
 		if (fileName == null) {
-			fileName = ImageRegistry.getCurrentImageList().getRandomFileName();
+			fileName = ImageRegistry.getImageListByName(listName).getRandomFileName();
 		}
 
-		setImage(context, appWidgetManager, appWidgetId, fileName);
+		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+	}
+
+	/**
+	 * Get the list name associated to an instance of the widget.
+	 *
+	 * @param appWidgetId
+	 *            The app widget id.
+	 * @return The list name.
+	 */
+	private String getListName(final int appWidgetId) {
+		String listName = listNames.get(appWidgetId);
+		if (listName == null) {
+			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
+			if (listName == null || listName.length() == 0) {
+				listName = ImageRegistry.getCurrentListName();
+			}
+			listNames.put(appWidgetId, listName);
+		}
+		return listName;
 	}
 
 	/**
@@ -66,11 +95,13 @@ public class ImageWidget extends AppWidgetProvider {
 	 *            A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId
 	 *            The appWidgetId of the widget whose size changed.
+	 * @param listName
+	 *            The name of the image list from which the file is taken.
 	 * @param fileName
 	 *            The filename of the image to be displayed.
 	 */
 	private void setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-			final String fileName) {
+			final String listName, final String fileName) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
 
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
@@ -90,7 +121,7 @@ public class ImageWidget extends AppWidgetProvider {
 							Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height))));
 		}
 
-		Intent intent = DisplayRandomImageActivity.createIntent(context, fileName);
+		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, fileName);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -99,16 +130,25 @@ public class ImageWidget extends AppWidgetProvider {
 	}
 
 	/**
-	 * Update all instances of the widget.
+	 * Update instances of the widget.
+	 *
+	 * @param appWidgetId
+	 *            the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateAllInstances() {
+	public static final void updateInstances(final int... appWidgetId) {
 		Context context = Application.getAppContext();
 		Intent intent = new Intent(context, ImageWidget.class);
 		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
-		int[] ids =
-				AppWidgetManager.getInstance(context).getAppWidgetIds(
-						new ComponentName(Application.getAppContext(), ImageWidget.class));
+		int[] ids;
+		if (appWidgetId.length == 0) {
+			ids =
+					AppWidgetManager.getInstance(context).getAppWidgetIds(
+							new ComponentName(Application.getAppContext(), ImageWidget.class));
+		}
+		else {
+			ids = appWidgetId;
+		}
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 		context.sendBroadcast(intent);
 	}

@@ -8,6 +8,7 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 
 /**
@@ -18,6 +19,15 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The resource key for the input folder.
 	 */
 	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
+	/**
+	 * The resource key for the input folder.
+	 */
+	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+
+	/**
+	 * The name of the used image list.
+	 */
+	private String listName;
 
 	/**
 	 * The name of the displayed file.
@@ -25,16 +35,26 @@ public class DisplayRandomImageActivity extends Activity {
 	private String currentFileName;
 
 	/**
+	 * The imageList used by the activity.
+	 */
+	private ImageList imageList;
+
+	/**
 	 * Static helper method to create an intent for this activitz.
 	 *
 	 * @param context
 	 *            The context in which this activity is started.
+	 * @param listName
+	 *            the image list which should be taken.
 	 * @param fileName
 	 *            the image file name which should be displayed first.
 	 * @return the intent.
 	 */
-	public static final Intent createIntent(final Context context, final String fileName) {
+	public static final Intent createIntent(final Context context, final String listName, final String fileName) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
+		if (listName != null) {
+			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		}
 		if (fileName != null) {
 			intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		}
@@ -46,16 +66,30 @@ public class DisplayRandomImageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		if (savedInstanceState != null) {
+			listName = savedInstanceState.getString("listName");
 			currentFileName = savedInstanceState.getString("currentFileName");
 		}
 
+		if (listName == null) {
+			listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+		}
 		if (currentFileName == null) {
 			currentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		}
 
+		if (listName == null) {
+			listName = ImageRegistry.getCurrentListName();
+			imageList = ImageRegistry.getCurrentImageList();
+			if (currentFileName == null) {
+				// Reload the file when starting the app.
+				imageList.load();
+			}
+		}
+		else {
+			imageList = ImageRegistry.getImageListByName(listName);
+		}
+
 		if (currentFileName == null) {
-			// Reload the file when starting the app.
-			ImageRegistry.getCurrentImageList().load();
 			displayRandomImage();
 		}
 		else {
@@ -79,7 +113,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Display a random image.
 	 */
 	private void displayRandomImage() {
-		currentFileName = ImageRegistry.getCurrentImageList().getRandomFileName();
+		currentFileName = imageList.getRandomFileName();
 		if (currentFileName == null) {
 			AddImagesFromGalleryActivity.startActivity(this);
 		}
@@ -133,6 +167,7 @@ public class DisplayRandomImageActivity extends Activity {
 		super.onSaveInstanceState(outState);
 		if (currentFileName != null) {
 			outState.putString("currentFileName", currentFileName);
+			outState.putString("listName", listName);
 		}
 	}
 

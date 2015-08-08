@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationActivity"
     android:initialLayout="@layout/widget_mini"
     android:minHeight="40dp"
     android:minWidth="40dp"

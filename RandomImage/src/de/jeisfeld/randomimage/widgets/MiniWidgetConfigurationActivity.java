@@ -1,0 +1,68 @@
+package de.jeisfeld.randomimage.widgets;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
+import android.os.Bundle;
+import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
+import de.jeisfeld.randomimage.util.ImageRegistry;
+
+/**
+ * Activity to display the settings page.
+ */
+public class MiniWidgetConfigurationActivity extends Activity {
+	/**
+	 * The id of the widget associated to this activity.
+	 */
+	private int appWidgetId;
+
+	@Override
+	protected final void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Set the result to CANCELED. This will cause the widget host to cancel
+		// out of the widget placement if they press the back button.
+		setResult(RESULT_CANCELED);
+
+		// Retrieve the widget id.
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+		}
+		// If they gave us an intent without the widget id, just bail.
+		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+			finish();
+		}
+
+		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+
+		DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+			/**
+			 * The serial version id.
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+				Intent resultValue = new Intent();
+				resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+				setResult(RESULT_OK, resultValue);
+
+				MiniWidget.configure(appWidgetId, text);
+				finish();
+			}
+
+			@Override
+			public void onDialogNegativeClick(final DialogFragment dialog) {
+				finish();
+			}
+		}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_mini_widget);
+
+	}
+
+}

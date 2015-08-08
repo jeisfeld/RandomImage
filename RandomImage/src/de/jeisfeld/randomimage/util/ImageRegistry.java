@@ -262,6 +262,27 @@ public final class ImageRegistry {
 	}
 
 	/**
+	 * Get the ImageList for a certain name.
+	 *
+	 * @param name
+	 *            The name.
+	 * @return The image list for this name, if existing. Otherwise null.
+	 */
+	public static ImageList getImageListByName(final String name) {
+		if (name == null) {
+			return null;
+		}
+
+		File configFile = getConfigFile(name);
+		if (configFile == null) {
+			return null;
+		}
+		else {
+			return new ImageList(configFile);
+		}
+	}
+
+	/**
 	 * Get the config file for a certain list name.
 	 *
 	 * @param name

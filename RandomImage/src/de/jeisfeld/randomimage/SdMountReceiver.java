@@ -20,8 +20,8 @@ public class SdMountReceiver extends BroadcastReceiver {
 				|| action.equals(Intent.ACTION_MEDIA_UNMOUNTED)
 				|| action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 			ImageRegistry.getCurrentImageList().load();
-			ImageWidget.updateAllInstances();
-			StackedImageWidget.updateAllInstances();
+			ImageWidget.updateInstances();
+			StackedImageWidget.updateInstances();
 		}
 	}
 

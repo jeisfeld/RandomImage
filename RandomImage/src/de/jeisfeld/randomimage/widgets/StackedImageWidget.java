@@ -81,18 +81,26 @@ public class StackedImageWidget extends AppWidgetProvider {
 	}
 
 	/**
-	 * Update all instances of the widget.
+	 * Update instances of the widget.
+	 *
+	 * @param appWidgetId
+	 *            the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateAllInstances() {
+	public static final void updateInstances(final int... appWidgetId) {
 		Context context = Application.getAppContext();
 		Intent intent = new Intent(context, StackedImageWidget.class);
 		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
-		int[] ids =
-				AppWidgetManager.getInstance(context).getAppWidgetIds(
-						new ComponentName(context, StackedImageWidget.class));
+		int[] ids;
+		if (appWidgetId.length == 0) {
+			ids =
+					AppWidgetManager.getInstance(context).getAppWidgetIds(
+							new ComponentName(Application.getAppContext(), StackedImageWidget.class));
+		}
+		else {
+			ids = appWidgetId;
+		}
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 		context.sendBroadcast(intent);
 	}
-
 }

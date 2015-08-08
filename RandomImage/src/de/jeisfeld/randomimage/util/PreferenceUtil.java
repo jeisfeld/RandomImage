@@ -198,4 +198,45 @@ public final class PreferenceUtil {
 		editor.commit();
 	}
 
+	/**
+	 * Get an indexed preference key that allows to store a shared preference with index.
+	 *
+	 * @param preferenceId
+	 *            The base preference id
+	 * @param index
+	 *            The index
+	 * @return The indexed preference key.
+	 */
+	private static String getIndexedPreferenceKey(final int preferenceId, final int index) {
+		return Application.getAppContext().getString(preferenceId) + "[" + index + "]";
+	}
+
+	/**
+	 * Retrieve an indexed String shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param index
+	 *            The index
+	 * @return the corresponding preference value.
+	 */
+	public static String getIndexedSharedPreferenceString(final int preferenceId, final int index) {
+		return getSharedPreferences().getString(getIndexedPreferenceKey(preferenceId, index), null);
+	}
+
+	/**
+	 * Set an indexed String shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param index
+	 *            The index
+	 * @param s
+	 *            the target value of the preference.
+	 */
+	public static void setIndexedSharedPreferenceString(final int preferenceId, final int index, final String s) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putString(getIndexedPreferenceKey(preferenceId, index), s);
+		editor.commit();
+	}
 }

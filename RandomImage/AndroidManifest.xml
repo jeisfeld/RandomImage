@@ -63,6 +63,13 @@
         </activity>
         <activity android:name=".AddImagesFromGalleryActivity" >
         </activity>
+        <activity
+            android:name=".widgets.MiniWidgetConfigurationActivity"
+            android:theme="@android:style/Theme.Holo.Dialog" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
         <receiver
             android:name=".widgets.MiniWidget"
