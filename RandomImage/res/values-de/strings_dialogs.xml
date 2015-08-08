@@ -5,6 +5,7 @@
     <string name="title_dialog_confirmation">Bestätigung</string>
     <string name="title_dialog_enter_list_name">Eingabe des Listennamens</string>
     <string name="title_dialog_select_list_name">Auswahl des Listennamens</string>
+    <string name="title_dialog_select_change_frequency">Auswahl der Bildwechselhäufigkeit</string>
     <string name="toast_added_image">Bild %1$s wurde hinzugefügt</string>
     <string name="toast_added_images_count">Es wurden %1$d Bilder hinzugefügt</string>
     <string name="toast_removed_images_count">Es wurden %1$d Bilder entfernt</string>
@@ -25,9 +26,22 @@
     <string name="dialog_select_list_for_backup">Bitte wählen Sie die Bildliste, die Sie sichern wollen.</string>
     <string name="dialog_select_list_for_restore">Bitte wählen Sie die Bildliste, die Sie wiederherstellen wollen.</string>
     <string name="dialog_select_list_for_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
+    <string name="dialog_select_image_change_frequency">Bittw wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Liste „%1$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_remove_images">Wollen Sie wirklich %1$d Bilder von der Liste „%2$s“ entfernen?</string>
     <string name="dialog_confirmation_overwrite_list">Die Bildliste „%1$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup">Das Backup von „%1$s“ existiert bereits. Wollen Sie es überschreiben?</string>
+
+    <!-- String arrays -->
+    <string-array name="timer_duration_names">
+        <item>15 Sekunden</item>
+        <item>1 Minute</item>
+        <item>5 Minuten</item>
+        <item>15 Minuten</item>
+        <item>1 Stunde</item>
+        <item>4 Stunden</item>
+        <item>1 Tag</item>
+        <item>1 Woche</item>
+    </string-array>
 
 </resources>

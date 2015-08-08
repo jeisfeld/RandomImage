@@ -53,8 +53,7 @@ public class ImageWidget extends AppWidgetProvider {
 
 	@Override
 	public final void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId,
-			final Bundle newOptions) {
+			final int appWidgetId, final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
 		String listName = getListName(appWidgetId);
@@ -65,6 +64,15 @@ public class ImageWidget extends AppWidgetProvider {
 		}
 
 		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+	}
+
+	@Override
+	public final void onDeleted(final Context context, final int[] appWidgetIds) {
+		super.onDeleted(context, appWidgetIds);
+
+		for (int i = 0; i < appWidgetIds.length; i++) {
+			WidgetAlarmReceiver.cancelAlarm(context, appWidgetIds[i]);
+		}
 	}
 
 	/**
@@ -140,11 +148,19 @@ public class ImageWidget extends AppWidgetProvider {
 	 *            The widget id.
 	 * @param listName
 	 *            The list name to be used by the widget.
+	 * @param interval
+	 *            The update interval.
 	 */
-	public static final void configure(final int appWidgetId, final String listName) {
+	public static final void configure(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
 		listNames.put(appWidgetId, listName);
 		currentFileNames.remove(appWidgetId);
+
+		if (interval > 0) {
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
+			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, ImageWidget.class, interval);
+		}
+
 		updateInstances(appWidgetId);
 	}
 
@@ -161,15 +177,67 @@ public class ImageWidget extends AppWidgetProvider {
 
 		int[] ids;
 		if (appWidgetId.length == 0) {
-			ids =
-					AppWidgetManager.getInstance(context).getAppWidgetIds(
-							new ComponentName(Application.getAppContext(), ImageWidget.class));
+			ids = getAllWidgetIds();
 		}
 		else {
 			ids = appWidgetId;
 		}
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 		context.sendBroadcast(intent);
+	}
+
+	/**
+	 * Update timers for the of the widget.
+	 *
+	 * @param appWidgetIds
+	 *            the list of instances to be updated. If empty, then all instances will be updated.
+	 */
+	public static final void updateTimers(final int... appWidgetIds) {
+		Context context = Application.getAppContext();
+		int[] ids;
+		if (appWidgetIds.length == 0) {
+			ids = getAllWidgetIds();
+		}
+		else {
+			ids = appWidgetIds;
+		}
+
+		for (int appWidgetId : ids) {
+			long interval =
+					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, 0);
+
+			if (interval > 0) {
+				WidgetAlarmReceiver.setAlarm(context, appWidgetId, ImageWidget.class, interval);
+			}
+		}
+	}
+
+	/**
+	 * Get the ids of all widgets of this class.
+	 *
+	 * @return The ids of all widgets of this class.
+	 */
+	public static int[] getAllWidgetIds() {
+		Context context = Application.getAppContext();
+		return AppWidgetManager.getInstance(context).getAppWidgetIds(
+				new ComponentName(context, ImageWidget.class));
+	}
+
+	/**
+	 * Check if there is an ImageWidget of this id.
+	 *
+	 * @param appWidgetId
+	 *            The widget id.
+	 * @return true if there is an ImageWidget of this id.
+	 */
+	public static boolean hasWidgetOfId(final int appWidgetId) {
+		int[] allAppWidgetIds = getAllWidgetIds();
+		for (int i = 0; i < allAppWidgetIds.length; i++) {
+			if (allAppWidgetIds[i] == appWidgetId) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

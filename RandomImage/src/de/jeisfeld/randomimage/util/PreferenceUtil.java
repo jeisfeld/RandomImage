@@ -270,4 +270,35 @@ public final class PreferenceUtil {
 		editor.putInt(getIndexedPreferenceKey(preferenceId, index), i);
 		editor.commit();
 	}
+
+	/**
+	 * Retrieve an indexed long shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param index
+	 *            The index
+	 * @param defaultValue
+	 *            the default value of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static long getIndexedSharedPreferenceLong(final int preferenceId, final int index, final long defaultValue) {
+		return getSharedPreferences().getLong(getIndexedPreferenceKey(preferenceId, index), defaultValue);
+	}
+
+	/**
+	 * Set an indexed long shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param index
+	 *            The index
+	 * @param i
+	 *            the target value of the preference.
+	 */
+	public static void setIndexedSharedPreferenceLong(final int preferenceId, final int index, final long i) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putLong(getIndexedPreferenceKey(preferenceId, index), i);
+		editor.commit();
+	}
 }

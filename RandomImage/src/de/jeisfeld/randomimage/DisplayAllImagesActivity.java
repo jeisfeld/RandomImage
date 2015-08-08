@@ -315,7 +315,8 @@ public class DisplayAllImagesActivity extends Activity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+					public void
+							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						ImageRegistry.switchToImageList(text, CreationStyle.NONE);
 						fillListOfImages();
 					}
@@ -344,7 +345,8 @@ public class DisplayAllImagesActivity extends Activity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+					public void
+							onDialogPositiveClick(final DialogFragment dialog, final int positin, final String text) {
 						DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 								new ConfirmDialogListener() {
 									/**
@@ -449,7 +451,8 @@ public class DisplayAllImagesActivity extends Activity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+					public void
+							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						if (backupNames.contains(text)) {
 							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 									new ConfirmDialogListener() {
@@ -504,7 +507,8 @@ public class DisplayAllImagesActivity extends Activity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+					public void
+							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						if (listNames.contains(text)) {
 							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 									new ConfirmDialogListener() {

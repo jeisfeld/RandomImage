@@ -507,7 +507,7 @@ public final class DialogUtil {
 				@Override
 				public void
 						onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-					listener.onDialogPositiveClick(SelectFromListDialogFragment.this, items[position]);
+					listener.onDialogPositiveClick(SelectFromListDialogFragment.this, position, items[position]);
 					dismiss();
 				}
 			});
@@ -556,10 +556,12 @@ public final class DialogUtil {
 			 *
 			 * @param dialog
 			 *            the confirmation dialog fragment.
+			 * @param the
+			 *            position of the array that was selected.
 			 * @param text
 			 *            the text returned from the input.
 			 */
-			void onDialogPositiveClick(final DialogFragment dialog, final String text);
+			void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text);
 
 			/**
 			 * Callback method for negative click from the confirmation dialog.

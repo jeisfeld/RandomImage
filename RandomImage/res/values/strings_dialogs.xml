@@ -5,6 +5,7 @@
     <string name="title_dialog_confirmation">Confirmation</string>
     <string name="title_dialog_enter_list_name">Enter list name</string>
     <string name="title_dialog_select_list_name">Select list name</string>
+    <string name="title_dialog_select_change_frequency">Select image change frequency</string>
     <string name="toast_added_image">Added image %1$s</string>
     <string name="toast_added_images_count">Added %1$d images</string>
     <string name="toast_removed_images_count">Removed %1$d images</string>
@@ -25,10 +26,33 @@
     <string name="dialog_select_list_for_backup">Please select the image list which you want to backup.</string>
     <string name="dialog_select_list_for_restore">Please select the image list which you want to restore.</string>
     <string name="dialog_select_list_for_widget">Please select the image list which you want to associate to this widget.</string>
+    <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the list “%1$s”?</string>
     <string name="dialog_confirmation_remove_images">Do you really want to remove %1$d images from the list “%2$s”?</string>
     <string name="dialog_confirmation_overwrite_list">The image list “%1$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup">The backup list “%1$s” exists already. Do you want to overwrite it?</string>
+
+    <!-- String arrays -->
+    <string-array name="timer_duration_names">
+        <item>15 seconds</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>15 minutes</item>
+        <item>1 hour</item>
+        <item>4 hours</item>
+        <item>1 day</item>
+        <item>1 week</item>
+    </string-array>
+    <string-array name="timer_durations" translatable="false">
+        <item>15000</item>
+        <item>60000</item>
+        <item>300000</item>
+        <item>900000</item>
+        <item>3600000</item>
+        <item>14400000</item>
+        <item>86400000</item>
+        <item>604800000</item>
+    </string-array>
 
     <!-- Shared preference keys -->
     <string name="key_info_add_images" translatable="false">info_add_images</string>

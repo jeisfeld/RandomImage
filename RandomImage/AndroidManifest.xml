@@ -135,6 +135,7 @@
                 <data android:scheme="file" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".widgets.WidgetAlarmReceiver" />
 
         <service
             android:name=".widgets.StackedImageWidgetService"

@@ -7,5 +7,6 @@
     <!-- Indexed keys for widget preferences -->
     <string name="key_widget_list_name" translatable="false">widget_list_name</string>
     <string name="key_widget_view_width" translatable="false">key_widget_view_width</string>
+    <string name="key_widget_alarm_interval" translatable="false">key_widget_alarm_interval</string>
 
 </resources>

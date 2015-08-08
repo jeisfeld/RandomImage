@@ -47,7 +47,7 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
+			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 				Intent resultValue = new Intent();
 				resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 				setResult(RESULT_OK, resultValue);
