@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,15 +12,31 @@ import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * Service handling the image stack for the stacked image widget.
  */
 public class StackedImageWidgetService extends RemoteViewsService {
+	/**
+	 * Factor by which the image sizes are reduced compared to allowed size.
+	 */
+	private static final float IMAGE_SCALE_FACTOR = 0.5f;
 
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
 		return new StackRemoteViewsFactory(this.getApplicationContext(), intent);
+	}
+
+	/**
+	 * Calculate the planned image size out of the view width.
+	 *
+	 * @param viewWidth
+	 *            The view width.
+	 * @return The planned image size.
+	 */
+	private static int calculateImageSize(final int viewWidth) {
+		return Math.max((int) Math.ceil(IMAGE_SCALE_FACTOR * viewWidth), MediaStoreUtil.MINI_THUMB_SIZE);
 	}
 
 	/**
@@ -42,9 +59,19 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		private Context context;
 
 		/**
-		 * The width of the view of the widget.
+		 * The app widget id.
 		 */
-		private int viewWidth;
+		private int appWidgetId;
+
+		/**
+		 * The size to which the images are scaled.
+		 */
+		private int imageSize;
+
+		/**
+		 * The name of the imageList to be displayed.
+		 */
+		private String listName;
 
 		/**
 		 * Constructor.
@@ -57,12 +84,17 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		public StackRemoteViewsFactory(final Context context, final Intent intent) {
 			this.context = context;
 
-			viewWidth = intent.getIntExtra(StackedImageWidget.STRING_EXTRA_WIDTH, MediaStoreUtil.MINI_THUMB_SIZE);
+			appWidgetId =
+					intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+
+			int viewWidth = intent.getIntExtra(StackedImageWidget.STRING_EXTRA_WIDTH, MediaStoreUtil.MINI_THUMB_SIZE);
+			imageSize = calculateImageSize(viewWidth);
+			listName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
 		}
 
 		@Override
 		public final void onCreate() {
-			ImageList imageList = ImageRegistry.getCurrentImageList();
+			ImageList imageList = ImageRegistry.getImageListByName(listName);
 			stackSize = imageList.size();
 			fileNames = imageList.getShuffledFileNames();
 		}
@@ -89,10 +121,11 @@ public class StackedImageWidgetService extends RemoteViewsService {
 						R.drawable.ic_launcher);
 			}
 			else {
+				// scale only by half the view width
 				remoteViews.setImageViewBitmap(
 						R.id.imageViewWidget,
 						ImageUtil.getImageBitmap(currentFileName,
-								Math.min(ImageUtil.MAX_BITMAP_SIZE, viewWidth)));
+								Math.min(ImageUtil.MAX_BITMAP_SIZE, imageSize)));
 			}
 
 			// Next, we set a fill-intent which will be used to fill-in the pending intent template
@@ -129,6 +162,10 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onDataSetChanged() {
+			int viewWidth =
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, 0);
+
+			imageSize = calculateImageSize(viewWidth);
 		}
 	}
 }

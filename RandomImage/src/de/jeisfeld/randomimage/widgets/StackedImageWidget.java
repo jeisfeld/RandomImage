@@ -8,10 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.widget.RemoteViews;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * The stacked widget, showing a stack of images.
@@ -28,9 +31,19 @@ public class StackedImageWidget extends AppWidgetProvider {
 	public static final String STRING_EXTRA_WIDTH = "de.jeisfeld.randomimage.WIDTH";
 
 	/**
+	 * The resource key for the input folder.
+	 */
+	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+
+	/**
 	 * Number of pixels per dip.
 	 */
 	private static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
+
+	/**
+	 * The names of the image lists associated to the widget.
+	 */
+	private static SparseArray<String> listNames = new SparseArray<String>();
 
 	@Override
 	public final void
@@ -47,8 +60,13 @@ public class StackedImageWidget extends AppWidgetProvider {
 
 			Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 			int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
-			intent.putExtra(STRING_EXTRA_WIDTH, width);
+			if (width <= 0) {
+				return;
+			}
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, width);
 
+			intent.putExtra(STRING_EXTRA_WIDTH, width);
+			intent.putExtra(STRING_EXTRA_LISTNAME, getListName(appWidgetId));
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_stacked_image);
 
 			// Set up the RemoteViews object to use a RemoteViews adapter.
@@ -78,6 +96,41 @@ public class StackedImageWidget extends AppWidgetProvider {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
 		onUpdate(context, appWidgetManager, new int[] { appWidgetId });
+
+		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
+	}
+
+	/**
+	 * Get the list name associated to an instance of the widget.
+	 *
+	 * @param appWidgetId
+	 *            The app widget id.
+	 * @return The list name.
+	 */
+	private String getListName(final int appWidgetId) {
+		String listName = listNames.get(appWidgetId);
+		if (listName == null) {
+			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
+			if (listName == null || listName.length() == 0) {
+				listName = ImageRegistry.getCurrentListName();
+			}
+			listNames.put(appWidgetId, listName);
+		}
+		return listName;
+	}
+
+	/**
+	 * Configure an instance of the widget.
+	 *
+	 * @param appWidgetId
+	 *            The widget id.
+	 * @param listName
+	 *            The list name to be used by the widget.
+	 */
+	public static final void configure(final int appWidgetId, final String listName) {
+		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
+		listNames.put(appWidgetId, listName);
+		updateInstances(appWidgetId);
 	}
 
 	/**

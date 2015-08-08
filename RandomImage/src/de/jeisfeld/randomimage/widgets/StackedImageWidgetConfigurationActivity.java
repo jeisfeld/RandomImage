@@ -5,10 +5,10 @@ import android.os.Bundle;
 /**
  * Activity for the configuration of the MiniWidget.
  */
-public class MiniWidgetConfigurationActivity extends WidgetConfigurationActivity {
+public class StackedImageWidgetConfigurationActivity extends WidgetConfigurationActivity {
 	@Override
 	protected final void initialize(final Bundle savedInstanceState, final int appWidgetId, final String listName) {
-		MiniWidget.configure(appWidgetId, listName);
+		StackedImageWidget.configure(appWidgetId, listName);
 		finish();
 	}
 }

@@ -24,7 +24,7 @@
     <string name="dialog_select_list_for_delete">Please select the image list which you want to delete.</string>
     <string name="dialog_select_list_for_backup">Please select the image list which you want to backup.</string>
     <string name="dialog_select_list_for_restore">Please select the image list which you want to restore.</string>
-    <string name="dialog_select_list_for_mini_widget">Please select the image list which you want to associate to this widget.</string>
+    <string name="dialog_select_list_for_widget">Please select the image list which you want to associate to this widget.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the list “%1$s”?</string>
     <string name="dialog_confirmation_remove_images">Do you really want to remove %1$d images from the list “%2$s”?</string>
     <string name="dialog_confirmation_overwrite_list">The image list “%1$s” exists already. Do you want to overwrite it with the backup?</string>

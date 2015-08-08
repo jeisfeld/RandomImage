@@ -21,11 +21,6 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
  */
 public class ImageWidget extends AppWidgetProvider {
 	/**
-	 * The file names of the currently displayed images - mapped from appWidgetId.
-	 */
-	private static SparseArray<String> currentFileNames = new SparseArray<String>();
-
-	/**
 	 * Number of pixels per dip.
 	 */
 	private static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
@@ -34,6 +29,11 @@ public class ImageWidget extends AppWidgetProvider {
 	 * The names of the image lists associated to the widget.
 	 */
 	private static SparseArray<String> listNames = new SparseArray<String>();
+
+	/**
+	 * The file names of the currently displayed images - mapped from appWidgetId.
+	 */
+	private static SparseArray<String> currentFileNames = new SparseArray<String>();
 
 	@Override
 	public final void
@@ -107,6 +107,9 @@ public class ImageWidget extends AppWidgetProvider {
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
 		int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
+		if (width <= 0 || height <= 0) {
+			return;
+		}
 
 		if (fileName == null) {
 			remoteViews.setImageViewResource(
@@ -115,6 +118,7 @@ public class ImageWidget extends AppWidgetProvider {
 		}
 		else {
 			currentFileNames.put(appWidgetId, fileName);
+
 			remoteViews.setImageViewBitmap(
 					R.id.imageViewWidget,
 					ImageUtil.getImageBitmap(fileName,
@@ -127,6 +131,21 @@ public class ImageWidget extends AppWidgetProvider {
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+	}
+
+	/**
+	 * Configure an instance of the widget.
+	 *
+	 * @param appWidgetId
+	 *            The widget id.
+	 * @param listName
+	 *            The list name to be used by the widget.
+	 */
+	public static final void configure(final int appWidgetId, final String listName) {
+		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
+		listNames.put(appWidgetId, listName);
+		currentFileNames.remove(appWidgetId);
+		updateInstances(appWidgetId);
 	}
 
 	/**

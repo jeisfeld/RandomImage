@@ -24,7 +24,7 @@
     <string name="dialog_select_list_for_delete">Bitte wählen Sie die Bildliste, die Sie löschen wollen.</string>
     <string name="dialog_select_list_for_backup">Bitte wählen Sie die Bildliste, die Sie sichern wollen.</string>
     <string name="dialog_select_list_for_restore">Bitte wählen Sie die Bildliste, die Sie wiederherstellen wollen.</string>
-    <string name="dialog_select_list_for_mini_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
+    <string name="dialog_select_list_for_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Liste „%1$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_remove_images">Wollen Sie wirklich %1$d Bilder von der Liste „%2$s“ entfernen?</string>
     <string name="dialog_confirmation_overwrite_list">Die Bildliste „%1$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
