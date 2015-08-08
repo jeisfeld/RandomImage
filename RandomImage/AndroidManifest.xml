@@ -35,7 +35,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddSentImagesActivity" >
+        <activity
+            android:name=".AddSentImagesActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 

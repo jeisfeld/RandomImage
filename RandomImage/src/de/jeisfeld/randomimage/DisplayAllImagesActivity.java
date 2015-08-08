@@ -93,6 +93,10 @@ public class DisplayAllImagesActivity extends Activity {
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 			changeAction(currentAction);
 		}
+
+		if (fileNames.length == 0) {
+			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
+		}
 	}
 
 	/**

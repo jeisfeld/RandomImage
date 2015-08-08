@@ -58,6 +58,7 @@ public class DisplayRandomImageActivity extends Activity {
 		if (fileName != null) {
 			intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		}
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		return intent;
 	}
 
@@ -90,7 +91,10 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 
 		if (currentFileName == null) {
-			displayRandomImage();
+			boolean success = displayRandomImage();
+			if (success) {
+				DialogUtil.displayInfo(this, null, R.string.key_info_display_image, R.string.dialog_info_display_image);
+			}
 		}
 		else {
 			displayCurrentImage();
@@ -111,14 +115,19 @@ public class DisplayRandomImageActivity extends Activity {
 
 	/**
 	 * Display a random image.
+	 *
+	 * @return false if there was no image to be displayed.
 	 */
-	private void displayRandomImage() {
+	private boolean displayRandomImage() {
 		currentFileName = imageList.getRandomFileName();
 		if (currentFileName == null) {
-			AddImagesFromGalleryActivity.startActivity(this);
+			DisplayAllImagesActivity.startActivity(this, listName);
+			finish();
+			return false;
 		}
 		else {
 			displayCurrentImage();
+			return true;
 		}
 	}
 
@@ -136,7 +145,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public boolean onDoubleTap(final MotionEvent e) {
-				displayRandomImage();
+				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
 				return true;
 			}
 
@@ -154,6 +163,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
+				// TODO: menu with further options.
 				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
 			}
 
