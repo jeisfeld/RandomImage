@@ -341,6 +341,9 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 							return;
 						}
 						cache.put(i, view);
+
+						// Prevent wrong marking status in race conditions.
+						view.setMarkable(selectionMode == SelectionMode.MULTIPLE);
 					}
 				}
 
