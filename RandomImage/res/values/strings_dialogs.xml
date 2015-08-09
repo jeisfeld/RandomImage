@@ -14,7 +14,9 @@
     <string name="toast_added_images_count_external">Added %1$d images to the random image list “%2$s”</string>
     <string name="toast_added_images_single_external">Added image “%1$s” to the random image list “%2$s”</string>
     <string name="toast_added_images_none_external">All selected images were already in the random image list “%1$s”</string>
-    <string name="toast_removed_images_count">Removed %1$d images</string>
+    <string name="toast_removed_images_count">Removed %1$d images from the list</string>
+    <string name="toast_removed_single_image">Removed image “%1$s” from the list</string>
+    <string name="toast_removed_no_image">There was no image selected for removal</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
     <string name="toast_backup_of_list">Made backup of list “%1$s”</string>
     <string name="toast_failed_to_backup_list">Failed to backup list “%1$s”</string>
@@ -41,6 +43,7 @@
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%1$s”?</string>
+    <string name="dialog_confirmation_remove_single_image">Do you really want to remove the image “%1$s” from the list “%2$s”?</string>
     <string name="dialog_confirmation_remove_images">Do you really want to remove %1$d images from the list “%2$s”?</string>
     <string name="dialog_confirmation_overwrite_list">The image list “%1$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup">The backup list “%1$s” exists already. Do you want to overwrite it?</string>

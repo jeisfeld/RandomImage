@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -200,8 +201,15 @@ public class DisplayAllImagesActivity extends Activity {
 		case R.id.action_remove_images:
 			final ImageList imageList = ImageRegistry.getCurrentImageList();
 
-			final int imagesToBeRemoved = adapter.getSelectedFiles().length;
-			if (imagesToBeRemoved > 0) {
+			final String[] imagesToBeRemoved = adapter.getSelectedFiles();
+			if (imagesToBeRemoved.length > 0) {
+				final int messageId =
+						imagesToBeRemoved.length == 1 ? R.string.dialog_confirmation_remove_single_image
+								: R.string.dialog_confirmation_remove_images;
+				final Object messageParameter =
+						imagesToBeRemoved.length == 1 ? new File(imagesToBeRemoved[0]).getName()
+								: imagesToBeRemoved.length;
+
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 					/**
 					 * The serial version id.
@@ -211,14 +219,22 @@ public class DisplayAllImagesActivity extends Activity {
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog) {
 						int removedFileCount = 0;
-						for (String fileName : adapter.getSelectedFiles()) {
+						String lastFileRemoved = null;
+						for (String fileName : imagesToBeRemoved) {
 							boolean isRemoved = imageList.remove(fileName);
 							if (isRemoved) {
 								removedFileCount++;
+								lastFileRemoved = fileName;
 							}
 						}
-						DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_images_count,
-								removedFileCount);
+						if (removedFileCount == 1) {
+							DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_single_image,
+									new File(lastFileRemoved).getName());
+						}
+						else {
+							DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_images_count,
+									removedFileCount);
+						}
 						imageList.save();
 						fillListOfImages();
 						changeAction(CurrentAction.DISPLAY);
@@ -228,9 +244,12 @@ public class DisplayAllImagesActivity extends Activity {
 					public void onDialogNegativeClick(final DialogFragment dialog) {
 						// do nothing.
 					}
-				}, R.string.button_remove, R.string.dialog_confirmation_remove_images, imagesToBeRemoved,
-						ImageRegistry.getCurrentListName());
+				}, R.string.button_remove, messageId, messageParameter, ImageRegistry.getCurrentListName());
 
+			}
+			else {
+				DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_no_image);
+				changeAction(CurrentAction.DISPLAY);
 			}
 			return true;
 		case R.id.action_cancel:
