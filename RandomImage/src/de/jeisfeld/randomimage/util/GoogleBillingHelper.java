@@ -34,13 +34,13 @@ public final class GoogleBillingHelper {
 	 * The product ids to be offered.
 	 */
 	private static final String[] PRODUCT_IDS =
-			new String[] { }; // TODO
+			new String[] { "premium_package", "premium_plus_package" };
 
 	/**
 	 * The product ids which set premium status.
 	 */
 	private static final String[] PREMIUM_IDS =
-			new String[] { }; // TODO
+			new String[] { "premium_package", "premium_plus_package" };
 
 	/**
 	 * The product ids which are subscriptions.
