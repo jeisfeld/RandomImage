@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -80,7 +82,8 @@ public class AddImagesFromGalleryActivity extends Activity {
 				Uri selectedImageUri = data.getData();
 				String addedFileName = ImageRegistry.getCurrentImageList().add(selectedImageUri);
 				if (addedFileName != null) {
-					DialogUtil.displayToast(this, R.string.toast_added_image, addedFileName);
+					String shortFileName = new File(addedFileName).getName();
+					DialogUtil.displayToast(this, R.string.toast_added_image, shortFileName);
 					addedImageCount++;
 				}
 				triggerAddImage();

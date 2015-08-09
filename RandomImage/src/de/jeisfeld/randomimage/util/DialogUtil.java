@@ -204,6 +204,42 @@ public final class DialogUtil {
 	 *            the current activity
 	 * @param listener
 	 *            The listener waiting for the response
+	 * @param iconId
+	 *            The icon to be used in the dialog.
+	 * @param titleResource
+	 *            the resource with the title string
+	 * @param listValues
+	 *            the array of values from which to be selected.
+	 * @param messageResource
+	 *            the confirmation message
+	 * @param args
+	 *            arguments for the confirmation message
+	 */
+	public static void displayListSelectionDialog(final Activity activity,
+			final SelectFromListDialogListener listener, final int iconId, final int titleResource,
+			final ArrayList<String> listValues,
+			final int messageResource, final Object... args) {
+		String message = String.format(activity.getString(messageResource), args);
+		Bundle bundle = new Bundle();
+		if (iconId != 0) {
+			bundle.putInt(PARAM_ICON, iconId);
+		}
+		bundle.putCharSequence(PARAM_MESSAGE, message);
+		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
+		bundle.putStringArrayList(PARAM_LIST_ITEMS, listValues);
+		bundle.putSerializable(PARAM_LISTENER, listener);
+		SelectFromListDialogFragment fragment = new SelectFromListDialogFragment();
+		fragment.setArguments(bundle);
+		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+	}
+
+	/**
+	 * Display a confirmation message asking for cancel or ok.
+	 *
+	 * @param activity
+	 *            the current activity
+	 * @param listener
+	 *            The listener waiting for the response
 	 * @param titleResource
 	 *            the resource with the title string
 	 * @param listValues
@@ -216,15 +252,7 @@ public final class DialogUtil {
 	public static void displayListSelectionDialog(final Activity activity,
 			final SelectFromListDialogListener listener, final int titleResource, final ArrayList<String> listValues,
 			final int messageResource, final Object... args) {
-		String message = String.format(activity.getString(messageResource), args);
-		Bundle bundle = new Bundle();
-		bundle.putCharSequence(PARAM_MESSAGE, message);
-		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
-		bundle.putStringArrayList(PARAM_LIST_ITEMS, listValues);
-		bundle.putSerializable(PARAM_LISTENER, listener);
-		SelectFromListDialogFragment fragment = new SelectFromListDialogFragment();
-		fragment.setArguments(bundle);
-		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		displayListSelectionDialog(activity, listener, 0, titleResource, listValues, messageResource, args);
 	}
 
 	/**
@@ -497,6 +525,7 @@ public final class DialogUtil {
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
 			listener = (SelectFromListDialogListener) getArguments().getSerializable(PARAM_LISTENER);
 			final String[] items = getArguments().getStringArrayList(PARAM_LIST_ITEMS).toArray(new String[0]);
+			final int iconId = getArguments().getInt(PARAM_ICON);
 
 			// setMessage is not combinable with setItems, therefore using setView for the list of names.
 			ListView listView = new ListView(getActivity());
@@ -533,6 +562,10 @@ public final class DialogUtil {
 							listener.onDialogNegativeClick(SelectFromListDialogFragment.this);
 						}
 					});
+
+			if (iconId != 0) {
+				builder.setIcon(iconId);
+			}
 			return builder.create();
 		}
 

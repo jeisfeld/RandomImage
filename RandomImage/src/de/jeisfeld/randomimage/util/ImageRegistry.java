@@ -272,6 +272,9 @@ public final class ImageRegistry {
 		if (name == null) {
 			return null;
 		}
+		if (getCurrentListName().equals(name)) {
+			return getCurrentImageList();
+		}
 
 		File configFile = getConfigFile(name);
 		if (configFile == null) {
