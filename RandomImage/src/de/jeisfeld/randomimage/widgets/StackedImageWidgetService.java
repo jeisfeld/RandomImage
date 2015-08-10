@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
@@ -22,6 +23,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	 * Factor by which the image sizes are reduced compared to allowed size.
 	 */
 	private static final float IMAGE_SCALE_FACTOR = 0.5f;
+
+	/**
+	 * A map storing instances of the factory.
+	 */
+	private static SparseArray<StackRemoteViewsFactory> factoryMap =
+			new SparseArray<StackedImageWidgetService.StackRemoteViewsFactory>();
 
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
@@ -90,6 +97,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			int viewWidth = intent.getIntExtra(StackedImageWidget.STRING_EXTRA_WIDTH, MediaStoreUtil.MINI_THUMB_SIZE);
 			imageSize = calculateImageSize(viewWidth);
 			listName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
+
+			factoryMap.put(appWidgetId, this);
 		}
 
 		@Override
@@ -101,6 +110,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public final void onDestroy() {
+			factoryMap.remove(appWidgetId);
 		}
 
 		@Override
@@ -162,10 +172,15 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onDataSetChanged() {
+			// update image size
 			int viewWidth =
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, 0);
-
 			imageSize = calculateImageSize(viewWidth);
+
+			// create new image list
+			ImageList imageList = ImageRegistry.getImageListByName(listName);
+			stackSize = imageList.size();
+			fileNames = imageList.getShuffledFileNames();
 		}
 	}
 }

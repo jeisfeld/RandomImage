@@ -26,6 +26,10 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 		if (ImageWidget.hasWidgetOfId(appWidgetId)) {
 			ImageWidget.updateInstances(appWidgetId);
 		}
+
+		if (StackedImageWidget.hasWidgetOfId(appWidgetId)) {
+			StackedImageWidget.updateInstances(appWidgetId);
+		}
 	}
 
 	/**
@@ -36,13 +40,10 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 *            The context in which the alarm is set.
 	 * @param appWidgetId
 	 *            the widget id.
-	 * @param widgetType
-	 *            the widget class.
 	 * @param interval
 	 *            the interval in which the alarm triggers.
 	 */
-	public static final void setAlarm(final Context context, final int appWidgetId,
-			final Class<?> widgetType, final long interval) {
+	public static final void setAlarm(final Context context, final int appWidgetId, final long interval) {
 		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId);
 
 		// Set the alarm

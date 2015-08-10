@@ -199,6 +199,18 @@ public final class PreferenceUtil {
 	}
 
 	/**
+	 * Remove a shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 */
+	public static void removeSharedPreference(final int preferenceId) {
+		Editor editor = getSharedPreferences().edit();
+		editor.remove(Application.getAppContext().getString(preferenceId));
+		editor.commit();
+	}
+
+	/**
 	 * Get an indexed preference key that allows to store a shared preference with index.
 	 *
 	 * @param preferenceId
@@ -299,6 +311,20 @@ public final class PreferenceUtil {
 	public static void setIndexedSharedPreferenceLong(final int preferenceId, final int index, final long i) {
 		Editor editor = getSharedPreferences().edit();
 		editor.putLong(getIndexedPreferenceKey(preferenceId, index), i);
+		editor.commit();
+	}
+
+	/**
+	 * Remove an indexed shared preference.
+	 *
+	 * @param preferenceId
+	 *            the id of the shared preference.
+	 * @param index
+	 *            The index
+	 */
+	public static void removeIndexedSharedPreference(final int preferenceId, final int index) {
+		Editor editor = getSharedPreferences().edit();
+		editor.remove(getIndexedPreferenceKey(preferenceId, index));
 		editor.commit();
 	}
 }

@@ -6,7 +6,7 @@
     <string name="title_dialog_confirmation">Bestätigung</string>
     <string name="title_dialog_enter_list_name">Eingabe des Listennamens</string>
     <string name="title_dialog_select_list_name">Auswahl des Listennamens</string>
-    <string name="title_dialog_select_change_frequency">Auswahl der Bildwechselhäufigkeit</string>
+    <string name="title_dialog_select_change_frequency">Auswahl der Wechselhäufigkeit</string>
 
     <!-- Contents of toasts -->
     <string name="toast_added_image">Das Bild “%1$s” wurde hinzugefügt</string>
@@ -42,6 +42,7 @@
     <string name="dialog_select_list_for_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
+    <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%1$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_remove_single_image">Wollen Sie das Bild „%1$s“ wirklich von der Liste „%2$s“ entfernen?</string>
     <string name="dialog_confirmation_remove_images">Wollen Sie wirklich %1$d Bilder von der Liste „%2$s“ entfernen?</string>

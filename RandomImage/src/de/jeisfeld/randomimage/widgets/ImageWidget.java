@@ -71,7 +71,13 @@ public class ImageWidget extends AppWidgetProvider {
 		super.onDeleted(context, appWidgetIds);
 
 		for (int i = 0; i < appWidgetIds.length; i++) {
-			WidgetAlarmReceiver.cancelAlarm(context, appWidgetIds[i]);
+			int appWidgetId = appWidgetIds[i];
+			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
+			currentFileNames.remove(appWidgetId);
+			listNames.remove(appWidgetId);
+
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
 		}
 	}
 
@@ -158,7 +164,7 @@ public class ImageWidget extends AppWidgetProvider {
 
 		if (interval > 0) {
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
-			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, ImageWidget.class, interval);
+			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval);
 		}
 
 		updateInstances(appWidgetId);
@@ -187,7 +193,7 @@ public class ImageWidget extends AppWidgetProvider {
 	}
 
 	/**
-	 * Update timers for the of the widget.
+	 * Update timers for instances of the widget.
 	 *
 	 * @param appWidgetIds
 	 *            the list of instances to be updated. If empty, then all instances will be updated.
@@ -207,7 +213,7 @@ public class ImageWidget extends AppWidgetProvider {
 					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, 0);
 
 			if (interval > 0) {
-				WidgetAlarmReceiver.setAlarm(context, appWidgetId, ImageWidget.class, interval);
+				WidgetAlarmReceiver.setAlarm(context, appWidgetId, interval);
 			}
 		}
 	}

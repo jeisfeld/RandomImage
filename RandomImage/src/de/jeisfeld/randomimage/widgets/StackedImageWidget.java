@@ -60,10 +60,9 @@ public class StackedImageWidget extends AppWidgetProvider {
 
 			Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 			int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
-			if (width <= 0) {
-				return;
+			if (width > 0) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, width);
 			}
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, width);
 
 			intent.putExtra(STRING_EXTRA_WIDTH, width);
 			intent.putExtra(STRING_EXTRA_LISTNAME, getListName(appWidgetId));
@@ -86,6 +85,9 @@ public class StackedImageWidget extends AppWidgetProvider {
 			remoteViews.setPendingIntentTemplate(R.id.stackViewWidget, pendingIntent);
 
 			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+
+			// trigger also onDataStackChanged, as the intent will not update the service once created.
+			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
 		}
 	}
 
@@ -96,8 +98,21 @@ public class StackedImageWidget extends AppWidgetProvider {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
 		onUpdate(context, appWidgetManager, new int[] { appWidgetId });
+	}
 
-		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
+	@Override
+	public final void onDeleted(final Context context, final int[] appWidgetIds) {
+		super.onDeleted(context, appWidgetIds);
+
+		for (int i = 0; i < appWidgetIds.length; i++) {
+			int appWidgetId = appWidgetIds[i];
+			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
+			listNames.remove(appWidgetId);
+
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetId);
+		}
 	}
 
 	/**
@@ -126,10 +141,17 @@ public class StackedImageWidget extends AppWidgetProvider {
 	 *            The widget id.
 	 * @param listName
 	 *            The list name to be used by the widget.
+	 * @param interval
+	 *            The shuffle interval.
 	 */
-	public static final void configure(final int appWidgetId, final String listName) {
+	public static final void configure(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
 		listNames.put(appWidgetId, listName);
+
+		if (interval > 0) {
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
+			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval);
+		}
 		updateInstances(appWidgetId);
 	}
 
@@ -155,5 +177,33 @@ public class StackedImageWidget extends AppWidgetProvider {
 		}
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 		context.sendBroadcast(intent);
+	}
+
+	/**
+	 * Get the ids of all widgets of this class.
+	 *
+	 * @return The ids of all widgets of this class.
+	 */
+	public static int[] getAllWidgetIds() {
+		Context context = Application.getAppContext();
+		return AppWidgetManager.getInstance(context).getAppWidgetIds(
+				new ComponentName(context, StackedImageWidget.class));
+	}
+
+	/**
+	 * Check if there is an StackedImageWidget of this id.
+	 *
+	 * @param appWidgetId
+	 *            The widget id.
+	 * @return true if there is an StackedImageWidget of this id.
+	 */
+	public static boolean hasWidgetOfId(final int appWidgetId) {
+		int[] allAppWidgetIds = getAllWidgetIds();
+		for (int i = 0; i < allAppWidgetIds.length; i++) {
+			if (allAppWidgetIds[i] == appWidgetId) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

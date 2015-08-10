@@ -6,7 +6,7 @@
     <string name="title_dialog_confirmation">Confirmation</string>
     <string name="title_dialog_enter_list_name">Enter list name</string>
     <string name="title_dialog_select_list_name">Select list name</string>
-    <string name="title_dialog_select_change_frequency">Select image change frequency</string>
+    <string name="title_dialog_select_change_frequency">Select change frequency</string>
 
     <!-- Contents of toasts -->
     <string name="toast_added_image">Added image “%1$s”</string>
@@ -42,6 +42,7 @@
     <string name="dialog_select_list_for_widget">Please select the image list which you want to associate to this widget.</string>
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
+    <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%1$s”?</string>
     <string name="dialog_confirmation_remove_single_image">Do you really want to remove the image “%1$s” from the list “%2$s”?</string>
     <string name="dialog_confirmation_remove_images">Do you really want to remove %1$d images from the list “%2$s”?</string>
