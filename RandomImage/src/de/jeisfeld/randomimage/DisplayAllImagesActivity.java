@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
@@ -123,6 +125,22 @@ public class DisplayAllImagesActivity extends Activity {
 				menu.findItem(R.id.action_switch_list).setEnabled(false);
 				menu.findItem(R.id.action_delete_list).setEnabled(false);
 			}
+
+			MenuItem addItem = menu.findItem(R.id.action_add_images);
+			addItem.setActionView(R.layout.button_action_bar_plus);
+			addItem.getActionView().setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					AddImagesFromGalleryActivity.startActivity(DisplayAllImagesActivity.this);
+				}
+			});
+			addItem.getActionView().setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(final View v) {
+					// TODO: call activity to get whole folder.
+					return true;
+				}
+			});
 
 			return true;
 		case DELETE:
