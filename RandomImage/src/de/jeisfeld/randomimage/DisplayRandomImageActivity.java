@@ -48,9 +48,12 @@ public class DisplayRandomImageActivity extends Activity {
 	 *            the image list which should be taken.
 	 * @param fileName
 	 *            the image file name which should be displayed first.
+	 * @param cancelActivityStack
+	 *            flag indicating if the intent should cancel all existing app activities and put the new one on top.
 	 * @return the intent.
 	 */
-	public static final Intent createIntent(final Context context, final String listName, final String fileName) {
+	public static final Intent createIntent(final Context context, final String listName, final String fileName,
+			final boolean cancelActivityStack) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -58,7 +61,9 @@ public class DisplayRandomImageActivity extends Activity {
 		if (fileName != null) {
 			intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		}
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		if (cancelActivityStack) {
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		}
 		return intent;
 	}
 

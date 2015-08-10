@@ -139,7 +139,7 @@ public class ImageWidget extends AppWidgetProvider {
 							Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height))));
 		}
 
-		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, fileName);
+		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
