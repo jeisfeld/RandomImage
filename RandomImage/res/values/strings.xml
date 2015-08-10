@@ -21,6 +21,8 @@
     <string name="menu_remove_images">Remove selected images</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_add_images">Add images</string>
+    <string name="menu_add_single_images">Add single images</string>
+    <string name="menu_add_image_folders">Add image folders</string>
     <string name="menu_manage_lists">Manage image lists</string>
     <string name="menu_backup_list">Backup image list</string>
     <string name="menu_restore_list">Restore image list</string>

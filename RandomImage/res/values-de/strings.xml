@@ -21,6 +21,8 @@
     <string name="menu_remove_images">Gewählte Bilder entfernen</string>
     <string name="menu_cancel">Abbrechen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
+    <string name="menu_add_single_images">Einzelne Bilder hinzufügen</string>
+    <string name="menu_add_image_folders">Bild-Verzeichnisse hinzufügen</string>
     <string name="menu_manage_lists">Bildlisten verwalten</string>
     <string name="menu_backup_list">Bildliste sichern</string>
     <string name="menu_restore_list">Bildliste wiederherstellen</string>
