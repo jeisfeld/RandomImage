@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.util.Calendar;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -14,6 +16,16 @@ import de.jeisfeld.randomimage.SdMountReceiver;
  * Receiver for the alarm triggering the update of the image widget.
  */
 public class WidgetAlarmReceiver extends BroadcastReceiver {
+	/**
+	 * The timer start hour.
+	 */
+	private static final int TIMER_HOUR = 3;
+
+	/**
+	 * The timer start minutes.
+	 */
+	private static final int TIMER_MINUTES = 30;
+
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
 		int appWidgetId =
@@ -48,7 +60,28 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 
 		// Set the alarm
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, interval, interval, alarmIntent);
+
+		if (interval < AlarmManager.INTERVAL_DAY) {
+			alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, interval, interval, alarmIntent);
+		}
+		else {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+
+			calendar.set(Calendar.HOUR_OF_DAY, TIMER_HOUR);
+			calendar.set(Calendar.MINUTE, TIMER_MINUTES);
+			calendar.set(Calendar.SECOND, 0);
+
+			// First ensure that it is in the past
+			if (calendar.getTimeInMillis() > System.currentTimeMillis()) {
+				calendar.add(Calendar.DATE, -1);
+			}
+
+			// Then add the planned interval
+			calendar.setTimeInMillis(calendar.getTimeInMillis() + interval);
+
+			alarmMgr.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), interval, alarmIntent);
+		}
 
 		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
 		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);

@@ -79,7 +79,7 @@ public class StackedImageWidget extends AppWidgetProvider {
 			// object above.
 			remoteViews.setEmptyView(R.id.stackViewWidget, R.id.textViewWidgetEmpty);
 
-			Intent nestedIntent = new Intent(context, DisplayRandomImageActivity.class);
+			Intent nestedIntent = DisplayRandomImageActivity.createIntent(context, listNames.get(appWidgetId), null);
 			PendingIntent pendingIntent =
 					PendingIntent.getActivity(context, appWidgetId, nestedIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			remoteViews.setPendingIntentTemplate(R.id.stackViewWidget, pendingIntent);
