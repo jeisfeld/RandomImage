@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.jeisfeld.randomimage.util.SystemUtil;
 import android.content.Context;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -13,6 +12,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.SystemUtil;
 
 /**
  * Array adapter class to display an eye photo pair in a list.
@@ -34,9 +35,19 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	private final DisplayAllImagesActivity activity;
 
 	/**
+	 * The names of the folders.
+	 */
+	private ArrayList<String> folderNames;
+
+	/**
 	 * The names of the files.
 	 */
-	private String[] fileNames;
+	private ArrayList<String> fileNames;
+
+	/**
+	 * The set of foldernames selected for deletion.
+	 */
+	private Set<String> selectedFolderNames = new HashSet<String>();
 
 	/**
 	 * The set of filenames selected for deletion.
@@ -73,6 +84,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		this.selectionMode = selectionMode;
 
 		if (selectionMode == SelectionMode.NONE) {
+			selectedFolderNames.clear();
 			selectedFileNames.clear();
 		}
 	}
@@ -82,14 +94,22 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @param activity
 	 *            The activity using the adapter.
+	 * @param folderNames
+	 *            The names of folders to be displayed.
 	 * @param fileNames
 	 *            The names of files to be displayed.
 	 */
-	public DisplayAllImagesArrayAdapter(final DisplayAllImagesActivity activity, final String[] fileNames) {
-		super(activity, R.layout.text_view_initializing, fileNames);
+	public DisplayAllImagesArrayAdapter(final DisplayAllImagesActivity activity,
+			final ArrayList<String> folderNames, final ArrayList<String> fileNames) {
+		super(activity, R.layout.text_view_initializing);
+
+		addAll(folderNames);
+		addAll(fileNames);
+
 		this.activity = activity;
+		this.folderNames = folderNames;
 		this.fileNames = fileNames;
-		this.viewCache = new ViewCache(fileNames.length - 1, PRELOAD_SIZE);
+		this.viewCache = new ViewCache(fileNames.size() - 1, PRELOAD_SIZE);
 	}
 
 	/**
@@ -120,19 +140,44 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @return The ThumbImageView.
 	 */
 	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent, final boolean sameThread) {
-		final String fileName = fileNames[position];
+		final boolean isFolder = position < folderNames.size();
 
 		final ThumbImageView thumbImageView =
 				(ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
 						parent, false);
 
-		thumbImageView.setImage(activity, fileName, sameThread, new Runnable() {
-			@Override
-			public void run() {
-				thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
-				thumbImageView.setMarked(selectedFileNames.contains(fileName));
+		final String fileName;
+
+		if (isFolder) {
+			fileName = folderNames.get(position);
+
+			String displayFileName = null;
+
+			Set<String> imageFiles = ImageList.getImageFilesInFolder(fileName);
+			if (imageFiles.size() > 0) {
+				displayFileName = imageFiles.iterator().next();
 			}
-		});
+
+			thumbImageView.setImage(activity, displayFileName, sameThread, new Runnable() {
+				@Override
+				public void run() {
+					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
+					thumbImageView.setMarked(selectedFolderNames.contains(fileName));
+					thumbImageView.setFolder(true);
+				}
+			});
+		}
+		else {
+			fileName = fileNames.get(position - folderNames.size());
+
+			thumbImageView.setImage(activity, fileName, sameThread, new Runnable() {
+				@Override
+				public void run() {
+					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
+					thumbImageView.setMarked(selectedFileNames.contains(fileName));
+				}
+			});
+		}
 
 		thumbImageView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -147,12 +192,11 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				case MULTIPLE:
 					if (view.isMarked()) {
 						view.setMarked(false);
-						selectedFileNames.remove(view.getFileName());
-
+						(isFolder ? selectedFolderNames : selectedFileNames).remove(fileName);
 					}
 					else {
 						view.setMarked(true);
-						selectedFileNames.add(view.getFileName());
+						(isFolder ? selectedFolderNames : selectedFileNames).add(fileName);
 					}
 					break;
 				default:
@@ -189,9 +233,34 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
+	 * Get the list of selected folders.
+	 *
+	 * @return The selected folders.
+	 */
+	public final String[] getSelectedFolders() {
+		return new ArrayList<String>(selectedFolderNames).toArray(new String[0]);
+	}
+
+	/**
+	 * Set the list of selected folders.
+	 *
+	 * @param selectedFolders
+	 *            The names of the folders.
+	 */
+	public final void setSelectedFolders(final String[] selectedFolders) {
+		if (selectedFolders == null) {
+			selectedFolderNames.clear();
+		}
+		else {
+			selectedFolderNames = new HashSet<String>(Arrays.asList(selectedFolders));
+		}
+	}
+
+	/**
 	 * Set the markability status for all images in the cache.
 	 *
-	 * @param markable the new markability status.
+	 * @param markable
+	 *            the new markability status.
 	 */
 	public final void setMarkabilityStatus(final boolean markable) {
 		for (ThumbImageView view : viewCache.getCachedImages()) {

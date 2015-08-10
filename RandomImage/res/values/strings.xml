@@ -16,13 +16,19 @@
     <string name="button_dont_show">Do not show again</string>
     <string name="default_list_name">Image List</string>
 
+    <!-- Partial strings used to construct other strings -->
+    <string name="partial_image_single">one image</string>
+    <string name="partial_image_multiple">%1$d images</string>
+    <string name="partial_folder_single">one folder</string>
+    <string name="partial_folder_multiple">%1$d folders</string>
+
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Remove images</string>
     <string name="menu_remove_images">Remove selected images</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_add_images">Add images</string>
     <string name="menu_add_single_images">Add single images</string>
-    <string name="menu_add_image_folders">Add image folders</string>
+    <string name="menu_add_image_folder">Add an image folder</string>
     <string name="menu_manage_lists">Manage image lists</string>
     <string name="menu_backup_list">Backup image list</string>
     <string name="menu_restore_list">Restore image list</string>

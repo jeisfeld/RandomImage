@@ -27,9 +27,10 @@ public class ThumbImageView extends FrameLayout {
 	private boolean isMarkable = false;
 
 	/**
-	 * The EyePhoto shown in the view.
+	 * Flag indicating if this view represents a folder instead of a file.
 	 */
-	private String fileName;
+	private boolean isFolder = false;
+
 	/**
 	 * Indicates if the view is initialized.
 	 */
@@ -96,34 +97,28 @@ public class ThumbImageView extends FrameLayout {
 	 *
 	 * @param activity
 	 *            The activity holding the view.
-	 * @param newFileName
+	 * @param fileName
 	 *            The image to be displayed.
 	 * @param sameThread
 	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 * @param postActivities
 	 *            Activities that may be run on the UI thread after loading the image.
 	 */
-	public final void setImage(final Activity activity, final String newFileName, final boolean sameThread,
+	public final void setImage(final Activity activity, final String fileName, final boolean sameThread,
 			final Runnable postActivities) {
-		if (newFileName == null || newFileName.equals(this.fileName)) {
-			return;
-		}
-		this.fileName = newFileName;
-
 		if (sameThread) {
-			loadImage(activity, postActivities);
+			loadImage(activity, fileName, postActivities);
 		}
 		else {
 			// Fill pictures in separate thread, for performance reasons
 			Thread thread = new Thread() {
 				@Override
 				public void run() {
-					loadImage(activity, postActivities);
+					loadImage(activity, fileName, postActivities);
 				}
 			};
 			thread.start();
 		}
-
 	}
 
 	/**
@@ -131,11 +126,19 @@ public class ThumbImageView extends FrameLayout {
 	 *
 	 * @param activity
 	 *            The activity triggering the load.
+	 * @param fileName
+	 *            the name of the file to be loaded.
 	 * @param postActivities
 	 *            Actions to be done after loading the image.
 	 */
-	private void loadImage(final Activity activity, final Runnable postActivities) {
-		final Bitmap imageBitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+	private void loadImage(final Activity activity, final String fileName, final Runnable postActivities) {
+		final Bitmap imageBitmap;
+		if (fileName == null) {
+			imageBitmap = ImageUtil.getDummyBitmap();
+		}
+		else {
+			imageBitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+		}
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -154,18 +157,8 @@ public class ThumbImageView extends FrameLayout {
 	 * Clean the eye photo from the view.
 	 */
 	public final void cleanImage() {
-		this.fileName = null;
 		imageView.setImageBitmap(null);
 		isMarked = false;
-	}
-
-	/**
-	 * Retrieve the eyePhoto object.
-	 *
-	 * @return the eye photo.
-	 */
-	public final String getFileName() {
-		return fileName;
 	}
 
 	/**
@@ -211,6 +204,17 @@ public class ThumbImageView extends FrameLayout {
 
 	public final boolean isMarked() {
 		return isMarked;
+	}
+
+	/**
+	 * Set the folder status of the view.
+	 *
+	 * @param folder
+	 *            true if the view is representing a folder.
+	 */
+	public final void setFolder(final boolean folder) {
+		isFolder = folder;
+		// TODO: ensure that this is somehow displayed.
 	}
 
 }

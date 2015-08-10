@@ -51,14 +51,9 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	 */
 	private class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 		/**
-		 * The number of stacked images.
-		 */
-		private int stackSize = 1;
-
-		/**
 		 * The file names of the stacked images.
 		 */
-		private String[] fileNames;
+		private String[] fileNames = new String[0];
 
 		/**
 		 * The application context.
@@ -104,7 +99,6 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		@Override
 		public final void onCreate() {
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
-			stackSize = imageList.size();
 			fileNames = imageList.getShuffledFileNames();
 		}
 
@@ -115,7 +109,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public final int getCount() {
-			return stackSize;
+			return fileNames.length;
 		}
 
 		@Override
@@ -179,7 +173,6 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 			// create new image list
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
-			stackSize = imageList.size();
 			fileNames = imageList.getShuffledFileNames();
 		}
 	}

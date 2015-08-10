@@ -16,13 +16,19 @@
     <string name="button_dont_show">Nicht mehr zeigen</string>
     <string name="default_list_name">Bildliste</string>
 
+    <!-- Partial strings used to construct other strings -->
+    <string name="partial_image_single">ein Bild</string>
+    <string name="partial_image_multiple">%1$d Bilder</string>
+    <string name="partial_folder_single">ein Verzeichnis</string>
+    <string name="partial_folder_multiple">%1$d Verzeichnisse</string>
+
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Bilder entfernen</string>
     <string name="menu_remove_images">Gewählte Bilder entfernen</string>
     <string name="menu_cancel">Abbrechen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_add_single_images">Einzelne Bilder hinzufügen</string>
-    <string name="menu_add_image_folders">Bild-Verzeichnisse hinzufügen</string>
+    <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>
     <string name="menu_manage_lists">Bildlisten verwalten</string>
     <string name="menu_backup_list">Bildliste sichern</string>
     <string name="menu_restore_list">Bildliste wiederherstellen</string>

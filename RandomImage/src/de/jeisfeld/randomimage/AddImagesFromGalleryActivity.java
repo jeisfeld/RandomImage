@@ -8,12 +8,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 
 /**
  * Activity to add images to the repository from the gallery.
  */
 public class AddImagesFromGalleryActivity extends Activity {
+	/**
+	 * The resource key for the flag indicating if the activity is started to get a folder (instead of a list of files).
+	 */
+	public static final String STRING_EXTRA_FORFOLDER = "de.jeisfeld.randomimage.FORFOLDER";
+
 	/**
 	 * Request code with which this activity is started.
 	 */
@@ -23,9 +30,13 @@ public class AddImagesFromGalleryActivity extends Activity {
 	 */
 	private static final int REQUEST_CODE_GALLERY = 2;
 	/**
-	 * The resource key for the name of the first selected file.
+	 * The resource key for the number of added images.
 	 */
-	private static final String STRING_RESULT_ADDED_IMAGES = "de.jeisfeld.randomimage.NEEDSREFRESH";
+	private static final String STRING_RESULT_ADDED_IMAGES_COUNT = "de.jeisfeld.randomimage.ADDED_IMAGES_COUNT";
+	/**
+	 * The resource key for the name of the added folder.
+	 */
+	private static final String STRING_RESULT_ADDED_FOLDER = "de.jeisfeld.randomimage.ADDED_FOLDER";
 
 	/**
 	 * The number of images that have been added.
@@ -33,13 +44,26 @@ public class AddImagesFromGalleryActivity extends Activity {
 	private int addedImageCount = 0;
 
 	/**
+	 * The folder that has been added.
+	 */
+	private String addedFolder = null;
+
+	/**
+	 * Flag indicating if the activity is started to get a folder (instead of a list of files).
+	 */
+	private boolean forFolder = false;
+
+	/**
 	 * Static helper method to start the activity.
 	 *
 	 * @param activity
 	 *            The activity starting this activity.
+	 * @param forFolder
+	 *            flag indicating if the activity is started to get a folder (instead of a list of files).
 	 */
-	public static final void startActivity(final Activity activity) {
+	public static final void startActivity(final Activity activity, final boolean forFolder) {
 		Intent intent = new Intent(activity, AddImagesFromGalleryActivity.class);
+		intent.putExtra(STRING_EXTRA_FORFOLDER, forFolder);
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
@@ -52,6 +76,8 @@ public class AddImagesFromGalleryActivity extends Activity {
 			return;
 		}
 
+		forFolder = getIntent().getBooleanExtra(STRING_EXTRA_FORFOLDER, false);
+
 		DialogUtil.displayInfo(this, new MessageDialogListener() {
 			/**
 			 * The serial version uid.
@@ -62,7 +88,8 @@ public class AddImagesFromGalleryActivity extends Activity {
 			public void onDialogFinished() {
 				triggerAddImage();
 			}
-		}, R.string.key_info_add_images, R.string.dialog_info_add_images);
+		}, forFolder ? R.string.key_info_add_folder : R.string.key_info_add_images,
+				forFolder ? R.string.dialog_info_add_folder : R.string.dialog_info_add_images);
 	}
 
 	/**
@@ -77,24 +104,65 @@ public class AddImagesFromGalleryActivity extends Activity {
 
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		if (requestCode == REQUEST_CODE_GALLERY) {
-			if (resultCode == RESULT_OK) {
-				Uri selectedImageUri = data.getData();
-				String addedFileName = ImageRegistry.getCurrentImageList().add(selectedImageUri);
-				if (addedFileName != null) {
-					String shortFileName = new File(addedFileName).getName();
-					DialogUtil.displayToast(this, R.string.toast_added_image, shortFileName);
-					addedImageCount++;
+		final ImageList imageList = ImageRegistry.getCurrentImageList();
+
+		if (requestCode != REQUEST_CODE_GALLERY) {
+			return;
+		}
+
+		if (resultCode == RESULT_OK) {
+			Uri selectedImageUri = data.getData();
+			String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
+			if (forFolder) {
+				if (fileName == null) {
+					DialogUtil.displayToast(this, R.string.toast_added_folder_error);
 				}
-				triggerAddImage();
-			}
-			else {
-				// Finally, refresh list of images
-				if (addedImageCount > 0) {
-					ImageRegistry.getCurrentImageList().save();
+				else {
+					String folderName = new File(fileName).getParent();
+					boolean success = imageList.addFolder(folderName);
+					if (success) {
+						addedFolder = new File(folderName).getName();
+					}
+					else {
+						if (imageList.contains(folderName)) {
+							String shortFolderName = new File(folderName).getName();
+							DialogUtil.displayToast(this, R.string.toast_added_folder_none, shortFolderName);
+						}
+						else {
+							DialogUtil.displayToast(this, R.string.toast_added_folder_error);
+						}
+					}
+				}
+				if (addedFolder != null) {
+					imageList.update();
 				}
 				returnResult();
 			}
+			else {
+				boolean success = imageList.addFile(fileName);
+				if (success) {
+					String shortFileName = new File(fileName).getName();
+					DialogUtil.displayToast(this, R.string.toast_added_image, shortFileName);
+					addedImageCount++;
+				}
+				else {
+					if (imageList.contains(fileName)) {
+						String shortFileName = new File(fileName).getName();
+						DialogUtil.displayToast(this, R.string.toast_added_image_none, shortFileName);
+					}
+					else {
+						DialogUtil.displayToast(this, R.string.toast_added_image_error);
+					}
+				}
+				triggerAddImage();
+			}
+		}
+		else {
+			// Finally, refresh list of images
+			if (addedImageCount > 0) {
+				imageList.update();
+			}
+			returnResult();
 		}
 	}
 
@@ -105,7 +173,7 @@ public class AddImagesFromGalleryActivity extends Activity {
 	}
 
 	/**
-	 * Static helper method to retrieve the activity response.
+	 * Static helper method to retrieve the number of added images from the activity response.
 	 *
 	 * @param resultCode
 	 *            The result code indicating if the response was successful.
@@ -113,13 +181,30 @@ public class AddImagesFromGalleryActivity extends Activity {
 	 *            The activity response data.
 	 * @return The number of added images
 	 */
-	public static final int getResult(final int resultCode, final Intent data) {
+	public static final int getAddedImageCountFromResult(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
-			Bundle res = data.getExtras();
-			return res.getInt(STRING_RESULT_ADDED_IMAGES);
+			return data.getExtras().getInt(STRING_RESULT_ADDED_IMAGES_COUNT);
 		}
 		else {
 			return 0;
+		}
+	}
+
+	/**
+	 * Static helper method to retrieve the added folder name from the activity response.
+	 *
+	 * @param resultCode
+	 *            The result code indicating if the response was successful.
+	 * @param data
+	 *            The activity response data.
+	 * @return The name of the added folder.
+	 */
+	public static final String getAddedFolderFromResult(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			return data.getExtras().getString(STRING_RESULT_ADDED_FOLDER);
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -128,7 +213,10 @@ public class AddImagesFromGalleryActivity extends Activity {
 	 */
 	private void returnResult() {
 		Bundle resultData = new Bundle();
-		resultData.putInt(STRING_RESULT_ADDED_IMAGES, addedImageCount);
+		resultData.putInt(STRING_RESULT_ADDED_IMAGES_COUNT, addedImageCount);
+		if (addedFolder != null) {
+			resultData.putString(STRING_RESULT_ADDED_FOLDER, addedFolder);
+		}
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);

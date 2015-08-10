@@ -192,20 +192,6 @@ public class DisplayRandomImageActivity extends Activity {
 		return true;
 	}
 
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		if (requestCode == AddImagesFromGalleryActivity.REQUEST_CODE) {
-			int addedImagesCount = AddImagesFromGalleryActivity.getResult(resultCode, data);
-			if (addedImagesCount > 0) {
-				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
-				displayRandomImage();
-			}
-			else {
-				finish();
-			}
-		}
-	}
-
 	/**
 	 * Method for temporary tests.
 	 */

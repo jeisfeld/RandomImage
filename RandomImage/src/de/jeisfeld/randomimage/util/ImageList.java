@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 import android.net.Uri;
 import android.util.Log;
@@ -34,6 +36,17 @@ public final class ImageList {
 	 * The list of image files.
 	 */
 	private ArrayList<String> fileNames = new ArrayList<String>();
+
+	/**
+	 * The list of image folders.
+	 */
+	private ArrayList<String> folderNames = new ArrayList<String>();
+
+	/**
+	 * All image files represented by this image list - configures image files as well as all images in configured
+	 * folders.
+	 */
+	private ArrayList<String> allImageFiles = new ArrayList<String>();
 
 	/**
 	 * Configuration properties of the file list.
@@ -85,7 +98,11 @@ public final class ImageList {
 	 */
 	public synchronized void load() {
 		fileNames.clear();
+		folderNames.clear();
+		allImageFiles.clear();
 		properties.clear();
+
+		Set<String> allImageFileSet = new HashSet<String>();
 		try {
 			if (configFile.exists()) {
 				Scanner scanner = new Scanner(configFile);
@@ -100,8 +117,18 @@ public final class ImageList {
 
 					// handle file names
 					if (line.startsWith(File.separator)) {
-						if (new File(line).exists()) {
-							fileNames.add(line);
+						File file = new File(line);
+						if (file.exists()) {
+							if (file.isDirectory()) {
+								folderNames.add(line);
+								allImageFileSet.addAll(getImageFilesInFolder(line));
+							}
+							else {
+								if (ImageUtil.isImage(file)) {
+									fileNames.add(line);
+									allImageFileSet.add(line);
+								}
+							}
 						}
 						else {
 							Log.w(Application.TAG, "Cannot find file " + line);
@@ -123,6 +150,8 @@ public final class ImageList {
 		catch (FileNotFoundException e) {
 			Log.e(Application.TAG, "Could not find configuration file", e);
 		}
+
+		allImageFiles = new ArrayList<String>(allImageFileSet);
 	}
 
 	/**
@@ -130,7 +159,7 @@ public final class ImageList {
 	 *
 	 * @return true if successful.
 	 */
-	public synchronized boolean save() {
+	private synchronized boolean save() {
 		File backupFile = new File(configFile.getParentFile(), configFile.getName() + ".bak");
 
 		if (configFile.exists()) {
@@ -149,6 +178,11 @@ public final class ImageList {
 			for (Object keyObject : properties.keySet()) {
 				String key = (String) keyObject;
 				writer.println(key + "=" + properties.getProperty(key));
+			}
+			writer.println();
+			writer.println("# Folder names");
+			for (String folderName : folderNames) {
+				writer.println(folderName);
 			}
 			writer.println();
 			writer.println("# File names");
@@ -180,46 +214,141 @@ public final class ImageList {
 	}
 
 	/**
-	 * Get the list of file names as array.
+	 * Save and reload the list.
 	 *
-	 * @return The list of file names.
+	 * @return true if both actions were successful.
 	 */
-	public String[] getFileNames() {
-		return fileNames.toArray(new String[0]);
-
-	}
-
-	/**
-	 * Get the list of file names in shuffled order.
-	 *
-	 * @return The list of file names.
-	 */
-	public String[] getShuffledFileNames() {
-		@SuppressWarnings("unchecked")
-		ArrayList<String> clonedList = (ArrayList<String>) fileNames.clone();
-		Collections.shuffle(clonedList);
-		return clonedList.toArray(new String[0]);
-	}
-
-	/**
-	 * Add a file name.
-	 *
-	 * @param fileName
-	 *            The file name to be added.
-	 * @return true if the file was not in the list before and hence has been added.
-	 */
-	public boolean add(final String fileName) {
-		if (fileName != null && !fileNames.contains(fileName)) {
-			fileNames.add(fileName);
+	public synchronized boolean update() {
+		if (save()) {
+			load();
 			return true;
 		}
 		else {
+			Log.e(Application.TAG, "Error while saving the image list.");
+			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_error_while_saving, getListName());
 			return false;
 		}
 	}
 
 	/**
-	 * Add a file from an Uri.
+	 * Get the list of file names in the list as array.
+	 *
+	 * @return The list of file names.
+	 */
+	public ArrayList<String> getFileNames() {
+		return fileNames;
+	}
+
+	/**
+	 * Get the list of folder names in the list as array.
+	 *
+	 * @return The list of file names.
+	 */
+	public ArrayList<String> getFolderNames() {
+		return folderNames;
+	}
+
+	/**
+	 * Get all image files in the given folder.
+	 *
+	 * @param folderName
+	 *            The image folder name
+	 * @return The list of image files in this folder.
+	 */
+	public static Set<String> getImageFilesInFolder(final String folderName) {
+		File folder = new File(folderName);
+		Set<String> result = new HashSet<String>();
+		if (!folder.exists() || !folder.isDirectory()) {
+			return result;
+		}
+
+		File[] files = folder.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (ImageUtil.isImage(file)) {
+					result.add(file.getAbsolutePath());
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get the list of file names, including the files in the configured folders, in shuffled order.
+	 *
+	 * @return The list of file names.
+	 */
+	public String[] getShuffledFileNames() {
+		ArrayList<String> clondedList = new ArrayList<String>(allImageFiles);
+		Collections.shuffle(clondedList);
+		return clondedList.toArray(new String[0]);
+	}
+
+	/**
+	 * Add a file name. This does not yet update the list of all images!
+	 *
+	 * @param fileName
+	 *            The file name to be added.
+	 * @return true if the file was not in the list before and hence has been added.
+	 */
+	public boolean addFile(final String fileName) {
+		if (fileName == null) {
+			return false;
+		}
+
+		File file = new File(fileName);
+		if (!file.exists() || file.isDirectory()) {
+			return false;
+		}
+
+		if (fileNames.contains(fileName)) {
+			return false;
+		}
+		else {
+			folderNames.add(fileName);
+			return true;
+		}
+	}
+
+	/**
+	 * Add a folder name. This does not yet update the list of all images!
+	 *
+	 * @param folderName
+	 *            The folder name to be added.
+	 * @return true if the folder was not in the list before and hence has been added.
+	 */
+	public boolean addFolder(final String folderName) {
+		if (folderName == null) {
+			return false;
+		}
+
+		File file = new File(folderName);
+		if (!file.exists() || !file.isDirectory()) {
+			return false;
+		}
+
+		if (folderNames.contains(folderName)) {
+			return false;
+		}
+		else {
+			folderNames.add(folderName);
+			return true;
+		}
+	}
+
+	/**
+	 * Check if the file or folder is contained in the list.
+	 *
+	 * @param fileName
+	 *            The file name to be checked.
+	 * @return true if contained in the list.
+	 */
+	public boolean contains(final String fileName) {
+		return fileName != null && (fileNames.contains(fileName) || folderNames.contains(fileName));
+	}
+
+	/**
+	 * Add a file from an Uri. The lists are kept up to date, but are not saved!
 	 *
 	 * @param imageUri
 	 *            The uri of the file to be added.
@@ -228,7 +357,7 @@ public final class ImageList {
 	public String add(final Uri imageUri) {
 		if (imageUri != null && ImageUtil.getMimeType(imageUri).startsWith("image/")) {
 			String fileName = MediaStoreUtil.getRealPathFromUri(imageUri);
-			boolean isAdded = add(fileName);
+			boolean isAdded = addFile(fileName);
 			return isAdded ? fileName : null;
 		}
 		else {
@@ -237,25 +366,35 @@ public final class ImageList {
 	}
 
 	/**
-	 * Remove a file name.
+	 * Remove a single file name. This does not yet update the list of all images!
 	 *
 	 * @param fileName
 	 *            The file name to be removed.
-	 * @return true if a file was removed.
+	 * @return true if the file was removed.
 	 */
-	public boolean remove(final String fileName) {
+	public boolean removeFile(final String fileName) {
+		File file = new File(fileName);
+
+		if (!file.exists() || file.isDirectory()) {
+			return false;
+		}
 		return fileNames.remove(fileName);
 	}
 
 	/**
-	 * Get information if a file name is contained in the registry.
+	 * Remove a single folder name. This does not yet update the list of all images!
 	 *
-	 * @param fileName
-	 *            The file name.
-	 * @return True if contained.
+	 * @param folderName
+	 *            The folder name to be removed.
+	 * @return true if the folder was removed.
 	 */
-	public boolean contains(final String fileName) {
-		return fileNames.contains(fileName);
+	public boolean removeFolder(final String folderName) {
+		File file = new File(folderName);
+
+		if (!file.exists() || !file.isDirectory()) {
+			return false;
+		}
+		return folderNames.remove(folderName);
 	}
 
 	/**
@@ -264,21 +403,12 @@ public final class ImageList {
 	 * @return A random file name.
 	 */
 	public String getRandomFileName() {
-		if (fileNames.size() > 0) {
-			return fileNames.get(new Random().nextInt(fileNames.size()));
+		if (allImageFiles.size() > 0) {
+			return allImageFiles.get(new Random().nextInt(allImageFiles.size()));
 		}
 		else {
 			return null;
 		}
-	}
-
-	/**
-	 * Get the number of files in the registry.
-	 *
-	 * @return The number of files.
-	 */
-	public int size() {
-		return fileNames.size();
 	}
 
 	/**
@@ -306,7 +436,7 @@ public final class ImageList {
 	 * @param listName
 	 *            The new name of the list.
 	 */
-	public void setListName(final String listName) {
+	protected void setListName(final String listName) {
 		if (listName == null) {
 			properties.remove(PROP_LIST_NAME);
 		}

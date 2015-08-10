@@ -262,6 +262,23 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Check if a file is an image file.
+	 *
+	 * @param file
+	 *            The file
+	 * @return true if it is an image file.
+	 */
+	public static boolean isImage(final File file) {
+		if (file == null || !file.exists() || file.isDirectory()) {
+			return false;
+		}
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(file.getPath(), options);
+		return options.outWidth >= 0 - 1 && options.outHeight >= 0;
+	}
+
+	/**
 	 * Retrieves a dummy bitmap (for the case that an image file is not readable).
 	 *
 	 * @return the dummy bitmap.

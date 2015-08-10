@@ -43,8 +43,8 @@
                 android:id="@+id/action_add_single_images"
                 android:title="@string/menu_add_single_images"/>
             <item
-                android:id="@+id/action_add_image_folders"
-                android:title="@string/menu_add_image_folders"/>
+                android:id="@+id/action_add_image_folder"
+                android:title="@string/menu_add_image_folder"/>
         </menu>
     </item>
     <item

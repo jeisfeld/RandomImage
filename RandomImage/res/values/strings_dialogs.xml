@@ -10,12 +10,18 @@
 
     <!-- Contents of toasts -->
     <string name="toast_added_image">Added image “%1$s”</string>
+    <string name="toast_added_image_none">The image “%1$s” was already in the list.</string>
+    <string name="toast_added_image_error">Unexpected error while trying to add an image.</string>
     <string name="toast_added_images_count">Added %1$d images</string>
+    <string name="toast_added_folder">Added folder “%1$s”</string>
+    <string name="toast_added_folder_none">The folder “%1$s” was already in the list.</string>
+    <string name="toast_added_folder_error">Unexpected error while trying to add a folder.</string>
     <string name="toast_added_images_count_external">Added %1$d images to the random image list “%2$s”</string>
     <string name="toast_added_images_single_external">Added image “%1$s” to the random image list “%2$s”</string>
     <string name="toast_added_images_none_external">All selected images were already in the random image list “%1$s”</string>
-    <string name="toast_removed_images_count">Removed %1$d images from the list</string>
-    <string name="toast_removed_single_image">Removed image “%1$s” from the list</string>
+    <string name="toast_removed_images">Removed %1$s from the list</string>
+    <string name="toast_removed_folders">Removed %1$s from the list</string>
+    <string name="toast_removed_folders_images">Removed %1$s and %2$s from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
     <string name="toast_backup_of_list">Made backup of list “%1$s”</string>
@@ -23,11 +29,13 @@
     <string name="toast_restore_of_list">Restored list “%1$s”</string>
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
     <string name="toast_cancelled_add_images">The addition of images was cancelled.</string>
+    <string name="toast_error_while_saving">Error while saving the image list “%1$s”</string>
     <string name="toast_aborted_add_images_no_list">The addition of images was aborted, as no image list was found.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_new_list">Your image list is empty. Pleas press the “+” symbol on top in order to add images to the list. Alternatively, you may go to your Gallery app and send images to this app in order to add them to the list.</string>
     <string name="dialog_info_add_images">Please choose from the gallery some images that you want to use in this app. Go back to the app if you do not want to add more images.</string>
+    <string name="dialog_info_add_folder">Please choose from the gallery any image in the folder that you want to add.</string>
     <string name="dialog_info_display_image">You can zoom and move the image.\nFlip the image to see another one.\nDouble tap to go to the image list configuration.\nLong press for further options.</string>
     <string name="dialog_info_delete_images">Select images that you want to remove from the list. Then press the trash icon to remove, or press the cross icon to abort.</string>
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
@@ -44,8 +52,9 @@
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%1$s”?</string>
-    <string name="dialog_confirmation_remove_single_image">Do you really want to remove the image “%1$s” from the list “%2$s”?</string>
-    <string name="dialog_confirmation_remove_images">Do you really want to remove %1$d images from the list “%2$s”?</string>
+    <string name="dialog_confirmation_remove_images">Do you really want to remove %3$s from the list “%1$s”?</string>
+    <string name="dialog_confirmation_remove_folders">Do you really want to remove %2$s from the list “%1$s”?</string>
+    <string name="dialog_confirmation_remove_folders_images">Do you really want to remove %2$s and %3$s from the list “%1$s”?</string>
     <string name="dialog_confirmation_overwrite_list">The image list “%1$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup">The backup list “%1$s” exists already. Do you want to overwrite it?</string>
 
@@ -73,6 +82,7 @@
     <string name="key_info_new_list" translatable="false">info_new_list</string>
     <string name="key_info_display_image" translatable="false">info_display_image</string>
     <string name="key_info_add_images" translatable="false">info_add_images</string>
+    <string name="key_info_add_folder" translatable="false">info_add_folder</string>
     <string name="key_info_delete_images" translatable="false">info_delete_images</string>
 
 </resources>

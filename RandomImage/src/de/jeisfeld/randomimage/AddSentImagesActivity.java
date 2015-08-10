@@ -73,10 +73,9 @@ public class AddSentImagesActivity extends Activity {
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			String addedFileName = imageList.add(imageUri);
 			if (addedFileName != null) {
-				imageList.save();
 				String shortFileName = new File(addedFileName).getName();
 				DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
-				imageList.save();
+				imageList.update();
 			}
 		}
 		else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null
@@ -96,14 +95,13 @@ public class AddSentImagesActivity extends Activity {
 				}
 				if (addedFileCount > 1) {
 					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedFileCount, listName);
-					imageList.save();
+					imageList.update();
 				}
 				else if (addedFileCount == 1) {
-					imageList.save();
 					String shortFileName = new File(lastAddedFileName).getName();
 					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName,
 							listName);
-					imageList.save();
+					imageList.update();
 				}
 				else {
 					DialogUtil.displayToast(this, R.string.toast_added_images_none_external, listName);

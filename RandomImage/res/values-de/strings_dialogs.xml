@@ -10,12 +10,18 @@
 
     <!-- Contents of toasts -->
     <string name="toast_added_image">Das Bild “%1$s” wurde hinzugefügt</string>
+    <string name="toast_added_image_none">Das Bild “%1$s” war bereits in der Liste.</string>
+    <string name="toast_added_image_error">Unerwarteter Fehler beim Versuch, ein Bild hinzuzufügen.</string>
     <string name="toast_added_images_count">Es wurden %1$d Bilder hinzugefügt</string>
+    <string name="toast_added_folder">Das Verzeichnis “%1$s” wurde hinzugefügt</string>
+    <string name="toast_added_folder_none">Das Verzeichnis “%1$s” war bereits in der Liste.</string>
+    <string name="toast_added_folder_error">Unerwarteter Fehler beim Versuch, ein Verzeichnis hinzuzufügen.</string>
     <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Zufalls-Bildliste „%2$s“ hinzugefügt</string>
     <string name="toast_added_images_single_external">Das Bild „%1$s“ wurde zur Zufalls-Bildliste „%2$s“ hinzugefügt</string>
     <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Zufallsbild-Liste „%1$s“</string>
-    <string name="toast_removed_images_count">Es wurden %1$d Bilder aus der Liste entfernt</string>
-    <string name="toast_removed_single_image">Das Bild „%1$s“ wurde aus der Liste entfernt</string>
+    <string name="toast_removed_images">Es wurden %1$s aus der Liste entfernt</string>
+    <string name="toast_removed_folders">Es wurden %1$s aus der Liste entfernt</string>
+    <string name="toast_removed_folders_images">Es wurden %1$s und %2$s aus der Liste entfernt</string>
     <string name="toast_removed_no_image">Es wurde kein Bild zum Entfernen ausgewählt</string>
     <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s“</string>
     <string name="toast_backup_of_list">Die Liste „%1$s“ wurde gesichert</string>
@@ -23,11 +29,13 @@
     <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
+    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_new_list">Ihre Bildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen. Sie können auch Ihre Galerie-App nutzen und von dort Bilder an die Zufallsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
     <string name="dialog_info_add_images">Bitte wählen Sie in der Galerie einige Bilder, die sie in dieser App verwenden wollen. Gehen Sie zurück zur App, wenn Sie keine Bilder mehr hinzufügen wollen.</string>
+    <string name="dialog_info_add_folder">Bitte wählen Sie in der Galerie ein Bild im Verzeichnis, das Sie in dieser App verwenden wollen.</string>
     <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
@@ -44,8 +52,9 @@
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%1$s“ wirklich löschen?</string>
-    <string name="dialog_confirmation_remove_single_image">Wollen Sie das Bild „%1$s“ wirklich von der Liste „%2$s“ entfernen?</string>
-    <string name="dialog_confirmation_remove_images">Wollen Sie wirklich %1$d Bilder von der Liste „%2$s“ entfernen?</string>
+    <string name="dialog_confirmation_remove_images">Wollen Sie wirklich %3$s aus der Liste „%1$s“ entfernen?</string>
+    <string name="dialog_confirmation_remove_folders">Wollen Sie wirklich %2$s aus der Liste „%1$s“ entfernen?</string>
+    <string name="dialog_confirmation_remove_folders_images">Wollen Sie wirklich %2$s und %3$s aus der Liste „%1$s“ entfernen?</string>
     <string name="dialog_confirmation_overwrite_list">Die Bildliste „%1$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup">Das Backup von „%1$s“ existiert bereits. Wollen Sie es überschreiben?</string>
 

@@ -1,6 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -32,9 +31,14 @@ public class DisplayAllImagesActivity extends Activity {
 	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 
 	/**
+	 * The names of the folders to be displayed.
+	 */
+	private ArrayList<String> folderNames;
+
+	/**
 	 * The names of the files to be displayed.
 	 */
-	private String[] fileNames;
+	private ArrayList<String> fileNames;
 
 	/**
 	 * The view showing the photos.
@@ -91,11 +95,13 @@ public class DisplayAllImagesActivity extends Activity {
 		if (savedInstanceState != null) {
 			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
 			adapter.setSelectedFiles(selectedFiles);
+			String[] selectedFolders = savedInstanceState.getStringArray("selectedFolders");
+			adapter.setSelectedFolders(selectedFolders);
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 			changeAction(currentAction);
 		}
 
-		if (fileNames.length == 0) {
+		if (fileNames.size() == 0 && folderNames.size() == 0) {
 			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
 		}
 	}
@@ -105,10 +111,11 @@ public class DisplayAllImagesActivity extends Activity {
 	 */
 	private void fillListOfImages() {
 		fileNames = ImageRegistry.getCurrentImageList().getFileNames();
+		folderNames = ImageRegistry.getCurrentImageList().getFolderNames();
 		if (adapter != null) {
 			adapter.cleanupCache();
 		}
-		adapter = new DisplayAllImagesArrayAdapter(this, fileNames);
+		adapter = new DisplayAllImagesArrayAdapter(this, folderNames, fileNames);
 		gridView.setAdapter(adapter);
 		textViewListName.setText(ImageRegistry.getCurrentListName());
 	}
@@ -160,10 +167,10 @@ public class DisplayAllImagesActivity extends Activity {
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
 		case R.id.action_add_single_images:
-			AddImagesFromGalleryActivity.startActivity(this);
+			AddImagesFromGalleryActivity.startActivity(this, false);
 			return true;
-		case R.id.action_add_image_folders:
-			// TODO: start activity to add folders to the list.
+		case R.id.action_add_image_folder:
+			AddImagesFromGalleryActivity.startActivity(this, true);
 			return true;
 		case R.id.action_backup_list:
 			backupImageList();
@@ -204,13 +211,29 @@ public class DisplayAllImagesActivity extends Activity {
 			final ImageList imageList = ImageRegistry.getCurrentImageList();
 
 			final String[] imagesToBeRemoved = adapter.getSelectedFiles();
-			if (imagesToBeRemoved.length > 0) {
-				final int messageId =
-						imagesToBeRemoved.length == 1 ? R.string.dialog_confirmation_remove_single_image
-								: R.string.dialog_confirmation_remove_images;
-				final Object messageParameter =
-						imagesToBeRemoved.length == 1 ? new File(imagesToBeRemoved[0]).getName()
-								: imagesToBeRemoved.length;
+			final String[] foldersToBeRemoved = adapter.getSelectedFolders();
+
+			String imageString =
+					imagesToBeRemoved.length == 1 ? String.format(getString(R.string.partial_image_single))
+							: String.format(getString(R.string.partial_image_multiple),
+									imagesToBeRemoved.length);
+			String folderString =
+					foldersToBeRemoved.length == 1 ? String.format(getString(R.string.partial_folder_single))
+							: String.format(getString(R.string.partial_folder_multiple),
+									foldersToBeRemoved.length);
+
+			if (imagesToBeRemoved.length > 0 || foldersToBeRemoved.length > 0) {
+				final int messageId;
+
+				if (imagesToBeRemoved.length == 0) {
+					messageId = R.string.dialog_confirmation_remove_folders;
+				}
+				else if (foldersToBeRemoved.length == 0) {
+					messageId = R.string.dialog_confirmation_remove_images;
+				}
+				else {
+					messageId = R.string.dialog_confirmation_remove_folders_images;
+				}
 
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 					/**
@@ -220,25 +243,52 @@ public class DisplayAllImagesActivity extends Activity {
 
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog) {
-						int removedFileCount = 0;
-						String lastFileRemoved = null;
-						for (String fileName : imagesToBeRemoved) {
-							boolean isRemoved = imageList.remove(fileName);
+						int removedFolderCount = 0;
+						int removedImageCount = 0;
+						for (String folderName : foldersToBeRemoved) {
+							boolean isRemoved = imageList.removeFolder(folderName);
 							if (isRemoved) {
-								removedFileCount++;
-								lastFileRemoved = fileName;
+								removedFolderCount++;
 							}
 						}
-						if (removedFileCount == 1) {
-							DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_single_image,
-									new File(lastFileRemoved).getName());
+						for (String fileName : imagesToBeRemoved) {
+							boolean isRemoved = imageList.removeFile(fileName);
+							if (isRemoved) {
+								removedImageCount++;
+							}
+						}
+
+						String imageString2 =
+								removedImageCount == 1 ? String.format(getString(R.string.partial_image_single))
+										: String.format(getString(R.string.partial_image_multiple),
+												removedImageCount);
+						String folderString2 =
+								removedFolderCount == 1 ? String.format(getString(R.string.partial_folder_single))
+										: String.format(getString(R.string.partial_folder_multiple),
+												removedFolderCount);
+
+						if (removedImageCount > 0) {
+							if (removedFolderCount > 0) {
+								DialogUtil.displayToast(DisplayAllImagesActivity.this,
+										R.string.toast_removed_folders_images,
+										folderString2, imageString2);
+							}
+							else {
+								DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_images,
+										imageString2);
+							}
 						}
 						else {
-							DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_images_count,
-									removedFileCount);
+							if (removedFolderCount > 0) {
+								DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_folders,
+										folderString2);
+							}
 						}
-						imageList.save();
-						fillListOfImages();
+
+						if (removedImageCount > 0 || removedFolderCount > 0) {
+							imageList.update();
+							fillListOfImages();
+						}
 						changeAction(CurrentAction.DISPLAY);
 					}
 
@@ -246,7 +296,7 @@ public class DisplayAllImagesActivity extends Activity {
 					public void onDialogNegativeClick(final DialogFragment dialog) {
 						// do nothing.
 					}
-				}, R.string.button_remove, messageId, messageParameter, ImageRegistry.getCurrentListName());
+				}, R.string.button_remove, messageId, ImageRegistry.getCurrentListName(), folderString, imageString);
 
 			}
 			else {
@@ -619,17 +669,25 @@ public class DisplayAllImagesActivity extends Activity {
 		outState.putSerializable("currentAction", currentAction);
 		if (adapter != null) {
 			outState.putStringArray("selectedFiles", adapter.getSelectedFiles());
+			outState.putStringArray("selectedFolders", adapter.getSelectedFolders());
 		}
 	}
 
 	@Override
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (requestCode == AddImagesFromGalleryActivity.REQUEST_CODE) {
-			int addedImagesCount = AddImagesFromGalleryActivity.getResult(resultCode, data);
+			int addedImagesCount = AddImagesFromGalleryActivity.getAddedImageCountFromResult(resultCode, data);
 			if (addedImagesCount > 0) {
 				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
+			}
+			String addedFolder = AddImagesFromGalleryActivity.getAddedFolderFromResult(resultCode, data);
+			if (addedFolder != null) {
+				DialogUtil.displayToast(this, R.string.toast_added_folder, addedFolder);
+			}
+			if (addedImagesCount > 0 || addedFolder != null) {
 				fillListOfImages();
 			}
+
 		}
 	}
 
