@@ -50,7 +50,6 @@
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
-        <item>15 seconds</item>
         <item>1 minute</item>
         <item>5 minutes</item>
         <item>15 minutes</item>
@@ -60,7 +59,6 @@
         <item>1 week</item>
     </string-array>
     <string-array name="timer_durations" translatable="false">
-        <item>15000</item>
         <item>60000</item>
         <item>300000</item>
         <item>900000</item>
