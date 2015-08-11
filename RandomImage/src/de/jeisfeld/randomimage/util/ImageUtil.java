@@ -155,8 +155,9 @@ public final class ImageUtil {
 				return bitmap;
 			}
 
-			if (bitmap.getWidth() > maxSize || bitmap.getHeight() > maxSize) {
-				// Only if bitmap is bigger than maxSize, then resize it.
+			if (bitmap.getWidth() > maxSize || bitmap.getHeight() > maxSize
+					|| maxSize <= MediaStoreUtil.MINI_THUMB_SIZE) {
+				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
 				if (bitmap.getWidth() > bitmap.getHeight()) {
 					int targetWidth = maxSize;
 					int targetHeight = bitmap.getHeight() * maxSize / bitmap.getWidth();
