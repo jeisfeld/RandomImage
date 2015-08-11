@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -306,6 +308,29 @@ public final class ImageUtil {
 	 */
 	public static Bitmap getDummyBitmap() {
 		return BitmapFactory.decodeResource(Application.getAppContext().getResources(), R.drawable.cannot_read_image);
+	}
+
+	/**
+	 * Show a file in the phone gallery.
+	 *
+	 * @param context
+	 *            the context from which the gallery is opened.
+	 * @param fileName
+	 *            The file name.
+	 * @return true if successful
+	 */
+	public static boolean showFileInGallery(final Context context, final String fileName) {
+		try {
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			Uri uri = MediaStoreUtil.getUriFromFile(fileName);
+			intent.setData(uri);
+			context.startActivity(intent);
+			return true;
+		}
+		catch (Exception e) {
+			Log.e(Application.TAG, "Could not open file " + fileName + " in gallery.", e);
+			return false;
+		}
 	}
 
 	/**

@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
 /**
@@ -147,15 +148,17 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 						parent, false);
 
 		final String fileName;
+		final String displayFileName;
 
 		if (isFolder) {
 			fileName = folderNames.get(position);
 
-			String displayFileName = null;
-
 			Set<String> imageFiles = ImageList.getImageFilesInFolder(fileName);
 			if (imageFiles.size() > 0) {
 				displayFileName = imageFiles.iterator().next();
+			}
+			else {
+				displayFileName = null;
 			}
 
 			thumbImageView.setImage(activity, displayFileName, sameThread, true, new Runnable() {
@@ -169,8 +172,9 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		}
 		else {
 			fileName = fileNames.get(position - folderNames.size());
+			displayFileName = fileName;
 
-			thumbImageView.setImage(activity, fileName, sameThread, false, new Runnable() {
+			thumbImageView.setImage(activity, displayFileName, sameThread, false, new Runnable() {
 				@Override
 				public void run() {
 					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
@@ -186,6 +190,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 
 				switch (selectionMode) {
 				case NONE:
+					ImageUtil.showFileInGallery(getContext(), displayFileName);
 					break;
 				case ONE:
 					break;
