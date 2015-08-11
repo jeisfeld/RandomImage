@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.util.Log;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.widgets.GenericWidget;
 
 /**
  * Utility class for storing and persisting a list of image file names plus additional display information.
@@ -436,7 +437,7 @@ public final class ImageList {
 	 * @param listName
 	 *            The new name of the list.
 	 */
-	protected void setListName(final String listName) {
+	private void setListName(final String listName) {
 		if (listName == null) {
 			properties.remove(PROP_LIST_NAME);
 		}
@@ -457,6 +458,7 @@ public final class ImageList {
 	 */
 	public boolean changeListName(final String listName, final File newConfigFile) {
 		File oldConfigFile = configFile;
+		String oldListName = getListName();
 		configFile = newConfigFile;
 		setListName(listName);
 		boolean success = save();
@@ -466,6 +468,7 @@ public final class ImageList {
 			if (!success) {
 				Log.e(Application.TAG, "Could not delete old config file " + oldConfigFile.getAbsolutePath());
 			}
+			GenericWidget.updateListName(oldListName, listName);
 			return success;
 		}
 		else {

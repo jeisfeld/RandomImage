@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.AlarmManager;
@@ -106,8 +107,8 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 
 		alarmMgr.cancel(alarmIntent);
 
-		int[] allWidgetIds = GenericWidget.getAllWidgetIds();
-		if (allWidgetIds.length == 0 || allWidgetIds.length == 1 && allWidgetIds[0] == appWidgetId) {
+		ArrayList<Integer> allWidgetIds = GenericWidget.getAllWidgetIds();
+		if (allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId) {
 			ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
 			PackageManager pm = context.getPackageManager();
 

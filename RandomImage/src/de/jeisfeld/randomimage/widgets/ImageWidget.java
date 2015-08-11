@@ -157,15 +157,6 @@ public class ImageWidget extends GenericWidget {
 	}
 
 	/**
-	 * Get the ids of all widgets of this class.
-	 *
-	 * @return The ids of all widgets of this class.
-	 */
-	public static int[] getAllWidgetIds() {
-		return getAllWidgetIds(ImageWidget.class);
-	}
-
-	/**
 	 * Check if there is an ImageWidget of this id.
 	 *
 	 * @param appWidgetId

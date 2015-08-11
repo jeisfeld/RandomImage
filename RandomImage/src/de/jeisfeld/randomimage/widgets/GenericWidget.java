@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.util.ArrayList;
+
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -16,12 +18,17 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
  */
 public abstract class GenericWidget extends AppWidgetProvider {
 	/**
+	 * The list of all widget types.
+	 */
+	private static final Class<?>[] WIDGET_TYPES = { MiniWidget.class, ImageWidget.class, StackedImageWidget.class };
+
+	/**
 	 * Number of pixels per dip.
 	 */
 	protected static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
 
 	/**
-	 * The names of the image lists associated to the widget.
+	 * The names of the image lists associated to any widget.
 	 */
 	private static SparseArray<String> listNames = new SparseArray<String>();
 
@@ -59,9 +66,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	@Override
 	public void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
-
 		for (int i = 0; i < appWidgetIds.length; i++) {
 			int appWidgetId = appWidgetIds[i];
+
 			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
 			listNames.remove(appWidgetId);
 
@@ -77,7 +84,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 *            The app widget id.
 	 * @return The list name.
 	 */
-	protected final String getListName(final int appWidgetId) {
+	protected static final String getListName(final int appWidgetId) {
 		String listName = listNames.get(appWidgetId);
 		if (listName == null) {
 			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
@@ -113,11 +120,15 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * Update instances of the widgets of a specific class.
 	 *
 	 * @param widgetClass
-	 *            the widget class
+	 *            the widget class (required if no appWidgetIds are given)
 	 * @param appWidgetId
 	 *            the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	protected static final void updateInstances(final Class<?> widgetClass, final int... appWidgetId) {
+		if (widgetClass == null) {
+			return;
+		}
+
 		Context context = Application.getAppContext();
 		Intent intent = new Intent(context, widgetClass);
 		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -179,18 +190,18 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 *
 	 * @return The list of widgetIds of widgets of this app.
 	 */
-	public static int[] getAllWidgetIds() {
-		int[] allImageWidgetIds = ImageWidget.getAllWidgetIds();
-		int[] allStackedImageWidgetIds = StackedImageWidget.getAllWidgetIds();
-		int[] allMiniWidgetIds = MiniWidget.getAllWidgetIds();
+	public static ArrayList<Integer> getAllWidgetIds() {
+		ArrayList<Integer> allWidgetIds = new ArrayList<Integer>();
 
-		int[] allWidgetIds =
-				new int[allImageWidgetIds.length + allStackedImageWidgetIds.length + allMiniWidgetIds.length];
-		System.arraycopy(allImageWidgetIds, 0, allWidgetIds, 0, allImageWidgetIds.length);
-		System.arraycopy(allStackedImageWidgetIds, 0, allWidgetIds, allImageWidgetIds.length,
-				allStackedImageWidgetIds.length);
-		System.arraycopy(allMiniWidgetIds, 0, allWidgetIds, allImageWidgetIds.length + allStackedImageWidgetIds.length,
-				allMiniWidgetIds.length);
+		for (Class<?> widgetClass : WIDGET_TYPES) {
+			int[] widgetIds = getAllWidgetIds(widgetClass);
+			if (widgetIds != null) {
+				for (int widgetId : widgetIds) {
+					allWidgetIds.add(widgetId);
+				}
+			}
+		}
+
 		return allWidgetIds;
 	}
 
@@ -212,6 +223,28 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Update the list name in all widgets.
+	 *
+	 * @param oldName
+	 *            The old name.
+	 * @param newName
+	 *            The new name.
+	 */
+	public static void updateListName(final String oldName, final String newName) {
+		for (Class<?> widgetClass : WIDGET_TYPES) {
+			int[] appWidgetIds = getAllWidgetIds(widgetClass);
+			for (int appWidgetId : appWidgetIds) {
+				if (oldName.equals(getListName(appWidgetId))) {
+					PreferenceUtil
+							.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, newName);
+					listNames.put(appWidgetId, newName);
+					updateInstances(widgetClass, appWidgetId);
+				}
+			}
+		}
 	}
 
 }

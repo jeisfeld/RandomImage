@@ -102,7 +102,6 @@ public class StackedImageWidget extends GenericWidget {
 	 */
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
 		doBaseConfiguration(appWidgetId, listName, interval);
-
 		updateInstances(appWidgetId);
 	}
 
@@ -114,15 +113,6 @@ public class StackedImageWidget extends GenericWidget {
 	 */
 	public static final void updateInstances(final int... appWidgetId) {
 		updateInstances(StackedImageWidget.class, appWidgetId);
-	}
-
-	/**
-	 * Get the ids of all widgets of this class.
-	 *
-	 * @return The ids of all widgets of this class.
-	 */
-	public static int[] getAllWidgetIds() {
-		return getAllWidgetIds(StackedImageWidget.class);
 	}
 
 	/**

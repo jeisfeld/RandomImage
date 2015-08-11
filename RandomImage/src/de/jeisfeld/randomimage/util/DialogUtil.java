@@ -136,8 +136,13 @@ public final class DialogUtil {
 	 *            arguments for the error message
 	 */
 	public static void displayToast(final Context context, final int resource, final Object... args) {
-		String message = capitalizeFirst(String.format(context.getString(resource), args));
-		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+		try {
+			String message = capitalizeFirst(String.format(context.getString(resource), args));
+			Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+		}
+		catch (Exception e) {
+			// Do nothing - just prevent runtime exception.
+		}
 	}
 
 	/**

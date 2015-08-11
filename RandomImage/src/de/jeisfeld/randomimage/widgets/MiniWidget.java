@@ -39,7 +39,6 @@ public class MiniWidget extends GenericWidget {
 	 */
 	public static final void configure(final int appWidgetId, final String listName) {
 		doBaseConfiguration(appWidgetId, listName, 0);
-
 		updateInstances(appWidgetId);
 	}
 
@@ -51,15 +50,6 @@ public class MiniWidget extends GenericWidget {
 	 */
 	public static final void updateInstances(final int... appWidgetId) {
 		updateInstances(MiniWidget.class, appWidgetId);
-	}
-
-	/**
-	 * Get the ids of all widgets of this class.
-	 *
-	 * @return The ids of all widgets of this class.
-	 */
-	public static int[] getAllWidgetIds() {
-		return getAllWidgetIds(MiniWidget.class);
 	}
 
 }
