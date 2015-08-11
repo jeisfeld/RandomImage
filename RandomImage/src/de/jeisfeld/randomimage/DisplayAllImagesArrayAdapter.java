@@ -2,7 +2,6 @@ package de.jeisfeld.randomimage;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -224,12 +223,12 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param selectedFiles
 	 *            The names of the files.
 	 */
-	public final void setSelectedFiles(final String[] selectedFiles) {
+	public final void setSelectedFiles(final ArrayList<String> selectedFiles) {
 		if (selectedFiles == null) {
 			selectedFileNames.clear();
 		}
 		else {
-			selectedFileNames = new HashSet<String>(Arrays.asList(selectedFiles));
+			selectedFileNames = new HashSet<String>(selectedFiles);
 		}
 	}
 
@@ -248,12 +247,12 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param selectedFolders
 	 *            The names of the folders.
 	 */
-	public final void setSelectedFolders(final String[] selectedFolders) {
+	public final void setSelectedFolders(final ArrayList<String> selectedFolders) {
 		if (selectedFolders == null) {
 			selectedFolderNames.clear();
 		}
 		else {
-			selectedFolderNames = new HashSet<String>(Arrays.asList(selectedFolders));
+			selectedFolderNames = new HashSet<String>(selectedFolders);
 		}
 	}
 
@@ -267,6 +266,33 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		for (ThumbImageView view : viewCache.getCachedImages()) {
 			view.setMarkable(markable);
 		}
+	}
+
+	/**
+	 * If in selection mode, select all images. If all images are selected, then deselect all images.
+	 *
+	 * @return true if all have been selected, false if all have been deselected or if not in selection mode.
+	 */
+	public final boolean toggleSelectAll() {
+		if (selectionMode == SelectionMode.MULTIPLE) {
+			if (selectedFileNames.size() < fileNames.size() || selectedFolderNames.size() < folderNames.size()) {
+				setSelectedFiles(fileNames);
+				setSelectedFolders(folderNames);
+				for (ThumbImageView view : viewCache.getCachedImages()) {
+					view.setMarked(true);
+				}
+				return true;
+			}
+			else {
+				setSelectedFiles(null);
+				setSelectedFolders(null);
+				for (ThumbImageView view : viewCache.getCachedImages()) {
+					view.setMarked(false);
+				}
+				return false;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -522,6 +548,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 			}
 			return result;
 		}
+
 	}
 
 }

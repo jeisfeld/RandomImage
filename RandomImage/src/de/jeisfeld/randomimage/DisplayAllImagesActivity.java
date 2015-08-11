@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -94,9 +95,9 @@ public class DisplayAllImagesActivity extends Activity {
 
 		if (savedInstanceState != null) {
 			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
-			adapter.setSelectedFiles(selectedFiles);
+			adapter.setSelectedFiles((ArrayList<String>) Arrays.asList(selectedFiles));
 			String[] selectedFolders = savedInstanceState.getStringArray("selectedFolders");
-			adapter.setSelectedFolders(selectedFolders);
+			adapter.setSelectedFolders((ArrayList<String>) Arrays.asList(selectedFolders));
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 			changeAction(currentAction);
 		}
@@ -278,6 +279,15 @@ public class DisplayAllImagesActivity extends Activity {
 			return true;
 		case R.id.action_cancel:
 			changeAction(CurrentAction.DISPLAY);
+			return true;
+		case R.id.action_select_all:
+			boolean markingStatus = adapter.toggleSelectAll();
+			for (int i = 0; i < gridView.getChildCount(); i++) {
+				View imageView = gridView.getChildAt(i);
+				if (imageView instanceof ThumbImageView) {
+					((ThumbImageView) imageView).setMarked(markingStatus);
+				}
+			}
 			return true;
 		default:
 			return false;

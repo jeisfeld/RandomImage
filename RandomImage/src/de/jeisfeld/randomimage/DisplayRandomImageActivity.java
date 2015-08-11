@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -93,6 +94,11 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 		else {
 			imageList = ImageRegistry.getImageListByName(listName);
+			if (imageList == null) {
+				Log.e(Application.TAG, "Could not load image list");
+				DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
+				return;
+			}
 		}
 
 		if (currentFileName == null) {

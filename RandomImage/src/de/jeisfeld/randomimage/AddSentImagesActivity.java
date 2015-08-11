@@ -8,6 +8,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
@@ -66,6 +67,12 @@ public class AddSentImagesActivity extends Activity {
 	 */
 	private void addImages(final String listName) {
 		ImageList imageList = ImageRegistry.getImageListByName(listName);
+		if (imageList == null) {
+			Log.e(Application.TAG, "Could not load image list");
+			DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
+			return;
+		}
+
 		Intent intent = getIntent();
 
 		if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {

@@ -7,11 +7,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.widget.RemoteViews;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -45,7 +48,14 @@ public class ImageWidget extends AppWidgetProvider {
 
 			String listName = getListName(appWidgetId);
 
-			String fileName = ImageRegistry.getImageListByName(listName).getRandomFileName();
+			ImageList imageList = ImageRegistry.getImageListByName(listName);
+			if (imageList == null) {
+				Log.e(Application.TAG, "Could not load image list");
+				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+				return;
+			}
+
+			String fileName = imageList.getRandomFileName();
 
 			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 		}
@@ -58,9 +68,16 @@ public class ImageWidget extends AppWidgetProvider {
 
 		String listName = getListName(appWidgetId);
 
+		ImageList imageList = ImageRegistry.getImageListByName(listName);
+		if (imageList == null) {
+			Log.e(Application.TAG, "Could not load image list");
+			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+			return;
+		}
+
 		String fileName = currentFileNames.get(appWidgetId);
 		if (fileName == null) {
-			fileName = ImageRegistry.getImageListByName(listName).getRandomFileName();
+			fileName = imageList.getRandomFileName();
 		}
 
 		setImage(context, appWidgetManager, appWidgetId, listName, fileName);

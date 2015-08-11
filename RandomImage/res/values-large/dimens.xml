@@ -4,5 +4,7 @@
     <dimen name="activity_horizontal_margin">32dp</dimen>
     <dimen name="activity_vertical_margin">32dp</dimen>
     <dimen name="grid_pictures_size">180dp</dimen>
+    <dimen name="grid_text_size">18sp</dimen>
+    <dimen name="grid_folder_bottom_size">60sp</dimen>
 
 </resources>

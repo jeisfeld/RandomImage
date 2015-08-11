@@ -4,11 +4,14 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -99,7 +102,15 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		@Override
 		public final void onCreate() {
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
-			fileNames = imageList.getShuffledFileNames();
+
+			if (imageList == null) {
+				Log.e(Application.TAG, "Could not load image list");
+				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+				fileNames = new String[0];
+			}
+			else {
+				fileNames = imageList.getShuffledFileNames();
+			}
 		}
 
 		@Override
@@ -173,7 +184,14 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 			// create new image list
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
-			fileNames = imageList.getShuffledFileNames();
+			if (imageList == null) {
+				Log.e(Application.TAG, "Could not load image list");
+				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+				fileNames = new String[0];
+			}
+			else {
+				fileNames = imageList.getShuffledFileNames();
+			}
 		}
 	}
 }

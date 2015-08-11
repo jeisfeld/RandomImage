@@ -124,7 +124,7 @@ public final class ImageList {
 								allImageFileSet.addAll(getImageFilesInFolder(line));
 							}
 							else {
-								if (ImageUtil.isImage(file)) {
+								if (ImageUtil.isImage(file, false)) {
 									fileNames.add(line);
 									allImageFileSet.add(line);
 								}
@@ -265,7 +265,7 @@ public final class ImageList {
 		File[] files = folder.listFiles();
 		if (files != null) {
 			for (File file : files) {
-				if (ImageUtil.isImage(file)) {
+				if (ImageUtil.isImage(file, false)) {
 					result.add(file.getAbsolutePath());
 				}
 			}

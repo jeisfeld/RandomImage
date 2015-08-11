@@ -30,15 +30,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:gravity="center"
-        android:height="40dp"
-        android:maxHeight="40dp"
-        android:minHeight="40dp"
+        android:height="@dimen/grid_folder_bottom_size"
+        android:maxHeight="@dimen/grid_folder_bottom_size"
+        android:minHeight="@dimen/grid_folder_bottom_size"
         android:paddingBottom="0dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="0dp"
         android:textColor="@android:color/black"
-        android:textSize="12sp" >
+        android:textSize="@dimen/grid_text_size" >
     </TextView>
 
     <CheckBox

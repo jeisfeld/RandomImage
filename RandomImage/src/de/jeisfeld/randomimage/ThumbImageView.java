@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 
 /**
  * A view for displaying a thumbnail.
@@ -227,12 +228,15 @@ public class ThumbImageView extends FrameLayout {
 	public final void setFolderName(final String folderName) {
 		if (isFolder) {
 			TextView textViewName = (TextView) findViewById(R.id.textViewFolderName);
-			textViewName.setText(folderName);
-
+			if (folderName.length() > 50) { // MAGIC_NUMBER
+				textViewName.setText(folderName.substring(0, 50)); // MAGIC_NUMBER
+			}
+			else {
+				textViewName.setText(folderName);
+			}
 			if (folderName.length() > 25) { // MAGIC_NUMBER
-				textViewName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10); // MAGIC_NUMBER
+				textViewName.setTextSize(TypedValue.COMPLEX_UNIT_SP, SystemUtil.isTablet() ? 15 : 10); // MAGIC_NUMBER
 			}
 		}
 	}
-
 }

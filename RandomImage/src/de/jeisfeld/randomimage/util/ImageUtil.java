@@ -2,7 +2,9 @@ package de.jeisfeld.randomimage.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.ContentResolver;
@@ -37,6 +39,12 @@ public final class ImageUtil {
 	 * Number of milliseconds for retry of getting bitmap.
 	 */
 	private static final long BITMAP_RETRY = 50;
+
+	/**
+	 * The file endings considered as image files.
+	 */
+	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
+			new String[] { "JPG", "JPEG", "PNG", "BMP", "TIF", "TIFF", "GIF" });
 
 	/**
 	 * Hide default constructor.
@@ -267,11 +275,23 @@ public final class ImageUtil {
 	 *
 	 * @param file
 	 *            The file
+	 * @param strict
+	 *            if true, then the file content will be checked, otherwise the suffix is sufficient.
 	 * @return true if it is an image file.
 	 */
-	public static boolean isImage(final File file) {
+	public static boolean isImage(final File file, final boolean strict) {
 		if (file == null || !file.exists() || file.isDirectory()) {
 			return false;
+		}
+		if (!strict) {
+			String fileName = file.getName();
+			int index = fileName.lastIndexOf('.');
+			if (index >= 0) {
+				String suffix = fileName.substring(index + 1);
+				if (IMAGE_SUFFIXES.contains(suffix.toUpperCase(Locale.getDefault()))) {
+					return true;
+				}
+			}
 		}
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;

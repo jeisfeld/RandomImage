@@ -28,13 +28,13 @@
     <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
-    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
-    <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
+    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string><string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
+<string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
     <!-- Messages of dialogs -->
-    <string name="dialog_info_new_list">Ihre Bildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen. Sie können auch Ihre Galerie-App nutzen und von dort Bilder an die Zufallsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
-    <string name="dialog_info_add_images">Bitte wählen Sie in der Galerie einige Bilder, die sie in dieser App verwenden wollen. Gehen Sie zurück zur App, wenn Sie keine Bilder mehr hinzufügen wollen.</string>
-    <string name="dialog_info_add_folder">Bitte wählen Sie in der Galerie ein Bild im Verzeichnis, das Sie in dieser App verwenden wollen.</string>
+    <string name="dialog_info_new_list">Ihre Zufallsbild-liste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.\n\nSie können auch Ihre Galerie-App nutzen und von dort Bilder an die Zufallsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
+    <string name="dialog_info_add_images">Bitte wählen Sie in der Galerie einige Bilder, die sie in Ihre Zufallsbild-Liste aufnehmen wollen. Gehen Sie zurück zur App, wenn Sie keine Bilder mehr hinzufügen wollen.</string>
+    <string name="dialog_info_add_folder">Bitte wählen Sie in der Galerie ein Bild im Verzeichnis, das Sie zu Ihrer Zufallsbild-Liste hinzufügen wollen.</string>
     <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
