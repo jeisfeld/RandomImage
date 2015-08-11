@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 
@@ -16,6 +18,11 @@ import de.jeisfeld.randomimage.util.MediaStoreUtil;
  * A view for displaying a thumbnail.
  */
 public class ThumbImageView extends FrameLayout {
+	/**
+	 * The context in which this is used.
+	 */
+	private Context context;
+
 	/**
 	 * Flag indicating if the view is marked. (Similar to selection, but more stable)
 	 */
@@ -84,12 +91,7 @@ public class ThumbImageView extends FrameLayout {
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-
-		LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		layoutInflater.inflate(R.layout.view_thumb_image, this, true);
-
-		imageView = (ImageView) findViewById(R.id.imageViewThumb);
-		checkBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
+		this.context = context;
 	}
 
 	/**
@@ -101,11 +103,21 @@ public class ThumbImageView extends FrameLayout {
 	 *            The image to be displayed.
 	 * @param sameThread
 	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
+	 * @param isImageFolder
+	 *            flag indicating if this view is the thumb of a folder.
 	 * @param postActivities
 	 *            Activities that may be run on the UI thread after loading the image.
 	 */
 	public final void setImage(final Activity activity, final String fileName, final boolean sameThread,
-			final Runnable postActivities) {
+			final boolean isImageFolder, final Runnable postActivities) {
+		this.isFolder = isImageFolder;
+
+		LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		layoutInflater.inflate(isFolder ? R.layout.view_thumb_image_folder : R.layout.view_thumb_image, this, true);
+
+		imageView = (ImageView) findViewById(R.id.imageViewThumb);
+		checkBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
+
 		if (sameThread) {
 			loadImage(activity, fileName, postActivities);
 		}
@@ -207,14 +219,20 @@ public class ThumbImageView extends FrameLayout {
 	}
 
 	/**
-	 * Set the folder status of the view.
+	 * Set the folderName for display.
 	 *
-	 * @param folder
-	 *            true if the view is representing a folder.
+	 * @param folderName
+	 *            the folderName to be displayed.
 	 */
-	public final void setFolder(final boolean folder) {
-		isFolder = folder;
-		// TODO: ensure that this is somehow displayed.
+	public final void setFolderName(final String folderName) {
+		if (isFolder) {
+			TextView textViewName = (TextView) findViewById(R.id.textViewFolderName);
+			textViewName.setText(folderName);
+
+			if (folderName.length() > 25) { // MAGIC_NUMBER
+				textViewName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10); // MAGIC_NUMBER
+			}
+		}
 	}
 
 }

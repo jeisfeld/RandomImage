@@ -1,0 +1,54 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutThumbImageView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/text_initializing"
+        android:padding="3dp"
+        android:src="@drawable/folder_background" />
+
+    <ImageView
+        android:id="@+id/imageViewThumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/text_initializing"
+        android:padding="10dp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/text_initializing"
+        android:padding="3dp"
+        android:src="@drawable/folder_foreground" />
+
+    <TextView
+        android:id="@+id/textViewFolderName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:gravity="center"
+        android:height="40dp"
+        android:maxHeight="40dp"
+        android:minHeight="40dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="0dp"
+        android:textColor="@android:color/black"
+        android:textSize="12sp" >
+    </TextView>
+
+    <CheckBox
+        android:id="@+id/checkBoxMark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:button="@drawable/checkbox_negative"
+        android:checked="false"
+        android:clickable="false"
+        android:visibility="invisible" />
+
+</FrameLayout>

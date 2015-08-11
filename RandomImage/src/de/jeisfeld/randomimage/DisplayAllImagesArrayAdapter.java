@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -158,19 +159,19 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				displayFileName = imageFiles.iterator().next();
 			}
 
-			thumbImageView.setImage(activity, displayFileName, sameThread, new Runnable() {
+			thumbImageView.setImage(activity, displayFileName, sameThread, true, new Runnable() {
 				@Override
 				public void run() {
 					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
 					thumbImageView.setMarked(selectedFolderNames.contains(fileName));
-					thumbImageView.setFolder(true);
+					thumbImageView.setFolderName(new File(fileName).getName());
 				}
 			});
 		}
 		else {
 			fileName = fileNames.get(position - folderNames.size());
 
-			thumbImageView.setImage(activity, fileName, sameThread, new Runnable() {
+			thumbImageView.setImage(activity, fileName, sameThread, false, new Runnable() {
 				@Override
 				public void run() {
 					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
