@@ -2,13 +2,12 @@ package de.jeisfeld.randomimage.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.View;
 import android.widget.RemoteViews;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
@@ -17,22 +16,11 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * The extended widget, also displaying a changing image.
  */
-public class ImageWidget extends AppWidgetProvider {
-	/**
-	 * Number of pixels per dip.
-	 */
-	private static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
-
-	/**
-	 * The names of the image lists associated to the widget.
-	 */
-	private static SparseArray<String> listNames = new SparseArray<String>();
-
+public class ImageWidget extends GenericWidget {
 	/**
 	 * The file names of the currently displayed images - mapped from appWidgetId.
 	 */
@@ -40,25 +28,18 @@ public class ImageWidget extends AppWidgetProvider {
 
 	@Override
 	public final void
-			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
-
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			int appWidgetId = appWidgetIds[i];
-
-			String listName = getListName(appWidgetId);
-
-			ImageList imageList = ImageRegistry.getImageListByName(listName);
-			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list");
-				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-				return;
-			}
-
-			String fileName = imageList.getRandomFileName();
-
-			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
+					final String listName) {
+		ImageList imageList = ImageRegistry.getImageListByName(listName);
+		if (imageList == null) {
+			Log.e(Application.TAG, "Could not load image list");
+			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+			return;
 		}
+
+		String fileName = imageList.getRandomFileName();
+
+		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 	}
 
 	@Override
@@ -72,11 +53,10 @@ public class ImageWidget extends AppWidgetProvider {
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-			return;
 		}
 
 		String fileName = currentFileNames.get(appWidgetId);
-		if (fileName == null) {
+		if (fileName == null && imageList != null) {
 			fileName = imageList.getRandomFileName();
 		}
 
@@ -88,33 +68,8 @@ public class ImageWidget extends AppWidgetProvider {
 		super.onDeleted(context, appWidgetIds);
 
 		for (int i = 0; i < appWidgetIds.length; i++) {
-			int appWidgetId = appWidgetIds[i];
-			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
-			currentFileNames.remove(appWidgetId);
-			listNames.remove(appWidgetId);
-
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
+			currentFileNames.remove(appWidgetIds[i]);
 		}
-	}
-
-	/**
-	 * Get the list name associated to an instance of the widget.
-	 *
-	 * @param appWidgetId
-	 *            The app widget id.
-	 * @return The list name.
-	 */
-	private String getListName(final int appWidgetId) {
-		String listName = listNames.get(appWidgetId);
-		if (listName == null) {
-			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
-			if (listName == null || listName.length() == 0) {
-				listName = ImageRegistry.getCurrentListName();
-			}
-			listNames.put(appWidgetId, listName);
-		}
-		return listName;
 	}
 
 	/**
@@ -143,13 +98,12 @@ public class ImageWidget extends AppWidgetProvider {
 		}
 
 		if (fileName == null) {
-			remoteViews.setImageViewResource(
-					R.id.imageViewWidget,
-					R.drawable.ic_launcher);
+			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
 		}
 		else {
 			currentFileNames.put(appWidgetId, fileName);
 
+			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 			remoteViews.setImageViewBitmap(
 					R.id.imageViewWidget,
 					ImageUtil.getImageBitmap(fileName,
@@ -175,14 +129,9 @@ public class ImageWidget extends AppWidgetProvider {
 	 *            The update interval.
 	 */
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
-		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
-		listNames.put(appWidgetId, listName);
 		currentFileNames.remove(appWidgetId);
 
-		if (interval > 0) {
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
-			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval);
-		}
+		doBaseConfiguration(appWidgetId, listName, interval);
 
 		updateInstances(appWidgetId);
 	}
@@ -194,19 +143,7 @@ public class ImageWidget extends AppWidgetProvider {
 	 *            the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	public static final void updateInstances(final int... appWidgetId) {
-		Context context = Application.getAppContext();
-		Intent intent = new Intent(context, ImageWidget.class);
-		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-
-		int[] ids;
-		if (appWidgetId.length == 0) {
-			ids = getAllWidgetIds();
-		}
-		else {
-			ids = appWidgetId;
-		}
-		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-		context.sendBroadcast(intent);
+		updateInstances(ImageWidget.class, appWidgetId);
 	}
 
 	/**
@@ -216,23 +153,7 @@ public class ImageWidget extends AppWidgetProvider {
 	 *            the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	public static final void updateTimers(final int... appWidgetIds) {
-		Context context = Application.getAppContext();
-		int[] ids;
-		if (appWidgetIds.length == 0) {
-			ids = getAllWidgetIds();
-		}
-		else {
-			ids = appWidgetIds;
-		}
-
-		for (int appWidgetId : ids) {
-			long interval =
-					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, 0);
-
-			if (interval > 0) {
-				WidgetAlarmReceiver.setAlarm(context, appWidgetId, interval);
-			}
-		}
+		updateTimers(ImageWidget.class, appWidgetIds);
 	}
 
 	/**
@@ -241,9 +162,7 @@ public class ImageWidget extends AppWidgetProvider {
 	 * @return The ids of all widgets of this class.
 	 */
 	public static int[] getAllWidgetIds() {
-		Context context = Application.getAppContext();
-		return AppWidgetManager.getInstance(context).getAppWidgetIds(
-				new ComponentName(context, ImageWidget.class));
+		return getAllWidgetIds(ImageWidget.class);
 	}
 
 	/**
@@ -254,13 +173,7 @@ public class ImageWidget extends AppWidgetProvider {
 	 * @return true if there is an ImageWidget of this id.
 	 */
 	public static boolean hasWidgetOfId(final int appWidgetId) {
-		int[] allAppWidgetIds = getAllWidgetIds();
-		for (int i = 0; i < allAppWidgetIds.length; i++) {
-			if (allAppWidgetIds[i] == appWidgetId) {
-				return true;
-			}
-		}
-		return false;
+		return hasWidgetOfId(ImageWidget.class, appWidgetId);
 	}
 
 }

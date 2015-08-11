@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageViewWidget"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:contentDescription="@layout/text_view_initializing" >
+    android:layout_height="match_parent" >
 
-</ImageView>
+    <ImageView
+        android:id="@+id/imageViewWidget"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@layout/text_view_initializing" >
+    </ImageView>
+
+    <TextView
+        android:id="@+id/textViewWidgetEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#9F000000"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/text_no_image"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</FrameLayout>

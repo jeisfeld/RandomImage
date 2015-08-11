@@ -30,7 +30,6 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	public final void onReceive(final Context context, final Intent intent) {
 		int appWidgetId =
 				intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-
 		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			return;
 		}
@@ -107,7 +106,7 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 
 		alarmMgr.cancel(alarmIntent);
 
-		int[] allWidgetIds = ImageWidget.getAllWidgetIds();
+		int[] allWidgetIds = GenericWidget.getAllWidgetIds();
 		if (allWidgetIds.length == 0 || allWidgetIds.length == 1 && allWidgetIds[0] == appWidgetId) {
 			ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
 			PackageManager pm = context.getPackageManager();

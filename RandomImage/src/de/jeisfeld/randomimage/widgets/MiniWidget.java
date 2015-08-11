@@ -2,67 +2,31 @@ package de.jeisfeld.randomimage.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.SparseArray;
 import android.widget.RemoteViews;
-import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
-import de.jeisfeld.randomimage.util.ImageRegistry;
-import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * The base widget, allowing to open the app for a specific list.
  */
-public class MiniWidget extends AppWidgetProvider {
-	/**
-	 * The names of the image lists associated to the widget.
-	 */
-	private static SparseArray<String> listNames = new SparseArray<String>();
-
+public class MiniWidget extends GenericWidget {
 	@Override
 	public final void
-			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
+			onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
+					final String listName) {
 
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			int appWidgetId = appWidgetIds[i];
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
 
-			String listName = getListName(appWidgetId);
+		remoteViews.setTextViewText(R.id.textViewWidget, listName);
 
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
+		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, true);
+		PendingIntent pendingIntent =
+				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-			remoteViews.setTextViewText(R.id.textViewWidget, listName);
-
-			Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, true);
-			PendingIntent pendingIntent =
-					PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-			remoteViews.setOnClickPendingIntent(R.id.textViewWidget, pendingIntent);
-			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
-		}
-	}
-
-	/**
-	 * Get the list name associated to an instance of the widget.
-	 *
-	 * @param appWidgetId
-	 *            The app widget id.
-	 * @return The list name.
-	 */
-	private String getListName(final int appWidgetId) {
-		String listName = listNames.get(appWidgetId);
-		if (listName == null) {
-			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
-			if (listName == null || listName.length() == 0) {
-				listName = ImageRegistry.getCurrentListName();
-			}
-			listNames.put(appWidgetId, listName);
-		}
-		return listName;
+		remoteViews.setOnClickPendingIntent(R.id.textViewWidget, pendingIntent);
+		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 
 	/**
@@ -74,8 +38,8 @@ public class MiniWidget extends AppWidgetProvider {
 	 *            The list name to be used by the widget.
 	 */
 	public static final void configure(final int appWidgetId, final String listName) {
-		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
-		listNames.put(appWidgetId, listName);
+		doBaseConfiguration(appWidgetId, listName, 0);
+
 		updateInstances(appWidgetId);
 	}
 
@@ -86,21 +50,16 @@ public class MiniWidget extends AppWidgetProvider {
 	 *            the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	public static final void updateInstances(final int... appWidgetId) {
-		Context context = Application.getAppContext();
-		Intent intent = new Intent(context, MiniWidget.class);
-		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		updateInstances(MiniWidget.class, appWidgetId);
+	}
 
-		int[] ids;
-		if (appWidgetId.length == 0) {
-			ids =
-					AppWidgetManager.getInstance(context).getAppWidgetIds(
-							new ComponentName(Application.getAppContext(), MiniWidget.class));
-		}
-		else {
-			ids = appWidgetId;
-		}
-		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-		context.sendBroadcast(intent);
+	/**
+	 * Get the ids of all widgets of this class.
+	 *
+	 * @return The ids of all widgets of this class.
+	 */
+	public static int[] getAllWidgetIds() {
+		return getAllWidgetIds(MiniWidget.class);
 	}
 
 }
