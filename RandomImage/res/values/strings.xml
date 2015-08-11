@@ -16,12 +16,6 @@
     <string name="button_dont_show">Do not show again</string>
     <string name="default_list_name">Image List</string>
 
-    <!-- Partial strings used to construct other strings -->
-    <string name="partial_image_single">one image</string>
-    <string name="partial_image_multiple">%1$d images</string>
-    <string name="partial_folder_single">one folder</string>
-    <string name="partial_folder_multiple">%1$d folders</string>
-
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Remove images</string>
     <string name="menu_remove_images">Remove selected images</string>

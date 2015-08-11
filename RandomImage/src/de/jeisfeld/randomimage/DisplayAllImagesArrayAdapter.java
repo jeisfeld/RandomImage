@@ -213,8 +213,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @return The selected files.
 	 */
-	public final String[] getSelectedFiles() {
-		return new ArrayList<String>(selectedFileNames).toArray(new String[0]);
+	public final ArrayList<String> getSelectedFiles() {
+		return new ArrayList<String>(selectedFileNames);
 	}
 
 	/**
@@ -237,8 +237,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @return The selected folders.
 	 */
-	public final String[] getSelectedFolders() {
-		return new ArrayList<String>(selectedFolderNames).toArray(new String[0]);
+	public final ArrayList<String> getSelectedFolders() {
+		return new ArrayList<String>(selectedFolderNames);
 	}
 
 	/**

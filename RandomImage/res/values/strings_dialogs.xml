@@ -19,9 +19,8 @@
     <string name="toast_added_images_count_external">Added %1$d images to the random image list “%2$s”</string>
     <string name="toast_added_images_single_external">Added image “%1$s” to the random image list “%2$s”</string>
     <string name="toast_added_images_none_external">All selected images were already in the random image list “%1$s”</string>
-    <string name="toast_removed_images">Removed %1$s from the list</string>
-    <string name="toast_removed_folders">Removed %1$s from the list</string>
-    <string name="toast_removed_folders_images">Removed %1$s and %2$s from the list</string>
+    <string name="toast_removed_multiple">%1$s have been removed from the list</string>
+    <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
     <string name="toast_backup_of_list">Made backup of list “%1$s”</string>
@@ -52,11 +51,18 @@
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%1$s”?</string>
-    <string name="dialog_confirmation_remove_images">Do you really want to remove %3$s from the list “%1$s”?</string>
-    <string name="dialog_confirmation_remove_folders">Do you really want to remove %2$s from the list “%1$s”?</string>
-    <string name="dialog_confirmation_remove_folders_images">Do you really want to remove %2$s and %3$s from the list “%1$s”?</string>
+    <string name="dialog_confirmation_remove">Do you really want to remove %2$s from the list “%1$s”?</string>
     <string name="dialog_confirmation_overwrite_list">The image list “%1$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup">The backup list “%1$s” exists already. Do you want to overwrite it?</string>
+
+    <!-- Partial strings used to construct other strings -->
+    <string name="partial_none">no images</string>
+    <string name="partial_and">%1$s and %2$s</string>
+    <string name="partial_image_single">the image “%1$s”</string>
+    <string name="partial_image_multiple">%1$d images</string>
+    <string name="partial_folder_single">the folder “%1$s”</string>
+    <string name="partial_folder_two">the folders „%1$s“ and „%2$s“</string>
+    <string name="partial_folder_multiple">%1$d folders</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">

@@ -1,7 +1,9 @@
 package de.jeisfeld.randomimage.util;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
@@ -110,7 +113,7 @@ public final class DialogUtil {
 			bundle.putInt(PARAM_SKIPPREFERENCE, skipDialogResource);
 		}
 
-		String message = String.format(activity.getString(messageResource), args);
+		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putString(PARAM_TITLE, activity.getString(R.string.title_dialog_info));
 		bundle.putInt(PARAM_ICON, R.drawable.ic_title_info);
@@ -133,7 +136,7 @@ public final class DialogUtil {
 	 *            arguments for the error message
 	 */
 	public static void displayToast(final Context context, final int resource, final Object... args) {
-		String message = String.format(context.getString(resource), args);
+		String message = capitalizeFirst(String.format(context.getString(resource), args));
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 
@@ -154,7 +157,7 @@ public final class DialogUtil {
 	public static void displayConfirmationMessage(final Activity activity,
 			final ConfirmDialogListener listener, final int buttonResource,
 			final int messageResource, final Object... args) {
-		String message = String.format(activity.getString(messageResource), args);
+		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_BUTTON_RESOURCE, buttonResource);
@@ -185,7 +188,7 @@ public final class DialogUtil {
 	public static void displayInputDialog(final Activity activity,
 			final RequestInputDialogListener listener, final int titleResource, final int buttonResource,
 			final String textValue, final int messageResource, final Object... args) {
-		String message = String.format(activity.getString(messageResource), args);
+		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
@@ -219,7 +222,7 @@ public final class DialogUtil {
 			final SelectFromListDialogListener listener, final int iconId, final int titleResource,
 			final ArrayList<String> listValues,
 			final int messageResource, final Object... args) {
-		String message = String.format(activity.getString(messageResource), args);
+		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
 		Bundle bundle = new Bundle();
 		if (iconId != 0) {
 			bundle.putInt(PARAM_ICON, iconId);
@@ -253,6 +256,85 @@ public final class DialogUtil {
 			final SelectFromListDialogListener listener, final int titleResource, final ArrayList<String> listValues,
 			final int messageResource, final Object... args) {
 		displayListSelectionDialog(activity, listener, 0, titleResource, listValues, messageResource, args);
+	}
+
+	/**
+	 * Create a message sub-string telling about the number and names of folders and or files.
+	 *
+	 * @param folderList
+	 *            The list of folders.
+	 * @param imageList
+	 *            The list of files.
+	 * @return The message sub-string.
+	 */
+	public static String createFileFolderMessageString(final ArrayList<String> folderList,
+			final ArrayList<String> imageList) {
+		int folderCount = folderList.size();
+		int imageCount = imageList.size();
+
+		String imageString = imageCount == 1
+				? getFormattedString(R.string.partial_image_single, new File(imageList.get(0)).getName())
+				: getFormattedString(R.string.partial_image_multiple, imageCount);
+
+		String folderString;
+		switch (folderCount) {
+		case 1:
+			folderString = getFormattedString(R.string.partial_folder_single, new File(folderList.get(0)).getName());
+			break;
+		case 2:
+			folderString = getFormattedString(R.string.partial_folder_two, new File(folderList.get(0)).getName(),
+					new File(folderList.get(1)).getName());
+			break;
+		default:
+			folderString = getFormattedString(R.string.partial_folder_multiple, folderCount);
+			break;
+		}
+
+		if (folderCount == 0) {
+			if (imageCount == 0) {
+				return Application.getResourceString(R.string.partial_none);
+			}
+			else {
+				return imageString;
+			}
+		}
+		else {
+			if (imageCount == 0) {
+				return folderString;
+			}
+			else {
+				return getFormattedString(R.string.partial_and, folderString, imageString);
+			}
+		}
+	}
+
+	/**
+	 * Get a formatted String out of a message resource and parameter strings.
+	 *
+	 * @param resource
+	 *            The message resource.
+	 * @param args
+	 *            The parameter strings.
+	 * @return The formatted string.
+	 */
+	private static String getFormattedString(final int resourceId, final Object... args) {
+		return String.format(Application.getResourceString(resourceId), args);
+	}
+
+	/**
+	 * Capitalize the first letter of a String.
+	 *
+	 * @param input
+	 *            The input String
+	 * @return The same string with the first letter capitalized.
+	 */
+	private static String capitalizeFirst(final String input) {
+		if (input == null || input.length() == 0) {
+			return input;
+		}
+		else {
+			return input.substring(0, 1).toUpperCase(Locale.getDefault()) + input.substring(1);
+		}
 	}
 
 	/**
