@@ -5,8 +5,8 @@
     <string name="mini_widget_name">Mini Widget</string>
     <string name="image_widget_name">Random Image Frame</string>
     <string name="stacked_image_widget_name">Stacked Image Frame</string>
+    <string name="title_activity_display_image_details">Image Details</string>
     <string name="title_activity_display_images">Random Image</string>
-    <string name="title_launcher_display_images">Random Image Setup</string>
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="text_no_image">No image</string>
     <string name="button_ok">OK</string>
@@ -16,6 +16,11 @@
     <string name="button_overwrite">Overwrite</string>
     <string name="button_dont_show">Do not show again</string>
     <string name="default_list_name">Image List</string>
+
+    <!-- Strings for image info -->
+    <string name="info_file_name">File name:</string>
+    <string name="info_file_location">Folder:</string>
+    <string name="info_file_date">Date:</string>
 
     <!-- Strings for menus -->
     <string name="menu_select_images_for_removal">Remove images</string>
@@ -33,5 +38,7 @@
     <string name="menu_create_list">Create new image list</string>
     <string name="menu_switch_list">Switch image list</string>
     <string name="menu_delete_list">Delete image list</string>
+    <string name="menu_remove_from_list">Remove image from list</string>
+    <string name="menu_display_list">Display image list</string>
 
 </resources>

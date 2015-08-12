@@ -237,13 +237,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				// TODO: menu with further options.
-				if (preventDisplayAll) {
-					finish();
-				}
-				else {
-					DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
-				}
+				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, currentFileName, listName);
 			}
 
 		});
@@ -263,12 +257,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 	@Override
 	public final boolean onPrepareOptionsMenu(final Menu menu) {
-		if (preventDisplayAll) {
-			finish();
-		}
-		else {
-			DisplayAllImagesActivity.startActivity(this, listName);
-		}
+		DisplayImageDetailsActivity.startActivity(this, currentFileName, listName);
 		return true;
 	}
 
