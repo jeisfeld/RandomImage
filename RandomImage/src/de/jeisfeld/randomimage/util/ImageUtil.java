@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -299,6 +300,38 @@ public final class ImageUtil {
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(file.getPath(), options);
 		return options.outWidth >= 0 - 1 && options.outHeight >= 0;
+	}
+
+	/**
+	 * Get the list of image files in a folder.
+	 *
+	 * @param folderName
+	 *            The folder name.
+	 * @return The list of image files in this folder.
+	 */
+	public static ArrayList<String> getImagesInFolder(final String folderName) {
+		ArrayList<String> fileNames = new ArrayList<String>();
+		if (folderName == null) {
+			return fileNames;
+		}
+		File folder = new File(folderName);
+		if (!folder.exists() || !folder.isDirectory()) {
+			return fileNames;
+		}
+		File[] imageFiles = folder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(final File file) {
+				return isImage(file, false);
+			}
+		});
+		if (imageFiles == null) {
+			return fileNames;
+		}
+
+		for (File file : imageFiles) {
+			fileNames.add(file.getAbsolutePath());
+		}
+		return fileNames;
 	}
 
 	/**

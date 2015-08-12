@@ -185,22 +185,22 @@ public final class ImageRegistry {
 	 *
 	 * @param name
 	 *            The name of the list
-	 * @return true if successful.
+	 * @return the backup file path if successful.
 	 */
-	public static boolean backupImageList(final String name) {
+	public static String backupImageList(final String name) {
 		File configFile = configFileMap.get(name);
 		File oldBackupFile = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
 
 		if (configFile == null) {
 			Log.e(Application.TAG, "Could not find config file of " + name + " for backup.");
-			return false;
+			return null;
 		}
 
 		if (!BACKUP_FILE_FOLDER.exists()) {
 			boolean success = BACKUP_FILE_FOLDER.mkdir();
 			if (!success) {
 				Log.e(Application.TAG, "Could not create backup dir " + BACKUP_FILE_FOLDER.getAbsolutePath());
-				return false;
+				return null;
 			}
 		}
 
@@ -209,7 +209,7 @@ public final class ImageRegistry {
 			oldBackupFile.delete();
 		}
 
-		return FileUtil.copyFile(configFile, backupFile);
+		return FileUtil.copyFile(configFile, backupFile) ? backupFile.getAbsolutePath() : null;
 	}
 
 	/**

@@ -20,6 +20,12 @@ import de.jeisfeld.randomimage.util.SystemUtil;
  */
 public class ThumbImageView extends FrameLayout {
 	/**
+	 * The thumb size in pixels.
+	 */
+	private static final int THUMB_SIZE = Math.min(Application.getAppContext().getResources()
+			.getDimensionPixelSize(R.dimen.grid_pictures_size), MediaStoreUtil.MINI_THUMB_SIZE);
+
+	/**
 	 * The context in which this is used.
 	 */
 	private Context context;
@@ -150,7 +156,7 @@ public class ThumbImageView extends FrameLayout {
 			imageBitmap = ImageUtil.getDummyBitmap();
 		}
 		else {
-			imageBitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+			imageBitmap = ImageUtil.getImageBitmap(fileName, THUMB_SIZE);
 		}
 		activity.runOnUiThread(new Runnable() {
 			@Override

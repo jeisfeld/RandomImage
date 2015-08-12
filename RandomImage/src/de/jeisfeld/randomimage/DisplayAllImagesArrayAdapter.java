@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import android.content.Context;
@@ -159,9 +160,9 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 		if (isFolder) {
 			fileName = folderNames.get(position);
 
-			Set<String> imageFiles = ImageList.getImageFilesInFolder(fileName);
+			ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(fileName));
 			if (imageFiles.size() > 0) {
-				displayFileName = imageFiles.iterator().next();
+				displayFileName = imageFiles.get(new Random().nextInt(imageFiles.size()));
 			}
 			else {
 				displayFileName = null;

@@ -550,10 +550,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 										@Override
 										public void onDialogPositiveClick(final DialogFragment dialog2) {
-											boolean success = ImageRegistry.backupImageList(text);
-											DialogUtil.displayToast(DisplayAllImagesActivity.this,
-													success ? R.string.toast_backup_of_list
-															: R.string.toast_failed_to_backup_list, text);
+											doBackup(text);
 										}
 
 										@Override
@@ -564,10 +561,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 						}
 						else {
-							boolean success = ImageRegistry.backupImageList(text);
-							DialogUtil.displayToast(DisplayAllImagesActivity.this,
-									success ? R.string.toast_backup_of_list
-											: R.string.toast_failed_to_backup_list, text);
+							doBackup(text);
 						}
 					}
 
@@ -577,6 +571,24 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					}
 				}, R.string.title_dialog_select_list_name, listNames,
 						R.string.dialog_select_list_for_backup);
+	}
+
+	/**
+	 * Make a backup of the list without querying.
+	 *
+	 * @param listToBeBackuped
+	 *            The list name.
+	 */
+	private void doBackup(final String listToBeBackuped) {
+		String backupFile = ImageRegistry.backupImageList(listToBeBackuped);
+		DialogUtil.displayToast(DisplayAllImagesActivity.this,
+				backupFile == null ? R.string.toast_failed_to_backup_list
+						: R.string.toast_backup_of_list, listToBeBackuped);
+		if (backupFile != null) {
+			DialogUtil.displayInfo(DisplayAllImagesActivity.this, null,
+					R.string.key_info_backup, R.string.dialog_info_backup, listToBeBackuped,
+					backupFile);
+		}
 	}
 
 	/**

@@ -1,7 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -72,36 +70,19 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * Fill the view with the images of a folder.
 	 */
 	private void fillListOfImagesFromFolder() {
-		if (folderName == null) {
-			finish();
-			return;
-		}
-		File folder = new File(folderName);
-		if (!folder.exists() || !folder.isDirectory()) {
-			finish();
-			return;
-		}
-		File[] imageFiles = folder.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(final File file) {
-				return ImageUtil.isImage(file, false);
-			}
-		});
-		if (imageFiles == null || imageFiles.length == 0) {
-			finish();
-			return;
-		}
+		fileNames = ImageUtil.getImagesInFolder(folderName);
 
-		fileNames = new ArrayList<String>();
-		for (File file : imageFiles) {
-			fileNames.add(file.getAbsolutePath());
+		if (fileNames.size() == 0) {
+			// do not show activity for empty folder.
+			finish();
+			return;
 		}
 
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
 
-		setAdapter(null, fileNames, folder.getAbsolutePath());
+		setAdapter(null, fileNames, folderName);
 	}
 
 	@Override

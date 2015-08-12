@@ -42,6 +42,7 @@
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
     <string name="dialog_info_name_already_existing">The name “%1$s” already exists - please choose another one.</string>
     <string name="dialog_info_delete_widgets">On your home screen, there are widgets for the name “%1$s”. Please remember to remove these.</string>
+    <string name="dialog_info_backup">The backup of the list “%1$s” is completed. The backup is located in the file “%2$s”.</string>
     <string name="dialog_input_enter_list_name_new">Please enter a name for the new list.</string>
     <string name="dialog_input_enter_list_name_cloned">Please enter a name for the cloned list.</string>
     <string name="dialog_input_enter_list_name_changed">Please enter the new name of the list.</string>
@@ -93,5 +94,6 @@
     <string name="key_info_add_images" translatable="false">info_add_images</string>
     <string name="key_info_add_folder" translatable="false">info_add_folder</string>
     <string name="key_info_delete_images" translatable="false">info_delete_images</string>
+    <string name="key_info_backup" translatable="false">info_backup</string>
 
 </resources>
