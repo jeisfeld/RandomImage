@@ -199,11 +199,16 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				case NONE:
 					if (isFolder) {
 						DisplayImagesFromFolderActivity.startActivity(activity, fileName);
-						// ImageUtil.showFileInGallery(activity, displayFileName);
 					}
 					else {
-						activity.startActivity(DisplayRandomImageActivity
-								.createIntent(activity, null, displayFileName, true));
+						if (activity instanceof DisplayImagesFromFolderActivity) {
+							DisplayRandomImageActivity.startActivityForFolder(activity, new File(fileName).getParent(),
+									displayFileName);
+						}
+						else {
+							activity.startActivity(DisplayRandomImageActivity
+									.createIntent(activity, null, displayFileName, true));
+						}
 					}
 					break;
 				case ONE:

@@ -1,5 +1,8 @@
 package de.jeisfeld.randomimage;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,23 +14,29 @@ import android.view.MotionEvent;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.RandomFileProvider;
 
 /**
  * Display a random image.
  */
 public class DisplayRandomImageActivity extends Activity {
 	/**
-	 * The resource key for the input folder.
+	 * The resource key for the image list.
 	 */
 	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 	/**
-	 * The resource key for the input folder.
+	 * The resource key for the image folder.
+	 */
+	public static final String STRING_EXTRA_FOLDERNAME = "de.jeisfeld.randomimage.FOLDERNAME";
+	/**
+	 * The resource key for the file name.
 	 */
 	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
 	/**
-	 * The resource key for the input folder.
+	 * The resource key for the flat indicating if it should be prevented to trigger the DisplayAllImagesActivity.
 	 */
-	public static final String STRING_EXTRA_FIXED_IMAGE = "de.jeisfeld.randomimage.FIXED_IMAGE";
+	public static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
 
 	/**
 	 * The name of the used image list.
@@ -47,10 +56,10 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The imageList used by the activity.
 	 */
-	private ImageList imageList;
+	private RandomFileProvider randomFileProvider;
 
 	/**
-	 * Static helper method to create an intent for this activitz.
+	 * Static helper method to create an intent for this activity.
 	 *
 	 * @param context
 	 *            The context in which this activity is started.
@@ -71,7 +80,7 @@ public class DisplayRandomImageActivity extends Activity {
 		if (fileName != null) {
 			intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		}
-		intent.putExtra(STRING_EXTRA_FIXED_IMAGE, preventDisplayAll);
+		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, preventDisplayAll);
 
 		if (preventDisplayAll) {
 			intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -80,6 +89,27 @@ public class DisplayRandomImageActivity extends Activity {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		}
 		return intent;
+	}
+
+	/**
+	 * Static helper method to start the activity for the contents of an image folder.
+	 *
+	 * @param context
+	 *            The context starting this activity.
+	 * @param folderName
+	 *            the name of the folder whose images should be displayed.
+	 * @param fileName
+	 *            the name of the file that should be displayed first
+	 *
+	 */
+	public static final void startActivityForFolder(final Context context, final String folderName,
+			final String fileName) {
+		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
+		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
+		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, true);
+		context.startActivity(intent);
 	}
 
 	@Override
@@ -99,23 +129,34 @@ public class DisplayRandomImageActivity extends Activity {
 			currentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		}
 
-		preventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_FIXED_IMAGE, false);
+		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 
-		if (listName == null) {
-			listName = ImageRegistry.getCurrentListName();
-			imageList = ImageRegistry.getCurrentImageList();
-			if (currentFileName == null) {
-				// Reload the file when starting the app.
-				imageList.load();
-			}
+		preventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
+
+		if (folderName != null) {
+			// If folderName is provided, then use the list of images in this folder.
+			randomFileProvider = new FolderRandomFileProvider(folderName, currentFileName);
 		}
 		else {
-			imageList = ImageRegistry.getImageListByName(listName);
-			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list");
-				DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
-				return;
+			// Otherwise, use the imageList.
+			ImageList imageList;
+			if (listName == null) {
+				listName = ImageRegistry.getCurrentListName();
+				imageList = ImageRegistry.getCurrentImageList();
+				if (currentFileName == null) {
+					// Reload the file when starting the app.
+					imageList.load();
+				}
 			}
+			else {
+				imageList = ImageRegistry.getImageListByName(listName);
+				if (imageList == null) {
+					Log.e(Application.TAG, "Could not load image list");
+					DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
+					return;
+				}
+			}
+			randomFileProvider = imageList;
 		}
 
 		if (currentFileName == null) {
@@ -147,7 +188,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return false if there was no image to be displayed.
 	 */
 	private boolean displayRandomImage() {
-		currentFileName = imageList.getRandomFileName();
+		currentFileName = randomFileProvider.getRandomFileName();
 		if (currentFileName == null) {
 			DisplayAllImagesActivity.startActivity(this, listName);
 			finish();
@@ -236,4 +277,44 @@ public class DisplayRandomImageActivity extends Activity {
 	 */
 	private void test() {
 	}
+
+	/**
+	 * A class allowing to select a random file name out of an image folder.
+	 */
+	private final class FolderRandomFileProvider implements RandomFileProvider {
+		/**
+		 * The list of files in the folder, being the base of the provider.
+		 */
+		private ArrayList<String> fileNames;
+
+		/**
+		 * The file name returned if there is no image file in the folder.
+		 */
+		private String defaultFileName;
+
+		/**
+		 * Constructor initializing with the folder name.
+		 *
+		 * @param folderName
+		 *            The folder name.
+		 * @param defaultFileName
+		 *            The file name returned if there is no image file in the folder.
+		 */
+		private FolderRandomFileProvider(final String folderName, final String defaultFileName) {
+			fileNames = ImageUtil.getImagesInFolder(folderName);
+			this.defaultFileName = defaultFileName;
+		}
+
+		@Override
+		public String getRandomFileName() {
+			if (fileNames.size() > 0) {
+				return fileNames.get(new Random().nextInt(fileNames.size()));
+			}
+			else {
+				return defaultFileName;
+			}
+		}
+
+	}
+
 }

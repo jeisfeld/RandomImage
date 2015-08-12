@@ -22,7 +22,7 @@ import de.jeisfeld.randomimage.widgets.GenericWidget;
 /**
  * Utility class for storing and persisting a list of image file names plus additional display information.
  */
-public final class ImageList {
+public final class ImageList implements RandomFileProvider {
 	/**
 	 * Name of the property for the list name.
 	 */
@@ -403,6 +403,7 @@ public final class ImageList {
 	 *
 	 * @return A random file name.
 	 */
+	@Override
 	public String getRandomFileName() {
 		if (allImageFiles.size() > 0) {
 			return allImageFiles.get(new Random().nextInt(allImageFiles.size()));

@@ -2,7 +2,7 @@ package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -30,19 +30,19 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
+	 * @param context
+	 *            The context starting this activity.
 	 * @param folderName
 	 *            the name of the folder which should be displayed.
-	 * @param activity
-	 *            The activity starting this activity.
 	 *
 	 */
-	public static final void startActivity(final Activity activity, final String folderName) {
-		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
+	public static final void startActivity(final Context context, final String folderName) {
+		Intent intent = new Intent(context, DisplayImagesFromFolderActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		if (folderName != null) {
 			intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
 		}
-		activity.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	@Override
