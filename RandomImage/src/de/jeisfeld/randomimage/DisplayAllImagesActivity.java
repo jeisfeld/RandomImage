@@ -107,6 +107,14 @@ public class DisplayAllImagesActivity extends Activity {
 		}
 	}
 
+	@Override
+	protected final void onDestroy() {
+		super.onDestroy();
+		if (adapter != null) {
+			adapter.cleanupCache();
+		}
+	}
+
 	/**
 	 * Fill the view with the current list of images.
 	 */
@@ -119,6 +127,17 @@ public class DisplayAllImagesActivity extends Activity {
 		adapter = new DisplayAllImagesArrayAdapter(this, folderNames, fileNames);
 		gridView.setAdapter(adapter);
 		textViewListName.setText(ImageRegistry.getCurrentListName());
+	}
+
+	/**
+	 * Remove any DisplayRandomImageActivity that may be on top of this activity.
+	 */
+	protected final void bringOnTop() {
+		Intent reorderIntent = new Intent(this, DisplayRandomImageActivity.class);
+		reorderIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		Intent displayAllIntent = new Intent(this, DisplayAllImagesActivity.class);
+		displayAllIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivities(new Intent[] { reorderIntent, displayAllIntent });
 	}
 
 	@Override
