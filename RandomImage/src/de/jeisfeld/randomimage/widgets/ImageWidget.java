@@ -32,12 +32,14 @@ public class ImageWidget extends GenericWidget {
 					final String listName) {
 		ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList == null) {
-			Log.e(Application.TAG, "Could not load image list");
+			Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-			return;
 		}
 
-		String fileName = imageList.getRandomFileName();
+		String fileName = null;
+		if (imageList != null) {
+			fileName = imageList.getRandomFileName();
+		}
 
 		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 	}
@@ -51,11 +53,12 @@ public class ImageWidget extends GenericWidget {
 
 		ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList == null) {
-			Log.e(Application.TAG, "Could not load image list");
+			Log.e(Application.TAG, "Could not load image list " + listName + " for ImageWidget option change");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 		}
 
 		String fileName = currentFileNames.get(appWidgetId);
+
 		if (fileName == null && imageList != null) {
 			fileName = imageList.getRandomFileName();
 		}

@@ -226,6 +226,25 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	}
 
 	/**
+	 * Retrieve all widgetIds for widgets related to a specific list name.
+	 *
+	 * @param listName
+	 *            The list name.
+	 * @return The ids of widgets configured for this list name.
+	 */
+	public static ArrayList<Integer> getWidgetIdsForName(final String listName) {
+		ArrayList<Integer> widgetIdsForName = new ArrayList<Integer>();
+
+		for (int appWidgetId : getAllWidgetIds()) {
+			if (listName.equals(getListName(appWidgetId))) {
+				widgetIdsForName.add(appWidgetId);
+			}
+		}
+
+		return widgetIdsForName;
+	}
+
+	/**
 	 * Update the list name in all widgets.
 	 *
 	 * @param oldName

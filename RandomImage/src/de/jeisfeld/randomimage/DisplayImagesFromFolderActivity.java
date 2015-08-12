@@ -1,0 +1,112 @@
+package de.jeisfeld.randomimage;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageUtil;
+
+/**
+ * Activity to display the list of images of a folder.
+ */
+public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
+	/**
+	 * The resource key for the folder whose images should be displayed.
+	 */
+	public static final String STRING_EXTRA_FOLDERNAME = "de.jeisfeld.randomimage.FOLDERNAME";
+
+	/**
+	 * The names of the files to be displayed.
+	 */
+	private ArrayList<String> fileNames;
+
+	/**
+	 * The folder whose images should be displayed.
+	 */
+	private String folderName;
+
+	/**
+	 * Static helper method to start the activity to display the contents of a folder.
+	 *
+	 * @param folderName
+	 *            the name of the folder which should be displayed.
+	 * @param activity
+	 *            The activity starting this activity.
+	 *
+	 */
+	public static final void startActivity(final Activity activity, final String folderName) {
+		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		if (folderName != null) {
+			intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
+		}
+		activity.startActivity(intent);
+	}
+
+	@Override
+	protected final void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
+
+		fillListOfImagesFromFolder();
+
+		if (fileNames.size() == 0) {
+			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
+		}
+	}
+
+	@Override
+	protected final void onDestroy() {
+		super.onDestroy();
+		if (getAdapter() != null) {
+			getAdapter().cleanupCache();
+		}
+	}
+
+	/**
+	 * Fill the view with the images of a folder.
+	 */
+	private void fillListOfImagesFromFolder() {
+		if (folderName == null) {
+			finish();
+			return;
+		}
+		File folder = new File(folderName);
+		if (!folder.exists() || !folder.isDirectory()) {
+			finish();
+			return;
+		}
+		File[] imageFiles = folder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(final File file) {
+				return ImageUtil.isImage(file, false);
+			}
+		});
+		if (imageFiles == null || imageFiles.length == 0) {
+			finish();
+			return;
+		}
+
+		fileNames = new ArrayList<String>();
+		for (File file : imageFiles) {
+			fileNames.add(file.getAbsolutePath());
+		}
+
+		if (getAdapter() != null) {
+			getAdapter().cleanupCache();
+		}
+
+		setAdapter(null, fileNames, folder.getAbsolutePath());
+	}
+
+	@Override
+	protected final void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
+
+}

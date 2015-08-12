@@ -131,6 +131,10 @@ public final class ImageRegistry {
 		if (name == null) {
 			return false;
 		}
+		else if (currentImageList != null && name.equals(currentImageList.getListName())) {
+			currentImageList.load();
+			return true;
+		}
 
 		File configFile = getConfigFile(name);
 

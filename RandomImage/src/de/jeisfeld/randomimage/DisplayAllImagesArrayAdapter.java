@@ -14,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
-import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
 /**
@@ -34,7 +33,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * The activity holding this adapter.
 	 */
-	private final DisplayAllImagesActivity activity;
+	private final DisplayImageListActivity activity;
 
 	/**
 	 * The names of the folders.
@@ -101,16 +100,22 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param fileNames
 	 *            The names of files to be displayed.
 	 */
-	public DisplayAllImagesArrayAdapter(final DisplayAllImagesActivity activity,
+	public DisplayAllImagesArrayAdapter(final DisplayImageListActivity activity,
 			final ArrayList<String> folderNames, final ArrayList<String> fileNames) {
 		super(activity, R.layout.text_view_initializing);
-
-		addAll(folderNames);
-		addAll(fileNames);
-
 		this.activity = activity;
-		this.folderNames = folderNames;
+
+		if (folderNames == null) {
+			this.folderNames = new ArrayList<String>();
+		}
+		else {
+			this.folderNames = folderNames;
+			addAll(folderNames);
+		}
+
+		addAll(fileNames);
 		this.fileNames = fileNames;
+
 		this.viewCache = new ViewCache(fileNames.size() - 1, PRELOAD_SIZE);
 	}
 
@@ -122,7 +127,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public DisplayAllImagesArrayAdapter(final Context context) {
 		super(context, R.layout.text_view_initializing);
-		this.activity = (DisplayAllImagesActivity) context;
+		this.activity = (DisplayImageListActivity) context;
 	}
 
 	@Override
@@ -192,8 +197,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				switch (selectionMode) {
 				case NONE:
 					if (isFolder) {
-						// TODO: use custom gallery
-						ImageUtil.showFileInGallery(activity, displayFileName);
+						DisplayImagesFromFolderActivity.startActivity(activity, fileName);
+						// ImageUtil.showFileInGallery(activity, displayFileName);
 					}
 					else {
 						activity.startActivity(DisplayRandomImageActivity

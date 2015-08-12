@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridView;
-import android.widget.TextView;
 import de.jeisfeld.randomimage.DisplayAllImagesArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
@@ -21,13 +19,14 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.widgets.GenericWidget;
 
 /**
  * Activity to display the list of images configured for this app.
  */
-public class DisplayAllImagesActivity extends Activity {
+public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	/**
-	 * The resource key for the input folder.
+	 * The resource key for the name of the image list to be displayed.
 	 */
 	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 
@@ -42,19 +41,9 @@ public class DisplayAllImagesActivity extends Activity {
 	private ArrayList<String> fileNames;
 
 	/**
-	 * The view showing the photos.
+	 * The name of the image list to be displayed.
 	 */
-	private GridView gridView;
-
-	/**
-	 * The view showing the name of the list.
-	 */
-	private TextView textViewListName;
-
-	/**
-	 * The adapter handling the list of images.
-	 */
-	private DisplayAllImagesArrayAdapter adapter;
+	private String listName;
 
 	/**
 	 * The current action within this activity.
@@ -81,23 +70,25 @@ public class DisplayAllImagesActivity extends Activity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_images);
 
-		String listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
-		if (listName != null && !listName.equals(ImageRegistry.getCurrentListName())) {
-			ImageRegistry.switchToImageList(listName, CreationStyle.NONE);
+		if (savedInstanceState != null) {
+			listName = savedInstanceState.getString("listName");
+		}
+		else {
+			listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		}
 
-		gridView = (GridView) findViewById(R.id.gridViewDisplayImages);
-		textViewListName = (TextView) findViewById(R.id.textViewListName);
+		if (listName == null) {
+			listName = ImageRegistry.getCurrentListName();
+		}
 
-		fillListOfImages();
+		switchToImageList(listName, CreationStyle.NONE);
 
 		if (savedInstanceState != null) {
 			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
-			adapter.setSelectedFiles(new ArrayList<String>(Arrays.asList(selectedFiles)));
+			getAdapter().setSelectedFiles(new ArrayList<String>(Arrays.asList(selectedFiles)));
 			String[] selectedFolders = savedInstanceState.getStringArray("selectedFolders");
-			adapter.setSelectedFolders(new ArrayList<String>(Arrays.asList(selectedFolders)));
+			getAdapter().setSelectedFolders(new ArrayList<String>(Arrays.asList(selectedFolders)));
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 			changeAction(currentAction);
 		}
@@ -110,8 +101,8 @@ public class DisplayAllImagesActivity extends Activity {
 	@Override
 	protected final void onDestroy() {
 		super.onDestroy();
-		if (adapter != null) {
-			adapter.cleanupCache();
+		if (getAdapter() != null) {
+			getAdapter().cleanupCache();
 		}
 	}
 
@@ -121,12 +112,10 @@ public class DisplayAllImagesActivity extends Activity {
 	private void fillListOfImages() {
 		fileNames = ImageRegistry.getCurrentImageList().getFileNames();
 		folderNames = ImageRegistry.getCurrentImageList().getFolderNames();
-		if (adapter != null) {
-			adapter.cleanupCache();
+		if (getAdapter() != null) {
+			getAdapter().cleanupCache();
 		}
-		adapter = new DisplayAllImagesArrayAdapter(this, folderNames, fileNames);
-		gridView.setAdapter(adapter);
-		textViewListName.setText(ImageRegistry.getCurrentListName());
+		setAdapter(folderNames, fileNames, listName);
 	}
 
 	/**
@@ -230,8 +219,8 @@ public class DisplayAllImagesActivity extends Activity {
 		case R.id.action_remove_images:
 			final ImageList imageList = ImageRegistry.getCurrentImageList();
 
-			final ArrayList<String> imagesToBeRemoved = adapter.getSelectedFiles();
-			final ArrayList<String> foldersToBeRemoved = adapter.getSelectedFolders();
+			final ArrayList<String> imagesToBeRemoved = getAdapter().getSelectedFiles();
+			final ArrayList<String> foldersToBeRemoved = getAdapter().getSelectedFolders();
 
 			String imageFolderString = DialogUtil.createFileFolderMessageString(foldersToBeRemoved, imagesToBeRemoved);
 
@@ -247,10 +236,10 @@ public class DisplayAllImagesActivity extends Activity {
 					public void onDialogPositiveClick(final DialogFragment dialog) {
 						ArrayList<String> removedFolders = new ArrayList<String>();
 						ArrayList<String> removedImages = new ArrayList<String>();
-						for (String folderName : foldersToBeRemoved) {
-							boolean isRemoved = imageList.removeFolder(folderName);
+						for (String removeFolderName : foldersToBeRemoved) {
+							boolean isRemoved = imageList.removeFolder(removeFolderName);
 							if (isRemoved) {
-								removedFolders.add(folderName);
+								removedFolders.add(removeFolderName);
 							}
 						}
 						for (String fileName : imagesToBeRemoved) {
@@ -287,7 +276,7 @@ public class DisplayAllImagesActivity extends Activity {
 					public void onDialogNegativeClick(final DialogFragment dialog) {
 						// do nothing.
 					}
-				}, R.string.button_remove, R.string.dialog_confirmation_remove, ImageRegistry.getCurrentListName(),
+				}, R.string.button_remove, R.string.dialog_confirmation_remove, listName,
 						imageFolderString);
 
 			}
@@ -300,9 +289,9 @@ public class DisplayAllImagesActivity extends Activity {
 			changeAction(CurrentAction.DISPLAY);
 			return true;
 		case R.id.action_select_all:
-			boolean markingStatus = adapter.toggleSelectAll();
-			for (int i = 0; i < gridView.getChildCount(); i++) {
-				View imageView = gridView.getChildAt(i);
+			boolean markingStatus = getAdapter().toggleSelectAll();
+			for (int i = 0; i < getGridView().getChildCount(); i++) {
+				View imageView = getGridView().getChildAt(i);
 				if (imageView instanceof ThumbImageView) {
 					((ThumbImageView) imageView).setMarked(markingStatus);
 				}
@@ -360,9 +349,7 @@ public class DisplayAllImagesActivity extends Activity {
 							}, 0, R.string.dialog_info_name_already_existing, name);
 						}
 						else {
-							ImageRegistry.switchToImageList(name, creationStyle);
-							invalidateOptionsMenu();
-							fillListOfImages();
+							switchToImageList(name, creationStyle);
 						}
 					}
 
@@ -376,12 +363,31 @@ public class DisplayAllImagesActivity extends Activity {
 	}
 
 	/**
+	 * Switch to the image list with the given name.
+	 *
+	 * @param name
+	 *            The name of the target image list.
+	 * @param creationStyle
+	 *            Flag indicating if the list should be created if non-existing.
+	 *
+	 * @return true if successful.
+	 */
+	private boolean switchToImageList(final String name, final CreationStyle creationStyle) {
+		listName = name;
+		boolean success = ImageRegistry.switchToImageList(name, creationStyle);
+		if (success) {
+			fillListOfImages();
+			invalidateOptionsMenu();
+		}
+		return success;
+	}
+
+	/**
 	 * Switch to another image list after selecting the list.
 	 */
 	private void switchImageList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		String currentName = ImageRegistry.getCurrentListName();
-		listNames.remove(currentName);
+		listNames.remove(listName);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
@@ -393,7 +399,7 @@ public class DisplayAllImagesActivity extends Activity {
 					@Override
 					public void
 							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-						ImageRegistry.switchToImageList(text, CreationStyle.NONE);
+						switchToImageList(text, CreationStyle.NONE);
 						fillListOfImages();
 					}
 
@@ -410,8 +416,7 @@ public class DisplayAllImagesActivity extends Activity {
 	 */
 	private void deleteImageList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		String currentName = ImageRegistry.getCurrentListName();
-		listNames.remove(currentName);
+		listNames.remove(listName);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
@@ -433,6 +438,12 @@ public class DisplayAllImagesActivity extends Activity {
 									@Override
 									public void onDialogPositiveClick(final DialogFragment dialog1) {
 										ImageRegistry.deleteImageList(text);
+
+										if (GenericWidget.getWidgetIdsForName(text).size() > 0) {
+											DialogUtil.displayInfo(DisplayAllImagesActivity.this, null, 0,
+													R.string.dialog_info_delete_widgets, text);
+										}
+
 										invalidateOptionsMenu();
 									}
 
@@ -497,7 +508,7 @@ public class DisplayAllImagesActivity extends Activity {
 						else {
 							boolean success = ImageRegistry.renameCurrentList(name);
 							if (success) {
-								ImageRegistry.switchToImageList(name, CreationStyle.NONE);
+								switchToImageList(name, CreationStyle.NONE);
 								invalidateOptionsMenu();
 								fillListOfImages();
 							}
@@ -508,7 +519,7 @@ public class DisplayAllImagesActivity extends Activity {
 					public void onDialogNegativeClick(final DialogFragment dialog) {
 						// do nothing
 					}
-				}, R.string.title_dialog_enter_list_name, R.string.button_ok, ImageRegistry.getCurrentListName(),
+				}, R.string.title_dialog_enter_list_name, R.string.button_ok, listName,
 						R.string.dialog_input_enter_list_name_changed);
 	}
 
@@ -599,9 +610,8 @@ public class DisplayAllImagesActivity extends Activity {
 											DialogUtil.displayToast(DisplayAllImagesActivity.this,
 													success ? R.string.toast_restore_of_list
 															: R.string.toast_failed_to_restore_list, text);
-											invalidateOptionsMenu();
-											if (text.equals(ImageRegistry.getCurrentListName())) {
-												fillListOfImages();
+											if (success) {
+												switchToImageList(text, CreationStyle.NONE);
 											}
 										}
 
@@ -617,9 +627,8 @@ public class DisplayAllImagesActivity extends Activity {
 							DialogUtil.displayToast(DisplayAllImagesActivity.this,
 									success ? R.string.toast_restore_of_list
 											: R.string.toast_failed_to_restore_list, text);
-							invalidateOptionsMenu();
-							if (text.equals(ImageRegistry.getCurrentListName())) {
-								fillListOfImages();
+							if (success) {
+								switchToImageList(text, CreationStyle.NONE);
 							}
 						}
 					}
@@ -639,7 +648,7 @@ public class DisplayAllImagesActivity extends Activity {
 	 *            the new action.
 	 */
 	private void changeAction(final CurrentAction action) {
-		if (action != null) {
+		if (action == CurrentAction.DELETE || action == CurrentAction.DISPLAY) {
 			currentAction = action;
 			setMarkabilityStatus(action == CurrentAction.DELETE);
 			invalidateOptionsMenu();
@@ -653,24 +662,25 @@ public class DisplayAllImagesActivity extends Activity {
 	 *            The markability status.
 	 */
 	private void setMarkabilityStatus(final boolean markable) {
-		adapter.setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.NONE);
+		getAdapter().setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.NONE);
 
-		for (int i = 0; i < gridView.getChildCount(); i++) {
-			View imageView = gridView.getChildAt(i);
+		for (int i = 0; i < getGridView().getChildCount(); i++) {
+			View imageView = getGridView().getChildAt(i);
 			if (imageView instanceof ThumbImageView) {
 				((ThumbImageView) imageView).setMarkable(markable);
 			}
 		}
-		adapter.setMarkabilityStatus(markable);
+		getAdapter().setMarkabilityStatus(markable);
 	}
 
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable("currentAction", currentAction);
-		if (adapter != null) {
-			outState.putStringArray("selectedFiles", adapter.getSelectedFiles().toArray(new String[0]));
-			outState.putStringArray("selectedFolders", adapter.getSelectedFolders().toArray(new String[0]));
+		outState.putSerializable("listName", listName);
+		if (getAdapter() != null) {
+			outState.putStringArray("selectedFiles", getAdapter().getSelectedFiles().toArray(new String[0]));
+			outState.putStringArray("selectedFolders", getAdapter().getSelectedFolders().toArray(new String[0]));
 		}
 	}
 
@@ -678,8 +688,11 @@ public class DisplayAllImagesActivity extends Activity {
 	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (requestCode == AddImagesFromGalleryActivity.REQUEST_CODE) {
 			int addedImagesCount = AddImagesFromGalleryActivity.getAddedImageCountFromResult(resultCode, data);
-			if (addedImagesCount > 0) {
+			if (addedImagesCount > 1) {
 				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
+			}
+			else if (addedImagesCount == 1) {
+				DialogUtil.displayToast(this, R.string.toast_added_images_single);
 			}
 			String addedFolder = AddImagesFromGalleryActivity.getAddedFolderFromResult(resultCode, data);
 			if (addedFolder != null) {

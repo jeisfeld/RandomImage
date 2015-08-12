@@ -57,14 +57,17 @@
         </activity>
         <activity
             android:name=".DisplayAllImagesActivity"
-            android:launchMode="singleInstance"
-            android:label="@string/title_activity_display_images"
-            android:windowSoftInputMode="adjustResize" >
+            android:label="@string/title_launcher_display_images"
+            android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".DisplayImagesFromFolderActivity"
+            android:label="@string/title_launcher_display_images" >
         </activity>
         <activity android:name=".AddImagesFromGalleryActivity" >
         </activity>

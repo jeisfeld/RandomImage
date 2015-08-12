@@ -13,6 +13,7 @@
     <string name="toast_added_image_none">Das Bild “%1$s” war bereits in der Liste.</string>
     <string name="toast_added_image_error">Unerwarteter Fehler beim Versuch, ein Bild hinzuzufügen.</string>
     <string name="toast_added_images_count">Es wurden %1$d Bilder hinzugefügt</string>
+    <string name="toast_added_images_single">Es wurde ein Bild hinzugefügt.</string>
     <string name="toast_added_folder">Das Verzeichnis “%1$s” wurde hinzugefügt</string>
     <string name="toast_added_folder_none">Das Verzeichnis “%1$s” war bereits in der Liste.</string>
     <string name="toast_added_folder_error">Unerwarteter Fehler beim Versuch, ein Verzeichnis hinzuzufügen.</string>
@@ -28,8 +29,9 @@
     <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
-    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string><string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
-<string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
+    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
+    <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
+    <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_new_list">Ihre Zufallsbild-liste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.\n\nSie können auch Ihre Galerie-App nutzen und von dort Bilder an die Zufallsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
@@ -39,6 +41,7 @@
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
+    <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich widgets für die Liste „%1$s“. Bitte denken Sie daran, diese zu entfernen.</string>
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>
     <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>

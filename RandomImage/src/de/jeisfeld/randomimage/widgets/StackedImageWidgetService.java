@@ -104,7 +104,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
 
 			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list");
+				Log.e(Application.TAG, "Could not load image list " + listName + " for StackedImageWidget creation");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 				fileNames = new String[0];
 			}
@@ -185,7 +185,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			// create new image list
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
 			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list");
+				Log.e(Application.TAG, "Could not load image list " + listName + " for StackedImageWidget data change");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 				fileNames = new String[0];
 			}

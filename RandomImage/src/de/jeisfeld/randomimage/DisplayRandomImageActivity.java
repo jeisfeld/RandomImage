@@ -235,6 +235,5 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Method for temporary tests.
 	 */
 	private void test() {
-
 	}
 }
