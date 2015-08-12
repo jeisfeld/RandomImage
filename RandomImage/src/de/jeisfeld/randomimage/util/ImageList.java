@@ -306,7 +306,7 @@ public final class ImageList {
 			return false;
 		}
 		else {
-			folderNames.add(fileName);
+			fileNames.add(fileName);
 			return true;
 		}
 	}

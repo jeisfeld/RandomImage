@@ -24,6 +24,10 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The resource key for the input folder.
 	 */
 	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
+	/**
+	 * The resource key for the input folder.
+	 */
+	public static final String STRING_EXTRA_FIXED_IMAGE = "de.jeisfeld.randomimage.FIXED_IMAGE";
 
 	/**
 	 * The name of the used image list.
@@ -34,6 +38,11 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The name of the displayed file.
 	 */
 	private String currentFileName;
+
+	/**
+	 * flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 */
+	private boolean preventDisplayAll;
 
 	/**
 	 * The imageList used by the activity.
@@ -49,12 +58,12 @@ public class DisplayRandomImageActivity extends Activity {
 	 *            the image list which should be taken.
 	 * @param fileName
 	 *            the image file name which should be displayed first.
-	 * @param cancelActivityStack
-	 *            flag indicating if the intent should cancel all existing app activities and put the new one on top.
+	 * @param preventDisplayAll
+	 *            flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName,
-			final boolean cancelActivityStack) {
+			final boolean preventDisplayAll) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -62,7 +71,12 @@ public class DisplayRandomImageActivity extends Activity {
 		if (fileName != null) {
 			intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		}
-		if (cancelActivityStack) {
+		intent.putExtra(STRING_EXTRA_FIXED_IMAGE, preventDisplayAll);
+
+		if (preventDisplayAll) {
+			intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		}
+		else {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		}
 		return intent;
@@ -75,6 +89,7 @@ public class DisplayRandomImageActivity extends Activity {
 		if (savedInstanceState != null) {
 			listName = savedInstanceState.getString("listName");
 			currentFileName = savedInstanceState.getString("currentFileName");
+			preventDisplayAll = savedInstanceState.getBoolean("preventDisplayAll");
 		}
 
 		if (listName == null) {
@@ -83,6 +98,8 @@ public class DisplayRandomImageActivity extends Activity {
 		if (currentFileName == null) {
 			currentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		}
+
+		preventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_FIXED_IMAGE, false);
 
 		if (listName == null) {
 			listName = ImageRegistry.getCurrentListName();
@@ -156,7 +173,12 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public boolean onDoubleTap(final MotionEvent e) {
-				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
+				if (preventDisplayAll) {
+					finish();
+				}
+				else {
+					DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
+				}
 				return true;
 			}
 
@@ -175,7 +197,12 @@ public class DisplayRandomImageActivity extends Activity {
 			@Override
 			public void onLongPress(final MotionEvent e) {
 				// TODO: menu with further options.
-				DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
+				if (preventDisplayAll) {
+					finish();
+				}
+				else {
+					DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
+				}
 			}
 
 		});
@@ -189,12 +216,18 @@ public class DisplayRandomImageActivity extends Activity {
 		if (currentFileName != null) {
 			outState.putString("currentFileName", currentFileName);
 			outState.putString("listName", listName);
+			outState.putBoolean("preventDisplayAll", preventDisplayAll);
 		}
 	}
 
 	@Override
 	public final boolean onPrepareOptionsMenu(final Menu menu) {
-		DisplayAllImagesActivity.startActivity(this, listName);
+		if (preventDisplayAll) {
+			finish();
+		}
+		else {
+			DisplayAllImagesActivity.startActivity(this, listName);
+		}
 		return true;
 	}
 

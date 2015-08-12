@@ -95,9 +95,9 @@ public class DisplayAllImagesActivity extends Activity {
 
 		if (savedInstanceState != null) {
 			String[] selectedFiles = savedInstanceState.getStringArray("selectedFiles");
-			adapter.setSelectedFiles((ArrayList<String>) Arrays.asList(selectedFiles));
+			adapter.setSelectedFiles(new ArrayList<String>(Arrays.asList(selectedFiles)));
 			String[] selectedFolders = savedInstanceState.getStringArray("selectedFolders");
-			adapter.setSelectedFolders((ArrayList<String>) Arrays.asList(selectedFolders));
+			adapter.setSelectedFolders(new ArrayList<String>(Arrays.asList(selectedFolders)));
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 			changeAction(currentAction);
 		}

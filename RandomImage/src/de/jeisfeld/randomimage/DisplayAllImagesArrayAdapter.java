@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.content.Context;
-import android.content.Intent;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
-import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
@@ -193,13 +192,12 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				switch (selectionMode) {
 				case NONE:
 					if (isFolder) {
+						// TODO: use custom gallery
 						ImageUtil.showFileInGallery(activity, displayFileName);
 					}
 					else {
-						Intent displayImageIntent = DisplayRandomImageActivity.createIntent(activity,
-								ImageRegistry.getCurrentListName(),
-								displayFileName, false);
-						activity.startActivity(displayImageIntent);
+						activity.startActivity(DisplayRandomImageActivity
+								.createIntent(activity, null, displayFileName, true));
 					}
 					break;
 				case ONE:
@@ -485,7 +483,12 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 			Thread preloadThread = new Thread() {
 				@Override
 				public void run() {
-					doPreload(position, atEnd);
+					try {
+						doPreload(position, atEnd);
+					}
+					catch (Exception e) {
+						Log.e(Application.TAG, "Exception while preloading.", e);
+					}
 				}
 			};
 
