@@ -24,7 +24,7 @@ public class AddImagesFromGalleryActivity extends Activity {
 	/**
 	 * Request code with which this activity is started.
 	 */
-	public static final int REQUEST_CODE = 1;
+	public static final int REQUEST_CODE = 3;
 	/**
 	 * Request code for getting images from gallery.
 	 */

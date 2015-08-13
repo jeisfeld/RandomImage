@@ -1,10 +1,12 @@
 package de.jeisfeld.randomimage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,10 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.jeisfeld.randomimage.util.DateUtil;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ListMenuView;
@@ -42,6 +48,10 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * The resource key for the flag if the parent activity should be finished.
 	 */
 	private static final String STRING_RESULT_FINISH_PARENT = "de.jeisfeld.randomimage.FINISH_PARENT";
+	/**
+	 * The resource key for the flag if the parent activity should be finished.
+	 */
+	private static final String STRING_RESULT_FILE_REMOVED = "de.jeisfeld.randomimage.FILE_REMOVED";
 
 	/**
 	 * The name of the file whose details should be displayed.
@@ -97,38 +107,58 @@ public class DisplayImageDetailsActivity extends Activity {
 
 		textView.setText(getImageInfo());
 
-		listMenu.addItem(R.string.menu_remove_from_list, new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				// TODO
-			}
-		});
-		// if (!preventDisplayAll) {
-		// listMenu.addItem(R.string.menu_display_list, new OnClickListener() {
-		// @Override
-		// public void onClick(final View v) {
-		// DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, listName);
-		// }
-		// });
-		// }
+		final ImageList imageList = ImageRegistry.getImageListByName(listName);
+		if (imageList != null && imageList.contains(fileName)) {
+			listMenu.addItem(R.string.menu_remove_from_list, new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					ArrayList<String> filesToBeRemoved = new ArrayList<String>();
+					filesToBeRemoved.add(fileName);
+					String filesString =
+							DialogUtil.createFileFolderMessageString(new ArrayList<String>(), filesToBeRemoved);
 
-		listMenu.addItem(R.string.menu_display_list, new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				if (preventDisplayAll) {
-					returnResult(true);
+					DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
+							new ConfirmDialogListener() {
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void onDialogPositiveClick(final DialogFragment dialog) {
+									imageList.removeFile(fileName);
+									imageList.update();
+									returnResult(preventDisplayAll, true);
+								}
+
+								@Override
+								public void onDialogNegativeClick(final DialogFragment dialog) {
+									returnResult(false, false);
+								}
+							}, R.string.button_remove, R.string.dialog_confirmation_remove, listName, filesString);
 				}
-				else {
-					DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, listName);
-					returnResult(false);
+			});
+		}
+
+		if (listName != null) {
+			listMenu.addItem(R.string.menu_display_list, new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					if (preventDisplayAll) {
+						returnResult(true, false);
+					}
+					else {
+						DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, listName);
+						returnResult(false, false);
+					}
 				}
-			}
-		});
+			});
+		}
 
 	}
 
 	/**
-	 * Static helper method to extract the result flag.
+	 * Static helper method to extract the finishParent flag.
 	 *
 	 * @param resultCode
 	 *            The result code indicating if the response was successful.
@@ -136,10 +166,29 @@ public class DisplayImageDetailsActivity extends Activity {
 	 *            The activity response data.
 	 * @return the flag if the parent activity should be finished.
 	 */
-	public static final boolean getResult(final int resultCode, final Intent data) {
+	public static final boolean getResultFinishParent(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_FINISH_PARENT);
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * Static helper method to extract the fileRemoved flag.
+	 *
+	 * @param resultCode
+	 *            The result code indicating if the response was successful.
+	 * @param data
+	 *            The activity response data.
+	 * @return the flag if the file was removed.
+	 */
+	public static final boolean getResultFileRemoved(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			Bundle res = data.getExtras();
+			return res.getBoolean(STRING_RESULT_FILE_REMOVED);
 		}
 		else {
 			return false;
@@ -151,10 +200,13 @@ public class DisplayImageDetailsActivity extends Activity {
 	 *
 	 * @param finishParent
 	 *            The flag if the parent activity should be finished.
+	 * @param fileRemoved
+	 *            The flag if the file has been removed from the list.
 	 */
-	private void returnResult(final boolean finishParent) {
+	private void returnResult(final boolean finishParent, final boolean fileRemoved) {
 		Bundle resultData = new Bundle();
 		resultData.putBoolean(STRING_RESULT_FINISH_PARENT, finishParent);
+		resultData.putBoolean(STRING_RESULT_FILE_REMOVED, fileRemoved);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);

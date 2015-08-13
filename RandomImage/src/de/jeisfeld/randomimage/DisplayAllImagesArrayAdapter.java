@@ -207,8 +207,9 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 									displayFileName);
 						}
 						else {
-							activity.startActivity(DisplayRandomImageActivity
-									.createIntent(activity, null, displayFileName, true));
+							activity.startActivityForResult(DisplayRandomImageActivity
+									.createIntent(activity, null, displayFileName, true),
+									DisplayRandomImageActivity.REQUEST_CODE);
 						}
 					}
 					break;

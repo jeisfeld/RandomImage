@@ -698,8 +698,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	}
 
 	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		if (requestCode == AddImagesFromGalleryActivity.REQUEST_CODE) {
+	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+		case AddImagesFromGalleryActivity.REQUEST_CODE:
 			int addedImagesCount = AddImagesFromGalleryActivity.getAddedImageCountFromResult(resultCode, data);
 			if (addedImagesCount > 1) {
 				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
@@ -714,7 +715,15 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			if (addedImagesCount > 0 || addedFolder != null) {
 				fillListOfImages();
 			}
-
+			break;
+		case DisplayRandomImageActivity.REQUEST_CODE:
+			boolean refreshParent = DisplayRandomImageActivity.getResult(resultCode, data);
+			if (refreshParent) {
+				fillListOfImages();
+			}
+			break;
+		default:
+			break;
 		}
 	}
 

@@ -23,6 +23,10 @@ import de.jeisfeld.randomimage.view.PinchImageView;
  */
 public class DisplayRandomImageActivity extends Activity {
 	/**
+	 * The request code used to finish the triggering activity.
+	 */
+	public static final int REQUEST_CODE = 2;
+	/**
 	 * The resource key for the image list.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
@@ -38,6 +42,10 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The resource key for the flat indicating if it should be prevented to trigger the DisplayAllImagesActivity.
 	 */
 	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
+	/**
+	 * The resource key for the flag if the parent activity should be refreshed.
+	 */
+	private static final String STRING_RESULT_REFRESH_PARENT = "de.jeisfeld.randomimage.REFRESH_PARENT";
 
 	/**
 	 * The name of the used image list.
@@ -216,7 +224,9 @@ public class DisplayRandomImageActivity extends Activity {
 			@Override
 			public boolean onDoubleTap(final MotionEvent e) {
 				if (preventDisplayAll) {
-					finish();
+					if (listName != null) {
+						finish();
+					}
 				}
 				else {
 					DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
@@ -267,14 +277,52 @@ public class DisplayRandomImageActivity extends Activity {
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 		case DisplayImageDetailsActivity.REQUEST_CODE:
-			boolean finishParent = DisplayImageDetailsActivity.getResult(resultCode, data);
+			boolean finishParent = DisplayImageDetailsActivity.getResultFinishParent(resultCode, data);
+			boolean fileRemoved = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
 			if (finishParent) {
-				finish();
+				returnResult(fileRemoved);
+			}
+			else if (fileRemoved) {
+				displayRandomImage();
 			}
 			break;
 		default:
 			break;
 		}
+	}
+
+	/**
+	 * Static helper method to extract the result flag.
+	 *
+	 * @param resultCode
+	 *            The result code indicating if the response was successful.
+	 * @param data
+	 *            The activity response data.
+	 * @return the flag if the parent activity should be refreshed.
+	 */
+	public static final boolean getResult(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			Bundle res = data.getExtras();
+			return res.getBoolean(STRING_RESULT_REFRESH_PARENT);
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * Helper method: Return the flag if the parent activity should be finished.
+	 *
+	 * @param refreshParent
+	 *            The flag if the parent activity should be refreshed.
+	 */
+	private void returnResult(final boolean refreshParent) {
+		Bundle resultData = new Bundle();
+		resultData.putBoolean(STRING_RESULT_REFRESH_PARENT, refreshParent);
+		Intent intent = new Intent();
+		intent.putExtras(resultData);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 
 	/**
