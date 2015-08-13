@@ -101,6 +101,7 @@ public class StackedImageWidget extends GenericWidget {
 	 *            The shuffle interval.
 	 */
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatestackedimagewidget);
 		doBaseConfiguration(appWidgetId, listName, interval);
 		updateInstances(appWidgetId);
 	}

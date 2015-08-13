@@ -15,6 +15,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.view.PinchImageView;
 
@@ -178,6 +179,8 @@ public class DisplayRandomImageActivity extends Activity {
 			displayCurrentImage();
 		}
 
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
+
 		test();
 	}
 
@@ -239,6 +242,7 @@ public class DisplayRandomImageActivity extends Activity {
 					final float velocityY) {
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
 					displayRandomImage();
+					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
 					return true;
 				}
 				else {

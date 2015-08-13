@@ -9,4 +9,21 @@
     <string name="key_widget_view_width" translatable="false">widget_view_width</string>
     <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
 
+    <!-- Keys for statistics -->
+    <string name="key_statistics_initialversion" translatable="false">statistics_initialversion</string>
+    <string name="key_statistics_firststarttime" translatable="false">statistics_firststarttime</string>
+    <string name="key_statistics_countstarts" translatable="false">statistics_countstarts</string>
+    <string name="key_statistics_countdisplayrandom" translatable="false">statistics_countdisplayrandom</string>
+    <string name="key_statistics_countdisplayall" translatable="false">statistics_countdisplayall</string>
+    <string name="key_statistics_countcreatelist" translatable="false">statistics_countcreatelist</string>
+    <string name="key_statistics_countaddfiles" translatable="false">statistics_countaddfiles</string>
+    <string name="key_statistics_countaddfolder" translatable="false">statistics_countaddfolder</string>
+    <string name="key_statistics_countaddexternal" translatable="false">statistics_countaddexternal</string>
+    <string name="key_statistics_countcreateminiwidget" translatable="false">statistics_countcreateminiwidget</string>
+    <string name="key_statistics_countcreateimagewidget" translatable="false">statistics_countcreateimagewidget</string>
+    <string name="key_statistics_countcreatestackedimagewidget" translatable="false">statistics_countcreatestackedimagewidget</string>
+    <string name="key_statistics_countfling" translatable="false">statistics_countfling</string>
+    <string name="key_statistics_countbackup" translatable="false">statistics_countbackup</string>
+    <string name="key_statistics_countrestore" translatable="false">statistics_countrestore</string>
+
 </resources>

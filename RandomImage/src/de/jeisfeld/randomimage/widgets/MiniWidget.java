@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * The base widget, allowing to open the app for a specific list.
@@ -38,6 +39,7 @@ public class MiniWidget extends GenericWidget {
 	 *            The list name to be used by the widget.
 	 */
 	public static final void configure(final int appWidgetId, final String listName) {
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateminiwidget);
 		doBaseConfiguration(appWidgetId, listName, 0);
 		updateInstances(appWidgetId);
 	}

@@ -16,6 +16,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * The extended widget, also displaying a changing image.
@@ -132,6 +133,8 @@ public class ImageWidget extends GenericWidget {
 	 *            The update interval.
 	 */
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateimagewidget);
+
 		currentFileNames.remove(appWidgetId);
 
 		doBaseConfiguration(appWidgetId, listName, interval);

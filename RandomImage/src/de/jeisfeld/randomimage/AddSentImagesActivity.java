@@ -13,6 +13,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * Add images sent to the app via intent.
@@ -80,6 +81,7 @@ public class AddSentImagesActivity extends Activity {
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			String addedFileName = imageList.add(imageUri);
 			if (addedFileName != null) {
+				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 				String shortFileName = new File(addedFileName).getName();
 				DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
 				imageList.update();
@@ -101,10 +103,12 @@ public class AddSentImagesActivity extends Activity {
 					}
 				}
 				if (addedFileCount > 1) {
+					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedFileCount, listName);
 					imageList.update();
 				}
 				else if (addedFileCount == 1) {
+					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					String shortFileName = new File(lastAddedFileName).getName();
 					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName,
 							listName);

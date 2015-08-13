@@ -18,6 +18,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.Reques
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
@@ -97,6 +98,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		if (fileNames.size() == 0 && folderNames.size() == 0) {
 			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
 		}
+
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayall);
 	}
 
 	@Override
@@ -183,18 +186,22 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			AddImagesFromGalleryActivity.startActivity(this, true);
 			return true;
 		case R.id.action_backup_list:
+			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
 			backupImageList();
 			return true;
 		case R.id.action_restore_list:
+			PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
 			restoreImageList();
 			return true;
 		case R.id.action_rename_list:
 			renameImageList();
 			return true;
 		case R.id.action_clone_list:
+			PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
 			createNewImageList(CreationStyle.CLONE_CURRENT);
 			return true;
 		case R.id.action_create_list:
+			PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
 			createNewImageList(CreationStyle.CREATE_EMPTY);
 			return true;
 		case R.id.action_switch_list:
@@ -703,13 +710,16 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		case AddImagesFromGalleryActivity.REQUEST_CODE:
 			int addedImagesCount = AddImagesFromGalleryActivity.getAddedImageCountFromResult(resultCode, data);
 			if (addedImagesCount > 1) {
+				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
 				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
 			}
 			else if (addedImagesCount == 1) {
+				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
 				DialogUtil.displayToast(this, R.string.toast_added_images_single);
 			}
 			String addedFolder = AddImagesFromGalleryActivity.getAddedFolderFromResult(resultCode, data);
 			if (addedFolder != null) {
+				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
 				DialogUtil.displayToast(this, R.string.toast_added_folder, addedFolder);
 			}
 			if (addedImagesCount > 0 || addedFolder != null) {

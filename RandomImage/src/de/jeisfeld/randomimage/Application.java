@@ -1,10 +1,11 @@
 package de.jeisfeld.randomimage;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Utility class to retrieve base application resources.
@@ -27,6 +28,19 @@ public class Application extends android.app.Application {
 	public final void onCreate() {
 		super.onCreate();
 		Application.context = getApplicationContext();
+
+		// Set statistics
+		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);
+		if (initialVersion == -1) {
+			PreferenceUtil.setSharedPreferenceInt(R.string.key_statistics_initialversion, getVersion());
+		}
+
+		long firstStartTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_statistics_firststarttime, -1);
+		if (firstStartTime == -1) {
+			PreferenceUtil.setSharedPreferenceLong(R.string.key_statistics_firststarttime, System.currentTimeMillis());
+		}
+
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
 	}
 
 	/**
