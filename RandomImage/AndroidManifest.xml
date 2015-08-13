@@ -58,7 +58,7 @@
         <activity
             android:name=".DisplayAllImagesActivity"
             android:label="@string/title_activity_display_images"
-            android:launchMode="singleInstance" >
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

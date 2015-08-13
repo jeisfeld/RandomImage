@@ -179,9 +179,13 @@ public class PinchImageView extends ImageView {
 		// retrieve bitmap from cache if possible
 		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(),
 				cacheIndex);
+		if (!pathName.equals(mPathName)) {
+			retainFragment.setBitmap(null);
+		}
+
 		mBitmap = retainFragment.getBitmap();
 
-		if (mBitmap == null || !pathName.equals(mPathName)) {
+		if (mBitmap == null) {
 			// populate bitmaps in separate thread, so that screen keeps fluid.
 			// This also ensures that this happens only after view is visible and sized.
 			Thread thread = new Thread() {
