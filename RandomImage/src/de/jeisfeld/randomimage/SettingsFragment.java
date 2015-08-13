@@ -199,6 +199,8 @@ public class SettingsFragment extends PreferenceFragment {
 		@Override
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
 				final boolean isPremium) {
+			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
+
 			// List inventory items.
 			for (PurchasedSku purchase : purchases) {
 				Preference purchasePreference = new Preference(getActivity());
@@ -237,12 +239,13 @@ public class SettingsFragment extends PreferenceFragment {
 	private OnPurchaseSuccessListener onPurchaseSuccessListener = new OnPurchaseSuccessListener() {
 		@Override
 		public void handlePurchase(final Purchase purchase, final boolean addedPremiumProduct) {
+			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, true);
 			MessageDialogListener listener = new MessageDialogListener() {
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void onDialogFinished() {
-					getActivity().finish();
+					((SettingsActivity) getActivity()).returnResult(true);
 				}
 			};
 

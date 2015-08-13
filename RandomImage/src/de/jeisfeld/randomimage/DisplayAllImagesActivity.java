@@ -16,10 +16,12 @@ import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDial
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
+import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 
@@ -143,6 +145,13 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				menu.findItem(R.id.action_switch_list).setEnabled(false);
 				menu.findItem(R.id.action_delete_list).setEnabled(false);
 			}
+
+			if (GoogleBillingHelper.hasPremium() || SystemUtil.isJeDevice()) {
+				menu.findItem(R.id.action_need_premium).setVisible(false);
+			}
+			else {
+				menu.findItem(R.id.action_manage_lists).setVisible(false);
+			}
 			return true;
 		case DELETE:
 			getMenuInflater().inflate(R.menu.delete_images, menu);
@@ -175,8 +184,18 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
 		switch (menuId) {
-		case R.id.action_settings:
-			SettingsActivity.startActivity(this);
+		case R.id.action_need_premium:
+			DialogUtil.displayInfo(this, new MessageDialogListener() {
+				/**
+				 * The serial version id.
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onDialogFinished() {
+					SettingsActivity.startActivity(DisplayAllImagesActivity.this);
+				}
+			}, 0, R.string.dialog_info_need_premium);
 			return true;
 		case R.id.action_select_images_for_removal:
 			changeAction(CurrentAction.DELETE);
@@ -212,6 +231,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			return true;
 		case R.id.action_delete_list:
 			deleteImageList();
+			return true;
+		case R.id.action_settings:
+			SettingsActivity.startActivity(this);
 			return true;
 		default:
 			return false;
@@ -733,6 +755,12 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			boolean refreshParent = DisplayRandomImageActivity.getResult(resultCode, data);
 			if (refreshParent) {
 				fillListOfImages();
+			}
+			break;
+		case SettingsActivity.REQUEST_CODE:
+			boolean boughtPremium = SettingsActivity.getResultBoughtPremium(resultCode, data);
+			if (boughtPremium) {
+				invalidateOptionsMenu();
 			}
 			break;
 		default:

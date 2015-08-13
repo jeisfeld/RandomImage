@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.util;
 
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActivityManager;
@@ -10,6 +12,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import de.jeisfeld.randomimage.Application;
@@ -18,6 +21,7 @@ import de.jeisfeld.randomimage.Application;
  * Utility class for getting system information.
  */
 public final class SystemUtil {
+
 	/**
 	 * Hide default constructor.
 	 */
@@ -162,4 +166,23 @@ public final class SystemUtil {
 		return manager.getLargeMemoryClass();
 	}
 
+	/**
+	 * Get information if this is one of JE's devices.
+	 *
+	 * @return true if one of JE's devices.
+	 */
+	public static boolean isJeDevice() {
+		try {
+			// Looking for a class PrivateConstants with field LICENSE_KEY - not in repository.
+			Class<?> privateConstants = Class.forName("de.jeisfeld.randomimage.util.PrivateConstants");
+			Field specialKeysField = privateConstants.getDeclaredField("JE_DEVICES");
+			@SuppressWarnings("unchecked")
+			List<String> jeDevices = (List<String>) specialKeysField.get(null);
+			return jeDevices.contains(getDeviceId());
+		}
+		catch (Exception e) {
+			Log.e(Application.TAG, "Did not find PrivateConstants", e);
+			return false;
+		}
+	}
 }

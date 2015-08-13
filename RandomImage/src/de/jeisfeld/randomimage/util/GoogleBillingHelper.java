@@ -16,6 +16,8 @@ import com.android.vending.billing.Purchase;
 import com.android.vending.billing.PurchasedSku;
 import com.android.vending.billing.SkuDetails;
 
+import de.jeisfeld.randomimage.R;
+
 /**
  * Utility class to support in-ad purchases via Google Billing.
  */
@@ -299,6 +301,15 @@ public final class GoogleBillingHelper {
 			};
 
 	/**
+	 * Method to find out if the user has premium package installed.
+	 *
+	 * @return true if he has premium package.
+	 */
+	public static boolean hasPremium() {
+		return PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium);
+	}
+
+	/**
 	 * Listener to be called after inventory has been retrieved.
 	 */
 	public interface OnInventoryFinishedListener {
@@ -329,4 +340,5 @@ public final class GoogleBillingHelper {
 		 */
 		void handlePurchase(Purchase purchase, boolean addedPremiumProduct);
 	}
+
 }

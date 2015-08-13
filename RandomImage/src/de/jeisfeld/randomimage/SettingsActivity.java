@@ -13,19 +13,27 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
  */
 public class SettingsActivity extends Activity {
 	/**
+	 * The request code used to finish the triggering activity.
+	 */
+	public static final int REQUEST_CODE = 4;
+	/**
 	 * The fragment tag.
 	 */
 	private static final String FRAGMENT_TAG = "FRAGMENT_TAG";
+	/**
+	 * The resource key for the flag if a premium pack has been bought.
+	 */
+	private static final String STRING_RESULT_BOUGHT_PREMIUM = "de.jeisfeld.randomimage.BOUGHT_PREMIUM";
 
 	/**
 	 * Utility method to start the activity.
 	 *
-	 * @param context
-	 *            The context in which the activity is started.
+	 * @param activity
+	 *            The activity from which the activity is started.
 	 */
-	public static final void startActivity(final Context context) {
-		Intent intent = new Intent(context, SettingsActivity.class);
-		context.startActivity(intent);
+	public static final void startActivity(final Activity activity) {
+		Intent intent = new Intent(activity, SettingsActivity.class);
+		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
 	@Override
@@ -67,5 +75,39 @@ public class SettingsActivity extends Activity {
 	public final void onDestroy() {
 		super.onDestroy();
 		GoogleBillingHelper.dispose();
+	}
+
+	/**
+	 * Static helper method to extract the result flag.
+	 *
+	 * @param resultCode
+	 *            The result code indicating if the response was successful.
+	 * @param data
+	 *            The activity response data.
+	 * @return the flag if a premium pack has been bought.
+	 */
+	public static final boolean getResultBoughtPremium(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			Bundle res = data.getExtras();
+			return res.getBoolean(STRING_RESULT_BOUGHT_PREMIUM);
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * Helper method: Return the flag if a premium pack has been bought.
+	 *
+	 * @param boughtPremium
+	 *            The flag if a premium pack has been bought.
+	 */
+	protected final void returnResult(final boolean boughtPremium) {
+		Bundle resultData = new Bundle();
+		resultData.putBoolean(STRING_RESULT_BOUGHT_PREMIUM, boughtPremium);
+		Intent intent = new Intent();
+		intent.putExtras(resultData);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 }
