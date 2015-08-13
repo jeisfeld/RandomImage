@@ -1,8 +1,13 @@
 package de.jeisfeld.randomimage;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -28,6 +33,7 @@ public class Application extends android.app.Application {
 	public final void onCreate() {
 		super.onCreate();
 		Application.context = getApplicationContext();
+		setLanguage();
 
 		// Set statistics
 		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);
@@ -95,5 +101,47 @@ public class Application extends android.app.Application {
 			Log.e(TAG, "Did not find application version", e);
 			return null;
 		}
+	}
+
+	/**
+	 * Set the language.
+	 */
+	public static void setLanguage() {
+		String languageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
+		if (languageString == null || languageString.length() == 0) {
+			PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, "0");
+			return;
+		}
+
+		int languageSetting = Integer.parseInt(languageString);
+
+		if (languageSetting != 0) {
+			switch (languageSetting) {
+			case 1:
+				setLocale(Locale.ENGLISH);
+				break;
+			case 2:
+				setLocale(Locale.GERMAN);
+				break;
+			case 3: // MAGIC_NUMBER
+				setLocale(new Locale("es"));
+				break;
+			default:
+			}
+		}
+	}
+
+	/**
+	 * Set the locale.
+	 *
+	 * @param locale
+	 *            The locale to be set.
+	 */
+	private static void setLocale(final Locale locale) {
+		Resources res = getAppContext().getResources();
+		DisplayMetrics dm = res.getDisplayMetrics();
+		Configuration conf = res.getConfiguration();
+		conf.locale = locale;
+		res.updateConfiguration(conf, dm);
 	}
 }

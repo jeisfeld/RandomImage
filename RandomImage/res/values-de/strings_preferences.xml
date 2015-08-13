@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_category_premium">Premium-Pakete</string>
+    <string name="pref_category_other">Andere Einstellungen</string>
+    <string name="pref_title_language">Sprache</string>
+
+    <!-- Strings related to Setting arrays -->
+
+    <string-array name="pref_list_titles_language">
+        <item>Systemsprache</item>
+        <item>English</item>
+        <item>Deutsch</item>
+    </string-array>
+
+</resources>

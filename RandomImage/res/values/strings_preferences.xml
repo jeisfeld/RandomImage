@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Keys for settings -->
+
+    <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>
+    <string name="key_pref_language" translatable="false">pref_language</string>
+    <string name="key_pref_show_info" translatable="false">pref_show_info</string>
+    <string name="key_pref_hide_info" translatable="false">pref_hide_info</string>
+
     <!-- Keys for shared preferences -->
+
     <string name="key_current_list_name" translatable="false">current_list_name</string>
 
     <!-- Indexed keys for widget preferences -->
+
     <string name="key_widget_list_name" translatable="false">widget_list_name</string>
     <string name="key_widget_view_width" translatable="false">widget_view_width</string>
     <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
 
     <!-- Keys for statistics -->
+
     <string name="key_statistics_initialversion" translatable="false">statistics_initialversion</string>
     <string name="key_statistics_firststarttime" translatable="false">statistics_firststarttime</string>
     <string name="key_statistics_countstarts" translatable="false">statistics_countstarts</string>
@@ -25,5 +35,25 @@
     <string name="key_statistics_countfling" translatable="false">statistics_countfling</string>
     <string name="key_statistics_countbackup" translatable="false">statistics_countbackup</string>
     <string name="key_statistics_countrestore" translatable="false">statistics_countrestore</string>
+    <string name="key_statistics_countsettings" translatable="false">statistics_countsettings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_category_premium">Premium Packs</string>
+    <string name="pref_category_other">Other settings</string>
+    <string name="pref_title_language">Language</string>
+    <string name="pref_default_language" translatable="false">0</string>
+
+    <!-- Strings related to Setting arrays -->
+
+    <string-array name="pref_list_titles_language">
+        <item>System language</item>
+        <item>English</item>
+        <item>Deutsch</item>
+    </string-array>
+    <string-array name="pref_list_values_language" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
 </resources>

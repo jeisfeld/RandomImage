@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings for menus -->
+    <string name="menu_select_images_for_removal">Bilder entfernen</string>
+    <string name="menu_remove_images">Gewählte Bilder entfernen</string>
+    <string name="menu_cancel">Abbrechen</string>
+    <string name="menu_select_all">Alle Bilder auswählen</string>
+    <string name="menu_add_images">Bilder hinzufügen</string>
+    <string name="menu_add_single_images">Einzelne Bilder hinzufügen</string>
+    <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>
+    <string name="menu_manage_lists">Bildlisten verwalten</string>
+    <string name="menu_backup_list">Bildliste sichern</string>
+    <string name="menu_restore_list">Bildliste wiederherstellen</string>
+    <string name="menu_rename_list">Aktuelle Bildliste umbenennen</string>
+    <string name="menu_clone_list">Aktuelle Bildliste duplizieren</string>
+    <string name="menu_create_list">Neue Bildliste erstellen</string>
+    <string name="menu_switch_list">Bildliste wechseln</string>
+    <string name="menu_delete_list">Bildliste löschen</string>
+    <string name="menu_remove_from_list">Bild aus der Liste entfernen</string>
+    <string name="menu_display_list">Bildliste anzeigen</string>
+    <string name="menu_settings">Einstellungen</string>
+
+    <!-- Entries related to buttons in the settings -->
+
+    <string name="menu_hide_all_info">Hinweise nicht mehr zeigen</string>
+    <string name="menu_show_all_info">Alle Hinweise zeigen</string>
+    <string name="menu_title_variable_donation">Variable Spende</string>
+    <string name="menu_detail_variable_donation">über PayPal im Browser</string>
+    <string name="menu_target_variable_donation">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=WGXT99K7YH4F4</string>
+    <string name="menu_title_contact_developer">Kontakt mit dem Entwickler</string>
+    <string name="menu_detail_contact_developer">über E-Mail im Fall von Problemen oder Fragen</string>
+    <string name="menu_subject_contact_developer">Frage zur Augendiagnose-App</string>
+
+</resources>

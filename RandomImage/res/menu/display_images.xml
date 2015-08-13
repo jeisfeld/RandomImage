@@ -3,6 +3,12 @@
     tools:context="de.jeisfeld.randomimage.DisplayRandomImageActivity" >
 
     <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_settings"/>
+    <item
         android:id="@+id/action_manage_lists"
         android:icon="@drawable/ic_action_folder"
         android:orderInCategory="100"

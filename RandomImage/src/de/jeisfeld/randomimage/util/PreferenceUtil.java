@@ -1,15 +1,29 @@
 package de.jeisfeld.randomimage.util;
 
+import java.util.Arrays;
+
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.R;
 
 /**
  * Utility class for handling the shared preferences.
  */
 public final class PreferenceUtil {
+	/**
+	 * The list of preferences used for switching on and off hints.
+	 */
+	private static final Integer[] INFO_PREFERENCES = {
+			R.string.key_info_add_folder,
+			R.string.key_info_add_images,
+			R.string.key_info_backup,
+			R.string.key_info_delete_images,
+			R.string.key_info_display_image,
+			R.string.key_info_new_list };
+
 	/**
 	 * Hide default constructor.
 	 */
@@ -327,4 +341,17 @@ public final class PreferenceUtil {
 		editor.remove(getIndexedPreferenceKey(preferenceId, index));
 		editor.commit();
 	}
+
+	/**
+	 * Set all hint preferences to the given value.
+	 *
+	 * @param value
+	 *            The value.
+	 */
+	public static void setAllHints(final boolean value) {
+		for (int preferenceId : Arrays.asList(INFO_PREFERENCES)) {
+			setSharedPreferenceBoolean(preferenceId, value);
+		}
+	}
+
 }

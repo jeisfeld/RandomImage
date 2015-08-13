@@ -175,6 +175,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
 		switch (menuId) {
+		case R.id.action_settings:
+			SettingsActivity.startActivity(this);
+			return true;
 		case R.id.action_select_images_for_removal:
 			changeAction(CurrentAction.DELETE);
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
