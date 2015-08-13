@@ -57,6 +57,9 @@ public class SettingsFragment extends PreferenceFragment {
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);
+		addHelpPageListener();
+		addDonationListener();
+		addDeveloperContactListener();
 
 		prefCategoryPremium = (PreferenceCategory) findPreference(getString(R.string.key_pref_category_premium));
 
@@ -85,14 +88,31 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Add an entry for variable donation.
 	 */
-	private void addVariableDonation() {
-		Preference variableDonationPreference = findPreference(getString(R.string.key_pref_variable_donation));
+	private void addDonationListener() {
+		Preference variableDonationPreference = findPreference(getString(R.string.key_pref_donation));
 
 		variableDonationPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				Intent browserIntent =
-						new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.menu_target_variable_donation)));
+						new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.menu_target_donation)));
+				startActivity(browserIntent);
+				return true;
+			}
+		});
+	}
+
+	/**
+	 * Add an entry for variable donation.
+	 */
+	private void addHelpPageListener() {
+		Preference variableDonationPreference = findPreference(getString(R.string.key_pref_help_page));
+
+		variableDonationPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(final Preference preference) {
+				Intent browserIntent =
+						new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.menu_target_help_page)));
 				startActivity(browserIntent);
 				return true;
 			}
@@ -102,7 +122,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Add an entry for developer contact.
 	 */
-	private void addDeveloperContact() {
+	private void addDeveloperContactListener() {
 		Preference contactPreference = findPreference(getString(R.string.key_pref_contact_developer));
 
 		contactPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -191,7 +211,11 @@ public class SettingsFragment extends PreferenceFragment {
 		@Override
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
 				final boolean isPremium) {
-			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
+			if (isPremium != GoogleBillingHelper.hasPremium()) {
+				// Update premium status, also in DisplayAllImagesActivity.
+				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
+				((SettingsActivity) getActivity()).returnResult(true);
+			}
 
 			// List inventory items.
 			for (PurchasedSku purchase : purchases) {
@@ -219,9 +243,6 @@ public class SettingsFragment extends PreferenceFragment {
 				});
 				prefCategoryPremium.addPreference(skuPreference);
 			}
-
-			addVariableDonation();
-			addDeveloperContact();
 		}
 	};
 
@@ -238,6 +259,7 @@ public class SettingsFragment extends PreferenceFragment {
 				@Override
 				public void onDialogFinished() {
 					((SettingsActivity) getActivity()).returnResult(true);
+					getActivity().finish();
 				}
 			};
 

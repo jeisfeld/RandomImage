@@ -88,7 +88,7 @@ public final class GoogleBillingHelper {
 	/**
 	 * Flag indicating if there is a purchase setting premium status.
 	 */
-	private boolean isPremium = false;
+	private volatile boolean isPremium = false;
 
 	/**
 	 * Hide default constructor.

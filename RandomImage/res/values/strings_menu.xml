@@ -25,12 +25,15 @@
 
     <string name="menu_hide_all_info">Do not display info messages</string>
     <string name="menu_show_all_info">Display all info messages</string>
-    <string name="menu_title_variable_donation">Variable donation</string>
-    <string name="menu_detail_variable_donation">via PayPal in browser</string>
-    <string name="menu_target_variable_donation">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=F7AK7EV2S3GBQ</string>
+    <string name="menu_title_donation">Donation</string>
+    <string name="menu_detail_donation">via PayPal in browser</string>
+    <string name="menu_target_donation">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=PAGGKCYNR5FHC</string>
     <string name="menu_title_contact_developer">Contact the developer</string>
     <string name="menu_detail_contact_developer">via email in case of problems or questions</string>
     <string name="menu_email_contact_developer" translatable="false">Jörg Eisfeld &lt;randomimage@jeisfeld.de&gt;</string>
     <string name="menu_subject_contact_developer">Question on Eye Diagnosis App</string>
+    <string name="menu_title_help_page">Help Page</string>
+    <string name="menu_detail_help_page">Open the help page in your browser</string>
+    <string name="menu_target_help_page">http://randomimage.jeisfeld.de/?lang=en&amp;page=overview</string>
 
 </resources>

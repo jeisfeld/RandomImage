@@ -6,6 +6,9 @@ import java.util.Arrays;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -122,6 +125,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			getAdapter().cleanupCache();
 		}
 		setAdapter(folderNames, fileNames, listName);
+		invalidateOptionsMenu();
 	}
 
 	/**
@@ -144,6 +148,15 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			if (ImageRegistry.getImageListNames().size() < 2) {
 				menu.findItem(R.id.action_switch_list).setEnabled(false);
 				menu.findItem(R.id.action_delete_list).setEnabled(false);
+			}
+			if ((fileNames == null || fileNames.size() == 0) && (folderNames == null || folderNames.size() == 0)) {
+				MenuItem menuItemRemove = menu.findItem(R.id.action_select_images_for_removal);
+				menuItemRemove.setEnabled(false);
+				Drawable icon =
+						new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_action_minus));
+				icon.setAlpha(128); // MAGIC_NUMBER
+				menuItemRemove.setIcon(icon);
 			}
 
 			if (GoogleBillingHelper.hasPremium() || SystemUtil.isJeDevice()) {
@@ -410,7 +423,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		boolean success = ImageRegistry.switchToImageList(name, creationStyle);
 		if (success) {
 			fillListOfImages();
-			invalidateOptionsMenu();
 		}
 		return success;
 	}
@@ -542,7 +554,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 							boolean success = ImageRegistry.renameCurrentList(name);
 							if (success) {
 								switchToImageList(name, CreationStyle.NONE);
-								invalidateOptionsMenu();
 								fillListOfImages();
 							}
 						}

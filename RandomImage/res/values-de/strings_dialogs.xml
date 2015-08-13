@@ -43,8 +43,8 @@
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
     <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich widgets für die Liste „%1$s“. Bitte denken Sie daran, diese zu entfernen.</string>
     <string name="dialog_info_backup">Die Bildliste „%1$s“ wurde gesichert. Die Sicherung befindet sich in der Datei „%2$s“.</string>
-    <string name="dialog_info_premium_thanks">Danke für den Kauf des Premium-Pakets! Sie können nun mehrere Bildlisten verwenden.</string>
-    <string name="dialog_info_need_premium">Zur Nutzung mehrerer Bildlisten müssen Sie ein Premium-Paket erwerben.</string>
+    <string name="dialog_info_premium_thanks">Danke für den Kauf der Premium-Erweiterung! Sie können nun mehrere Bildlisten verwenden.</string>
+    <string name="dialog_info_need_premium">Zur Nutzung mehrerer Bildlisten müssen Sie eine Premium-Erweiterung erwerben.</string>
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>
     <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>

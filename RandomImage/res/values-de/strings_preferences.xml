@@ -3,7 +3,7 @@
 
     <!-- Strings related to Settings -->
 
-    <string name="pref_category_premium">Premium-Pakete</string>
+    <string name="pref_category_premium">Premium-Erweiterungen</string>
     <string name="pref_category_support">Unterstützung</string>
     <string name="pref_category_other">Andere Einstellungen</string>
     <string name="pref_title_language">Sprache</string>

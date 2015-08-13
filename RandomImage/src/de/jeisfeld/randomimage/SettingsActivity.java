@@ -108,6 +108,5 @@ public class SettingsActivity extends Activity {
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
-		finish();
 	}
 }

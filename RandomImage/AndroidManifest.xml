@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="de.jeisfeld.randomimage"
     android:versionCode="2"
-    android:versionName="0.2" >
+    android:versionName="0.1.1" >
 
     <uses-sdk
         android:minSdkVersion="16"

@@ -3,7 +3,7 @@ package de.jeisfeld.randomimage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -89,23 +88,32 @@ public class DisplayImageDetailsActivity extends Activity {
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_image_details);
 
+		// Enable icon
+		final TextView title = (TextView) findViewById(android.R.id.title);
+		if (title != null) {
+			int horizontalMargin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
+			title.setPadding(horizontalMargin * 9 / 10, 0, 0, 0); // MAGIC_NUMBER
+			title.setCompoundDrawablePadding(horizontalMargin * 2 / 3); // MAGIC_NUMBER
+			title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_title_info, 0, 0, 0);
+		}
+
 		fileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		preventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
-		// Move the textView into the listView, so that it scrolls with the list.
-		LinearLayout layout = (LinearLayout) findViewById(R.id.layout_display_image_details);
-		TextView textView = (TextView) findViewById(R.id.textViewImageDetails);
 		ListMenuView listMenu = (ListMenuView) findViewById(R.id.listViewImageDetailsMenu);
-		layout.removeView(textView);
-		listMenu.addHeaderView(textView, null, false);
 
+		// put the textView into the listView, so that it scrolls with the list.
+		TextView textView =
+				(TextView) getLayoutInflater().inflate(R.layout.listview_display_image_details_header, null);
 		textView.setText(getImageInfo());
+		listMenu.addHeaderView(textView, null, false);
 
 		final ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList != null && imageList.contains(fileName)) {

@@ -87,7 +87,6 @@ public class ListMenuView extends ListView {
 	public ListMenuView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setOnItemClickListener(onItemClickListener);
-		setAdapter();
 	}
 
 	/**
@@ -106,6 +105,11 @@ public class ListMenuView extends ListView {
 		}
 		// If resourceId is already there, just replace the listener.
 		listeners.add(listener);
+
+		// Add adapter only now - from now on, headers may not be changed any more.
+		if (getAdapter() == null) {
+			setAdapter();
+		}
 	}
 
 	/**
