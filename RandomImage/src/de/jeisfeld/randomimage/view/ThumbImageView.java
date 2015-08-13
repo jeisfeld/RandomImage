@@ -1,4 +1,4 @@
-package de.jeisfeld.randomimage;
+package de.jeisfeld.randomimage.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;

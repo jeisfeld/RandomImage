@@ -19,6 +19,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 
 /**
@@ -28,7 +29,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	/**
 	 * The resource key for the name of the image list to be displayed.
 	 */
-	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 
 	/**
 	 * The names of the folders to be displayed.

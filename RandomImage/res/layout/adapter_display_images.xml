@@ -1,4 +1,4 @@
-<de.jeisfeld.randomimage.ThumbImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<de.jeisfeld.randomimage.view.ThumbImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/imageViewDeleteImages"
     android:contentDescription="@string/text_initializing"
     android:padding="3dp"

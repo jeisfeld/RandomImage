@@ -16,6 +16,7 @@ import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
+import de.jeisfeld.randomimage.view.PinchImageView;
 
 /**
  * Display a random image.
@@ -24,11 +25,11 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The resource key for the image list.
 	 */
-	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 	/**
 	 * The resource key for the image folder.
 	 */
-	public static final String STRING_EXTRA_FOLDERNAME = "de.jeisfeld.randomimage.FOLDERNAME";
+	private static final String STRING_EXTRA_FOLDERNAME = "de.jeisfeld.randomimage.FOLDERNAME";
 	/**
 	 * The resource key for the file name.
 	 */
@@ -36,7 +37,7 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The resource key for the flat indicating if it should be prevented to trigger the DisplayAllImagesActivity.
 	 */
-	public static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
+	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
 
 	/**
 	 * The name of the used image list.
@@ -237,7 +238,8 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, currentFileName, listName);
+				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, currentFileName, listName,
+						preventDisplayAll);
 			}
 
 		});
@@ -257,8 +259,22 @@ public class DisplayRandomImageActivity extends Activity {
 
 	@Override
 	public final boolean onPrepareOptionsMenu(final Menu menu) {
-		DisplayImageDetailsActivity.startActivity(this, currentFileName, listName);
+		DisplayImageDetailsActivity.startActivity(this, currentFileName, listName, preventDisplayAll);
 		return true;
+	}
+
+	@Override
+	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+		case DisplayImageDetailsActivity.REQUEST_CODE:
+			boolean finishParent = DisplayImageDetailsActivity.getResult(resultCode, data);
+			if (finishParent) {
+				finish();
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	/**

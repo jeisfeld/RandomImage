@@ -1,4 +1,4 @@
-package de.jeisfeld.randomimage;
+package de.jeisfeld.randomimage.view;
 
 import java.util.ArrayList;
 
@@ -9,11 +9,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import de.jeisfeld.randomimage.R;
 
 /**
  * A ListView that is used like a Menu.
  */
-public class ListMenu extends ListView {
+public class ListMenuView extends ListView {
 	/**
 	 * The ids of resources defining the list entries.
 	 */
@@ -54,7 +55,7 @@ public class ListMenu extends ListView {
 	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
 	 * @see android.view.View#View(Context)
 	 */
-	public ListMenu(final Context context) {
+	public ListMenuView(final Context context) {
 		this(context, null, 0);
 	}
 
@@ -67,7 +68,7 @@ public class ListMenu extends ListView {
 	 *            The attributes of the XML tag that is inflating the view.
 	 * @see android.view.View#View(Context, AttributeSet)
 	 */
-	public ListMenu(final Context context, final AttributeSet attrs) {
+	public ListMenuView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
@@ -83,7 +84,7 @@ public class ListMenu extends ListView {
 	 *            values for the view. Can be 0 to not look for defaults.
 	 * @see android.view.View#View(Context, AttributeSet, int)
 	 */
-	public ListMenu(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ListMenuView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setOnItemClickListener(onItemClickListener);
 		setAdapter();

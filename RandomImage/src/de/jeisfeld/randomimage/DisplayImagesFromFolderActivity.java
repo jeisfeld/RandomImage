@@ -15,7 +15,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * The resource key for the folder whose images should be displayed.
 	 */
-	public static final String STRING_EXTRA_FOLDERNAME = "de.jeisfeld.randomimage.FOLDERNAME";
+	private static final String STRING_EXTRA_FOLDERNAME = "de.jeisfeld.randomimage.FOLDERNAME";
 
 	/**
 	 * The names of the files to be displayed.

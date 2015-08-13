@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
+import de.jeisfeld.randomimage.view.ThumbImageView;
 
 /**
  * Array adapter class to display an eye photo pair in a list.
