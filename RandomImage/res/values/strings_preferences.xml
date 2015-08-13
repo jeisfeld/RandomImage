@@ -3,11 +3,16 @@
 
     <!-- Keys for settings -->
 
-    <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>
     <string name="key_pref_language" translatable="false">pref_language</string>
+    <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
+
+    <!-- Dummy keys only required as menu reference -->
+
+    <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>
     <string name="key_pref_show_info" translatable="false">pref_show_info</string>
     <string name="key_pref_hide_info" translatable="false">pref_hide_info</string>
-    <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
+    <string name="key_pref_variable_donation" translatable="false">pref_variable_donation</string>
+    <string name="key_pref_contact_developer" translatable="false">pref_contact_developer</string>
 
     <!-- Keys for shared preferences -->
 
@@ -40,6 +45,7 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_category_premium">Premium Packs</string>
+    <string name="pref_category_support">Support</string>
     <string name="pref_category_other">Other settings</string>
     <string name="pref_title_language">Language</string>
     <string name="pref_default_language" translatable="false">0</string>

@@ -86,9 +86,7 @@ public class SettingsFragment extends PreferenceFragment {
 	 * Add an entry for variable donation.
 	 */
 	private void addVariableDonation() {
-		Preference variableDonationPreference = new Preference(getActivity());
-		variableDonationPreference.setTitle(getString(R.string.menu_title_variable_donation));
-		variableDonationPreference.setSummary(getString(R.string.menu_detail_variable_donation));
+		Preference variableDonationPreference = findPreference(getString(R.string.key_pref_variable_donation));
 
 		variableDonationPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
@@ -99,17 +97,13 @@ public class SettingsFragment extends PreferenceFragment {
 				return true;
 			}
 		});
-
-		prefCategoryPremium.addItemFromInflater(variableDonationPreference);
 	}
 
 	/**
 	 * Add an entry for developer contact.
 	 */
 	private void addDeveloperContact() {
-		Preference contactPreference = new Preference(getActivity());
-		contactPreference.setTitle(getString(R.string.menu_title_contact_developer));
-		contactPreference.setSummary(getString(R.string.menu_detail_contact_developer));
+		Preference contactPreference = findPreference(getString(R.string.key_pref_contact_developer));
 
 		contactPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
@@ -122,8 +116,6 @@ public class SettingsFragment extends PreferenceFragment {
 				return true;
 			}
 		});
-
-		prefCategoryPremium.addItemFromInflater(contactPreference);
 	}
 
 	/**
