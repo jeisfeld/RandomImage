@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -163,6 +164,8 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
+		// Adapter must be set after header, so better set it in the and.
+		listMenu.setAdapter();
 	}
 
 	/**

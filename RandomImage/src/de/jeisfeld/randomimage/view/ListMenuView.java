@@ -105,11 +105,6 @@ public class ListMenuView extends ListView {
 		}
 		// If resourceId is already there, just replace the listener.
 		listeners.add(listener);
-
-		// Add adapter only now - from now on, headers may not be changed any more.
-		if (getAdapter() == null) {
-			setAdapter();
-		}
 	}
 
 	/**
@@ -131,7 +126,7 @@ public class ListMenuView extends ListView {
 	/**
 	 * Set the adapter of the list (either first time or update).
 	 */
-	private void setAdapter() {
+	public final void setAdapter() {
 		ArrayAdapter<String> directoryListAdapter =
 				new ArrayAdapter<String>(getContext(), R.layout.adapter_list_names, listValues);
 		setAdapter(directoryListAdapter);
