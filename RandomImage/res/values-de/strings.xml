@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Zufallsbild</string>
-    <string name="mini_widget_name">Mini-Widget</string>
-    <string name="image_widget_name">Zufallsbilderrahmen</string>
-    <string name="stacked_image_widget_name">Stapelbilderrahmen</string>
+    <string name="app_name">Überraschungsbild</string>
+    <string name="mini_widget_name">Überraschungsbild-Widget</string>
+    <string name="image_widget_name">Überraschungsbilderrahmen</string>
+    <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
     <string name="title_activity_display_image_details">Bildinformationen</string>
-    <string name="title_activity_display_images">Zufallsbild konfigurieren</string>
+    <string name="title_activity_display_images">Überraschungsbild konfigurieren</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="text_no_image">Kein Bild</string>

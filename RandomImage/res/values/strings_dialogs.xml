@@ -17,9 +17,9 @@
     <string name="toast_added_folder">Added folder “%1$s”</string>
     <string name="toast_added_folder_none">The folder “%1$s” was already in the list.</string>
     <string name="toast_added_folder_error">Unexpected error while trying to add a folder.</string>
-    <string name="toast_added_images_count_external">Added %1$d images to the random image list “%2$s”</string>
-    <string name="toast_added_images_single_external">Added image “%1$s” to the random image list “%2$s”</string>
-    <string name="toast_added_images_none_external">All selected images were already in the random image list “%1$s”</string>
+    <string name="toast_added_images_count_external">Added %1$d images to the surprise image list “%2$s”</string>
+    <string name="toast_added_images_single_external">Added image “%1$s” to the surprise image list “%2$s”</string>
+    <string name="toast_added_images_none_external">All selected images were already in the surprise image list “%1$s”</string>
     <string name="toast_removed_multiple">%1$s have been removed from the list</string>
     <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
@@ -34,9 +34,9 @@
     <string name="toast_aborted_add_images_no_list">The addition of images was aborted, as no image list was found.</string>
 
     <!-- Messages of dialogs -->
-    <string name="dialog_info_new_list">Your random image list is empty. Pleas press the “+” symbol on top in order to add images to the list.\n\nAlternatively, you may go to your Gallery app and send images to this app in order to add them to the list.</string>
-    <string name="dialog_info_add_images">Please choose from the gallery some images that you want to add to your random image list. Go back to the app if you do not want to add more images.</string>
-    <string name="dialog_info_add_folder">Please choose from the gallery any image in the folder that you want to add to your random image list.</string>
+    <string name="dialog_info_new_list">Your surprise image list is empty. Pleas press the “+” symbol on top in order to add images to the list.\n\nAlternatively, you may go to your Gallery app and send images to this app in order to add them to the list.</string>
+    <string name="dialog_info_add_images">Please choose from the gallery some images that you want to add to your surprise image list. Go back to the app if you do not want to add more images.</string>
+    <string name="dialog_info_add_folder">Please choose from the gallery any image in the folder that you want to add to your surprise image list.</string>
     <string name="dialog_info_display_image">You can zoom and move the image.\nFlip the image to see another one.\nDouble tap to go to the image list configuration.\nLong press for further options.</string>
     <string name="dialog_info_delete_images">Select images that you want to remove from the list. Then press the trash icon to remove, or press the cross icon to abort.</string>
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>

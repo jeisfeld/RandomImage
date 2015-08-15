@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Random Image</string>
-    <string name="mini_widget_name">Mini Widget</string>
-    <string name="image_widget_name">Random Image Frame</string>
-    <string name="stacked_image_widget_name">Stacked Image Frame</string>
+    <string name="app_name">Surprise Image</string>
+    <string name="mini_widget_name">Surprise Image Widget</string>
+    <string name="image_widget_name">Surprise Image Frame</string>
+    <string name="stacked_image_widget_name">Surprise Image Deck</string>
     <string name="title_activity_display_image_details">Image Details</string>
-    <string name="title_activity_display_images">Random Image Configuration</string>
+    <string name="title_activity_display_images">Surprise Image Configuration</string>
     <string name="title_activity_settings">Settings</string>
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="text_no_image">No image</string>
