@@ -95,6 +95,21 @@ public class DisplayRandomImageActivity extends Activity {
 	private PinchImageView nextImageView = null;
 
 	/**
+	 * The cache index of the previous image view.
+	 */
+	private int previousCacheIndex = 3; // MAGIC_NUMBER
+
+	/**
+	 * The cache index of the current image view.
+	 */
+	private int currentCacheIndex = 1;
+
+	/**
+	 * The cache index of the next image view.
+	 */
+	private int nextCacheIndex = 2;
+
+	/**
 	 * The direction of the last fling movement.
 	 */
 	private FlingDirection lastFlingDirection = null;
@@ -177,6 +192,9 @@ public class DisplayRandomImageActivity extends Activity {
 			lastFlingDirection =
 					new FlingDirection(savedInstanceState.getFloat("lastFlingX", 0),
 							savedInstanceState.getFloat("lastFlingY", 0));
+			previousCacheIndex = savedInstanceState.getInt("previousCacheIndex");
+			currentCacheIndex = savedInstanceState.getInt("currentCacheIndex");
+			nextCacheIndex = savedInstanceState.getInt("nextCacheIndex");
 		}
 
 		if (listName == null) {
@@ -223,11 +241,11 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 		}
 		else {
-			currentImageView = createImageView(currentFileName);
+			currentImageView = createImageView(currentFileName, currentCacheIndex);
 			setContentView(currentImageView);
 			if (doPreload) {
 				nextFileName = randomFileProvider.getRandomFileName();
-				nextImageView = createImageView(nextFileName);
+				nextImageView = createImageView(nextFileName, nextCacheIndex);
 			}
 		}
 
@@ -241,12 +259,14 @@ public class DisplayRandomImageActivity extends Activity {
 	 *
 	 * @param fileName
 	 *            The name of the file.
+	 * @param cacheIndex
+	 *            an index helping for caching the image for orientation change.
 	 * @return The PinchImageView.
 	 */
-	private PinchImageView createImageView(final String fileName) {
+	private PinchImageView createImageView(final String fileName, final int cacheIndex) {
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setGestureDetector(gestureDetector);
-		imageView.setImage(fileName, this, 1);
+		imageView.setImage(fileName, this, cacheIndex);
 		return imageView;
 	}
 
@@ -256,13 +276,16 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return false if there was no image to be displayed.
 	 */
 	private boolean displayRandomImage() {
+		int tempCacheIndex = currentCacheIndex;
 		previousFileName = currentFileName;
 		if (doPreload) {
 			previousImageView = currentImageView;
+			tempCacheIndex = previousCacheIndex;
+			previousCacheIndex = currentCacheIndex;
 		}
 		if (nextImageView == null) {
 			currentFileName = randomFileProvider.getRandomFileName();
-
+			currentCacheIndex = tempCacheIndex;
 			if (currentFileName == null) {
 				// Handle the case where the provider does not return any image.
 				if (listName != null) {
@@ -271,18 +294,20 @@ public class DisplayRandomImageActivity extends Activity {
 				finish();
 				return false;
 			}
-			currentImageView = createImageView(currentFileName);
+			currentImageView = createImageView(currentFileName, currentCacheIndex);
 		}
 		else {
 			currentFileName = nextFileName;
 			currentImageView = nextImageView;
+			currentCacheIndex = nextCacheIndex;
 		}
 
 		setContentView(currentImageView);
 
 		if (doPreload) {
 			nextFileName = randomFileProvider.getRandomFileName();
-			nextImageView = createImageView(nextFileName);
+			nextCacheIndex = tempCacheIndex;
+			nextImageView = createImageView(nextFileName, tempCacheIndex);
 		}
 
 		return true;
@@ -330,7 +355,7 @@ public class DisplayRandomImageActivity extends Activity {
 									previousImageView = tempImageView;
 								}
 								else {
-									currentImageView = createImageView(currentFileName);
+									currentImageView = createImageView(currentFileName, currentCacheIndex);
 								}
 								setContentView(currentImageView);
 							}
@@ -379,6 +404,9 @@ public class DisplayRandomImageActivity extends Activity {
 			if (previousFileName != null) {
 				outState.putString("previousFileName", previousFileName);
 			}
+			outState.putInt("previousCacheIndex", previousCacheIndex);
+			outState.putInt("currentCacheIndex", currentCacheIndex);
+			outState.putInt("nextCacheIndex", nextCacheIndex);
 		}
 	}
 
