@@ -3,7 +3,7 @@
 
     <string name="app_name">Überraschungsbild</string>
     <string name="app_name_short">Ü-Bild</string>
-	<string name="mini_widget_name">Überraschungsbild-Widget</string>
+    <string name="mini_widget_name">Überraschungsbild-Widget</string>
     <string name="image_widget_name">Überraschungsbilderrahmen</string>
     <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
     <string name="title_activity_display_image_details">Bildinformationen</string>
