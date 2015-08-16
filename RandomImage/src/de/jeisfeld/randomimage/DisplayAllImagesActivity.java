@@ -522,7 +522,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
 						String name = text == null ? null : text.trim();
 
-						if (name == null || name.length() == 0) {
+						if (listName.equals(name)) {
+							// If name unchanged, then do nothing.
+							return;
+						}
+						else if (name == null || name.length() == 0) {
 							DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
 								/**
 								 * The serial version id.
