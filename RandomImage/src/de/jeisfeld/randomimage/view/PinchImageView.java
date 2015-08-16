@@ -11,7 +11,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
@@ -190,8 +189,9 @@ public class PinchImageView extends ImageView {
 		// retrieve bitmap from cache if possible
 		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(),
 				cacheIndex);
-		if (!pathName.equals(mPathName)) {
+		if (!pathName.equals(retainFragment.getPathName())) {
 			retainFragment.setBitmap(null);
+			retainFragment.setPathName(pathName);
 		}
 
 		mBitmap = retainFragment.getBitmap();
@@ -205,7 +205,7 @@ public class PinchImageView extends ImageView {
 				public void run() {
 					mBitmap = ImageUtil.getImageBitmap(pathName, maxBitmapSize);
 
-					retainFragment.bitmap = mBitmap;
+					retainFragment.setBitmap(mBitmap);
 					mPathName = pathName;
 					handler.post(new Runnable() {
 						@Override
@@ -220,51 +220,10 @@ public class PinchImageView extends ImageView {
 		}
 		else {
 			super.setImageBitmap(mBitmap);
+			mPathName = pathName;
+			mIsBitmapSet = true;
 			doInitialScaling();
 		}
-	}
-
-	/**
-	 * Fill with an image from image resource, making the image fit into the view.
-	 *
-	 * @param imageResource
-	 *            The image resource id
-	 * @param activity
-	 *            The triggering activity (required for bitmap caching)
-	 * @param cacheIndex
-	 *            A unique index of the view in the activity
-	 */
-	public final void setImage(final int imageResource, final Activity activity, final int cacheIndex) {
-		// retrieve bitmap from cache if possible
-		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(),
-				cacheIndex);
-		mBitmap = retainFragment.getBitmap();
-
-		if (mBitmap == null || imageResource != mImageResource) {
-			final Handler handler = new Handler();
-
-			new Thread() {
-				@Override
-				public void run() {
-					mBitmap = BitmapFactory.decodeResource(getResources(), imageResource);
-					retainFragment.setBitmap(mBitmap);
-					mImageResource = imageResource;
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							PinchImageView.super.setImageBitmap(mBitmap);
-							mIsBitmapSet = true;
-							doInitialScaling();
-						}
-					});
-				}
-			}.start();
-		}
-		else {
-			super.setImageBitmap(mBitmap);
-			doInitialScaling();
-		}
-
 	}
 
 	/**
@@ -682,6 +641,19 @@ public class PinchImageView extends ImageView {
 
 		public final void setBitmap(final Bitmap bitmap) {
 			this.bitmap = bitmap;
+		}
+
+		/**
+		 * The pathName of this bitmap.
+		 */
+		private String pathName;
+
+		public final String getPathName() {
+			return pathName;
+		}
+
+		public final void setPathName(final String pathName) {
+			this.pathName = pathName;
 		}
 
 		/**

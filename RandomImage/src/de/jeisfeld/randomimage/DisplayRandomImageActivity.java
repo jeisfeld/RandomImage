@@ -196,7 +196,6 @@ public class DisplayRandomImageActivity extends Activity {
 			currentCacheIndex = savedInstanceState.getInt("currentCacheIndex");
 			nextCacheIndex = savedInstanceState.getInt("nextCacheIndex");
 		}
-
 		if (listName == null) {
 			listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		}
@@ -276,7 +275,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return false if there was no image to be displayed.
 	 */
 	private boolean displayRandomImage() {
-		int tempCacheIndex = currentCacheIndex;
+		int tempCacheIndex = 0;
 		previousFileName = currentFileName;
 		if (doPreload) {
 			previousImageView = currentImageView;
@@ -285,7 +284,9 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 		if (nextImageView == null) {
 			currentFileName = randomFileProvider.getRandomFileName();
-			currentCacheIndex = tempCacheIndex;
+			if (doPreload) {
+				currentCacheIndex = tempCacheIndex;
+			}
 			if (currentFileName == null) {
 				// Handle the case where the provider does not return any image.
 				if (listName != null) {
@@ -299,15 +300,17 @@ public class DisplayRandomImageActivity extends Activity {
 		else {
 			currentFileName = nextFileName;
 			currentImageView = nextImageView;
-			currentCacheIndex = nextCacheIndex;
+			if (doPreload) {
+				currentCacheIndex = nextCacheIndex;
+				nextCacheIndex = tempCacheIndex;
+			}
 		}
 
 		setContentView(currentImageView);
 
 		if (doPreload) {
 			nextFileName = randomFileProvider.getRandomFileName();
-			nextCacheIndex = tempCacheIndex;
-			nextImageView = createImageView(nextFileName, tempCacheIndex);
+			nextImageView = createImageView(nextFileName, nextCacheIndex);
 		}
 
 		return true;
@@ -348,7 +351,11 @@ public class DisplayRandomImageActivity extends Activity {
 								String tempFileName = currentFileName;
 								currentFileName = previousFileName;
 								previousFileName = tempFileName;
-
+								if (doPreload) {
+									int tempCacheIndex = currentCacheIndex;
+									currentCacheIndex = previousCacheIndex;
+									previousCacheIndex = tempCacheIndex;
+								}
 								if (doPreload && previousImageView != null) {
 									PinchImageView tempImageView = currentImageView;
 									currentImageView = previousImageView;
