@@ -315,30 +315,38 @@ public class DisplayRandomImageActivity extends Activity {
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
 					final float velocityY) {
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
-					FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
-					if (newFlingDirection.isOpposite(lastFlingDirection) && previousFileName != null) {
-						String tempFileName = currentFileName;
-						currentFileName = previousFileName;
-						previousFileName = tempFileName;
+					Runnable runnable = new Runnable() {
+						@Override
+						public void run() {
+							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
+							if (newFlingDirection.isOpposite(lastFlingDirection) && previousFileName != null) {
+								String tempFileName = currentFileName;
+								currentFileName = previousFileName;
+								previousFileName = tempFileName;
 
-						if (doPreload && previousImageView != null) {
-							PinchImageView tempImageView = currentImageView;
-							currentImageView = previousImageView;
-							previousImageView = tempImageView;
-						}
-						else {
-							currentImageView = createImageView(currentFileName);
-						}
-						setContentView(currentImageView);
-					}
-					else {
-						displayRandomImage();
-					}
-					lastFlingDirection = newFlingDirection;
+								if (doPreload && previousImageView != null) {
+									PinchImageView tempImageView = currentImageView;
+									currentImageView = previousImageView;
+									previousImageView = tempImageView;
+								}
+								else {
+									currentImageView = createImageView(currentFileName);
+								}
+								setContentView(currentImageView);
+							}
+							else {
+								displayRandomImage();
+							}
 
-					if (previousImageView != null) {
-						previousImageView.doScalingToFit();
-					}
+							if (previousImageView != null) {
+								previousImageView.doScalingToFit();
+							}
+
+							lastFlingDirection = newFlingDirection;
+						}
+					};
+
+					currentImageView.animateOut(velocityX, velocityY, runnable);
 
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
 					return true;

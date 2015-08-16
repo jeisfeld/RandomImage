@@ -1,5 +1,10 @@
 package de.jeisfeld.randomimage.view;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
@@ -308,6 +313,82 @@ public class PinchImageView extends ImageView {
 			requestLayout();
 			invalidate();
 		}
+	}
+
+	/**
+	 * Animate the image out of the view (in 100ms).
+	 *
+	 * @param velocityX
+	 *            The x velocity specifying the direction of animation.
+	 * @param velocityY
+	 *            The y velocity specifying the direction of animation.
+	 * @param postActivities
+	 *            Activities to be done after the animation is finished.
+	 */
+	public final void animateOut(final float velocityX, final float velocityY, final Runnable postActivities) {
+		float velocity = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+		if (velocity == 0) {
+			postActivities.run();
+			return;
+		}
+
+		float relativeX = velocityX / velocity;
+		float relativeY = velocityY / velocity;
+
+		final PropertyValuesHolder animPosX = PropertyValuesHolder.ofFloat("mPosX", mPosX, mPosX - 2 * relativeX);
+		final PropertyValuesHolder animPosY = PropertyValuesHolder.ofFloat("mPosY", mPosY, mPosY - 2 * relativeY);
+
+		final ObjectAnimator objectAnim = ObjectAnimator.ofPropertyValuesHolder(this, animPosX, animPosY);
+		objectAnim.setDuration(100); // MAGIC_NUMBER
+
+		objectAnim.addListener(new AnimatorListener() {
+			@Override
+			public void onAnimationStart(final Animator animation) {
+				// do nothing
+			}
+
+			@Override
+			public void onAnimationRepeat(final Animator animation) {
+				// do nothing
+			}
+
+			@Override
+			public void onAnimationEnd(final Animator animation) {
+				postActivities.run();
+			}
+
+			@Override
+			public void onAnimationCancel(final Animator animation) {
+				// do nothing
+			}
+		});
+
+		final AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.play(objectAnim);
+
+		animatorSet.start();
+	}
+
+	/**
+	 * Set the X position. Required for animation. Should not be used otherwise.
+	 *
+	 * @param posX
+	 *            The new x position.
+	 */
+	protected final void setMPosX(final float posX) {
+		mPosX = posX;
+		// Matrix is not set, as mPosY is set directly afterwards
+	}
+
+	/**
+	 * Set the X position. Required for animation. Should not be used otherwise.
+	 *
+	 * @param posY
+	 *            The new y position.
+	 */
+	protected final void setMPosY(final float posY) {
+		mPosY = posY;
+		setMatrix();
 	}
 
 	/**
