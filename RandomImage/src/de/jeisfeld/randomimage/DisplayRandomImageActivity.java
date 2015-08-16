@@ -64,6 +64,11 @@ public class DisplayRandomImageActivity extends Activity {
 	private String lastFileName = null;
 
 	/**
+	 * The gesture detector used by this activity.
+	 */
+	private GestureDetector gestureDetector;
+
+	/**
 	 * The direction of the last fling movement.
 	 */
 	private FlingDirection lastflingDirection = null;
@@ -136,6 +141,8 @@ public class DisplayRandomImageActivity extends Activity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		createGestureDetector();
+
 		if (savedInstanceState != null) {
 			listName = savedInstanceState.getString("listName");
 			currentFileName = savedInstanceState.getString("currentFileName");
@@ -199,7 +206,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 */
 	private void displayCurrentImage() {
 		PinchImageView imageView = new PinchImageView(this);
-		imageView.setGestureDetector(createGestureDetector());
+		imageView.setGestureDetector(gestureDetector);
 		setContentView(imageView);
 		imageView.setImage(currentFileName, this, 1);
 	}
@@ -224,12 +231,10 @@ public class DisplayRandomImageActivity extends Activity {
 	}
 
 	/**
-	 * Create a gesture detector that displays a new image on double tap.
-	 *
-	 * @return The gesture detector.
+	 * Create the gesture detector handling flinging and double tapping.
 	 */
-	private GestureDetector createGestureDetector() {
-		GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+	private void createGestureDetector() {
+		gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 			/**
 			 * The speed which is accepted as fling.
 			 */
@@ -278,8 +283,6 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 
 		});
-
-		return gestureDetector;
 	}
 
 	@Override
@@ -457,9 +460,9 @@ public class DisplayRandomImageActivity extends Activity {
 			if (otherDirection == null) {
 				return false;
 			}
-			return Math.abs(getAngle() - otherDirection.getAngle()) > Math.PI;
+			double angleDiff = Math.abs(getAngle() - otherDirection.getAngle());
+			return angleDiff > Math.PI / 2 && angleDiff < 3 * Math.PI / 2; // MAGIC_NUMBER
 		}
-
 	}
 
 }
