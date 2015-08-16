@@ -59,6 +59,16 @@ public class DisplayRandomImageActivity extends Activity {
 	private String currentFileName;
 
 	/**
+	 * The name of the previously displayed file.
+	 */
+	private String lastFileName = null;
+
+	/**
+	 * The direction of the last fling movement.
+	 */
+	private FlingDirection lastflingDirection = null;
+
+	/**
 	 * flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
 	 */
 	private boolean preventDisplayAll;
@@ -200,6 +210,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return false if there was no image to be displayed.
 	 */
 	private boolean displayRandomImage() {
+		lastFileName = currentFileName;
 		currentFileName = randomFileProvider.getRandomFileName();
 		if (currentFileName == null) {
 			DisplayAllImagesActivity.startActivity(this, listName);
@@ -241,7 +252,17 @@ public class DisplayRandomImageActivity extends Activity {
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
 					final float velocityY) {
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
-					displayRandomImage();
+					FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
+					if (newFlingDirection.isOpposite(lastflingDirection) && lastFileName != null) {
+						String tempFileName = currentFileName;
+						currentFileName = lastFileName;
+						lastFileName = tempFileName;
+						displayCurrentImage();
+					}
+					else {
+						displayRandomImage();
+					}
+					lastflingDirection = newFlingDirection;
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
 					return true;
 				}
@@ -370,6 +391,73 @@ public class DisplayRandomImageActivity extends Activity {
 			else {
 				return defaultFileName;
 			}
+		}
+
+	}
+
+	/**
+	 * A class holding the direction of a fling movement.
+	 */
+	private final class FlingDirection {
+		/**
+		 * The x velocity of the movement.
+		 */
+		private float velocityX;
+		/**
+		 * The y velocity of the movement.
+		 */
+		private float velocityY;
+
+		/**
+		 * Constructor.
+		 *
+		 * @param velocityX
+		 *            The x velocity of the movement.
+		 * @param velocityY
+		 *            The y velocity of the movement.
+		 */
+		private FlingDirection(final float velocityX, final float velocityY) {
+			this.velocityX = velocityX;
+			this.velocityY = velocityY;
+		}
+
+		/**
+		 * Get the direction of the fling as angle.
+		 *
+		 * @return the angle of the movement.
+		 */
+		private double getAngle() {
+			double angle;
+			if (velocityX > 0) {
+				angle = Math.atan(velocityY / velocityX);
+			}
+			else if (velocityX < 0) {
+				angle = Math.PI + Math.atan(velocityY / velocityX);
+			}
+			else if (velocityY > 0) {
+				angle = Math.PI / 2;
+			}
+			else {
+				angle = -Math.PI / 2;
+			}
+			if (angle < 0) {
+				angle = angle + 2 * Math.PI;
+			}
+			return angle;
+		}
+
+		/**
+		 * Find out if two flings go into opposite direction.
+		 *
+		 * @param otherDirection
+		 *            The fling to be compared with.
+		 * @return true if both go into opposite direction.
+		 */
+		private boolean isOpposite(final FlingDirection otherDirection) {
+			if (otherDirection == null) {
+				return false;
+			}
+			return Math.abs(getAngle() - otherDirection.getAngle()) > Math.PI;
 		}
 
 	}
