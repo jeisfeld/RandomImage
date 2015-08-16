@@ -17,6 +17,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.PinchImageView;
 
 /**
@@ -54,14 +55,19 @@ public class DisplayRandomImageActivity extends Activity {
 	private String listName;
 
 	/**
+	 * The name of the previously displayed file.
+	 */
+	private String previousFileName = null;
+
+	/**
 	 * The name of the displayed file.
 	 */
 	private String currentFileName;
 
 	/**
-	 * The name of the previously displayed file.
+	 * The name of the preloaded file for next display.
 	 */
-	private String lastFileName = null;
+	private String nextFileName = null;
 
 	/**
 	 * The gesture detector used by this activity.
@@ -69,9 +75,29 @@ public class DisplayRandomImageActivity extends Activity {
 	private GestureDetector gestureDetector;
 
 	/**
+	 * Flag indicating if the next image should be preloaded, and if the previous imageView should be retained.
+	 */
+	private boolean doPreload = SystemUtil.getLargeMemoryClass() >= 256; // MAGIC_NUMBER
+
+	/**
+	 * The view displaying the current file.
+	 */
+	private PinchImageView currentImageView = null;
+
+	/**
+	 * The view that displayed the previous file.
+	 */
+	private PinchImageView previousImageView = null;
+
+	/**
+	 * The view prepared to display the next file.
+	 */
+	private PinchImageView nextImageView = null;
+
+	/**
 	 * The direction of the last fling movement.
 	 */
-	private FlingDirection lastflingDirection = null;
+	private FlingDirection lastFlingDirection = null;
 
 	/**
 	 * flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
@@ -146,7 +172,11 @@ public class DisplayRandomImageActivity extends Activity {
 		if (savedInstanceState != null) {
 			listName = savedInstanceState.getString("listName");
 			currentFileName = savedInstanceState.getString("currentFileName");
+			previousFileName = savedInstanceState.getString("previousFileName");
 			preventDisplayAll = savedInstanceState.getBoolean("preventDisplayAll");
+			lastFlingDirection =
+					new FlingDirection(savedInstanceState.getFloat("lastFlingX", 0),
+							savedInstanceState.getFloat("lastFlingY", 0));
 		}
 
 		if (listName == null) {
@@ -193,7 +223,12 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 		}
 		else {
-			displayCurrentImage();
+			currentImageView = createImageView(currentFileName);
+			setContentView(currentImageView);
+			if (doPreload) {
+				nextFileName = randomFileProvider.getRandomFileName();
+				nextImageView = createImageView(nextFileName);
+			}
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
@@ -202,13 +237,17 @@ public class DisplayRandomImageActivity extends Activity {
 	}
 
 	/**
-	 * Display the current Image defined by currentFileName on this view.
+	 * Create a PinchImageView displaying a given file.
+	 *
+	 * @param fileName
+	 *            The name of the file.
+	 * @return The PinchImageView.
 	 */
-	private void displayCurrentImage() {
+	private PinchImageView createImageView(final String fileName) {
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setGestureDetector(gestureDetector);
-		setContentView(imageView);
-		imageView.setImage(currentFileName, this, 1);
+		imageView.setImage(fileName, this, 1);
+		return imageView;
 	}
 
 	/**
@@ -217,17 +256,36 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return false if there was no image to be displayed.
 	 */
 	private boolean displayRandomImage() {
-		lastFileName = currentFileName;
-		currentFileName = randomFileProvider.getRandomFileName();
-		if (currentFileName == null) {
-			DisplayAllImagesActivity.startActivity(this, listName);
-			finish();
-			return false;
+		previousFileName = currentFileName;
+		if (doPreload) {
+			previousImageView = currentImageView;
+		}
+		if (nextImageView == null) {
+			currentFileName = randomFileProvider.getRandomFileName();
+
+			if (currentFileName == null) {
+				// Handle the case where the provider does not return any image.
+				if (listName != null) {
+					DisplayAllImagesActivity.startActivity(this, listName);
+				}
+				finish();
+				return false;
+			}
+			currentImageView = createImageView(currentFileName);
 		}
 		else {
-			displayCurrentImage();
-			return true;
+			currentFileName = nextFileName;
+			currentImageView = nextImageView;
 		}
+
+		setContentView(currentImageView);
+
+		if (doPreload) {
+			nextFileName = randomFileProvider.getRandomFileName();
+			nextImageView = createImageView(nextFileName);
+		}
+
+		return true;
 	}
 
 	/**
@@ -258,16 +316,30 @@ public class DisplayRandomImageActivity extends Activity {
 					final float velocityY) {
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
 					FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
-					if (newFlingDirection.isOpposite(lastflingDirection) && lastFileName != null) {
+					if (newFlingDirection.isOpposite(lastFlingDirection) && previousFileName != null) {
 						String tempFileName = currentFileName;
-						currentFileName = lastFileName;
-						lastFileName = tempFileName;
-						displayCurrentImage();
+						currentFileName = previousFileName;
+						previousFileName = tempFileName;
+
+						if (doPreload && previousImageView != null) {
+							PinchImageView tempImageView = currentImageView;
+							currentImageView = previousImageView;
+							previousImageView = tempImageView;
+						}
+						else {
+							currentImageView = createImageView(currentFileName);
+						}
+						setContentView(currentImageView);
 					}
 					else {
 						displayRandomImage();
 					}
-					lastflingDirection = newFlingDirection;
+					lastFlingDirection = newFlingDirection;
+
+					if (previousImageView != null) {
+						previousImageView.doScalingToFit();
+					}
+
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
 					return true;
 				}
@@ -292,6 +364,13 @@ public class DisplayRandomImageActivity extends Activity {
 			outState.putString("currentFileName", currentFileName);
 			outState.putString("listName", listName);
 			outState.putBoolean("preventDisplayAll", preventDisplayAll);
+			if (lastFlingDirection != null) {
+				outState.putFloat("lastFlingX", lastFlingDirection.velocityX);
+				outState.putFloat("lastFlingY", lastFlingDirection.velocityY);
+			}
+			if (previousFileName != null) {
+				outState.putString("previousFileName", previousFileName);
+			}
 		}
 	}
 

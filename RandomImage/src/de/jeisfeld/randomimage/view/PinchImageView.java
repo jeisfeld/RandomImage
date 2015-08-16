@@ -287,20 +287,26 @@ public class PinchImageView extends ImageView {
 	}
 
 	/**
+	 * Scale the image to fit into the view, if not yet scaled before.
+	 */
+	protected final void doInitialScaling() {
+		if (mIsBitmapSet && !mInitialized) {
+			doScalingToFit();
+		}
+	}
+
+	/**
 	 * Scale the image to fit into the view.
 	 */
-	// OVERRIDABLE
-	protected synchronized void doInitialScaling() {
-		if (mIsBitmapSet && !mInitialized) {
-			mPosX = ONE_HALF;
-			mPosY = ONE_HALF;
-			mScaleFactor = getNaturalScaleFactor();
-			if (mScaleFactor > 0) {
-				mInitialized = true;
-				mLastScaleFactor = mScaleFactor;
-				requestLayout();
-				invalidate();
-			}
+	public final void doScalingToFit() {
+		mPosX = ONE_HALF;
+		mPosY = ONE_HALF;
+		mScaleFactor = getNaturalScaleFactor();
+		if (mScaleFactor > 0) {
+			mInitialized = true;
+			mLastScaleFactor = mScaleFactor;
+			requestLayout();
+			invalidate();
 		}
 	}
 
