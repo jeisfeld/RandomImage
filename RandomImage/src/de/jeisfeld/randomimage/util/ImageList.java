@@ -102,6 +102,7 @@ public final class ImageList implements RandomFileProvider {
 		folderNames.clear();
 		allImageFiles.clear();
 		properties.clear();
+		int notFoundFiles = 0;
 
 		Set<String> allImageFileSet = new HashSet<String>();
 		try {
@@ -133,6 +134,7 @@ public final class ImageList implements RandomFileProvider {
 						}
 						else {
 							Log.w(Application.TAG, "Cannot find file " + line);
+							notFoundFiles++;
 						}
 						continue;
 					}
@@ -150,6 +152,15 @@ public final class ImageList implements RandomFileProvider {
 		}
 		catch (FileNotFoundException e) {
 			Log.e(Application.TAG, "Could not find configuration file", e);
+		}
+
+		if (notFoundFiles > 1) {
+			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files,
+					notFoundFiles, getListName());
+		}
+		else if (notFoundFiles == 1) {
+			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
+					getListName());
 		}
 
 		allImageFiles = new ArrayList<String>(allImageFileSet);

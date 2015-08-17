@@ -116,15 +116,13 @@ public class DisplayImageDetailsActivity extends Activity {
 		textView.setText(getImageInfo());
 		listMenu.addHeaderView(textView, null, false);
 
-		if (listName != null) {
-			listMenu.addItem(R.string.menu_view_in_gallery, new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, fileName);
-					returnResult(false, false);
-				}
-			});
-		}
+		listMenu.addItem(R.string.menu_view_in_gallery, new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, fileName);
+				returnResult(false, false);
+			}
+		});
 
 		final ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList != null && imageList.contains(fileName)) {

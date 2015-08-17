@@ -28,6 +28,8 @@
     <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
     <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
+    <string name="toast_failed_to_load_files">%1$d Bilder oder Verzeichnisse der Bildliste  „%2$s“ wurden nicht gefunden</string>
+    <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s“ wurde nicht gefunden</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
     <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
     <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
