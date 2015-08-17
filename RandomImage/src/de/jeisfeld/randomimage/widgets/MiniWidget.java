@@ -26,7 +26,7 @@ public class MiniWidget extends GenericWidget {
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-		remoteViews.setOnClickPendingIntent(R.id.textViewWidget, pendingIntent);
+		remoteViews.setOnClickPendingIntent(R.id.layoutWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 

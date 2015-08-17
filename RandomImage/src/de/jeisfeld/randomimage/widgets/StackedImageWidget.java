@@ -31,9 +31,8 @@ public class StackedImageWidget extends GenericWidget {
 	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 
 	@Override
-	public final void
-			onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-					final String listName) {
+	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
+			final int appWidgetId, final String listName) {
 
 		Intent intent = new Intent(context, StackedImageWidgetService.class);
 		// Add the app widget ID to the intent extras.

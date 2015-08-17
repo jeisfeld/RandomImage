@@ -28,9 +28,8 @@ public class ImageWidget extends GenericWidget {
 	private static SparseArray<String> currentFileNames = new SparseArray<String>();
 
 	@Override
-	public final void
-			onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-					final String listName) {
+	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
+			final int appWidgetId, final String listName) {
 		ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
@@ -43,6 +42,9 @@ public class ImageWidget extends GenericWidget {
 		}
 
 		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+		configureButtons(context, appWidgetManager, appWidgetId);
+		new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
+				R.id.buttonNextImage, R.id.buttonSettings).start();
 	}
 
 	@Override
@@ -65,6 +67,9 @@ public class ImageWidget extends GenericWidget {
 		}
 
 		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+		configureButtons(context, appWidgetManager, appWidgetId);
+		new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
+				R.id.buttonNextImage, R.id.buttonSettings).start();
 	}
 
 	@Override
@@ -119,6 +124,38 @@ public class ImageWidget extends GenericWidget {
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
+		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+	}
+
+	/**
+	 * Set the intents for the action buttons on the widget.
+	 *
+	 * @param context
+	 *            The {@link android.content.Context Context} in which this receiver is running.
+	 * @param appWidgetManager
+	 *            A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+	 * @param appWidgetId
+	 *            The appWidgetId of the widget whose size changed.
+	 */
+	private void configureButtons(final Context context, final AppWidgetManager appWidgetManager,
+			final int appWidgetId) {
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+
+		// Set the onClick intent for the "next" button
+		Intent nextIntent = new Intent(context, ImageWidget.class);
+		nextIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { appWidgetId });
+		PendingIntent pendingNextIntent =
+				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);
+
+		// Set the onClick intent for the "settings" button
+		Intent settingsIntent = new Intent(context, ImageWidgetConfigurationActivity.class);
+		settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		PendingIntent pendingSettingsIntent =
+				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
+
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 

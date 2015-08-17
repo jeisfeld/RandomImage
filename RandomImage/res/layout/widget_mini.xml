@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutWidget"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp" >
 
     <TextView
         android:id="@+id/textViewWidget"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_margin="0dp"
-        android:drawableTop="@drawable/ic_launcher"
         android:gravity="center"
-        android:padding="0dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:paddingTop="0dp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="2"
+        android:shadowRadius="2"
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textColor="@android:color/white" >
     </TextView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/textViewWidget"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@layout/text_view_initializing"
+        android:padding="5dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:src="@drawable/ic_launcher" />
 
 </RelativeLayout>

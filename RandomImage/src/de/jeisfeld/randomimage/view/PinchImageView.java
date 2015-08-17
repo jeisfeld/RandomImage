@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 
 /**
  * A view for displaying an image, allowing moving and resizing with pinching.
@@ -40,6 +41,11 @@ public class PinchImageView extends ImageView {
 	 * The maximum scale factor allowed.
 	 */
 	private static final float MAX_SCALE_FACTOR = 25f;
+
+	/**
+	 * The duration of the animation used in animateOut.
+	 */
+	private static final int ANIMATION_DURATION = SystemUtil.isTablet() ? 150 : 100; // MAGIC_NUMBER
 
 	// PUBLIC_FIELDS:START
 	// Fields are used also in OverlayPinchImageView.
@@ -275,7 +281,7 @@ public class PinchImageView extends ImageView {
 	}
 
 	/**
-	 * Animate the image out of the view (in 100ms).
+	 * Animate the image out of the view.
 	 *
 	 * @param velocityX
 	 *            The x velocity specifying the direction of animation.
@@ -298,7 +304,7 @@ public class PinchImageView extends ImageView {
 		final PropertyValuesHolder animPosY = PropertyValuesHolder.ofFloat("mPosY", mPosY, mPosY - 2 * relativeY);
 
 		final ObjectAnimator objectAnim = ObjectAnimator.ofPropertyValuesHolder(this, animPosX, animPosY);
-		objectAnim.setDuration(100); // MAGIC_NUMBER
+		objectAnim.setDuration(ANIMATION_DURATION);
 
 		objectAnim.addListener(new AnimatorListener() {
 			@Override
@@ -334,7 +340,8 @@ public class PinchImageView extends ImageView {
 	 * @param posX
 	 *            The new x position.
 	 */
-	protected final void setMPosX(final float posX) {
+	@SuppressWarnings("unused")
+	private void setMPosX(final float posX) {
 		mPosX = posX;
 		// Matrix is not set, as mPosY is set directly afterwards
 	}
@@ -345,7 +352,8 @@ public class PinchImageView extends ImageView {
 	 * @param posY
 	 *            The new y position.
 	 */
-	protected final void setMPosY(final float posY) {
+	@SuppressWarnings("unused")
+	private void setMPosY(final float posY) {
 		mPosY = posY;
 		setMatrix();
 	}

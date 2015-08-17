@@ -25,7 +25,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * Factor by which the image sizes are reduced compared to allowed size.
 	 */
-	private static final float IMAGE_SCALE_FACTOR = 0.5f;
+	private static final float IMAGE_SCALE_FACTOR = 0.6f;
 
 	/**
 	 * A map storing instances of the factory.

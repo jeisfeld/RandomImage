@@ -7,6 +7,7 @@
         android:id="@+id/imageViewWidget"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/border"
         android:contentDescription="@layout/text_view_initializing" >
     </ImageView>
 
@@ -22,5 +23,25 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/buttonNextImage"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:contentDescription="@layout/text_view_initializing"
+        android:padding="2dp"
+        android:src="@drawable/ic_widget_next"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/buttonSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:contentDescription="@layout/text_view_initializing"
+        android:padding="2dp"
+        android:src="@drawable/ic_widget_settings"
+        android:visibility="invisible" />
 
 </FrameLayout>
