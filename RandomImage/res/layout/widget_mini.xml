@@ -12,8 +12,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_margin="0dp"
-        android:gravity="center"
-        android:paddingBottom="5dp"
+        android:gravity="center_horizontal|top"
+        android:maxHeight="36dp"
+        android:minHeight="36dp"
+        android:paddingBottom="0dp"
         android:paddingLeft="1dp"
         android:paddingRight="1dp"
         android:paddingTop="0dp"
@@ -27,16 +29,16 @@
     </TextView>
 
     <ImageView
+        android:id="@+id/imageViewWidget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/textViewWidget"
         android:layout_alignParentTop="true"
         android:contentDescription="@layout/text_view_initializing"
-        android:padding="5dp"
         android:paddingBottom="3dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:paddingTop="5dp"
+        android:paddingTop="10dp"
         android:src="@drawable/ic_launcher" />
 
 </RelativeLayout>
