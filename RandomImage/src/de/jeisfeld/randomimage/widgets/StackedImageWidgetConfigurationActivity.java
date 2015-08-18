@@ -27,7 +27,7 @@ public class StackedImageWidgetConfigurationActivity extends WidgetConfiguration
 		final ArrayList<String> durationNameList = new ArrayList<String>();
 		for (int i = 0; i < durationNames.length; i++) {
 			long duration = Long.parseLong(durationValueStrings[i]);
-			if (duration >= MIN_DURATION) {
+			if (duration >= MIN_DURATION || duration == 0) {
 				durationValueList.add(duration);
 				durationNameList.add(durationNames[i]);
 			}

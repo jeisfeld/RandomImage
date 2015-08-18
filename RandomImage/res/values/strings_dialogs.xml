@@ -81,6 +81,7 @@
         <item>4 hours</item>
         <item>1 day</item>
         <item>1 week</item>
+        <item>only on restart</item>
     </string-array>
     <string-array name="timer_durations" translatable="false">
         <item>60000</item>
@@ -90,6 +91,7 @@
         <item>14400000</item>
         <item>86400000</item>
         <item>604800000</item>
+        <item>0</item>
     </string-array>
 
     <!-- Shared preference keys -->

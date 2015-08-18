@@ -126,9 +126,12 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
 		listNames.put(appWidgetId, listName);
 
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
 		if (interval > 0) {
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
 			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval);
+		}
+		else {
+			WidgetAlarmReceiver.cancelAlarm(Application.getAppContext(), appWidgetId);
 		}
 	}
 

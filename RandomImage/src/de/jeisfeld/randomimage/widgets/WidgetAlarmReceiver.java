@@ -56,6 +56,10 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 *            the interval in which the alarm triggers.
 	 */
 	public static final void setAlarm(final Context context, final int appWidgetId, final long interval) {
+		if (interval <= 0) {
+			return;
+		}
+
 		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId);
 
 		// Set the alarm

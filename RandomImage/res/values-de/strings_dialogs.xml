@@ -81,6 +81,7 @@
         <item>4 Stunden</item>
         <item>1 Tag</item>
         <item>1 Woche</item>
+        <item>Nur bei Neustart</item>
     </string-array>
 
 </resources>
