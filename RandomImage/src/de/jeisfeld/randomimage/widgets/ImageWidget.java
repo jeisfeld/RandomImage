@@ -122,6 +122,7 @@ public class ImageWidget extends GenericWidget {
 		else {
 			currentFileNames.put(appWidgetId, fileName);
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
+
 			remoteViews.setImageViewBitmap(
 					R.id.imageViewWidget,
 					ImageUtil.getImageBitmap(fileName,
@@ -166,7 +167,7 @@ public class ImageWidget extends GenericWidget {
 				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
 
-		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 	}
 
 	/**

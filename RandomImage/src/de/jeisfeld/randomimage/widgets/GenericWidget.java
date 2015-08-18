@@ -414,7 +414,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				remoteViews.setInt(buttonId, "setAlpha", alpha);
 				remoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
 			}
-			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+			appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 		}
 
 		/**
