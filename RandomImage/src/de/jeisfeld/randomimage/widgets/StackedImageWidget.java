@@ -32,7 +32,7 @@ public class StackedImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName) {
+			final int appWidgetId, final String listName, final boolean changeImage) {
 
 		Intent intent = new Intent(context, StackedImageWidgetService.class);
 		// Add the app widget ID to the intent extras.
@@ -68,7 +68,9 @@ public class StackedImageWidget extends GenericWidget {
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
 		// trigger also onDataStackChanged, as the intent will not update the service once created.
-		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
+		if (changeImage) {
+			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
+		}
 	}
 
 	@Override

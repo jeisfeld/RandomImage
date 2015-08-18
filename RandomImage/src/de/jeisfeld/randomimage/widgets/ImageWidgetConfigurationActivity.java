@@ -35,12 +35,13 @@ public class ImageWidgetConfigurationActivity extends WidgetConfigurationActivit
 			@Override
 			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 				ImageWidget.configure(appWidgetId, listName, durationValues[position]);
+				setResult(true);
 				finish();
 			}
 
 			@Override
 			public void onDialogNegativeClick(final DialogFragment dialog) {
-				ImageWidget.configure(appWidgetId, listName, 0);
+				setResult(false);
 				finish();
 			}
 		}, R.string.title_dialog_select_change_frequency, durationNameList,

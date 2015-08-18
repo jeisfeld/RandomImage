@@ -16,6 +16,11 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
  * Generic activity for the configuration of widgets. First select the image list, then continue initialization.
  */
 public abstract class WidgetConfigurationActivity extends Activity {
+	/**
+	 * The Intent used as result.
+	 */
+	private Intent resultValue;
+
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,9 +53,8 @@ public abstract class WidgetConfigurationActivity extends Activity {
 
 			@Override
 			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-				Intent resultValue = new Intent();
+				resultValue = new Intent();
 				resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-				setResult(RESULT_OK, resultValue);
 
 				initialize(savedInstanceState, appWidgetId, text);
 			}
@@ -61,6 +65,16 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			}
 		}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
 
+	}
+
+	/**
+	 * Set the result of the activity.
+	 *
+	 * @param success
+	 *            true if widget successfully created.
+	 */
+	protected final void setResult(final boolean success) {
+		setResult(success ? RESULT_OK : RESULT_CANCELED, resultValue);
 	}
 
 	/**

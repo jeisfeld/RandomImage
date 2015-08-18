@@ -43,12 +43,13 @@ public class StackedImageWidgetConfigurationActivity extends WidgetConfiguration
 			@Override
 			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 				StackedImageWidget.configure(appWidgetId, listName, durationValueList.get(position));
+				setResult(true);
 				finish();
 			}
 
 			@Override
 			public void onDialogNegativeClick(final DialogFragment dialog) {
-				StackedImageWidget.configure(appWidgetId, listName, 0);
+				setResult(false);
 				finish();
 			}
 		}, R.string.title_dialog_select_change_frequency, durationNameList,

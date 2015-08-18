@@ -29,22 +29,32 @@ public class ImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName) {
-		ImageList imageList = ImageRegistry.getImageListByName(listName);
-		if (imageList == null) {
-			Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
-			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-		}
+			final int appWidgetId, final String listName, final boolean changeImage) {
+		boolean requireNewImage = changeImage || currentFileNames.get(appWidgetId) == null;
 
 		String fileName = null;
-		if (imageList != null) {
-			fileName = imageList.getRandomFileName();
+		if (requireNewImage) {
+			ImageList imageList = ImageRegistry.getImageListByName(listName);
+			if (imageList == null) {
+				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
+				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+			}
+
+			if (imageList != null) {
+				fileName = imageList.getRandomFileName();
+			}
+		}
+		else {
+			fileName = currentFileNames.get(appWidgetId);
 		}
 
 		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 		configureButtons(context, appWidgetManager, appWidgetId);
-		new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
-				R.id.buttonNextImage, R.id.buttonSettings).start();
+
+		if (requireNewImage) {
+			new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
+					R.id.buttonNextImage, R.id.buttonSettings).start();
+		}
 	}
 
 	@Override
@@ -111,7 +121,6 @@ public class ImageWidget extends GenericWidget {
 		}
 		else {
 			currentFileNames.put(appWidgetId, fileName);
-
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 			remoteViews.setImageViewBitmap(
 					R.id.imageViewWidget,
@@ -139,12 +148,13 @@ public class ImageWidget extends GenericWidget {
 	 */
 	private void configureButtons(final Context context, final AppWidgetManager appWidgetManager,
 			final int appWidgetId) {
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image); // STORE_PROPERTY
 
 		// Set the onClick intent for the "next" button
 		Intent nextIntent = new Intent(context, ImageWidget.class);
 		nextIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { appWidgetId });
+		nextIntent.putExtra(EXTRA_NEW_IMAGE, true);
 		PendingIntent pendingNextIntent =
 				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);
@@ -171,8 +181,6 @@ public class ImageWidget extends GenericWidget {
 	 */
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateimagewidget);
-
-		currentFileNames.remove(appWidgetId);
 
 		doBaseConfiguration(appWidgetId, listName, interval);
 

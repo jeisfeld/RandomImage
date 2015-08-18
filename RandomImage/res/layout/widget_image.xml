@@ -7,6 +7,7 @@
         android:id="@+id/imageViewWidget"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scaleType="centerInside"
         android:background="@drawable/border"
         android:contentDescription="@layout/text_view_initializing" >
     </ImageView>

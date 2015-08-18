@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.animation.Animator.AnimatorListener;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -38,6 +38,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	protected static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
 
 	/**
+	 * Intent flag to indicate that a new image should be displayed.
+	 */
+	protected static final String EXTRA_NEW_IMAGE = "de.jeisfeld.randomimage.NEW_IMAGE";
+
+	/**
 	 * The names of the image lists associated to any widget.
 	 */
 	private static SparseArray<String> listNames = new SparseArray<String>();
@@ -48,6 +53,29 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	private static Set<ButtonAnimator> buttonAnimators = new HashSet<ButtonAnimator>();
 
+	/**
+	 * A temporary storage listing appWidgetIds that should change the image with the next update.
+	 */
+	private static Set<Integer> dirtyWidgets = new HashSet<Integer>();
+
+	@Override
+	public final void onReceive(final Context context, final Intent intent) {
+		String action = intent.getAction();
+		if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
+			int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+			if (appWidgetIds != null && appWidgetIds.length > 0) {
+				boolean updateFlag = intent.getBooleanExtra(EXTRA_NEW_IMAGE, false);
+				if (updateFlag) {
+					for (int i = 0; i < appWidgetIds.length; i++) {
+						dirtyWidgets.add(appWidgetIds[i]);
+					}
+				}
+			}
+		}
+
+		super.onReceive(context, intent);
+	}
+
 	@Override
 	public final void
 			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
@@ -57,8 +85,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			String listName = getListName(appWidgetId);
+			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, dirtyWidgets.contains(appWidgetId));
 
-			onUpdateWidget(context, appWidgetManager, appWidgetId, listName);
+			dirtyWidgets.remove(appWidgetId);
 		}
 	}
 
@@ -74,9 +103,10 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 *            for this provider, or just a subset of them.
 	 * @param listName
 	 *            the list name of the widget.
+	 * @changeImage flag indicating if the image should be changed.
 	 */
 	protected abstract void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName);
+			final int appWidgetId, final String listName, final boolean changeImage);
 
 	// OVERRIDABLE
 	@Override
@@ -160,6 +190,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			ids = appWidgetId;
 		}
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		intent.putExtra(EXTRA_NEW_IMAGE, true);
 		context.sendBroadcast(intent);
 	}
 

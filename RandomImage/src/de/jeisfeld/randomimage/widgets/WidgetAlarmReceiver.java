@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.SystemClock;
 import de.jeisfeld.randomimage.SdMountReceiver;
 
 /**
@@ -65,8 +66,13 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 		// Set the alarm
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-		if (interval < AlarmManager.INTERVAL_DAY) {
-			alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, interval, interval, alarmIntent);
+		if (interval < AlarmManager.INTERVAL_FIFTEEN_MINUTES) {
+			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + interval,
+					interval, alarmIntent);
+		}
+		else if (interval < AlarmManager.INTERVAL_DAY) {
+			alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + interval,
+					interval, alarmIntent);
 		}
 		else {
 			Calendar calendar = Calendar.getInstance();

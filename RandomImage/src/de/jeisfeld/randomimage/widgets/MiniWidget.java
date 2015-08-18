@@ -16,8 +16,7 @@ public class MiniWidget extends GenericWidget {
 	@Override
 	public final void
 			onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-					final String listName) {
-
+					final String listName, final boolean changeImage) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
 
 		remoteViews.setTextViewText(R.id.textViewWidget, listName);
