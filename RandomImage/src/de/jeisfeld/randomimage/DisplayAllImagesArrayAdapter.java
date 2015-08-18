@@ -12,6 +12,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
@@ -60,7 +61,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Flag indicating how selection is handled.
 	 */
-	private volatile SelectionMode selectionMode = SelectionMode.NONE;
+	private volatile SelectionMode selectionMode = SelectionMode.ONE;
 
 	static {
 		// Set cache size in dependence of device memory.
@@ -86,7 +87,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	public final void setSelectionMode(final SelectionMode selectionMode) {
 		this.selectionMode = selectionMode;
 
-		if (selectionMode == SelectionMode.NONE) {
+		if (selectionMode != SelectionMode.MULTIPLE) {
 			selectedFolderNames.clear();
 			selectedFileNames.clear();
 		}
@@ -191,6 +192,14 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 			});
 		}
 
+		final String listName;
+		if (activity instanceof DisplayAllImagesActivity) {
+			listName = ((DisplayAllImagesActivity) activity).getListName();
+		}
+		else {
+			listName = null;
+		}
+
 		thumbImageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -198,6 +207,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 
 				switch (selectionMode) {
 				case NONE:
+					break;
+				case ONE:
 					if (isFolder) {
 						DisplayImagesFromFolderActivity.startActivity(activity, fileName);
 					}
@@ -213,8 +224,6 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 						}
 					}
 					break;
-				case ONE:
-					break;
 				case MULTIPLE:
 					if (view.isMarked()) {
 						view.setMarked(false);
@@ -228,6 +237,14 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				default:
 					break;
 				}
+			}
+		});
+
+		thumbImageView.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(final View v) {
+				DisplayImageDetailsActivity.startActivity(activity, fileName, isFolder ? null : listName, true);
+				return true;
 			}
 		});
 

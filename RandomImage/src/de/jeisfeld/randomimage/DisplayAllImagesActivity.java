@@ -52,6 +52,10 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private String listName;
 
+	protected final String getListName() {
+		return listName;
+	}
+
 	/**
 	 * The current action within this activity.
 	 */
@@ -722,7 +726,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 *            The markability status.
 	 */
 	private void setMarkabilityStatus(final boolean markable) {
-		getAdapter().setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.NONE);
+		getAdapter().setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.ONE);
 
 		for (int i = 0; i < getGridView().getChildCount(); i++) {
 			View imageView = getGridView().getChildAt(i);
@@ -767,8 +771,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			}
 			break;
 		case DisplayRandomImageActivity.REQUEST_CODE:
-			boolean refreshParent = DisplayRandomImageActivity.getResult(resultCode, data);
-			if (refreshParent) {
+			boolean needsRefresh1 = DisplayRandomImageActivity.getResult(resultCode, data);
+			if (needsRefresh1) {
 				fillListOfImages();
 			}
 			break;
@@ -776,6 +780,12 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			boolean boughtPremium = SettingsActivity.getResultBoughtPremium(resultCode, data);
 			if (boughtPremium) {
 				invalidateOptionsMenu();
+			}
+			break;
+		case DisplayImageDetailsActivity.REQUEST_CODE:
+			boolean needsRefresh2 = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
+			if (needsRefresh2) {
+				fillListOfImages();
 			}
 			break;
 		default:

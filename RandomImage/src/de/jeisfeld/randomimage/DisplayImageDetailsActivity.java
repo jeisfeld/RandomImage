@@ -116,13 +116,15 @@ public class DisplayImageDetailsActivity extends Activity {
 		textView.setText(getImageInfo());
 		listMenu.addHeaderView(textView, null, false);
 
-		listMenu.addItem(R.string.menu_view_in_gallery, new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, fileName);
-				returnResult(false, false);
-			}
-		});
+		if (new File(fileName).isFile()) {
+			listMenu.addItem(R.string.menu_view_in_gallery, new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, fileName);
+					returnResult(false, false);
+				}
+			});
+		}
 
 		final ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList != null && imageList.contains(fileName)) {
@@ -241,8 +243,10 @@ public class DisplayImageDetailsActivity extends Activity {
 		StringBuffer imageInfo = new StringBuffer();
 		File file = new File(fileName);
 
-		imageInfo.append(formatImageInfoLine(this, R.string.info_file_name, file.getName()));
-		imageInfo.append(formatImageInfoLine(this, R.string.info_file_location, file.getParent()));
+		imageInfo.append(formatImageInfoLine(this,
+				file.isDirectory() ? R.string.info_folder_name : R.string.info_file_name, file.getName()));
+		imageInfo.append(formatImageInfoLine(this,
+				file.isDirectory() ? R.string.info_folder_location : R.string.info_file_location, file.getParent()));
 
 		Date imageDate = ImageUtil.getExifDate(fileName);
 		if (imageDate != null) {

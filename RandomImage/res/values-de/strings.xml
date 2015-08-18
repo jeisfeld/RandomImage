@@ -22,7 +22,9 @@
 
     <!-- Strings for image info -->
     <string name="info_file_name">Dateiname:</string>
+    <string name="info_folder_name">Verzeichnisname:</string>
     <string name="info_file_location">Verzeichnis:</string>
+    <string name="info_folder_location">Verzeichnisort:</string>
     <string name="info_file_date">Datum:</string>
 
 </resources>
