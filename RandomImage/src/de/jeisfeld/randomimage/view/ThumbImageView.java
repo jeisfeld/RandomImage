@@ -40,7 +40,7 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Flag indicating if it is possible to mark the view.
 	 */
-	private boolean isMarkable = false;
+	private MarkingType markingType = MarkingType.NONE;
 
 	/**
 	 * Flag indicating if this view represents a folder instead of a file.
@@ -199,17 +199,19 @@ public class ThumbImageView extends FrameLayout {
 	}
 
 	/**
-	 * Set the markability status of the view.
+	 * Set the marking type of the view.
 	 *
-	 * @param markable
-	 *            if true, the view is set markable, otherwise not markable.
+	 * @param newMarkingType
+	 *            The type in which the view should be marked.
 	 */
-	public final void setMarkable(final boolean markable) {
-		isMarkable = markable;
-		if (!isMarkable && isMarked) {
+	public final void setMarkable(final MarkingType newMarkingType) {
+		markingType = newMarkingType;
+		if (markingType == MarkingType.NONE && isMarked) {
 			setMarked(false);
 		}
-		checkBoxMarked.setVisibility(isMarkable ? View.VISIBLE : View.INVISIBLE);
+		checkBoxMarked.setVisibility(markingType == MarkingType.NONE ? View.INVISIBLE : View.VISIBLE);
+		checkBoxMarked.setButtonDrawable(markingType == MarkingType.CROSS ? R.drawable.checkbox_negative
+				: R.drawable.checkbox_positive);
 	}
 
 	/**
@@ -246,5 +248,23 @@ public class ThumbImageView extends FrameLayout {
 				textViewName.setTextSize(TypedValue.COMPLEX_UNIT_SP, SystemUtil.isTablet() ? 15 : 10); // MAGIC_NUMBER
 			}
 		}
+	}
+
+	/**
+	 * The types in which the view can be marked.
+	 */
+	public enum MarkingType {
+		/**
+		 * No marking.
+		 */
+		NONE,
+		/**
+		 * Marking with a red cross.
+		 */
+		CROSS,
+		/**
+		 * Marking with a green hook.
+		 */
+		HOOK
 	}
 }

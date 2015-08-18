@@ -26,6 +26,7 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
+import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 
 /**
@@ -727,14 +728,15 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void setMarkabilityStatus(final boolean markable) {
 		getAdapter().setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.ONE);
+		MarkingType markingType = markable ? MarkingType.CROSS : MarkingType.NONE;
 
 		for (int i = 0; i < getGridView().getChildCount(); i++) {
 			View imageView = getGridView().getChildAt(i);
 			if (imageView instanceof ThumbImageView) {
-				((ThumbImageView) imageView).setMarkable(markable);
+				((ThumbImageView) imageView).setMarkable(markingType);
 			}
 		}
-		getAdapter().setMarkabilityStatus(markable);
+		getAdapter().setMarkabilityStatus(markingType);
 	}
 
 	@Override

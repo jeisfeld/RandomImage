@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
+import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 
 /**
  * Array adapter class to display an eye photo pair in a list.
@@ -63,6 +64,11 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 */
 	private volatile SelectionMode selectionMode = SelectionMode.ONE;
 
+	/**
+	 * The way in which the thumbs are marked.
+	 */
+	private MarkingType markingType = MarkingType.NONE;
+
 	static {
 		// Set cache size in dependence of device memory.
 		int memoryClass = SystemUtil.getLargeMemoryClass();
@@ -87,10 +93,20 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	public final void setSelectionMode(final SelectionMode selectionMode) {
 		this.selectionMode = selectionMode;
 
-		if (selectionMode != SelectionMode.MULTIPLE) {
+		switch (selectionMode) {
+		case NONE:
+		case ONE:
 			selectedFolderNames.clear();
 			selectedFileNames.clear();
+			markingType = MarkingType.NONE;
+			break;
+		case MULTIPLE:
+			markingType = MarkingType.CROSS;
+			break;
+		default:
+			break;
 		}
+
 	}
 
 	/**
@@ -173,7 +189,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 			thumbImageView.setImage(activity, displayFileName, sameThread, true, new Runnable() {
 				@Override
 				public void run() {
-					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
+					thumbImageView.setMarkable(markingType);
 					thumbImageView.setMarked(selectedFolderNames.contains(fileName));
 					thumbImageView.setFolderName(new File(fileName).getName());
 				}
@@ -186,7 +202,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 			thumbImageView.setImage(activity, displayFileName, sameThread, false, new Runnable() {
 				@Override
 				public void run() {
-					thumbImageView.setMarkable(selectionMode == SelectionMode.MULTIPLE);
+					thumbImageView.setMarkable(markingType);
 					thumbImageView.setMarked(selectedFileNames.contains(fileName));
 				}
 			});
@@ -302,12 +318,12 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Set the markability status for all images in the cache.
 	 *
-	 * @param markable
-	 *            the new markability status.
+	 * @param newMarkingType
+	 *            the new marking type.
 	 */
-	public final void setMarkabilityStatus(final boolean markable) {
+	public final void setMarkabilityStatus(final MarkingType newMarkingType) {
 		for (ThumbImageView view : viewCache.getCachedImages()) {
-			view.setMarkable(markable);
+			view.setMarkable(newMarkingType);
 		}
 	}
 
@@ -482,7 +498,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 						cache.put(i, view);
 
 						// Prevent wrong marking status in race conditions.
-						view.setMarkable(selectionMode == SelectionMode.MULTIPLE);
+						view.setMarkable(markingType);
 					}
 				}
 
