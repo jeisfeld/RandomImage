@@ -37,7 +37,7 @@
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_new_list">Your surprise image list is empty. Pleas press the “+” symbol on top in order to add images to the list.\n\nAlternatively, you may go to your Gallery app and send images to this app in order to add them to the list.</string>
-    <string name="dialog_info_add_images">Please choose from the gallery some images that you want to add to your surprise image list. Go back to the app if you do not want to add more images.</string>
+    <string name="dialog_info_add_images">Please choose from the gallery some images that you want to add to your surprise image list. Go back to the app if you do not want to add more images. (If you want to add many images from the same folder, it is more efficient to go to the Gallery app and send the images to the Surprise Image app.)</string>
     <string name="dialog_info_add_folder">Please choose from the gallery any image in the folder that you want to add to your surprise image list.</string>
     <string name="dialog_info_display_image">You can zoom and move the image.\nFlip the image to see another one.\nDouble tap to go to the image list configuration.\nLong press for further options.</string>
     <string name="dialog_info_delete_images">Select images that you want to remove from the list. Then press the trash icon to remove, or press the cross icon to abort.</string>

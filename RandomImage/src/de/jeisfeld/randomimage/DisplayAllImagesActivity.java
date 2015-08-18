@@ -785,6 +785,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		case DisplayImageDetailsActivity.REQUEST_CODE:
 			boolean needsRefresh2 = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
 			if (needsRefresh2) {
+				changeAction(CurrentAction.DISPLAY);
 				fillListOfImages();
 			}
 			break;
