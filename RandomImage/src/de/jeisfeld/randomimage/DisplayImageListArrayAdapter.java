@@ -271,7 +271,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		thumbImageView.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				DisplayImageDetailsActivity.startActivity(activity, fileName, isFolder ? null : listName, true);
+				DisplayImageDetailsActivity.startActivity(activity, fileName, listName, true);
 				return true;
 			}
 		});

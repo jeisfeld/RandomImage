@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -331,6 +332,7 @@ public final class ImageUtil {
 		for (File file : imageFiles) {
 			fileNames.add(file.getAbsolutePath());
 		}
+		Collections.sort(fileNames);
 		return fileNames;
 	}
 

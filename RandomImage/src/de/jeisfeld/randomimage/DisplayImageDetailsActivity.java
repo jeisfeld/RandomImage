@@ -116,11 +116,28 @@ public class DisplayImageDetailsActivity extends Activity {
 		textView.setText(getImageInfo());
 		listMenu.addHeaderView(textView, null, false);
 
-		if (new File(fileName).isFile()) {
+		final String galleryFileName;
+		File file = new File(fileName);
+		if (file.isFile()) {
+			galleryFileName = fileName;
+		}
+		else if (file.isDirectory()) {
+			ArrayList<String> files = ImageUtil.getImagesInFolder(fileName);
+			if (files.size() > 0) {
+				galleryFileName = files.get(0);
+			}
+			else {
+				galleryFileName = null;
+			}
+		}
+		else {
+			galleryFileName = null;
+		}
+		if (galleryFileName != null) {
 			listMenu.addItem(R.string.menu_view_in_gallery, new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, fileName);
+					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, galleryFileName);
 					returnResult(false, false);
 				}
 			});
@@ -128,35 +145,47 @@ public class DisplayImageDetailsActivity extends Activity {
 
 		final ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList != null && imageList.contains(fileName)) {
-			listMenu.addItem(R.string.menu_remove_from_list, new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					ArrayList<String> filesToBeRemoved = new ArrayList<String>();
-					filesToBeRemoved.add(fileName);
-					String filesString =
-							DialogUtil.createFileFolderMessageString(new ArrayList<String>(), filesToBeRemoved);
+			final boolean isDirectory = new File(fileName).isDirectory();
 
-					DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
-							new ConfirmDialogListener() {
-								/**
-								 * The serial version id.
-								 */
-								private static final long serialVersionUID = 1L;
+			listMenu.addItem(
+					isDirectory ? R.string.menu_remove_folder_from_list : R.string.menu_remove_image_from_list,
+					new OnClickListener() {
+						@Override
+						public void onClick(final View v) {
+							ArrayList<String> filesToBeRemoved = new ArrayList<String>();
+							ArrayList<String> foldersToBeRemoved = new ArrayList<String>();
+							if (isDirectory) {
+								foldersToBeRemoved.add(fileName);
+							}
+							else {
+								filesToBeRemoved.add(fileName);
+							}
+							String filesString =
+									DialogUtil.createFileFolderMessageString(foldersToBeRemoved, filesToBeRemoved);
 
-								@Override
-								public void onDialogPositiveClick(final DialogFragment dialog) {
-									imageList.removeFile(fileName);
-									imageList.update();
-									returnResult(preventDisplayAll, true);
-								}
+							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
+									new ConfirmDialogListener() {
+										/**
+										 * The serial version id.
+										 */
+										private static final long serialVersionUID = 1L;
 
-								@Override
-								public void onDialogNegativeClick(final DialogFragment dialog) {
-									returnResult(false, false);
-								}
-							}, R.string.button_remove, R.string.dialog_confirmation_remove, listName, filesString);
-				}
-			});
+										@Override
+										public void onDialogPositiveClick(final DialogFragment dialog) {
+											imageList.removeFile(fileName);
+											imageList.removeFolder(fileName);
+											imageList.update();
+											returnResult(preventDisplayAll, true);
+										}
+
+										@Override
+										public void onDialogNegativeClick(final DialogFragment dialog) {
+											returnResult(false, false);
+										}
+									}, R.string.button_remove, R.string.dialog_confirmation_remove, listName,
+									filesString);
+						}
+					});
 		}
 
 		if (listName != null) {
