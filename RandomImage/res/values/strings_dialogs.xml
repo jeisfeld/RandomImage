@@ -20,6 +20,7 @@
     <string name="toast_added_images_count_external">Added %1$d images to the surprise image list “%2$s”</string>
     <string name="toast_added_images_single_external">Added image “%1$s” to the surprise image list “%2$s”</string>
     <string name="toast_added_images_none_external">All selected images were already in the surprise image list “%1$s”</string>
+    <string name="toast_added_no_image">There was no image selected for adding</string>
     <string name="toast_removed_multiple">%1$s have been removed from the list</string>
     <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
@@ -46,6 +47,7 @@
     <string name="dialog_info_name_already_existing">The name “%1$s” already exists - please choose another one.</string>
     <string name="dialog_info_delete_widgets">On your home screen, there are widgets for the name “%1$s”. Please remember to remove these.</string>
     <string name="dialog_info_backup">The backup of the list “%1$s” is completed. The backup is located in the file “%2$s”.</string>
+    <string name="dialog_info_no_images_in_folder">The folder “%1$s” does not contain any images.</string>
     <string name="dialog_info_premium_thanks">Thanks for buying the premium add-on! You can now use multiple image lists.</string>
     <string name="dialog_info_need_premium">You have to acquire a premium add-on to manage multiple image lists.</string>
     <string name="dialog_input_enter_list_name_new">Please enter a name for the new list.</string>

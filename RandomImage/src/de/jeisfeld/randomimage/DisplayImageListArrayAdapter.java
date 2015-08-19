@@ -23,7 +23,7 @@ import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 /**
  * Array adapter class to display an eye photo pair in a list.
  */
-public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
+public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Number of views to be preloaded.
 	 */
@@ -132,7 +132,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param fileNames
 	 *            The names of files to be displayed.
 	 */
-	public DisplayAllImagesArrayAdapter(final DisplayImageListActivity activity,
+	public DisplayImageListArrayAdapter(final DisplayImageListActivity activity,
 			final ArrayList<String> folderNames, final ArrayList<String> fileNames) {
 		super(activity, R.layout.text_view_initializing);
 		this.activity = activity;
@@ -157,7 +157,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param context
 	 *            The Context the view is running in.
 	 */
-	public DisplayAllImagesArrayAdapter(final Context context) {
+	public DisplayImageListArrayAdapter(final Context context) {
 		super(context, R.layout.text_view_initializing);
 		this.activity = (DisplayImageListActivity) context;
 	}
@@ -237,7 +237,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				switch (selectionMode) {
 				case ONE:
 					if (isFolder) {
-						DisplayImagesFromFolderActivity.startActivity(activity, fileName);
+						DisplayImagesFromFolderActivity.startActivity(activity, fileName, false);
 					}
 					else {
 						if (activity instanceof DisplayImagesFromFolderActivity) {
