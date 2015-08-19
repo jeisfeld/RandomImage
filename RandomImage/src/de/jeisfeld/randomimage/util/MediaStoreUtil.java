@@ -24,6 +24,11 @@ public final class MediaStoreUtil {
 	public static final int MINI_THUMB_SIZE = 512;
 
 	/**
+	 * The size of a micro thumbnail.
+	 */
+	public static final int MICRO_THUMB_SIZE = 96;
+
+	/**
 	 * Hide default constructor.
 	 */
 	private MediaStoreUtil() {
@@ -195,11 +200,12 @@ public final class MediaStoreUtil {
 			int imageId = getImageId(path);
 
 			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = MINI_THUMB_SIZE / maxSize;
+			options.inSampleSize = maxSize <= MICRO_THUMB_SIZE ? MICRO_THUMB_SIZE / maxSize : MINI_THUMB_SIZE / maxSize;
 			options.inDither = true;
-			return MediaStore.Images.Thumbnails.getThumbnail(resolver, imageId, MediaStore.Images.Thumbnails.MINI_KIND,
+			return MediaStore.Images.Thumbnails.getThumbnail(resolver, imageId,
+					maxSize < MICRO_THUMB_SIZE ? MediaStore.Images.Thumbnails.MICRO_KIND
+							: MediaStore.Images.Thumbnails.MINI_KIND,
 					options);
-
 		}
 		catch (ImageNotFoundException e) {
 			return null;
