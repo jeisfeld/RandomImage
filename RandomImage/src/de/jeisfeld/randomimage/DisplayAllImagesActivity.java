@@ -715,7 +715,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action == CurrentAction.DELETE || action == CurrentAction.DISPLAY) {
 			currentAction = action;
-			setMarkabilityStatus(action == CurrentAction.DELETE);
+			setSelectionMode(action == CurrentAction.DELETE ? SelectionMode.MULTIPLE_REMOVE : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
 	}
@@ -723,12 +723,12 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	/**
 	 * Set the markability status of all views in the grid.
 	 *
-	 * @param markable
+	 * @param selectionMode
 	 *            The markability status.
 	 */
-	private void setMarkabilityStatus(final boolean markable) {
-		getAdapter().setSelectionMode(markable ? SelectionMode.MULTIPLE : SelectionMode.ONE);
-		MarkingType markingType = markable ? MarkingType.CROSS : MarkingType.NONE;
+	private void setSelectionMode(final SelectionMode selectionMode) {
+		getAdapter().setSelectionMode(selectionMode);
+		MarkingType markingType = DisplayAllImagesArrayAdapter.getMarkingTypeFromSelectionMode(selectionMode);
 
 		for (int i = 0; i < getGridView().getChildCount(); i++) {
 			View imageView = getGridView().getChildAt(i);
@@ -736,7 +736,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				((ThumbImageView) imageView).setMarkable(markingType);
 			}
 		}
-		getAdapter().setMarkabilityStatus(markingType);
 	}
 
 	@Override

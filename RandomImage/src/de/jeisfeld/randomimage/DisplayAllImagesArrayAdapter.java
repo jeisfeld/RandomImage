@@ -93,20 +93,33 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	public final void setSelectionMode(final SelectionMode selectionMode) {
 		this.selectionMode = selectionMode;
 
-		switch (selectionMode) {
-		case NONE:
-		case ONE:
+		if (selectionMode == SelectionMode.ONE) {
 			selectedFolderNames.clear();
 			selectedFileNames.clear();
-			markingType = MarkingType.NONE;
-			break;
-		case MULTIPLE:
-			markingType = MarkingType.CROSS;
-			break;
-		default:
-			break;
 		}
 
+		markingType = getMarkingTypeFromSelectionMode(selectionMode);
+		setMarkabilityStatus(markingType);
+	}
+
+	/**
+	 * Map the selectionMode of the adapter to the markingType of the thumb.
+	 *
+	 * @param selectionMode
+	 *            The selectionMode
+	 * @return the markingType
+	 */
+	public static MarkingType getMarkingTypeFromSelectionMode(final SelectionMode selectionMode) {
+		switch (selectionMode) {
+		case ONE:
+			return MarkingType.NONE;
+		case MULTIPLE_ADD:
+			return MarkingType.HOOK;
+		case MULTIPLE_REMOVE:
+			return MarkingType.CROSS;
+		default:
+			return null;
+		}
 	}
 
 	/**
@@ -222,8 +235,6 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 				ThumbImageView view = (ThumbImageView) v;
 
 				switch (selectionMode) {
-				case NONE:
-					break;
 				case ONE:
 					if (isFolder) {
 						DisplayImagesFromFolderActivity.startActivity(activity, fileName);
@@ -240,7 +251,8 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 						}
 					}
 					break;
-				case MULTIPLE:
+				case MULTIPLE_ADD:
+				case MULTIPLE_REMOVE:
 					if (view.isMarked()) {
 						view.setMarked(false);
 						(isFolder ? selectedFolderNames : selectedFileNames).remove(fileName);
@@ -321,7 +333,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @param newMarkingType
 	 *            the new marking type.
 	 */
-	public final void setMarkabilityStatus(final MarkingType newMarkingType) {
+	private void setMarkabilityStatus(final MarkingType newMarkingType) {
 		for (ThumbImageView view : viewCache.getCachedImages()) {
 			view.setMarkable(newMarkingType);
 		}
@@ -333,7 +345,7 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 * @return true if all have been selected, false if all have been deselected or if not in selection mode.
 	 */
 	public final boolean toggleSelectAll() {
-		if (selectionMode == SelectionMode.MULTIPLE) {
+		if (selectionMode != SelectionMode.ONE) {
 			if (selectedFileNames.size() < fileNames.size() || selectedFolderNames.size() < folderNames.size()) {
 				setSelectedFiles(fileNames);
 				setSelectedFolders(folderNames);
@@ -366,17 +378,17 @@ public class DisplayAllImagesArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public enum SelectionMode {
 		/**
-		 * No selection possible.
-		 */
-		NONE,
-		/**
-		 * One file can be selected.
+		 * One file can be selected for display.
 		 */
 		ONE,
 		/**
-		 * Multiple files can be selected.
+		 * Multiple files can be selected for adding.
 		 */
-		MULTIPLE
+		MULTIPLE_ADD,
+		/**
+		 * Multiple files can be selected for removal.
+		 */
+		MULTIPLE_REMOVE,
 	}
 
 	/**
