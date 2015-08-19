@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -35,6 +38,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+
+	/**
+	 * Request code for getting images from gallery.
+	 */
+	private static final int REQUEST_CODE_GALLERY = 100;
 
 	/**
 	 * The names of the folders to be displayed.
@@ -215,11 +223,21 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			changeAction(CurrentAction.REMOVE);
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
-		case R.id.action_add_single_images:
-			AddImagesFromGalleryActivity.startActivity(this, false);
-			return true;
-		case R.id.action_add_image_folder:
-			AddImagesFromGalleryActivity.startActivity(this, true);
+		case R.id.action_add_images:
+			DialogUtil.displayInfo(this, new MessageDialogListener() {
+				/**
+				 * The serial version uid.
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onDialogFinished() {
+					Intent intent = new Intent();
+					intent.setType("image/*");
+					intent.setAction(Intent.ACTION_GET_CONTENT);
+					startActivityForResult(intent, REQUEST_CODE_GALLERY);
+				}
+			}, R.string.key_info_add_images, R.string.dialog_info_add_images);
 			return true;
 		case R.id.action_backup_list:
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
@@ -726,25 +744,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
-		case AddImagesFromGalleryActivity.REQUEST_CODE:
-			int addedImagesCount = AddImagesFromGalleryActivity.getAddedImageCountFromResult(resultCode, data);
-			if (addedImagesCount > 1) {
-				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
-				DialogUtil.displayToast(this, R.string.toast_added_images_count, addedImagesCount);
-			}
-			else if (addedImagesCount == 1) {
-				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
-				DialogUtil.displayToast(this, R.string.toast_added_images_single);
-			}
-			String addedFolder = AddImagesFromGalleryActivity.getAddedFolderFromResult(resultCode, data);
-			if (addedFolder != null) {
-				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
-				DialogUtil.displayToast(this, R.string.toast_added_folder, addedFolder);
-			}
-			if (addedImagesCount > 0 || addedFolder != null) {
-				fillListOfImages();
-			}
-			break;
 		case DisplayRandomImageActivity.REQUEST_CODE:
 			boolean needsRefresh1 = DisplayRandomImageActivity.getResult(resultCode, data);
 			if (needsRefresh1) {
@@ -761,6 +760,28 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			boolean needsRefresh2 = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
 			if (needsRefresh2) {
 				changeAction(CurrentAction.DISPLAY);
+				fillListOfImages();
+			}
+			break;
+		case REQUEST_CODE_GALLERY:
+			if (resultCode == RESULT_OK) {
+
+				Uri selectedImageUri = data.getData();
+				String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
+
+				if (fileName == null) {
+					DialogUtil.displayToast(this, R.string.toast_error_select_folder);
+					return;
+				}
+
+				String folderName = new File(fileName).getParent();
+
+				DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
+			}
+			break;
+		case DisplayImagesFromFolderActivity.REQUEST_CODE:
+			boolean needsRefresh3 = DisplayImagesFromFolderActivity.getResultFilesAdded(resultCode, data);
+			if (needsRefresh3) {
 				fillListOfImages();
 			}
 			break;

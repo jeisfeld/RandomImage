@@ -16,7 +16,7 @@
         android:title="@string/menu_cancel"/>
     <item
         android:id="@+id/action_remove_images"
-        android:icon="@drawable/ic_action_trash"
+        android:icon="@drawable/ic_action_remove_checked"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/menu_remove_images"/>

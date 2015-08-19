@@ -43,16 +43,7 @@
         android:icon="@drawable/ic_action_plus"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_add_images">
-        <menu>
-            <item
-                android:id="@+id/action_add_single_images"
-                android:title="@string/menu_add_single_images"/>
-            <item
-                android:id="@+id/action_add_image_folder"
-                android:title="@string/menu_add_image_folder"/>
-        </menu>
-    </item>
+        android:title="@string/menu_add_images"/>
     <item
         android:id="@+id/action_select_images_for_removal"
         android:icon="@drawable/ic_action_minus"

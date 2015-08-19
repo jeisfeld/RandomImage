@@ -7,7 +7,6 @@
     <string name="menu_cancel">Cancel</string>
     <string name="menu_select_all">Select all images</string>
     <string name="menu_add_images">Add images</string>
-    <string name="menu_add_single_images">Add individual images</string>
     <string name="menu_add_image_folder">Add an image folder</string>
     <string name="menu_manage_lists">Manage image lists</string>
     <string name="menu_backup_list">Backup image list</string>

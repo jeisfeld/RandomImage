@@ -17,7 +17,6 @@ public final class PreferenceUtil {
 	 * The list of preferences used for switching on and off hints.
 	 */
 	private static final Integer[] INFO_PREFERENCES = {
-			R.string.key_info_add_folder,
 			R.string.key_info_add_images,
 			R.string.key_info_backup,
 			R.string.key_info_delete_images,

@@ -9,14 +9,9 @@
     <string name="title_dialog_select_change_frequency">Auswahl der Wechselhäufigkeit</string>
 
     <!-- Contents of toasts -->
-    <string name="toast_added_image">Das Bild “%1$s” wurde hinzugefügt</string>
-    <string name="toast_added_image_none">Das Bild “%1$s” war bereits in der Liste.</string>
-    <string name="toast_added_image_error">Unerwarteter Fehler beim Versuch, ein Bild hinzuzufügen.</string>
-    <string name="toast_added_images_count">Es wurden %1$d Bilder hinzugefügt</string>
-    <string name="toast_added_images_single">Es wurde ein Bild hinzugefügt.</string>
-    <string name="toast_added_folder">Das Verzeichnis “%1$s” wurde hinzugefügt</string>
+    <string name="toast_added_multiple">Es wurden %1$s zur Liste hinzugefügt</string>
+    <string name="toast_added_single">%1$s wurde zur Liste hinzugefügt</string>
     <string name="toast_added_folder_none">Das Verzeichnis “%1$s” war bereits in der Liste.</string>
-    <string name="toast_added_folder_error">Unerwarteter Fehler beim Versuch, ein Verzeichnis hinzuzufügen.</string>
     <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Überraschungsbildliste „%2$s“ hinzugefügt</string>
     <string name="toast_added_images_single_external">Das Bild „%1$s“ wurde zur Überraschungsbildliste „%2$s“ hinzugefügt</string>
     <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Überraschungsbildliste „%1$s“</string>
@@ -34,13 +29,12 @@
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
     <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
     <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
+    <string name="toast_error_select_folder">Unerwarteter Fehler beim Versuch, ein Verzeichnis auszuwählen.</string>
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.\n\nSie können auch Ihre Galerie-App nutzen und von dort Bilder an die Überraschungsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
-    <string name="dialog_info_add_images">Bitte wählen Sie in der Galerie einige Bilder, die sie in Ihre Überraschungsbildliste aufnehmen wollen. Gehen Sie zurück zur App, wenn Sie keine Bilder mehr hinzufügen wollen. (Wenn Sie viele Bilder aus dem gleichen Verzeichnis hinzufügen wollen, geht dies einfacher, wenn Sie direkt in die Galerie-App gehen und die Bilder von dort an die Überraschungsfoto-App senden.)</string>
-    <string name="dialog_info_add_multiple">Bitte wählen Sie in der Galerie ein Bild. Anschließend können Sie Bilder im gleichen Verzeichnis zum Hinzufügen auswählen.</string>
-    <string name="dialog_info_add_folder">Bitte wählen Sie in der Galerie ein Bild im Verzeichnis, das Sie zu Ihrer Überraschungsbildliste hinzufügen wollen.</string>
+    <string name="dialog_info_add_images">Bitte wählen Sie ein Bild aus der Galerie aus.\nAnschließend haben Sie dann die Wahl, ob Sie das ganze Bildverzeichnis in die Überraschungsbildliste aufnehmen wollen, oder ob Sie nur einzelne Bilder dieses Verzeichnisses hinzufügen wollen.</string>
     <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
@@ -63,6 +57,8 @@
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%1$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s“ entfernen?</string>
+    <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
+    <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>
     <string name="dialog_confirmation_overwrite_list">Die Bildliste „%1$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup">Das Backup von „%1$s“ existiert bereits. Wollen Sie es überschreiben?</string>
 

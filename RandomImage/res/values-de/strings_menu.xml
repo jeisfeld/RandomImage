@@ -7,7 +7,6 @@
     <string name="menu_cancel">Abbrechen</string>
     <string name="menu_select_all">Alle Bilder auswählen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
-    <string name="menu_add_single_images">Einzelne Bilder hinzufügen</string>
     <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>
     <string name="menu_manage_lists">Bildlisten verwalten</string>
     <string name="menu_backup_list">Bildliste sichern</string>

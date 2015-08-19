@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage;
 
+import java.io.File;
 import java.util.ArrayList;
 
-import android.content.Context;
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,16 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 
 /**
  * Activity to display the list of images of a folder.
  */
 public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
+	/**
+	 * The request code used to finish the triggering activity.
+	 */
+	public static final int REQUEST_CODE = 5;
 	/**
 	 * The resource key for the folder whose images should be displayed.
 	 */
@@ -29,6 +37,11 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * The resource key for the flag indicating if the activity is opened in order to add images to the current list.
 	 */
 	private static final String STRING_EXTRA_FORADDITION = "de.jeisfeld.randomimage.FORADDITION";
+
+	/**
+	 * The resource key for the flag if the parent activity should be finished.
+	 */
+	private static final String STRING_RESULT_FILES_ADDED = "de.jeisfeld.randomimage.FILES_ADDED";
 
 	/**
 	 * The names of the files to be displayed.
@@ -48,15 +61,15 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
-	 * @param context
-	 *            The context starting this activity.
+	 * @param activity
+	 *            The activity starting this activity.
 	 * @param folderName
 	 *            the name of the folder which should be displayed.
 	 * @param forAddition
 	 *            Flag indicating if the activity is opened in order to add images to the current list.
 	 */
-	public static final void startActivity(final Context context, final String folderName, final boolean forAddition) {
-		Intent intent = new Intent(context, DisplayImagesFromFolderActivity.class);
+	public static final void startActivity(final Activity activity, final String folderName, final boolean forAddition) {
+		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		if (folderName != null) {
 			intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
@@ -64,7 +77,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		if (forAddition) {
 			intent.putExtra(STRING_EXTRA_FORADDITION, forAddition);
 		}
-		context.startActivity(intent);
+		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
 	@Override
@@ -132,9 +145,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		switch (menuId) {
 		case R.id.action_add_images:
 			final ImageList imageList = ImageRegistry.getCurrentImageList();
-
 			final ArrayList<String> imagesToBeAdded = getAdapter().getSelectedFiles();
-
 			if (imagesToBeAdded.size() > 0) {
 
 				ArrayList<String> addedImages = new ArrayList<String>();
@@ -145,30 +156,77 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 					}
 				}
 
+				String addedImagesString =
+						DialogUtil.createFileFolderMessageString(new ArrayList<String>(), addedImages);
+
 				int totalAddedCount = addedImages.size();
 				if (totalAddedCount == 0) {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_no_image);
 				}
 				else if (totalAddedCount == 1) {
-					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_images_single);
+					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_single,
+							addedImagesString);
 				}
 				else {
-					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_images_count,
-							totalAddedCount);
+					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_multiple,
+							addedImagesString);
 				}
 
 				if (totalAddedCount > 0) {
+					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
 					imageList.update();
 				}
-				finish();
+				returnResult(totalAddedCount > 0);
 			}
 			else {
-				DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_no_image);
-				changeAction(CurrentAction.DISPLAY);
+				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						addFolderToImageList();
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						returnResult(false);
+					}
+				}, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
+						new File(folderName).getName());
+			}
+			return true;
+		case R.id.action_add_image_folder:
+			int selectedImagesCount = getAdapter().getSelectedFiles().size();
+
+			if (selectedImagesCount == 0) {
+				addFolderToImageList();
+			}
+			else {
+				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						addFolderToImageList();
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// stay in the activity.
+						return;
+					}
+				}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
+						new File(folderName).getName());
 			}
 			return true;
 		case R.id.action_cancel:
-			finish();
+			returnResult(false);
 			return true;
 		case R.id.action_select_all:
 			boolean markingStatus = getAdapter().toggleSelectAll();
@@ -182,6 +240,32 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		default:
 			return false;
 		}
+	}
+
+	/**
+	 * Add the current folder to the current imageList.
+	 */
+	private void addFolderToImageList() {
+		final ImageList imageList2 = ImageRegistry.getCurrentImageList();
+		boolean success = imageList2.addFolder(folderName);
+		if (success) {
+			ArrayList<String> addedFolderList = new ArrayList<String>();
+			addedFolderList.add(folderName);
+			String addedFoldersString =
+					DialogUtil.createFileFolderMessageString(addedFolderList, new ArrayList<String>());
+			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
+			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
+			imageList2.update();
+		}
+		else {
+			if (imageList2.contains(folderName)) {
+				DialogUtil.displayToast(this, R.string.toast_added_folder_none, new File(folderName).getName());
+			}
+			else {
+				DialogUtil.displayToast(this, R.string.toast_error_select_folder);
+			}
+		}
+		returnResult(true);
 	}
 
 	/**
@@ -200,7 +284,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 				@Override
 				public void onDialogFinished() {
 					// Nothing to display.
-					finish();
+					returnResult(false);
 				}
 			}, 0, R.string.dialog_info_no_images_in_folder, folderName);
 			return;
@@ -226,6 +310,40 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			setSelectionMode(action == CurrentAction.ADD ? SelectionMode.MULTIPLE_ADD : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
+	}
+
+	/**
+	 * Static helper method to extract the filesAdded flag.
+	 *
+	 * @param resultCode
+	 *            The result code indicating if the response was successful.
+	 * @param data
+	 *            The activity response data.
+	 * @return the flag if the files were added.
+	 */
+	public static final boolean getResultFilesAdded(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			Bundle res = data.getExtras();
+			return res.getBoolean(STRING_RESULT_FILES_ADDED);
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * Helper method: Return the flag if files have been added.
+	 *
+	 * @param filesAdded
+	 *            The flag if files have been added to the list.
+	 */
+	private void returnResult(final boolean filesAdded) {
+		Bundle resultData = new Bundle();
+		resultData.putBoolean(STRING_RESULT_FILES_ADDED, filesAdded);
+		Intent intent = new Intent();
+		intent.putExtras(resultData);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 
 	@Override

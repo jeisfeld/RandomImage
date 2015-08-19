@@ -76,8 +76,6 @@
             android:label="@string/title_activity_display_image_details"
             android:theme="@android:style/Theme.Holo.Dialog" >
         </activity>
-        <activity android:name=".AddImagesFromGalleryActivity" >
-        </activity>
         <activity
             android:name=".widgets.MiniWidgetConfigurationActivity"
             android:theme="@android:style/Theme.Holo.Dialog" >

@@ -17,6 +17,7 @@
     <string name="button_remove">Entfernen</string>
     <string name="button_overwrite">Überschreiben</string>
     <string name="button_dont_show">Nicht mehr zeigen</string>
+    <string name="button_add_folder">Verzeichnis hinzufügen</string>
     <string name="button_purchased_item">%1$s (gekauft)</string>
     <string name="default_list_name">Bildliste</string>
 
