@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -45,6 +46,19 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
  * Inspired by http://www.codeproject.com/Articles/547636/Android-Ready-to-use-simple-directory-chooser-dial
  */
 public class DirectoryChooserDialogFragment extends DialogFragment {
+	/**
+	 * The resource key for the initial folder name.
+	 */
+	private static final String STRING_EXTRA_FOLDER = "de.jeisfeld.randomimage.FOLDER";
+	/**
+	 * The resource key for the listener notified when finishing the dialog.
+	 */
+	private static final String STRING_EXTRA_LISTENER = "de.jeisfeld.randomimage.LISTENER";
+	/**
+	 * The resource key for the optional listener reacting on long clicks.
+	 */
+	private static final String STRING_EXTRA_LONG_CLICK_LISTENER = "de.jeisfeld.randomimage.LONG_CLICK_LISTENER";
+
 	/**
 	 * The text view showing the current folder.
 	 */
@@ -91,21 +105,32 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	private ChosenDirectoryListener listener = null;
 
 	/**
+	 * An optional listener reacting on item long clicks.
+	 */
+	private OnFolderLongClickListener longClickListener = null;
+
+	/**
 	 * Create a DirectoryChooserDialogFragment.
 	 *
 	 * @param activity
 	 *            The activity calling the dialog.
 	 * @param listener
 	 *            The callback listener reacting on the dialog response.
+	 * @param longClickListener
+	 *            An optional listener waiting for long clicks.
 	 * @param dir
 	 *            The start folder.
 	 */
 	public static void displayDirectoryChooserDialog(final Activity activity, final ChosenDirectoryListener listener,
-			final String dir) {
-		DirectoryChooserDialogFragment fragment = new DirectoryChooserDialogFragment();
+			final OnFolderLongClickListener longClickListener, final String dir) {
 		Bundle bundle = new Bundle();
-		bundle.putString("dir", dir);
-		bundle.putSerializable("listener", listener);
+		bundle.putString(STRING_EXTRA_FOLDER, dir);
+		bundle.putSerializable(STRING_EXTRA_LISTENER, listener);
+		if (longClickListener != null) {
+			bundle.putSerializable(STRING_EXTRA_LONG_CLICK_LISTENER, longClickListener);
+		}
+
+		DirectoryChooserDialogFragment fragment = new DirectoryChooserDialogFragment();
 		fragment.setArguments(bundle);
 		fragment.show(activity.getFragmentManager(), DirectoryChooserDialogFragment.class.toString());
 	}
@@ -126,8 +151,10 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		}
 
 		// retrieve arguments
-		String dir = getArguments().getString("dir");
-		listener = (ChosenDirectoryListener) getArguments().getSerializable("listener");
+		String dir = getArguments().getString(STRING_EXTRA_FOLDER);
+		listener = (ChosenDirectoryListener) getArguments().getSerializable(STRING_EXTRA_LISTENER);
+		longClickListener =
+				(OnFolderLongClickListener) getArguments().getSerializable(STRING_EXTRA_LONG_CLICK_LISTENER);
 
 		if (dir == null) {
 			dir = PreferenceUtil.getSharedPreferenceString(R.string.key_directory_chooser_last_folder);
@@ -176,6 +203,17 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 				updateDirectory();
 			}
 		});
+
+		if (longClickListener != null) {
+			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position,
+						final long id) {
+					final String selectedFolder = currentFolder + File.separator + listAdapter.getItem(position);
+					return longClickListener.onFolderLongClick(selectedFolder);
+				}
+			});
+		}
 
 		gridView = (GridView) layout.findViewById(R.id.gridViewImages);
 
@@ -368,9 +406,10 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 
 	@Override
 	public final void onSaveInstanceState(final Bundle outState) {
-		if (listener != null) {
+		if (listener != null || longClickListener != null) {
 			// Typically cannot serialize the listener due to its reference to the activity.
 			listener = null;
+			longClickListener = null;
 			outState.putBoolean("preventRecreation", true);
 		}
 		super.onSaveInstanceState(outState);
@@ -392,6 +431,20 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 * Called when the dialog is cancelled.
 		 */
 		void onCancelled();
+	}
+
+	/**
+	 * Callback interface for long click on folders.
+	 */
+	public interface OnFolderLongClickListener extends Serializable {
+		/**
+		 * Method called after long click on a folder.
+		 *
+		 * @param folderName
+		 *            The folder name.
+		 * @return true if the long click was consumed.
+		 */
+		boolean onFolderLongClick(final String folderName);
 	}
 
 	/**

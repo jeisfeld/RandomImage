@@ -768,9 +768,18 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		case REQUEST_CODE_GALLERY:
 			if (resultCode == RESULT_OK) {
 
-				String folderName = SelectDirectoryActivity.getResultFolder(resultCode, data);
+				boolean handledInternally =
+						SelectDirectoryActivity.getResultWasSelectDirectoryActivity(resultCode, data);
+				String folderName;
 
-				if (folderName == null) {
+				if (handledInternally) {
+					// got folder from SelectDirectoryActivity
+					folderName = SelectDirectoryActivity.getResultFolder(resultCode, data);
+					if (SelectDirectoryActivity.getResultUpdatedList(resultCode, data)) {
+						fillListOfImages();
+					}
+				}
+				else {
 					// got URI from external app
 					Uri selectedImageUri = data.getData();
 					String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
@@ -783,7 +792,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					folderName = new File(fileName).getParent();
 				}
 
-				DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
+				if (folderName != null) {
+					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
+				}
 			}
 			break;
 		case DisplayImagesFromFolderActivity.REQUEST_CODE:
