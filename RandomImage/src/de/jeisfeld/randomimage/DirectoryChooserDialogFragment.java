@@ -9,8 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.PreferenceUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -30,9 +29,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
  * Class to present a dialog for selection of a directory.
@@ -44,32 +48,37 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * The text view showing the current folder.
 	 */
-	private TextView mCurrentFolderView;
+	private TextView currentFolderView;
 
 	/**
 	 * The list view showing the sub-elements.
 	 */
-	private ListView mListView;
+	private ListView listView;
+
+	/**
+	 * The list view showing the sub-elements.
+	 */
+	private GridView gridView;
 
 	/**
 	 * The current folder.
 	 */
-	private String mDir = "";
+	private String currentFolder = "";
 
 	/**
 	 * The sub-elements of the current folder.
 	 */
-	private List<String> mSubdirs = null;
+	private List<String> subdirs = null;
 
 	/**
 	 * The list adapter handling the sub-elements of the current folder.
 	 */
-	private ArrayAdapter<String> mListAdapter = null;
+	private ArrayAdapter<String> listAdapter = null;
 
 	/**
 	 * The backstack of last browsed folders.
 	 */
-	private Stack<String> mBackStack = new Stack<String>();
+	private Stack<String> backStack = new Stack<String>();
 
 	/**
 	 * A reference to the shown dialog.
@@ -136,8 +145,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			return null;
 		}
 
-		mDir = dir;
-		mSubdirs = getDirectories(dir);
+		currentFolder = dir;
+		subdirs = getDirectories(dir);
 
 		Context context = getActivity();
 
@@ -152,21 +161,23 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		dialogBuilder.setView(layout);
 
 		((TextView) layout.findViewById(R.id.textViewMessage)).setText(R.string.dialog_select_image_folder_for_add);
-		mCurrentFolderView = (TextView) layout.findViewById(R.id.textCurrentFolder);
-		mCurrentFolderView.setText(dir);
+		currentFolderView = (TextView) layout.findViewById(R.id.textCurrentFolder);
+		currentFolderView.setText(dir);
 
-		mListView = (ListView) layout.findViewById(R.id.listViewSubfolders);
-		mListAdapter = createListAdapter(mSubdirs);
-		mListView.setAdapter(mListAdapter);
+		listView = (ListView) layout.findViewById(R.id.listViewSubfolders);
+		listAdapter = createListAdapter(subdirs);
+		listView.setAdapter(listAdapter);
 
-		mListView.setOnItemClickListener(new OnItemClickListener() {
+		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				mBackStack.push(mDir);
-				mDir += File.separator + mListAdapter.getItem(position);
+				backStack.push(currentFolder);
+				currentFolder += File.separator + listAdapter.getItem(position);
 				updateDirectory();
 			}
 		});
+
+		gridView = (GridView) layout.findViewById(R.id.gridViewImages);
 
 		dialogBuilder.setCancelable(false);
 
@@ -176,8 +187,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 				// Current directory chosen
 				if (listener != null) {
 					// Call registered listener supplied with the chosen directory
-					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mDir);
-					listener.onChosenDir(mDir);
+					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, currentFolder);
+					listener.onChosenDir(currentFolder);
 				}
 			}
 		}).setNegativeButton(R.string.button_cancel, new OnClickListener() {
@@ -196,14 +207,14 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
 					// Back button pressed - go to the last directory if existing - otherwise cancel the dialog.
-					if (mBackStack.size() == 0) {
+					if (backStack.size() == 0) {
 						dirsDialog.dismiss();
 						if (listener != null) {
 							listener.onCancelled();
 						}
 					}
 					else {
-						mDir = mBackStack.pop();
+						currentFolder = backStack.pop();
 						updateDirectory();
 					}
 
@@ -221,7 +232,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	@Override
 	public final void onStart() {
 		super.onStart();
-		enablePositiveButton(containsImages(mDir));
+		fillGridView();
 	}
 
 	/**
@@ -235,14 +246,15 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	}
 
 	/**
-	 * Query if the given directory contains an image.
-	 *
-	 * @param dir
-	 *            The directory.
-	 * @return True if the directory contains an image.
+	 * Fill the GridView to display the images.
 	 */
-	private boolean containsImages(final String dir) {
-		return ImageUtil.getImagesInFolder(dir).size() > 0;
+	private void fillGridView() {
+		ArrayList<String> imageFiles = ImageUtil.getImagesInFolder(currentFolder);
+
+		enablePositiveButton(imageFiles.size() > 0);
+
+		gridView.setAdapter(new DisplayImagesAdapter(imageFiles));
+		gridView.setVisibility(imageFiles.size() > 0 ? View.VISIBLE : View.GONE);
 	}
 
 	/**
@@ -294,23 +306,23 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	 */
 	private void updateDirectory() {
 		try {
-			mDir = new File(mDir).getCanonicalPath();
+			currentFolder = new File(currentFolder).getCanonicalPath();
 		}
 		catch (IOException e) {
 			// i
 		}
-		if (mDir == null || "".equals(mDir)) {
-			mDir = File.separator;
+		if (currentFolder == null || "".equals(currentFolder)) {
+			currentFolder = File.separator;
 		}
 
-		mSubdirs.clear();
-		mSubdirs.addAll(getDirectories(mDir));
-		mCurrentFolderView.setText(mDir);
+		subdirs.clear();
+		subdirs.addAll(getDirectories(currentFolder));
+		currentFolderView.setText(currentFolder);
 
-		mListAdapter.notifyDataSetChanged();
-		mListView.smoothScrollToPositionFromTop(0, 0, 100); // MAGIC_NUMBER
+		listAdapter.notifyDataSetChanged();
+		listView.smoothScrollToPositionFromTop(0, 0, 100); // MAGIC_NUMBER
 
-		enablePositiveButton(containsImages(mDir));
+		fillGridView();
 	}
 
 	/**
@@ -380,6 +392,72 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 * Called when the dialog is cancelled.
 		 */
 		void onCancelled();
+	}
+
+	/**
+	 * Adapter for the GridView displaying the image files.
+	 */
+	private class DisplayImagesAdapter extends ArrayAdapter<String> {
+		/**
+		 * The names of the image files displayed.
+		 */
+		private ArrayList<String> fileNames;
+
+		/**
+		 * Constructor for the adapter.
+		 *
+		 * @param fileNames
+		 *            The names of the image files to be displayed.
+		 */
+		public DisplayImagesAdapter(final ArrayList<String> fileNames) {
+			super(getActivity(), R.layout.text_view_initializing, fileNames);
+			this.fileNames = fileNames;
+		}
+
+		/**
+		 * Default adapter to be used by the framework.
+		 *
+		 * @param context
+		 *            The Context the view is running in.
+		 */
+		public DisplayImagesAdapter(final Context context) {
+			super(context, R.layout.text_view_initializing);
+		}
+
+		@Override
+		public final View getView(final int position, final View convertView, final ViewGroup parent) {
+			final ImageView imageView;
+			if (convertView != null && convertView instanceof ImageView) {
+				imageView = (ImageView) convertView;
+			}
+			else {
+				imageView = new ImageView(getActivity());
+			}
+
+			imageView.setAdjustViewBounds(true);
+
+			new Thread() {
+				@Override
+				public void run() {
+					final Bitmap bitmap =
+							ImageUtil.getImageBitmap(fileNames.get(position), MediaStoreUtil.MINI_THUMB_SIZE);
+
+					try {
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								imageView.setImageBitmap(bitmap);
+							}
+						});
+					}
+					catch (Exception e) {
+						// prevent NullPointerException
+					}
+				}
+			}.start();
+
+			return imageView;
+		}
 	}
 
 }

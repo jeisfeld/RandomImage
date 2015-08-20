@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:minHeight="1000dp"
-    android:orientation="vertical" >
+    android:minHeight="1000dp" >
 
     <TextView
         android:id="@+id/textViewMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_marginBottom="6dp"
         android:layout_marginTop="6dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -20,6 +20,7 @@
         android:id="@+id/textCurrentFolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewMessage"
         android:layout_marginBottom="6dp"
         android:layout_marginTop="6dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -30,7 +31,23 @@
     <ListView
         android:id="@+id/listViewSubfolders"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textCurrentFolder"
         android:layout_marginTop="6dp" />
 
-</LinearLayout>
+    <GridView
+        android:id="@+id/gridViewImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/listViewSubfolders"
+        android:layout_marginTop="6dp"
+        android:columnWidth="@dimen/mini_grid_pictures_size"
+        android:gravity="center"
+        android:horizontalSpacing="4dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="4dp"
+        android:visibility="gone" />
+
+</RelativeLayout>
