@@ -7,6 +7,7 @@
     <string name="title_dialog_enter_list_name">Enter list name</string>
     <string name="title_dialog_select_list_name">Select list name</string>
     <string name="title_dialog_select_change_frequency">Select change frequency</string>
+    <string name="title_dialog_select_folder">Select folder</string>
 
     <!-- Contents of toasts -->
     <string name="toast_added_multiple">%1$s have been added to the list</string>
@@ -55,6 +56,7 @@
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
+    <string name="dialog_select_image_folder_for_add">Select the folder from which you want to add images.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%1$s”?</string>
     <string name="dialog_confirmation_remove">Do you really want to remove %2$s from the list “%1$s”?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">You did not select any image for addition. Do you want to add the whole image folder to the list?</string>

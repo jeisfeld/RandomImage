@@ -7,6 +7,7 @@
     <string name="title_dialog_enter_list_name">Eingabe des Listennamens</string>
     <string name="title_dialog_select_list_name">Auswahl des Listennamens</string>
     <string name="title_dialog_select_change_frequency">Auswahl der Wechselhäufigkeit</string>
+    <string name="title_dialog_select_folder">Auswahl des Verzeichnisses</string>
 
     <!-- Contents of toasts -->
     <string name="toast_added_multiple">Es wurden %1$s zur Liste hinzugefügt</string>
@@ -55,6 +56,7 @@
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
+    <string name="dialog_select_image_folder_for_add">Wählen Sie das Verzeichnis, aus dem Sie Bilder hinzufügen wollen.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%1$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s“ entfernen?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
