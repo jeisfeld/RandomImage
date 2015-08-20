@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Stack;
 
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -76,6 +77,11 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	private AlertDialog dirsDialog;
 
 	/**
+	 * The listener notified when finishing the dialog.
+	 */
+	private ChosenDirectoryListener listener = null;
+
+	/**
 	 * Create a DirectoryChooserDialogFragment.
 	 *
 	 * @param activity
@@ -100,10 +106,23 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	 */
 	@Override
 	public final Dialog onCreateDialog(final Bundle savedInstanceState) {
-		// retrieve arguments
+		// Listeners cannot retain functionality when automatically recreated.
+		// Therefore, dialogs with listeners must be re-created by the activity on orientation change.
+		boolean preventRecreation = false;
+		if (savedInstanceState != null) {
+			preventRecreation = savedInstanceState.getBoolean("preventRecreation");
+		}
+		if (preventRecreation) {
+			dismiss();
+		}
 
+		// retrieve arguments
 		String dir = getArguments().getString("dir");
-		final ChosenDirectoryListener listener = (ChosenDirectoryListener) getArguments().getSerializable("listener");
+		listener = (ChosenDirectoryListener) getArguments().getSerializable("listener");
+
+		if (dir == null) {
+			dir = PreferenceUtil.getSharedPreferenceString(R.string.key_directory_chooser_last_folder);
+		}
 
 		File dirFile = dir == null ? null : new File(dir);
 		if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
@@ -157,6 +176,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 				// Current directory chosen
 				if (listener != null) {
 					// Call registered listener supplied with the chosen directory
+					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mDir);
 					listener.onChosenDir(mDir);
 				}
 			}
@@ -334,6 +354,16 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		return sdCardDirectory;
 	}
 
+	@Override
+	public final void onSaveInstanceState(final Bundle outState) {
+		if (listener != null) {
+			// Typically cannot serialize the listener due to its reference to the activity.
+			listener = null;
+			outState.putBoolean("preventRecreation", true);
+		}
+		super.onSaveInstanceState(outState);
+	}
+
 	/**
 	 * Callback interface for selected directory.
 	 */
@@ -351,4 +381,5 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 */
 		void onCancelled();
 	}
+
 }

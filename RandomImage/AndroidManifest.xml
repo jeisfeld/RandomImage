@@ -56,6 +56,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SelectDirectoryActivity"
+            android:theme="@android:style/Theme.Holo.Dialog" >
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".DisplayAllImagesActivity"
             android:icon="@drawable/ic_launcher_setup"
             android:label="@string/title_activity_display_images"

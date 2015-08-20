@@ -23,8 +23,8 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
-import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
@@ -235,9 +235,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					Intent intent = new Intent();
 					intent.setType("image/*");
 					intent.setAction(Intent.ACTION_GET_CONTENT);
+					intent.putExtra(SelectDirectoryActivity.STRING_EXTRA_ONLY_FOLDER, true);
+
 					startActivityForResult(intent, REQUEST_CODE_GALLERY);
 				}
-			}, R.string.key_info_add_images, R.string.dialog_info_add_images);
+			}, R.string.key_info_select_folder, R.string.dialog_info_select_folder);
 			return true;
 		case R.id.action_backup_list:
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
@@ -766,15 +768,20 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		case REQUEST_CODE_GALLERY:
 			if (resultCode == RESULT_OK) {
 
-				Uri selectedImageUri = data.getData();
-				String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
+				String folderName = SelectDirectoryActivity.getResultFolder(resultCode, data);
 
-				if (fileName == null) {
-					DialogUtil.displayToast(this, R.string.toast_error_select_folder);
-					return;
+				if (folderName == null) {
+					// got URI from external app
+					Uri selectedImageUri = data.getData();
+					String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
+
+					if (fileName == null) {
+						DialogUtil.displayToast(this, R.string.toast_error_select_folder);
+						return;
+					}
+
+					folderName = new File(fileName).getParent();
 				}
-
-				String folderName = new File(fileName).getParent();
 
 				DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
 			}

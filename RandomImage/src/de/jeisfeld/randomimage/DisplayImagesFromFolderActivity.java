@@ -97,6 +97,10 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			currentAction = forAddition ? CurrentAction.ADD : CurrentAction.DISPLAY;
 		}
 		changeAction(currentAction);
+
+		if (forAddition) {
+			DialogUtil.displayInfo(this, null, R.string.key_info_add_images, R.string.dialog_info_add_images);
+		}
 	}
 
 	@Override

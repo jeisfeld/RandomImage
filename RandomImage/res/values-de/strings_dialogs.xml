@@ -35,7 +35,8 @@
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.\n\nSie können auch Ihre Galerie-App nutzen und von dort Bilder an die Überraschungsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
-    <string name="dialog_info_add_images">Bitte wählen Sie ein Bild aus der Galerie aus.\nAnschließend haben Sie dann die Wahl, ob Sie das ganze Bildverzeichnis in die Überraschungsbildliste aufnehmen wollen, oder ob Sie nur einzelne Bilder dieses Verzeichnisses hinzufügen wollen.</string>
+    <string name="dialog_info_select_folder">Zunächst müssen Sie das Verzeichnis auswählen, aus dem Sie Bilder hinzufügen wollen.\n\nIm folgenden Dialog, wählen Sie „Überraschungsbild“, wenn Sie das Bildverzeichnis im Dateisystem auswählen wollen.\n\nOder wählen Sie Ihre Galerie-App, wenn Sie das Verzeichnis dort auswählen wollen - wählen Sie dann ein Bild in diesem Verzeichnis aus.</string>
+    <string name="dialog_info_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.</string>
     <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
