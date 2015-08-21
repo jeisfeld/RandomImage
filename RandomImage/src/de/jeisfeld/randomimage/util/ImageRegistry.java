@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
+import de.jeisfeld.randomimage.util.ImageList.ImageListInfo;
 
 /**
  * Utility class for storing and persisting the list of image names.
@@ -62,9 +63,9 @@ public final class ImageRegistry {
 	}
 
 	/**
-	 * Get an ImageRegistry currentImageList.
+	 * Get the currentImageList.
 	 *
-	 * @return An currentImageList.
+	 * @return The currentImageList.
 	 */
 	public static ImageList getCurrentImageList() {
 		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
@@ -83,6 +84,21 @@ public final class ImageRegistry {
 			switchToImageList(newName, CreationStyle.CREATE_EMPTY);
 		}
 		return currentImageList;
+	}
+
+	/**
+	 * Get the currentImageList, ensuring that it is freshly loaded.
+	 *
+	 * @return The currentImageList.
+	 */
+	public static ImageList getCurrentImageListRefreshed() {
+		if (currentImageList == null) {
+			return getCurrentImageList();
+		}
+		else {
+			currentImageList.load();
+			return currentImageList;
+		}
 	}
 
 	/**
@@ -163,7 +179,7 @@ public final class ImageRegistry {
 			}
 			else {
 				File newFile = getFileForListName(name);
-				imageListInfoMap.put(name, new ImageListInfo(newFile, StandardImageList.class));
+				imageListInfoMap.put(name, new ImageListInfo(name, newFile, StandardImageList.class));
 				currentImageList =
 						new StandardImageList(newFile, name, creationStyle == CreationStyle.CREATE_EMPTY ? null
 								: getConfigFile(getCurrentListName()));
@@ -285,7 +301,7 @@ public final class ImageRegistry {
 		File newConfigFile = getFileForListName(newName);
 		boolean success = currentImageList.changeListName(newName, newConfigFile);
 		if (success) {
-			imageListInfoMap.put(newName, new ImageListInfo(newConfigFile,
+			imageListInfoMap.put(newName, new ImageListInfo(newName, newConfigFile,
 					imageListInfoMap.get(currentName).getClass()));
 			imageListInfoMap.remove(currentName);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
@@ -385,14 +401,17 @@ public final class ImageRegistry {
 		Map<String, ImageListInfo> fileMap = new HashMap<String, ImageListInfo>();
 
 		for (File configFile : configFiles) {
-			ImageList imageList = ImageList.getListFromConfigFile(configFile);
-			String name = imageList.getListName();
+			ImageListInfo imageListInfo = ImageList.getInfoFromConfigFile(configFile);
 
-			if (fileMap.containsKey(name)) {
-				Log.e(Application.TAG, "Duplicate config list name " + name);
-			}
-			else {
-				fileMap.put(name, new ImageListInfo(configFile, imageList.getClass()));
+			if (imageListInfo != null) {
+				String name = imageListInfo.getName();
+
+				if (fileMap.containsKey(name)) {
+					Log.e(Application.TAG, "Duplicate config list name " + name);
+				}
+				else {
+					fileMap.put(name, new ImageListInfo(name, configFile, imageListInfo.getClass()));
+				}
 			}
 		}
 		return fileMap;
@@ -490,43 +509,6 @@ public final class ImageRegistry {
 		 * Clone the current list.
 		 */
 		CLONE_CURRENT
-	}
-
-	/**
-	 * Class holding information on an image file.
-	 */
-	private static final class ImageListInfo {
-		/**
-		 * The image list configuration file.
-		 */
-		private File configFile;
-
-		private File getConfigFile() {
-			return configFile;
-		}
-
-		/**
-		 * The class handling the image list.
-		 */
-		private Class<?> listClass;
-
-		private Class<?> getListClass() {
-			return listClass;
-		}
-
-		/**
-		 * Constructor for the class.
-		 *
-		 * @param configFile
-		 *            The image list configuration file.
-		 * @param listClass
-		 *            The class handling the image list.
-		 */
-		private ImageListInfo(final File configFile, final Class<?> listClass) {
-			this.configFile = configFile;
-			this.listClass = listClass;
-		}
-
 	}
 
 }

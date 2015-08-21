@@ -15,6 +15,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.Logger;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -215,12 +216,14 @@ public class DisplayRandomImageActivity extends Activity {
 			// Otherwise, use the imageList.
 			ImageList imageList;
 			if (listName == null) {
-				listName = ImageRegistry.getCurrentListName();
-				imageList = ImageRegistry.getCurrentImageList();
 				if (currentFileName == null) {
-					// Reload the file when starting the app.
-					imageList.load();
+					// Reload the file when starting the activity.
+					imageList = ImageRegistry.getCurrentImageListRefreshed();
 				}
+				else {
+					imageList = ImageRegistry.getCurrentImageList();
+				}
+				listName = imageList.getListName();
 			}
 			else {
 				imageList = ImageRegistry.getImageListByName(listName);

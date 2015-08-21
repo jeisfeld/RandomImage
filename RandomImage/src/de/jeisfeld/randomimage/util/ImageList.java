@@ -27,6 +27,11 @@ public abstract class ImageList implements RandomFileProvider {
 	private static final String PROP_LIST_NAME = "listName";
 
 	/**
+	 * Separator for properties in the file.
+	 */
+	private static final String PROPERTY_SEPARATOR = "=";
+
+	/**
 	 * The list of image files.
 	 */
 	private ArrayList<String> fileNames = new ArrayList<String>();
@@ -41,26 +46,10 @@ public abstract class ImageList implements RandomFileProvider {
 	 */
 	private File configFile = null;
 
-	protected final File getConfigFile() {
-		return configFile;
-	}
-
-	protected final void setConfigFile(final File configFile) {
-		this.configFile = configFile;
-	}
-
 	/**
 	 * Configuration properties of the file list.
 	 */
 	private Properties properties = new Properties();
-
-	protected final Properties getProperties() {
-		return properties;
-	}
-
-	protected final void setProperties(final Properties properties) {
-		this.properties = properties;
-	}
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -71,7 +60,7 @@ public abstract class ImageList implements RandomFileProvider {
 	 */
 	protected ImageList(final File configFile) {
 		init(); // OVERRIDABLE
-		setConfigFile(configFile);
+		this.configFile = configFile;
 		load(); // OVERRIDABLE
 	}
 
@@ -90,15 +79,14 @@ public abstract class ImageList implements RandomFileProvider {
 		init(); // OVERRIDABLE
 		if (configFile.exists()) {
 			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
-			setConfigFile(configFile);
+			this.configFile = configFile;
 			load(); // OVERRIDABLE
 		}
 		else {
+			this.configFile = configFile;
 			if (cloneFile != null) {
-				setConfigFile(cloneFile);
 				load(); // OVERRIDABLE
 			}
-			setConfigFile(configFile);
 			setListName(listName);
 			save();
 		}
@@ -144,9 +132,61 @@ public abstract class ImageList implements RandomFileProvider {
 	 *            the config file.
 	 * @return The image list.
 	 */
-	protected static ImageList parseConfigFile(final File configFile) {
-		// TODO: enhance for other types.
+	protected static ImageList getListFromConfigFile(final File configFile) {
+		// TODO: enhance for other classes.
 		return new StandardImageList(configFile);
+	}
+
+	/**
+	 * Retrieve the info for an ImageList from the config file.
+	 *
+	 * @param configFile
+	 *            the config file.
+	 * @return The name of the image list.
+	 */
+	protected static ImageListInfo getInfoFromConfigFile(final File configFile) {
+		if (!configFile.exists() || configFile.isDirectory()) {
+			return null;
+		}
+
+		String listName = null;
+
+		try {
+			Scanner scanner = new Scanner(configFile);
+			scanner.useDelimiter("\n");
+			while (scanner.hasNext()) {
+				String line = scanner.next();
+
+				// ignore comment lines
+				if (line == null || line.length() == 0 || line.startsWith("#")) {
+					continue;
+				}
+
+				// read properties
+				if (line.contains(PROPERTY_SEPARATOR) && !line.startsWith(File.separator)) {
+					int index = line.indexOf(PROPERTY_SEPARATOR);
+					String name = line.substring(0, index);
+					String value = line.substring(index + 1);
+
+					if (PROP_LIST_NAME.equals(name)) {
+						listName = value;
+					}
+				}
+			}
+			scanner.close();
+		}
+		catch (FileNotFoundException e) {
+			Log.e(Application.TAG, "Could not find configuration file", e);
+			return null;
+		}
+
+		if (listName == null) {
+			return null;
+		}
+		else {
+			// TODO: enhance for other classes.
+			return new ImageListInfo(listName, configFile, StandardImageList.class);
+		}
 	}
 
 	/**
@@ -154,14 +194,15 @@ public abstract class ImageList implements RandomFileProvider {
 	 */
 	// OVERRIDABLE
 	public synchronized void load() {
+Logger.log("load - start");
 		fileNames.clear();
 		folderNames.clear();
 		properties.clear();
 		int notFoundFiles = 0;
 
 		try {
-			if (getConfigFile().exists()) {
-				Scanner scanner = new Scanner(getConfigFile());
+			if (configFile.exists()) {
+				Scanner scanner = new Scanner(configFile);
 				scanner.useDelimiter("\n");
 				while (scanner.hasNext()) {
 					String line = scanner.next();
@@ -192,11 +233,11 @@ public abstract class ImageList implements RandomFileProvider {
 					}
 
 					// handle properties
-					if (line.contains("=")) {
-						int index = line.indexOf('=');
+					if (line.contains(PROPERTY_SEPARATOR)) {
+						int index = line.indexOf(PROPERTY_SEPARATOR);
 						String name = line.substring(0, index);
 						String value = line.substring(index + 1);
-						getProperties().setProperty(name, value);
+						properties.setProperty(name, value);
 					}
 				}
 				scanner.close();
@@ -214,6 +255,7 @@ public abstract class ImageList implements RandomFileProvider {
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
 					getListName());
 		}
+Logger.log("load - end");
 	}
 
 	/**
@@ -222,10 +264,10 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @return true if successful.
 	 */
 	protected final synchronized boolean save() {
-		File backupFile = new File(getConfigFile().getParentFile(), getConfigFile().getName() + ".bak");
+		File backupFile = new File(configFile.getParentFile(), configFile.getName() + ".bak");
 
-		if (getConfigFile().exists()) {
-			boolean success = getConfigFile().renameTo(backupFile);
+		if (configFile.exists()) {
+			boolean success = configFile.renameTo(backupFile);
 			if (!success) {
 				Log.e(Application.TAG, "Could not backup config file to " + backupFile.getAbsolutePath());
 				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
@@ -235,11 +277,11 @@ public abstract class ImageList implements RandomFileProvider {
 
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(getConfigFile()));
+			writer = new PrintWriter(new FileWriter(configFile));
 			writer.println("# Properties");
-			for (Object keyObject : getProperties().keySet()) {
+			for (Object keyObject : properties.keySet()) {
 				String key = (String) keyObject;
-				writer.println(key + "=" + getProperties().getProperty(key));
+				writer.println(key + PROPERTY_SEPARATOR + properties.getProperty(key));
 			}
 			writer.println();
 			writer.println("# Folder names");
@@ -263,7 +305,7 @@ public abstract class ImageList implements RandomFileProvider {
 			}
 		}
 		catch (IOException e) {
-			Log.e(Application.TAG, "Could not store configuration to file " + getConfigFile().getAbsolutePath(), e);
+			Log.e(Application.TAG, "Could not store configuration to file " + configFile.getAbsolutePath(), e);
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
 			return false;
 		}
@@ -306,10 +348,10 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @return The name of the list.
 	 */
 	public final String getListName() {
-		String listName = getProperties().getProperty(PROP_LIST_NAME);
+		String listName = properties.getProperty(PROP_LIST_NAME);
 
 		if (listName == null) {
-			listName = ImageRegistry.getListNameFromFileName(getConfigFile());
+			listName = ImageRegistry.getListNameFromFileName(configFile);
 		}
 
 		if (listName == null) {
@@ -327,10 +369,10 @@ public abstract class ImageList implements RandomFileProvider {
 	 */
 	private void setListName(final String listName) {
 		if (listName == null) {
-			getProperties().remove(PROP_LIST_NAME);
+			properties.remove(PROP_LIST_NAME);
 		}
 		else {
-			getProperties().setProperty(PROP_LIST_NAME, listName);
+			properties.setProperty(PROP_LIST_NAME, listName);
 		}
 		save();
 	}
@@ -345,9 +387,9 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @return true if successful.
 	 */
 	public final boolean changeListName(final String listName, final File newConfigFile) {
-		File oldConfigFile = getConfigFile();
+		File oldConfigFile = configFile;
 		String oldListName = getListName();
-		setConfigFile(newConfigFile);
+		configFile = newConfigFile;
 		setListName(listName);
 		boolean success = save();
 
@@ -360,8 +402,8 @@ public abstract class ImageList implements RandomFileProvider {
 			return success;
 		}
 		else {
-			Log.e(Application.TAG, "Could not save to new config file " + getConfigFile().getAbsolutePath());
-			setConfigFile(oldConfigFile);
+			Log.e(Application.TAG, "Could not save to new config file " + configFile.getAbsolutePath());
+			configFile = oldConfigFile;
 			return false;
 		}
 	}
@@ -485,4 +527,54 @@ public abstract class ImageList implements RandomFileProvider {
 		}
 		return folderNames.remove(folderName);
 	}
+
+	/**
+	 * Class holding information on an image file.
+	 */
+	protected static final class ImageListInfo {
+		/**
+		 * The name of the image list.
+		 */
+		private String name;
+
+		protected String getName() {
+			return name;
+		}
+
+		/**
+		 * The image list configuration file.
+		 */
+		private File configFile;
+
+		protected File getConfigFile() {
+			return configFile;
+		}
+
+		/**
+		 * The class handling the image list.
+		 */
+		private Class<?> listClass;
+
+		protected Class<?> getListClass() { // SUPPRESS_CHECKSTYLE
+			return listClass;
+		}
+
+		/**
+		 * Constructor for the class.
+		 *
+		 * @param name
+		 *            The name of the image list.
+		 * @param configFile
+		 *            The image list configuration file.
+		 * @param listClass
+		 *            The class handling the image list.
+		 */
+		protected ImageListInfo(final String name, final File configFile, final Class<?> listClass) {
+			this.name = name;
+			this.configFile = configFile;
+			this.listClass = listClass;
+		}
+
+	}
+
 }
