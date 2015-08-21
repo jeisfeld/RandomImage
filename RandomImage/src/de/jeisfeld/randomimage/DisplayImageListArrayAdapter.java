@@ -15,7 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
@@ -191,7 +191,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		if (isFolder) {
 			fileName = folderNames.get(position);
 
-			ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(fileName));
+			ArrayList<String> imageFiles = new ArrayList<String>(StandardImageList.getImageFilesInFolder(fileName));
 			if (imageFiles.size() > 0) {
 				displayFileName = imageFiles.get(new Random().nextInt(imageFiles.size()));
 			}

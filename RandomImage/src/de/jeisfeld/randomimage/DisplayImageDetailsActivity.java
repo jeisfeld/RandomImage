@@ -18,7 +18,7 @@ import android.widget.TextView;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -143,7 +143,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
-		final ImageList imageList = ImageRegistry.getImageListByName(listName);
+		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName);
 		if (imageList != null && imageList.contains(fileName)) {
 			final boolean isDirectory = new File(fileName).isDirectory();
 

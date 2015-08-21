@@ -44,12 +44,12 @@ public final class ImageRegistry {
 	/**
 	 * The singleton currentImageList of the imageRegistry.
 	 */
-	private static volatile ImageList currentImageList = null;
+	private static volatile StandardImageList currentImageList = null;
 
 	/**
 	 * A map from image list name to corresponding config file.
 	 */
-	private static Map<String, File> configFileMap = new HashMap<String, File>();
+	private static Map<String, ImageListInfo> imageListInfoMap = new HashMap<String, ImageListInfo>();
 
 	static {
 		parseConfigFiles();
@@ -66,14 +66,14 @@ public final class ImageRegistry {
 	 *
 	 * @return An currentImageList.
 	 */
-	public static ImageList getCurrentImageList() {
+	public static StandardImageList getCurrentImageList() {
 		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
 
 		if (currentImageList == null && currentListName != null) {
 			switchToImageList(currentListName, CreationStyle.NONE);
 		}
 
-		if (currentImageList == null && configFileMap.size() > 0) {
+		if (currentImageList == null && imageListInfoMap.size() > 0) {
 			String firstName = getImageListNames().get(0);
 			switchToImageList(firstName, CreationStyle.NONE);
 		}
@@ -100,7 +100,25 @@ public final class ImageRegistry {
 	 * @return The names of all available image lists.
 	 */
 	public static ArrayList<String> getImageListNames() {
-		ArrayList<String> nameList = new ArrayList<String>(configFileMap.keySet());
+		ArrayList<String> nameList = new ArrayList<String>(imageListInfoMap.keySet());
+		Collections.sort(nameList);
+		return nameList;
+	}
+
+	/**
+	 * Get the names of all available standard image lists.
+	 *
+	 * @return The names of all available standard image lists.
+	 */
+	public static ArrayList<String> getStandardImageListNames() {
+		ArrayList<String> nameList = new ArrayList<String>();
+
+		for (String name : imageListInfoMap.keySet()) {
+			if (imageListInfoMap.get(name).getListClass().equals(StandardImageList.class)) {
+				nameList.add(name);
+			}
+		}
+
 		Collections.sort(nameList);
 		return nameList;
 	}
@@ -111,7 +129,7 @@ public final class ImageRegistry {
 	 * @return The names of all available image lists in the backup.
 	 */
 	public static ArrayList<String> getBackupImageListNames() {
-		Map<String, File> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
+		Map<String, ImageListInfo> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
 		ArrayList<String> nameList = new ArrayList<String>(backupConfigFileMap.keySet());
 		Collections.sort(nameList);
 		return nameList;
@@ -145,16 +163,16 @@ public final class ImageRegistry {
 			}
 			else {
 				File newFile = getFileForListName(name);
-				configFileMap.put(name, newFile);
+				imageListInfoMap.put(name, new ImageListInfo(newFile, StandardImageList.class));
 				currentImageList =
-						new ImageList(newFile, name, creationStyle == CreationStyle.CREATE_EMPTY ? null
-								: configFileMap.get(getCurrentListName()));
+						new StandardImageList(newFile, name, creationStyle == CreationStyle.CREATE_EMPTY ? null
+								: getConfigFile(getCurrentListName()));
 				PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 				return true;
 			}
 		}
 		else {
-			currentImageList = new ImageList(configFile);
+			currentImageList = new StandardImageList(configFile);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 			return true;
 		}
@@ -188,8 +206,10 @@ public final class ImageRegistry {
 	 * @return the backup file path if successful.
 	 */
 	public static String backupImageList(final String name) {
-		File configFile = configFileMap.get(name);
-		File oldBackupFile = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+		File configFile = getConfigFile(name);
+
+		ImageListInfo oldImageListInfo = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+		File oldBackupFile = oldImageListInfo == null ? null : oldImageListInfo.getConfigFile();
 
 		if (configFile == null) {
 			Log.e(Application.TAG, "Could not find config file of " + name + " for backup.");
@@ -220,8 +240,9 @@ public final class ImageRegistry {
 	 * @return true if successful.
 	 */
 	public static boolean restoreImageList(final String name) {
-		File oldConfigFile = configFileMap.get(name);
-		File backupFile = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+		File oldConfigFile = getConfigFile(name);
+		ImageListInfo backupFileInfo = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+		File backupFile = backupFileInfo == null ? null : backupFileInfo.getConfigFile();
 
 		if (backupFile == null) {
 			Log.e(Application.TAG, "Could not find backup file of " + name + " for restore.");
@@ -255,18 +276,25 @@ public final class ImageRegistry {
 	 */
 	public static boolean renameCurrentList(final String newName) {
 		String currentName = getCurrentListName();
+		if (newName == null) {
+			return false;
+		}
+		if (newName.equals(currentName)) {
+			return true;
+		}
 		File newConfigFile = getFileForListName(newName);
 		boolean success = currentImageList.changeListName(newName, newConfigFile);
 		if (success) {
-			configFileMap.remove(currentName);
-			configFileMap.put(newName, newConfigFile);
+			imageListInfoMap.put(newName, new ImageListInfo(newConfigFile,
+					imageListInfoMap.get(currentName).getClass()));
+			imageListInfoMap.remove(currentName);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
 		}
 		return success;
 	}
 
 	/**
-	 * Get the ImageList for a certain name.
+	 * Get the StandardImageList for a certain name.
 	 *
 	 * @param name
 	 *            The name.
@@ -285,7 +313,25 @@ public final class ImageRegistry {
 			return null;
 		}
 		else {
-			return new ImageList(configFile);
+			return new StandardImageList(configFile);
+		}
+	}
+
+	/**
+	 * Get the StandardImageList for a certain name.
+	 *
+	 * @param name
+	 *            The name.
+	 * @return The image list for this name, if existing. Otherwise null.
+	 */
+	public static StandardImageList getStandardImageListByName(final String name) {
+		ImageList imageList = getImageListByName(name);
+
+		if (imageList != null && imageList instanceof StandardImageList) {
+			return (StandardImageList) imageList;
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -297,11 +343,14 @@ public final class ImageRegistry {
 	 * @return The config file, if existing, otherwise null.
 	 */
 	private static File getConfigFile(final String name) {
-		File configFile = configFileMap.get(name);
+		ImageListInfo imageListInfo = imageListInfoMap.get(name);
+
+		File configFile = imageListInfo == null ? null : imageListInfo.getConfigFile();
 
 		if (configFile == null) {
 			parseConfigFiles();
-			configFile = configFileMap.get(name);
+			imageListInfo = imageListInfoMap.get(name);
+			configFile = imageListInfo == null ? null : imageListInfo.getConfigFile();
 		}
 
 		return configFile;
@@ -311,7 +360,7 @@ public final class ImageRegistry {
 	 * Get the list of available config files.
 	 */
 	private static void parseConfigFiles() {
-		configFileMap = parseConfigFiles(CONFIG_FILE_FOLDER);
+		imageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
 	}
 
 	/**
@@ -321,7 +370,7 @@ public final class ImageRegistry {
 	 *            The config file folder.
 	 * @return The map from list names to image list files.
 	 */
-	private static Map<String, File> parseConfigFiles(final File configFileFolder) {
+	private static Map<String, ImageListInfo> parseConfigFiles(final File configFileFolder) {
 		File[] configFiles = configFileFolder.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(final File file) {
@@ -333,16 +382,17 @@ public final class ImageRegistry {
 			configFiles = new File[0];
 		}
 
-		Map<String, File> fileMap = new HashMap<String, File>();
+		Map<String, ImageListInfo> fileMap = new HashMap<String, ImageListInfo>();
 
 		for (File configFile : configFiles) {
-			String name = new ImageList(configFile).getListName();
+			ImageList imageList = ImageList.parseConfigFile(configFile);
+			String name = imageList.getListName();
 
 			if (fileMap.containsKey(name)) {
 				Log.e(Application.TAG, "Duplicate config list name " + name);
 			}
 			else {
-				fileMap.put(name, configFile);
+				fileMap.put(name, new ImageListInfo(configFile, imageList.getClass()));
 			}
 		}
 		return fileMap;
@@ -360,7 +410,7 @@ public final class ImageRegistry {
 		String listName = baseListName;
 
 		int counter = 1;
-		while (configFileMap.containsKey(listName)) {
+		while (imageListInfoMap.containsKey(listName)) {
 			listName = baseListName + " (" + (++counter) + ")";
 		}
 
@@ -440,6 +490,43 @@ public final class ImageRegistry {
 		 * Clone the current list.
 		 */
 		CLONE_CURRENT
+	}
+
+	/**
+	 * Class holding information on an image file.
+	 */
+	private static final class ImageListInfo {
+		/**
+		 * The image list configuration file.
+		 */
+		private File configFile;
+
+		private File getConfigFile() {
+			return configFile;
+		}
+
+		/**
+		 * The class handling the image list.
+		 */
+		private Class<?> listClass;
+
+		private Class<?> getListClass() {
+			return listClass;
+		}
+
+		/**
+		 * Constructor for the class.
+		 *
+		 * @param configFile
+		 *            The image list configuration file.
+		 * @param listClass
+		 *            The class handling the image list.
+		 */
+		private ImageListInfo(final File configFile, final Class<?> listClass) {
+			this.configFile = configFile;
+			this.listClass = listClass;
+		}
+
 	}
 
 }

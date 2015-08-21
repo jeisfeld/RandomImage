@@ -1,58 +1,40 @@
 package de.jeisfeld.randomimage.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Set;
 
-import android.net.Uri;
 import android.util.Log;
 import de.jeisfeld.randomimage.Application;
-import de.jeisfeld.randomimage.R;
-import de.jeisfeld.randomimage.widgets.GenericWidget;
 
 /**
- * Utility class for storing and persisting a list of image file names plus additional display information.
+ * Utility class for storing and persisting a random image provider.
  */
-public final class ImageList implements RandomFileProvider {
-	/**
-	 * Name of the property for the list name.
-	 */
-	private static final String PROP_LIST_NAME = "listName";
-
+public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * The config file where the list of files is stored.
 	 */
 	private File configFile = null;
 
-	/**
-	 * The list of image files.
-	 */
-	private ArrayList<String> fileNames = new ArrayList<String>();
+	protected final File getConfigFile() {
+		return configFile;
+	}
 
-	/**
-	 * The list of image folders.
-	 */
-	private ArrayList<String> folderNames = new ArrayList<String>();
-
-	/**
-	 * All image files represented by this image list - configures image files as well as all images in configured
-	 * folders.
-	 */
-	private ArrayList<String> allImageFiles = new ArrayList<String>();
+	protected final void setConfigFile(final File configFile) {
+		this.configFile = configFile;
+	}
 
 	/**
 	 * Configuration properties of the file list.
 	 */
 	private Properties properties = new Properties();
+
+	protected final Properties getProperties() {
+		return properties;
+	}
+
+	protected final void setProperties(final Properties properties) {
+		this.properties = properties;
+	}
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -62,8 +44,9 @@ public final class ImageList implements RandomFileProvider {
 	 *
 	 */
 	protected ImageList(final File configFile) {
-		this.configFile = configFile;
-		load();
+		init(); // OVERRIDABLE
+		setConfigFile(configFile);
+		load(); // OVERRIDABLE
 	}
 
 	/**
@@ -78,370 +61,58 @@ public final class ImageList implements RandomFileProvider {
 	 *
 	 */
 	protected ImageList(final File configFile, final String listName, final File cloneFile) {
+		init(); // OVERRIDABLE
 		if (configFile.exists()) {
 			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
-			this.configFile = configFile;
-			load();
+			setConfigFile(configFile);
+			load(); // OVERRIDABLE
 		}
 		else {
 			if (cloneFile != null) {
-				this.configFile = cloneFile;
-				load();
+				setConfigFile(cloneFile);
+				load(); // OVERRIDABLE
 			}
-			this.configFile = configFile;
-			setListName(listName);
-			save();
+			setConfigFile(configFile);
+			setListName(listName); // OVERRIDABLE
+			save(); // OVERRIDABLE
 		}
 	}
 
 	/**
-	 * Load the list if image file names from the config file.
-	 */
-	public synchronized void load() {
-		fileNames.clear();
-		folderNames.clear();
-		allImageFiles.clear();
-		properties.clear();
-		int notFoundFiles = 0;
-
-		Set<String> allImageFileSet = new HashSet<String>();
-		try {
-			if (configFile.exists()) {
-				Scanner scanner = new Scanner(configFile);
-				scanner.useDelimiter("\n");
-				while (scanner.hasNext()) {
-					String line = scanner.next();
-
-					// ignore comment lines
-					if (line == null || line.length() == 0 || line.startsWith("#")) {
-						continue;
-					}
-
-					// handle file names
-					if (line.startsWith(File.separator)) {
-						File file = new File(line);
-						if (file.exists()) {
-							if (file.isDirectory()) {
-								folderNames.add(line);
-								allImageFileSet.addAll(getImageFilesInFolder(line));
-							}
-							else {
-								if (ImageUtil.isImage(file, false)) {
-									fileNames.add(line);
-									allImageFileSet.add(line);
-								}
-							}
-						}
-						else {
-							Log.w(Application.TAG, "Cannot find file " + line);
-							notFoundFiles++;
-						}
-						continue;
-					}
-
-					// handle properties
-					if (line.contains("=")) {
-						int index = line.indexOf('=');
-						String name = line.substring(0, index);
-						String value = line.substring(index + 1);
-						properties.setProperty(name, value);
-					}
-				}
-				scanner.close();
-			}
-		}
-		catch (FileNotFoundException e) {
-			Log.e(Application.TAG, "Could not find configuration file", e);
-		}
-
-		if (notFoundFiles > 1) {
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files,
-					notFoundFiles, getListName());
-		}
-		else if (notFoundFiles == 1) {
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
-					getListName());
-		}
-
-		allImageFiles = new ArrayList<String>(allImageFileSet);
-	}
-
-	/**
-	 * Save the list of image file names to the config file.
+	 * Get an ImageList out of a config file.
 	 *
-	 * @return true if successful.
+	 * @param configFile
+	 *            the config file.
+	 * @return The image list.
 	 */
-	private synchronized boolean save() {
-		File backupFile = new File(configFile.getParentFile(), configFile.getName() + ".bak");
-
-		if (configFile.exists()) {
-			boolean success = configFile.renameTo(backupFile);
-			if (!success) {
-				Log.e(Application.TAG, "Could not backup config file to " + backupFile.getAbsolutePath());
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
-				return false;
-			}
-		}
-
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(configFile));
-			writer.println("# Properties");
-			for (Object keyObject : properties.keySet()) {
-				String key = (String) keyObject;
-				writer.println(key + "=" + properties.getProperty(key));
-			}
-			writer.println();
-			writer.println("# Folder names");
-			for (String folderName : folderNames) {
-				writer.println(folderName);
-			}
-			writer.println();
-			writer.println("# File names");
-			for (String fileName : fileNames) {
-				writer.println(fileName);
-			}
-
-			writer.close();
-
-			if (backupFile.exists()) {
-				boolean success = backupFile.delete();
-				if (!success) {
-					Log.e(Application.TAG, "Could not delete backup file " + backupFile.getAbsolutePath());
-					return false;
-				}
-			}
-		}
-		catch (IOException e) {
-			Log.e(Application.TAG, "Could not store configuration to file " + configFile.getAbsolutePath(), e);
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
-			return false;
-		}
-		finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
-		return true;
+	protected static ImageList parseConfigFile(final File configFile) {
+		// TODO: enhance for other types.
+		return new StandardImageList(configFile);
 	}
 
 	/**
-	 * Save and reload the list.
-	 *
-	 * @return true if both actions were successful.
+	 * Handle the initialization of the class (such as initialization of lists).
 	 */
-	public synchronized boolean update() {
-		if (save()) {
-			load();
-			return true;
-		}
-		else {
-			Log.e(Application.TAG, "Error while saving the image list.");
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_error_while_saving, getListName());
-			return false;
-		}
-	}
-
-	/**
-	 * Get the list of file names in the list as array.
-	 *
-	 * @return The list of file names.
-	 */
-	public ArrayList<String> getFileNames() {
-		return fileNames;
-	}
-
-	/**
-	 * Get the list of folder names in the list as array.
-	 *
-	 * @return The list of file names.
-	 */
-	public ArrayList<String> getFolderNames() {
-		return folderNames;
-	}
-
-	/**
-	 * Get all image files in the given folder.
-	 *
-	 * @param folderName
-	 *            The image folder name
-	 * @return The list of image files in this folder.
-	 */
-	public static Set<String> getImageFilesInFolder(final String folderName) {
-		File folder = new File(folderName);
-		Set<String> result = new HashSet<String>();
-		if (!folder.exists() || !folder.isDirectory()) {
-			return result;
-		}
-
-		File[] files = folder.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (ImageUtil.isImage(file, false)) {
-					result.add(file.getAbsolutePath());
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Get the list of file names, including the files in the configured folders, in shuffled order.
-	 *
-	 * @return The list of file names.
-	 */
-	public String[] getShuffledFileNames() {
-		ArrayList<String> clondedList = new ArrayList<String>(allImageFiles);
-		Collections.shuffle(clondedList);
-		return clondedList.toArray(new String[0]);
-	}
-
-	/**
-	 * Add a file name. This does not yet update the list of all images!
-	 *
-	 * @param fileName
-	 *            The file name to be added.
-	 * @return true if the file was not in the list before and hence has been added.
-	 */
-	public boolean addFile(final String fileName) {
-		if (fileName == null) {
-			return false;
-		}
-
-		File file = new File(fileName);
-		if (!file.exists() || file.isDirectory()) {
-			return false;
-		}
-
-		if (fileNames.contains(fileName)) {
-			return false;
-		}
-		else {
-			fileNames.add(fileName);
-			return true;
-		}
-	}
-
-	/**
-	 * Add a folder name. This does not yet update the list of all images!
-	 *
-	 * @param folderName
-	 *            The folder name to be added.
-	 * @return true if the folder was not in the list before and hence has been added.
-	 */
-	public boolean addFolder(final String folderName) {
-		if (folderName == null) {
-			return false;
-		}
-
-		File file = new File(folderName);
-		if (!file.exists() || !file.isDirectory()) {
-			return false;
-		}
-
-		if (folderNames.contains(folderName)) {
-			return false;
-		}
-		else {
-			folderNames.add(folderName);
-			return true;
-		}
-	}
-
-	/**
-	 * Check if the file or folder is contained in the list.
-	 *
-	 * @param fileName
-	 *            The file name to be checked.
-	 * @return true if contained in the list.
-	 */
-	public boolean contains(final String fileName) {
-		return fileName != null && (fileNames.contains(fileName) || folderNames.contains(fileName));
-	}
-
-	/**
-	 * Add a file from an Uri. The lists are kept up to date, but are not saved!
-	 *
-	 * @param imageUri
-	 *            The uri of the file to be added.
-	 * @return the file name, if it was added.
-	 */
-	public String add(final Uri imageUri) {
-		if (imageUri != null && ImageUtil.getMimeType(imageUri).startsWith("image/")) {
-			String fileName = MediaStoreUtil.getRealPathFromUri(imageUri);
-			boolean isAdded = addFile(fileName);
-			return isAdded ? fileName : null;
-		}
-		else {
-			return null;
-		}
-	}
-
-	/**
-	 * Remove a single file name. This does not yet update the list of all images!
-	 *
-	 * @param fileName
-	 *            The file name to be removed.
-	 * @return true if the file was removed.
-	 */
-	public boolean removeFile(final String fileName) {
-		File file = new File(fileName);
-
-		if (!file.exists() || file.isDirectory()) {
-			return false;
-		}
-		return fileNames.remove(fileName);
-	}
-
-	/**
-	 * Remove a single folder name. This does not yet update the list of all images!
-	 *
-	 * @param folderName
-	 *            The folder name to be removed.
-	 * @return true if the folder was removed.
-	 */
-	public boolean removeFolder(final String folderName) {
-		File file = new File(folderName);
-
-		if (!file.exists() || !file.isDirectory()) {
-			return false;
-		}
-		return folderNames.remove(folderName);
-	}
-
-	/**
-	 * Get a random file name from the registry.
-	 *
-	 * @return A random file name.
-	 */
-	@Override
-	public String getRandomFileName() {
-		if (allImageFiles.size() > 0) {
-			return allImageFiles.get(new Random().nextInt(allImageFiles.size()));
-		}
-		else {
-			return null;
-		}
-	}
+	protected abstract void init();
 
 	/**
 	 * Get the name of the list.
 	 *
 	 * @return The name of the list.
 	 */
-	public String getListName() {
-		String listName = properties.getProperty(PROP_LIST_NAME);
+	public abstract String getListName();
 
-		if (listName == null) {
-			listName = ImageRegistry.getListNameFromFileName(configFile);
-		}
+	/**
+	 * Load the list if image file names from the config file.
+	 */
+	public abstract void load();
 
-		if (listName == null) {
-			listName = Application.getResourceString(R.string.default_list_name);
-		}
-
-		return listName;
-	}
+	/**
+	 * Save the list of image file names to the config file.
+	 *
+	 * @return true if successful.
+	 */
+	protected abstract boolean save();
 
 	/**
 	 * Set the name of the list without changing the file name.
@@ -449,44 +120,5 @@ public final class ImageList implements RandomFileProvider {
 	 * @param listName
 	 *            The new name of the list.
 	 */
-	private void setListName(final String listName) {
-		if (listName == null) {
-			properties.remove(PROP_LIST_NAME);
-		}
-		else {
-			properties.setProperty(PROP_LIST_NAME, listName);
-		}
-		save();
-	}
-
-	/**
-	 * Change the list name, also renaming the config file accordingly.
-	 *
-	 * @param listName
-	 *            The new name of the list.
-	 * @param newConfigFile
-	 *            The new config file.
-	 * @return true if successful.
-	 */
-	public boolean changeListName(final String listName, final File newConfigFile) {
-		File oldConfigFile = configFile;
-		String oldListName = getListName();
-		configFile = newConfigFile;
-		setListName(listName);
-		boolean success = save();
-
-		if (success) {
-			success = oldConfigFile.delete();
-			if (!success) {
-				Log.e(Application.TAG, "Could not delete old config file " + oldConfigFile.getAbsolutePath());
-			}
-			GenericWidget.updateListName(oldListName, listName);
-			return success;
-		}
-		else {
-			Log.e(Application.TAG, "Could not save to new config file " + configFile.getAbsolutePath());
-			configFile = oldConfigFile;
-			return false;
-		}
-	}
+	protected abstract void setListName(final String listName);
 }

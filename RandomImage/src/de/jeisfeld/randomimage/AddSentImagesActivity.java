@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
-import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 
@@ -24,7 +24,7 @@ public class AddSentImagesActivity extends Activity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		ArrayList<String> imageListsNames = ImageRegistry.getImageListNames();
+		ArrayList<String> imageListsNames = ImageRegistry.getStandardImageListNames();
 
 		if (imageListsNames == null || imageListsNames.size() == 0) {
 			DialogUtil.displayToast(AddSentImagesActivity.this, R.string.toast_aborted_add_images_no_list);
@@ -67,7 +67,7 @@ public class AddSentImagesActivity extends Activity {
 	 *            The name of the list to which the images should be added.
 	 */
 	private void addImages(final String listName) {
-		ImageList imageList = ImageRegistry.getImageListByName(listName);
+		StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName);
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list");
 			DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);

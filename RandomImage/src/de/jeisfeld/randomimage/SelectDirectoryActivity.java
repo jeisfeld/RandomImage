@@ -11,7 +11,7 @@ import de.jeisfeld.randomimage.DirectoryChooserDialogFragment.ChosenDirectoryLis
 import de.jeisfeld.randomimage.DirectoryChooserDialogFragment.OnFolderLongClickListener;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 
@@ -79,7 +79,7 @@ public class SelectDirectoryActivity extends Activity {
 
 						@Override
 						public boolean onFolderLongClick(final String folderName) {
-							final ImageList imageList = ImageRegistry.getCurrentImageList();
+							final StandardImageList imageList = ImageRegistry.getCurrentImageList();
 
 							String folderShortName = new File(folderName).getName();
 

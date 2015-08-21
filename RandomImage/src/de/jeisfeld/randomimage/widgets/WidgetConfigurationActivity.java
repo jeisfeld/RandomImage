@@ -43,7 +43,7 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			return;
 		}
 
-		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		ArrayList<String> listNames = getImageListNames();
 
 		DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
 			/**
@@ -65,6 +65,16 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			}
 		}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
 
+	}
+
+	/**
+	 * Get the list of image list names allowed for this widget.
+	 *
+	 * @return The list of image list names.
+	 */
+	// OVERRIDABLE
+	protected ArrayList<String> getImageListNames() {
+		return ImageRegistry.getImageListNames();
 	}
 
 	/**

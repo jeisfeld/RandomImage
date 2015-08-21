@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
@@ -55,5 +56,10 @@ public class StackedImageWidgetConfigurationActivity extends WidgetConfiguration
 		}, R.string.title_dialog_select_change_frequency, durationNameList,
 				R.string.dialog_select_reshuffle_frequency);
 
+	}
+
+	@Override
+	protected final ArrayList<String> getImageListNames() {
+		return ImageRegistry.getStandardImageListNames();
 	}
 }
