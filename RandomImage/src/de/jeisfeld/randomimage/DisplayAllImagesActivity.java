@@ -760,6 +760,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void includeOtherList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
 		listNames.remove(listName);
+		listNames.removeAll(nestedListNames);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
