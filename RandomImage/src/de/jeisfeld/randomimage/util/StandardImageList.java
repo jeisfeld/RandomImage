@@ -3,7 +3,9 @@ package de.jeisfeld.randomimage.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -11,12 +13,16 @@ import java.util.Set;
  * Subclass of ImageList, giving each file the same weight.
  */
 public final class StandardImageList extends ImageList {
+	/**
+	 * The name of the default nested list (containing the non-nested items).
+	 */
+	private static final String DEFAULT_NESTED_LIST = "";
 
 	/**
-	 * All image files represented by this image list - configures image files as well as all images in configured
-	 * folders.
+	 * All image files represented by this image list, grouped by nested list. All non-grouped items are linked to
+	 * virtual list "".
 	 */
-	private volatile ArrayList<String> allImageFiles;
+	private volatile Map<String, ArrayList<String>> imageFilesByNestedList = null;
 
 	/**
 	 * The thread currently loading the allImageFiles list.
@@ -67,21 +73,28 @@ public final class StandardImageList extends ImageList {
 		waitingLoaderThread = new Thread() {
 			@Override
 			public void run() {
+				Map<String, ArrayList<String>> imageFilesByNestedListNew = new HashMap<String, ArrayList<String>>();
+
 				Set<String> allImageFileSet = new HashSet<String>();
 
-				for (String nestedListName : nestedListNames) {
-					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
-					if (nestedImageList != null) {
-						allImageFileSet.addAll(nestedImageList.getAllImageFiles());
-					}
-				}
 				for (String folderName : folderNames) {
 					allImageFileSet.addAll(getImageFilesInFolder(folderName));
 				}
 				for (String fileName : fileNames) {
 					allImageFileSet.add(fileName);
 				}
-				allImageFiles = new ArrayList<String>(allImageFileSet);
+
+				imageFilesByNestedListNew.put(DEFAULT_NESTED_LIST, new ArrayList<String>(allImageFileSet));
+
+				for (String nestedListName : nestedListNames) {
+					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
+					if (nestedImageList != null) {
+						imageFilesByNestedListNew.put(nestedListName, nestedImageList.getAllImageFiles());
+					}
+				}
+
+				// Set it only here so that it is only visible when completed, and has always a complete state.
+				imageFilesByNestedList = imageFilesByNestedListNew;
 
 				synchronized (this) {
 					if (waitingLoaderThread != null) {
@@ -108,7 +121,7 @@ public final class StandardImageList extends ImageList {
 	 */
 	@Override
 	protected void init() {
-		allImageFiles = null;
+		imageFilesByNestedList = null;
 	}
 
 	/**
@@ -117,9 +130,9 @@ public final class StandardImageList extends ImageList {
 	 * @return The list of file names.
 	 */
 	public String[] getShuffledFileNames() {
-		ArrayList<String> clondedList = new ArrayList<String>(allImageFiles);
-		Collections.shuffle(clondedList);
-		return clondedList.toArray(new String[0]);
+		ArrayList<String> clonedList = getAllImageFiles();
+		Collections.shuffle(clonedList);
+		return clonedList.toArray(new String[0]);
 	}
 
 	/**
@@ -129,6 +142,7 @@ public final class StandardImageList extends ImageList {
 	 */
 	@Override
 	public String getRandomFileName() {
+		ArrayList<String> allImageFiles = getAllImageFiles();
 		if (allImageFiles != null && allImageFiles.size() > 0) {
 			return allImageFiles.get(new Random().nextInt(allImageFiles.size()));
 		}
@@ -139,7 +153,7 @@ public final class StandardImageList extends ImageList {
 
 	@Override
 	public boolean isReady() {
-		return allImageFiles != null;
+		return imageFilesByNestedList != null;
 	}
 
 	@Override
@@ -163,6 +177,10 @@ public final class StandardImageList extends ImageList {
 	@Override
 	public ArrayList<String> getAllImageFiles() {
 		waitUntilReady();
+		Set<String> allImageFiles = new HashSet<String>();
+		for (ArrayList<String> nestedListImages : imageFilesByNestedList.values()) {
+			allImageFiles.addAll(nestedListImages);
+		}
 		return new ArrayList<String>(allImageFiles);
 	}
 }
