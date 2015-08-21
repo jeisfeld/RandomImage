@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 
 import android.net.Uri;
 import android.util.Log;
+import android.util.SparseArray;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
@@ -36,12 +38,24 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Prefix for the property used for embedded lists.
 	 */
-	private static final String PROP_NESTED_LIST_PREFIX = "imageList";
+	private static final String PROP_NESTED_LIST_PREFIX = "nestedList";
 
 	/**
 	 * The regex pattern used to identify embedded list properties.
 	 */
-	private static final Pattern PROP_NESTED_LIST_PATTERN = Pattern.compile(PROP_NESTED_LIST_PREFIX + "\\[(\\d+)\\]");
+	private static final Pattern PROP_NESTED_LIST_PATTERN =
+			Pattern.compile("^" + PROP_NESTED_LIST_PREFIX + "\\[(\\d+)\\]");
+
+	/**
+	 * Prefix for the property used for embedded lists.
+	 */
+	private static final String PROP_NESTED_PROPERTY_PREFIX = "nestedProperty.";
+
+	/**
+	 * The regex pattern used to identify embedded list properties.
+	 */
+	private static final Pattern PROP_NESTED_PROPERTY_PATTERN =
+			Pattern.compile("^" + PROP_NESTED_PROPERTY_PREFIX + "([^\\[]*)\\[(\\d+)\\]");
 
 	/**
 	 * The list of image files.
@@ -67,6 +81,11 @@ public abstract class ImageList extends RandomFileProvider {
 	 * Configuration properties of the file list.
 	 */
 	private Properties properties = new Properties();
+
+	/**
+	 * Configuration properties of nested lists.
+	 */
+	private HashMap<String, Properties> nestedListProperties = new HashMap<String, Properties>();
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -150,10 +169,8 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if it is contained in some way.
 	 */
 	public final boolean containsNestedList(final String listName) {
-		for (String nestedListName : nestedListNames) {
-			if (nestedListName.equals(listName)) {
-				return true;
-			}
+		if (nestedListNames.contains(listName)) {
+			return true;
 		}
 
 		for (String nestedListName : nestedListNames) {
@@ -237,64 +254,83 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	// OVERRIDABLE
 	public synchronized void load() {
+		if (!configFile.exists()) {
+			return;
+		}
+
 		fileNames.clear();
 		folderNames.clear();
 		nestedListNames.clear();
+		nestedListProperties.clear();
 		properties.clear();
 		int notFoundFiles = 0;
 
+		SparseArray<Properties> nestedPropertiesArray = new SparseArray<Properties>();
+		HashMap<String, Integer> nestedListIndices = new HashMap<String, Integer>();
+
 		try {
-			if (configFile.exists()) {
-				Scanner scanner = new Scanner(configFile);
-				scanner.useDelimiter("\n");
-				while (scanner.hasNext()) {
-					String line = scanner.next();
+			Scanner scanner = new Scanner(configFile);
+			scanner.useDelimiter("\n");
+			while (scanner.hasNext()) {
+				String line = scanner.next();
 
-					// ignore comment lines
-					if (line == null || line.length() == 0 || line.startsWith("#")) {
-						continue;
-					}
+				// ignore comment lines
+				if (line == null || line.length() == 0 || line.startsWith("#")) {
+					continue;
+				}
 
-					// handle file names
-					if (line.startsWith(File.separator)) {
-						File file = new File(line);
-						if (file.exists()) {
-							if (file.isDirectory()) {
-								folderNames.add(line);
-							}
-							else {
-								if (ImageUtil.isImage(file, false)) {
-									fileNames.add(line);
-								}
-							}
+				// handle file names
+				if (line.startsWith(File.separator)) {
+					File file = new File(line);
+					if (file.exists()) {
+						if (file.isDirectory()) {
+							folderNames.add(line);
 						}
 						else {
-							Log.w(Application.TAG, "Cannot find file " + line);
-							notFoundFiles++;
-						}
-						continue;
-					}
-
-					// handle properties
-					if (line.contains(PROPERTY_SEPARATOR)) {
-						int index = line.indexOf(PROPERTY_SEPARATOR);
-						String name = line.substring(0, index);
-						String value = line.substring(index + 1);
-
-						if (name.startsWith(PROP_NESTED_LIST_PREFIX)) {
-							Matcher matcher = PROP_NESTED_LIST_PATTERN.matcher(name);
-							if (matcher.find()) {
-								// need not care about index.
-								nestedListNames.add(value);
+							if (ImageUtil.isImage(file, false)) {
+								fileNames.add(line);
 							}
 						}
-						else {
-							properties.setProperty(name, value);
+					}
+					else {
+						Log.w(Application.TAG, "Cannot find file " + line);
+						notFoundFiles++;
+					}
+					continue;
+				}
+
+				// handle properties
+				if (line.contains(PROPERTY_SEPARATOR)) {
+					int index = line.indexOf(PROPERTY_SEPARATOR);
+					String name = line.substring(0, index);
+					String value = line.substring(index + 1);
+
+					// nested list names
+					if (name.startsWith(PROP_NESTED_LIST_PREFIX)) {
+						Matcher matcher = PROP_NESTED_LIST_PATTERN.matcher(name);
+						if (matcher.find()) {
+							int propertyIndex = Integer.parseInt(matcher.group(1));
+							nestedListNames.add(value);
+							nestedListIndices.put(value, propertyIndex);
 						}
+					}
+					else if (name.startsWith(PROP_NESTED_PROPERTY_PREFIX)) {
+						Matcher matcher = PROP_NESTED_PROPERTY_PATTERN.matcher(name);
+						if (matcher.find()) {
+							String propertyName = matcher.group(1);
+							int propertyIndex = Integer.parseInt(matcher.group(2));
+							if (nestedPropertiesArray.get(propertyIndex) == null) {
+								nestedPropertiesArray.put(propertyIndex, new Properties());
+							}
+							nestedPropertiesArray.get(propertyIndex).setProperty(propertyName, value);
+						}
+					}
+					else {
+						properties.setProperty(name, value);
 					}
 				}
-				scanner.close();
 			}
+			scanner.close();
 		}
 		catch (FileNotFoundException e) {
 			Log.e(Application.TAG, "Could not find configuration file", e);
@@ -307,6 +343,18 @@ public abstract class ImageList extends RandomFileProvider {
 		else if (notFoundFiles == 1) {
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
 					getListName());
+		}
+
+		// Nested properties are filled now.
+		for (String nestedListName : nestedListNames) {
+			int nestedListIndex = nestedListIndices.get(nestedListName);
+			Properties nestedProperties = nestedPropertiesArray.get(nestedListIndex);
+			if (nestedProperties == null) {
+				nestedListProperties.put(nestedListName, new Properties());
+			}
+			else {
+				nestedListProperties.put(nestedListName, nestedProperties);
+			}
 		}
 	}
 
@@ -331,8 +379,7 @@ public abstract class ImageList extends RandomFileProvider {
 		try {
 			writer = new PrintWriter(new FileWriter(configFile));
 			writer.println("# Properties");
-			for (Object keyObject : properties.keySet()) {
-				String key = (String) keyObject;
+			for (String key : properties.stringPropertyNames()) {
 				writer.println(key + PROPERTY_SEPARATOR + properties.getProperty(key));
 			}
 			writer.println();
@@ -340,6 +387,13 @@ public abstract class ImageList extends RandomFileProvider {
 			for (int i = 0; i < nestedListNames.size(); i++) {
 				String nestedListName = nestedListNames.get(i);
 				writer.println(PROP_NESTED_LIST_PREFIX + "[" + i + "]" + PROPERTY_SEPARATOR + nestedListName);
+				Properties nestedProperties = nestedListProperties.get(nestedListName);
+				if (nestedProperties != null) {
+					for (String nestedKey : nestedProperties.stringPropertyNames()) {
+						writer.println(PROP_NESTED_PROPERTY_PREFIX + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
+								+ nestedProperties.getProperty(nestedKey));
+					}
+				}
 			}
 			writer.println();
 			writer.println("# Folder names");
@@ -586,6 +640,7 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 
 		nestedListNames.add(nestedListName);
+		nestedListProperties.put(nestedListName, new Properties());
 		return true;
 	}
 
@@ -619,7 +674,62 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if the nested list was removed.
 	 */
 	public final boolean removeNestedList(final String nestedListName) {
+		nestedListProperties.remove(nestedListName);
 		return nestedListNames.remove(nestedListName);
+	}
+
+	/**
+	 * Get a list property.
+	 *
+	 * @param key
+	 *            The property key.
+	 * @return The property value.
+	 */
+	protected final String getProperty(final String key) {
+		return properties.getProperty(key);
+	}
+
+	/**
+	 * Set a list property.
+	 *
+	 * @param key
+	 *            The property key.
+	 * @param value
+	 *            The property value.
+	 */
+	protected final void setProperty(final String key, final String value) {
+		properties.setProperty(key, value);
+	}
+
+	/**
+	 * Get a list property of a nested list.
+	 *
+	 * @param nestedListName
+	 *            the name of the nested list.
+	 * @param key
+	 *            The property key.
+	 * @return The property value.
+	 */
+	public final String getNestedListProperty(final String nestedListName, final String key) {
+		Properties nestedProperties = nestedListProperties.get(nestedListName);
+		return nestedProperties == null ? null : nestedProperties.getProperty(key);
+	}
+
+	/**
+	 * Set a list property of a nested list.
+	 *
+	 * @param nestedListName
+	 *            the name of the nested list.
+	 * @param key
+	 *            The property key.
+	 * @param value
+	 *            The property value.
+	 */
+	public final void setNestedListProperty(final String nestedListName, final String key, final String value) {
+		Properties nestedProperties = nestedListProperties.get(nestedListName);
+		if (nestedProperties != null) {
+			nestedProperties.setProperty(key, value);
+		}
 	}
 
 	/**
