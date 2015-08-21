@@ -20,6 +20,8 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
+import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName;
+import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName.FileNameProvider;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 import de.jeisfeld.randomimage.view.ThumbImageView.ThumbStyle;
 
@@ -210,60 +212,65 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 						parent, false);
 
 		final String entryName;
-		final String displayFileName;
+		final LoadableFileName displayFileName;
 
 		if (isNestedList) {
 			entryName = nestedListNames.get(position);
-			ArrayList<String> imageFiles =
-					new ArrayList<String>(ImageRegistry.getImageListByName(entryName).getAllImageFiles());
-			if (imageFiles.size() > 0) {
-				displayFileName = imageFiles.get(new Random().nextInt(imageFiles.size()));
-			}
-			else {
-				displayFileName = null;
-			}
 
-			// TODO: Special display variant for nested lists.
-			thumbImageView.setImage(activity, displayFileName, sameThread, ThumbStyle.IMAGE_LIST, new Runnable() {
+			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
-				public void run() {
-					thumbImageView.setMarkable(markingType);
-					thumbImageView.setMarked(selectedNestedListNames.contains(entryName));
-					thumbImageView.setFolderName(entryName);
+				public String getFileName() {
+					ArrayList<String> imageFiles =
+							new ArrayList<String>(ImageRegistry.getImageListByName(entryName)
+									.getAllImageFiles());
+					if (imageFiles.size() > 0) {
+						return imageFiles.get(new Random().nextInt(imageFiles.size()));
+					}
+					else {
+						return null;
+					}
 				}
 			});
+
+			thumbImageView.initWithStyle(activity, ThumbStyle.IMAGE_LIST);
+			thumbImageView.setMarkable(markingType);
+			thumbImageView.setMarked(selectedNestedListNames.contains(entryName));
+			thumbImageView.setFolderName(entryName);
+
+			thumbImageView.setImage(activity, displayFileName, sameThread);
 		}
 		else if (isFolder) {
 			entryName = folderNames.get(position - nestedListNames.size());
 
-			ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(entryName));
-			if (imageFiles.size() > 0) {
-				displayFileName = imageFiles.get(new Random().nextInt(imageFiles.size()));
-			}
-			else {
-				displayFileName = null;
-			}
-
-			thumbImageView.setImage(activity, displayFileName, sameThread, ThumbStyle.FOLDER, new Runnable() {
+			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
-				public void run() {
-					thumbImageView.setMarkable(markingType);
-					thumbImageView.setMarked(selectedFolderNames.contains(entryName));
-					thumbImageView.setFolderName(new File(entryName).getName());
+				public String getFileName() {
+					ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(entryName));
+					if (imageFiles.size() > 0) {
+						return imageFiles.get(new Random().nextInt(imageFiles.size()));
+					}
+					else {
+						return null;
+					}
 				}
 			});
+
+			thumbImageView.initWithStyle(activity, ThumbStyle.FOLDER);
+			thumbImageView.setMarkable(markingType);
+			thumbImageView.setMarked(selectedFolderNames.contains(entryName));
+			thumbImageView.setFolderName(new File(entryName).getName());
+
+			thumbImageView.setImage(activity, displayFileName, sameThread);
 		}
 		else {
 			entryName = fileNames.get(position - nestedListNames.size() - folderNames.size());
-			displayFileName = entryName;
+			displayFileName = new LoadableFileName(entryName);
 
-			thumbImageView.setImage(activity, displayFileName, sameThread, ThumbStyle.IMAGE, new Runnable() {
-				@Override
-				public void run() {
-					thumbImageView.setMarkable(markingType);
-					thumbImageView.setMarked(selectedFileNames.contains(entryName));
-				}
-			});
+			thumbImageView.initWithStyle(activity, ThumbStyle.IMAGE);
+			thumbImageView.setMarkable(markingType);
+			thumbImageView.setMarked(selectedFileNames.contains(entryName));
+
+			thumbImageView.setImage(activity, displayFileName, sameThread);
 		}
 
 		final String listName;
@@ -304,11 +311,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 						if (activity instanceof DisplayImagesFromFolderActivity) {
 							DisplayRandomImageActivity.startActivityForFolder(activity,
 									new File(entryName).getParent(),
-									displayFileName);
+									displayFileName.getFileName());
 						}
 						else {
 							activity.startActivityForResult(DisplayRandomImageActivity
-									.createIntent(activity, null, displayFileName, true),
+									.createIntent(activity, null, displayFileName.getFileName(), true),
 									DisplayRandomImageActivity.REQUEST_CODE);
 						}
 					}

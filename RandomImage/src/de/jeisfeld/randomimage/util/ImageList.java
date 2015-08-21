@@ -220,7 +220,9 @@ public abstract class ImageList extends RandomFileProvider {
 			Log.e(Application.TAG, "Could not find configuration file", e);
 			return null;
 		}
-
+		if (listName == null) {
+			listName = ImageRegistry.getListNameFromFileName(configFile);
+		}
 		if (listName == null) {
 			return null;
 		}

@@ -48,11 +48,6 @@ public class ThumbImageView extends FrameLayout {
 	private ThumbStyle thumbStyle = ThumbStyle.IMAGE;
 
 	/**
-	 * Indicates if the view is initialized.
-	 */
-	private boolean initialized = false;
-
-	/**
 	 * The imageView displaying the thumb.
 	 */
 	private ImageView imageView;
@@ -104,21 +99,14 @@ public class ThumbImageView extends FrameLayout {
 	}
 
 	/**
-	 * Set the image and create the bitmap.
+	 * Initialize the View, depending on the style.
 	 *
 	 * @param activity
-	 *            The activity holding the view.
-	 * @param fileName
-	 *            The image to be displayed.
-	 * @param sameThread
-	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
+	 *            The activity displaying the view.
 	 * @param style
-	 *            The style in which the thumb is displayed.
-	 * @param postActivities
-	 *            Activities that may be run on the UI thread after loading the image.
+	 *            The style of the view.
 	 */
-	public final void setImage(final Activity activity, final String fileName, final boolean sameThread,
-			final ThumbStyle style, final Runnable postActivities) {
+	public final void initWithStyle(final Activity activity, final ThumbStyle style) {
 		this.thumbStyle = style;
 
 		int layoutId = 0;
@@ -141,16 +129,29 @@ public class ThumbImageView extends FrameLayout {
 
 		imageView = (ImageView) findViewById(R.id.imageViewThumb);
 		checkBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
+	}
 
+	/**
+	 * Set the image and create the bitmap.
+	 *
+	 * @param activity
+	 *            The activity holding the view.
+	 * @param loadableFileName
+	 *            A provider for the name of the image to be displayed.
+	 * @param sameThread
+	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
+	 */
+	public final void setImage(final Activity activity, final LoadableFileName loadableFileName,
+			final boolean sameThread) {
 		if (sameThread) {
-			loadImage(activity, fileName, postActivities);
+			loadImage(activity, loadableFileName);
 		}
 		else {
 			// Fill pictures in separate thread, for performance reasons
 			Thread thread = new Thread() {
 				@Override
 				public void run() {
-					loadImage(activity, fileName, postActivities);
+					loadImage(activity, loadableFileName);
 				}
 			};
 			thread.start();
@@ -162,18 +163,16 @@ public class ThumbImageView extends FrameLayout {
 	 *
 	 * @param activity
 	 *            The activity triggering the load.
-	 * @param fileName
-	 *            the name of the file to be loaded.
-	 * @param postActivities
-	 *            Actions to be done after loading the image.
+	 * @param loadableFileName
+	 *            a provider of the name of the file to be loaded.
 	 */
-	private void loadImage(final Activity activity, final String fileName, final Runnable postActivities) {
+	private void loadImage(final Activity activity, final LoadableFileName loadableFileName) {
 		final Bitmap imageBitmap;
-		if (fileName == null) {
+		if (loadableFileName == null || loadableFileName.getFileName() == null) {
 			imageBitmap = ImageUtil.getDummyBitmap();
 		}
 		else {
-			imageBitmap = ImageUtil.getImageBitmap(fileName, THUMB_SIZE);
+			imageBitmap = ImageUtil.getImageBitmap(loadableFileName.getFileName(), THUMB_SIZE);
 		}
 		activity.runOnUiThread(new Runnable() {
 			@Override
@@ -181,36 +180,8 @@ public class ThumbImageView extends FrameLayout {
 				imageView.setImageBitmap(imageBitmap);
 				imageView.invalidate();
 				setMarked(false);
-				initialized = true;
-				if (postActivities != null) {
-					postActivities.run();
-				}
 			}
 		});
-	}
-
-	/**
-	 * Clean the eye photo from the view.
-	 */
-	public final void cleanImage() {
-		imageView.setImageBitmap(null);
-		isMarked = false;
-	}
-
-	/**
-	 * Mark as mInitialized to prevent double initialization.
-	 */
-	public final void setInitialized() {
-		initialized = true;
-	}
-
-	/**
-	 * Check if it is mInitialized.
-	 *
-	 * @return true if it is initialized.
-	 */
-	public final boolean isInitialized() {
-		return initialized;
 	}
 
 	/**
@@ -263,6 +234,65 @@ public class ThumbImageView extends FrameLayout {
 				textViewName.setTextSize(TypedValue.COMPLEX_UNIT_SP, SystemUtil.isTablet() ? 15 : 10); // MAGIC_NUMBER
 			}
 		}
+	}
+
+	/**
+	 * Helper class that allows to provide the fileName asynchronously.
+	 */
+	public static class LoadableFileName {
+		/**
+		 * The fileName.
+		 */
+		private String fileName = null;
+		/**
+		 * An asynchronous provider of the file name.
+		 */
+		private FileNameProvider fileNameProvider = null;
+
+		/**
+		 * Constructor providing the file name.
+		 *
+		 * @param fileName
+		 *            The file name.
+		 */
+		public LoadableFileName(final String fileName) {
+			this.fileName = fileName;
+		}
+
+		/**
+		 * Constructor providing a method to retrieve the file name.
+		 *
+		 * @param fileNameProvider
+		 *            The provider for the file name.
+		 */
+		public LoadableFileName(final FileNameProvider fileNameProvider) {
+			this.fileNameProvider = fileNameProvider;
+		}
+
+		/**
+		 * Get the file name.
+		 *
+		 * @return The file name.
+		 */
+		public final String getFileName() {
+			if (fileName == null && fileNameProvider != null) {
+				fileName = fileNameProvider.getFileName();
+			}
+			return fileName;
+		}
+
+		/**
+		 * Interface for asynchronous delivery of the file name.
+		 */
+		public interface FileNameProvider {
+			/**
+			 * Method to get the file name.
+			 *
+			 * @return The file name.
+			 */
+			String getFileName();
+		}
+
 	}
 
 	/**
