@@ -15,7 +15,6 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.Logger;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -245,7 +244,7 @@ public class DisplayRandomImageActivity extends Activity {
 		else {
 			currentImageView = createImageView(currentFileName, currentCacheIndex);
 			setContentView(currentImageView);
-			if (doPreload) {
+			if (doPreload && randomFileProvider.isReady()) {
 				nextFileName = randomFileProvider.getRandomFileName();
 				nextImageView = createImageView(nextFileName, nextCacheIndex);
 			}
@@ -278,6 +277,8 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @return false if there was no image to be displayed.
 	 */
 	private boolean displayRandomImage() {
+		randomFileProvider.waitUntilReady();
+
 		int tempCacheIndex = 0;
 		previousFileName = currentFileName;
 		if (doPreload) {
@@ -487,7 +488,7 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * A class allowing to select a random file name out of an image folder.
 	 */
-	private final class FolderRandomFileProvider implements RandomFileProvider {
+	private final class FolderRandomFileProvider extends RandomFileProvider {
 		/**
 		 * The list of files in the folder, being the base of the provider.
 		 */
@@ -520,7 +521,6 @@ public class DisplayRandomImageActivity extends Activity {
 				return defaultFileName;
 			}
 		}
-
 	}
 
 	/**

@@ -20,7 +20,7 @@ import de.jeisfeld.randomimage.widgets.GenericWidget;
 /**
  * Utility class for storing and persisting a list of image file names plus additional display information.
  */
-public abstract class ImageList implements RandomFileProvider {
+public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Name of the property for the list name.
 	 */
@@ -194,7 +194,6 @@ public abstract class ImageList implements RandomFileProvider {
 	 */
 	// OVERRIDABLE
 	public synchronized void load() {
-Logger.log("load - start");
 		fileNames.clear();
 		folderNames.clear();
 		properties.clear();
@@ -255,7 +254,6 @@ Logger.log("load - start");
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
 					getListName());
 		}
-Logger.log("load - end");
 	}
 
 	/**

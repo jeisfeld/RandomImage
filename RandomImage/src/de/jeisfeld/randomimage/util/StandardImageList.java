@@ -16,7 +16,17 @@ public final class StandardImageList extends ImageList {
 	 * All image files represented by this image list - configures image files as well as all images in configured
 	 * folders.
 	 */
-	private ArrayList<String> allImageFiles;
+	private volatile ArrayList<String> allImageFiles;
+
+	/**
+	 * The thread currently loading the allImageFiles list.
+	 */
+	private volatile Thread loaderThread;
+
+	/**
+	 * The thread waiting to load the allImageFile list.
+	 */
+	private volatile Thread waitingLoaderThread;
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -46,21 +56,44 @@ public final class StandardImageList extends ImageList {
 
 	@Override
 	public synchronized void load() {
-		allImageFiles.clear();
-
 		super.load();
 
-		Set<String> allImageFileSet = new HashSet<String>();
+		// Asynchronously parse the list of images, working on a copy of file and folder names to prevent concurrent
+		// modification.
+		final ArrayList<String> folderNames = new ArrayList<String>(getFolderNames());
+		final ArrayList<String> fileNames = new ArrayList<String>(getFileNames());
 
-		for (String folderName : getFolderNames()) {
-			allImageFileSet.addAll(getImageFilesInFolder(folderName));
+		waitingLoaderThread = new Thread() {
+			@Override
+			public void run() {
+				Set<String> allImageFileSet = new HashSet<String>();
+
+				for (String folderName : folderNames) {
+					allImageFileSet.addAll(getImageFilesInFolder(folderName));
+				}
+				for (String fileName : fileNames) {
+					allImageFileSet.add(fileName);
+				}
+				allImageFiles = new ArrayList<String>(allImageFileSet);
+
+				synchronized (this) {
+					if (waitingLoaderThread != null) {
+						loaderThread = waitingLoaderThread;
+						waitingLoaderThread = null;
+						loaderThread.start();
+					}
+					else {
+						loaderThread = null;
+					}
+				}
+			}
+		};
+
+		if (loaderThread == null) {
+			loaderThread = waitingLoaderThread;
+			waitingLoaderThread = null;
+			loaderThread.start();
 		}
-
-		for (String fileName : getFileNames()) {
-			allImageFileSet.add(fileName);
-		}
-
-		allImageFiles = new ArrayList<String>(allImageFileSet);
 	}
 
 	/**
@@ -68,7 +101,7 @@ public final class StandardImageList extends ImageList {
 	 */
 	@Override
 	protected void init() {
-		allImageFiles = new ArrayList<String>();
+		allImageFiles = null;
 	}
 
 	/**
@@ -89,7 +122,7 @@ public final class StandardImageList extends ImageList {
 	 */
 	@Override
 	public String getRandomFileName() {
-		if (allImageFiles.size() > 0) {
+		if (allImageFiles != null && allImageFiles.size() > 0) {
 			return allImageFiles.get(new Random().nextInt(allImageFiles.size()));
 		}
 		else {
@@ -97,4 +130,26 @@ public final class StandardImageList extends ImageList {
 		}
 	}
 
+	@Override
+	public boolean isReady() {
+		return allImageFiles != null;
+	}
+
+	@Override
+	public void waitUntilReady() {
+		if (isReady()) {
+			return;
+		}
+
+		// prevent exception if loaderThread gets deleted after check.
+		Thread localLoaderThread = loaderThread;
+		if (localLoaderThread != null) {
+			try {
+				localLoaderThread.join();
+			}
+			catch (InterruptedException e) {
+				// do nothing
+			}
+		}
+	}
 }

@@ -41,6 +41,7 @@ public class ImageWidget extends GenericWidget {
 			}
 
 			if (imageList != null) {
+				imageList.waitUntilReady();
 				fileName = imageList.getRandomFileName();
 			}
 		}
@@ -73,6 +74,7 @@ public class ImageWidget extends GenericWidget {
 		String fileName = currentFileNames.get(appWidgetId);
 
 		if (fileName == null && imageList != null) {
+			imageList.waitUntilReady();
 			fileName = imageList.getRandomFileName();
 		}
 
