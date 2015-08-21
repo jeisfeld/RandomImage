@@ -44,7 +44,7 @@ public final class ImageRegistry {
 	/**
 	 * The singleton currentImageList of the imageRegistry.
 	 */
-	private static volatile StandardImageList currentImageList = null;
+	private static volatile ImageList currentImageList = null;
 
 	/**
 	 * A map from image list name to corresponding config file.
@@ -66,7 +66,7 @@ public final class ImageRegistry {
 	 *
 	 * @return An currentImageList.
 	 */
-	public static StandardImageList getCurrentImageList() {
+	public static ImageList getCurrentImageList() {
 		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
 
 		if (currentImageList == null && currentListName != null) {
@@ -172,7 +172,7 @@ public final class ImageRegistry {
 			}
 		}
 		else {
-			currentImageList = new StandardImageList(configFile);
+			currentImageList = ImageList.getListFromConfigFile(configFile);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 			return true;
 		}
@@ -313,7 +313,7 @@ public final class ImageRegistry {
 			return null;
 		}
 		else {
-			return new StandardImageList(configFile);
+			return ImageList.getListFromConfigFile(configFile);
 		}
 	}
 
@@ -385,7 +385,7 @@ public final class ImageRegistry {
 		Map<String, ImageListInfo> fileMap = new HashMap<String, ImageListInfo>();
 
 		for (File configFile : configFiles) {
-			ImageList imageList = ImageList.parseConfigFile(configFile);
+			ImageList imageList = ImageList.getListFromConfigFile(configFile);
 			String name = imageList.getListName();
 
 			if (fileMap.containsKey(name)) {

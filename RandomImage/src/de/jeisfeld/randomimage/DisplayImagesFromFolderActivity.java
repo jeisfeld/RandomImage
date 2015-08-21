@@ -14,7 +14,7 @@ import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
-import de.jeisfeld.randomimage.util.StandardImageList;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -139,7 +139,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	}
 
 	/**
-	 * Handler for options selected while in delete mode.
+	 * Handler for options selected while in add mode.
 	 *
 	 * @param menuId
 	 *            The selected menu item.
@@ -148,7 +148,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedAdd(final int menuId) {
 		switch (menuId) {
 		case R.id.action_add_images:
-			final StandardImageList imageList = ImageRegistry.getCurrentImageList();
+			final ImageList imageList = ImageRegistry.getCurrentImageList();
 			final ArrayList<String> imagesToBeAdded = getAdapter().getSelectedFiles();
 			if (imagesToBeAdded.size() > 0) {
 
@@ -250,7 +250,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * Add the current folder to the current imageList.
 	 */
 	private void addFolderToImageList() {
-		final StandardImageList imageList2 = ImageRegistry.getCurrentImageList();
+		final ImageList imageList2 = ImageRegistry.getCurrentImageList();
 		boolean success = imageList2.addFolder(folderName);
 		if (success) {
 			ArrayList<String> addedFolderList = new ArrayList<String>();

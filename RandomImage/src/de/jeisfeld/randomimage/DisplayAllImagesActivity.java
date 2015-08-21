@@ -21,7 +21,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.Mess
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.GoogleBillingHelper;
-import de.jeisfeld.randomimage.util.StandardImageList;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -284,7 +284,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedDelete(final int menuId) {
 		switch (menuId) {
 		case R.id.action_remove_images:
-			final StandardImageList imageList = ImageRegistry.getCurrentImageList();
+			final ImageList imageList = ImageRegistry.getCurrentImageList();
 
 			final ArrayList<String> imagesToBeRemoved = getAdapter().getSelectedFiles();
 			final ArrayList<String> foldersToBeRemoved = getAdapter().getSelectedFolders();
