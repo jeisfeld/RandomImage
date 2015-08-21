@@ -60,14 +60,19 @@ public final class StandardImageList extends ImageList {
 
 		// Asynchronously parse the list of images, working on a copy of file and folder names to prevent concurrent
 		// modification.
-		final ArrayList<String> folderNames = new ArrayList<String>(getFolderNames());
-		final ArrayList<String> fileNames = new ArrayList<String>(getFileNames());
+		final ArrayList<String> folderNames = getFolderNames();
+		final ArrayList<String> fileNames = getFileNames();
+		final ArrayList<String> nestedListNames = getNestedListNames();
 
 		waitingLoaderThread = new Thread() {
 			@Override
 			public void run() {
 				Set<String> allImageFileSet = new HashSet<String>();
 
+				for (String nestedListName : nestedListNames) {
+					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
+					allImageFileSet.addAll(nestedImageList.getAllImageFiles());
+				}
 				for (String folderName : folderNames) {
 					allImageFileSet.addAll(getImageFilesInFolder(folderName));
 				}
@@ -151,5 +156,11 @@ public final class StandardImageList extends ImageList {
 				// do nothing
 			}
 		}
+	}
+
+	@Override
+	public ArrayList<String> getAllImageFiles() {
+		waitUntilReady();
+		return new ArrayList<String>(allImageFiles);
 	}
 }

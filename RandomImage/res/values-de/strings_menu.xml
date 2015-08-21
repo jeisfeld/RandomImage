@@ -16,6 +16,7 @@
     <string name="menu_create_list">Neue Bildliste erstellen</string>
     <string name="menu_switch_list">Bildliste wechseln</string>
     <string name="menu_delete_list">Bildliste löschen</string>
+    <string name="menu_include_other_list">Andere Liste zu aktueller hinzufügen</string>
     <string name="menu_remove_image_from_list">Bild aus der Liste entfernen</string>
     <string name="menu_remove_folder_from_list">Verzeichnis aus der Liste entfernen</string>
     <string name="menu_display_list">Bildliste anzeigen</string>

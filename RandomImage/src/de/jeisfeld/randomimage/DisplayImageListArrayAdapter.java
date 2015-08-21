@@ -16,9 +16,12 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
+import de.jeisfeld.randomimage.view.ThumbImageView.ThumbStyle;
 
 /**
  * Array adapter class to display an eye photo pair in a list.
@@ -40,6 +43,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	private final DisplayImageListActivity activity;
 
 	/**
+	 * The names of the nested lists.
+	 */
+	private ArrayList<String> nestedListNames;
+
+	/**
 	 * The names of the folders.
 	 */
 	private ArrayList<String> folderNames;
@@ -48,6 +56,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * The names of the files.
 	 */
 	private ArrayList<String> fileNames;
+
+	/**
+	 * The set of nested list names selected for deletion.
+	 */
+	private Set<String> selectedNestedListNames = new HashSet<String>();
 
 	/**
 	 * The set of foldernames selected for deletion.
@@ -127,16 +140,26 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @param activity
 	 *            The activity using the adapter.
+	 * @param nestedListNames
+	 *            The names of nested lists to be displayed.
 	 * @param folderNames
 	 *            The names of folders to be displayed.
 	 * @param fileNames
 	 *            The names of files to be displayed.
 	 */
 	public DisplayImageListArrayAdapter(final DisplayImageListActivity activity,
-			final ArrayList<String> folderNames, final ArrayList<String> fileNames) {
+			final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
+			final ArrayList<String> fileNames) {
 		super(activity, R.layout.text_view_initializing);
 		this.activity = activity;
 
+		if (nestedListNames == null) {
+			this.nestedListNames = new ArrayList<String>();
+		}
+		else {
+			this.nestedListNames = nestedListNames;
+			addAll(nestedListNames);
+		}
 		if (folderNames == null) {
 			this.folderNames = new ArrayList<String>();
 		}
@@ -179,19 +202,20 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The ThumbImageView.
 	 */
 	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent, final boolean sameThread) {
-		final boolean isFolder = position < folderNames.size();
+		final boolean isNestedList = position < nestedListNames.size();
+		final boolean isFolder = !isNestedList && position < nestedListNames.size() + folderNames.size();
 
 		final ThumbImageView thumbImageView =
 				(ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
 						parent, false);
 
-		final String fileName;
+		final String entryName;
 		final String displayFileName;
 
-		if (isFolder) {
-			fileName = folderNames.get(position);
-
-			ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(fileName));
+		if (isNestedList) {
+			entryName = nestedListNames.get(position);
+			ArrayList<String> imageFiles =
+					new ArrayList<String>(ImageRegistry.getImageListByName(entryName).getAllImageFiles());
 			if (imageFiles.size() > 0) {
 				displayFileName = imageFiles.get(new Random().nextInt(imageFiles.size()));
 			}
@@ -199,24 +223,45 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				displayFileName = null;
 			}
 
-			thumbImageView.setImage(activity, displayFileName, sameThread, true, new Runnable() {
+			// TODO: Special display variant for nested lists.
+			thumbImageView.setImage(activity, displayFileName, sameThread, ThumbStyle.IMAGE_LIST, new Runnable() {
 				@Override
 				public void run() {
 					thumbImageView.setMarkable(markingType);
-					thumbImageView.setMarked(selectedFolderNames.contains(fileName));
-					thumbImageView.setFolderName(new File(fileName).getName());
+					thumbImageView.setMarked(selectedNestedListNames.contains(entryName));
+					thumbImageView.setFolderName(entryName);
+				}
+			});
+		}
+		else if (isFolder) {
+			entryName = folderNames.get(position - nestedListNames.size());
+
+			ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(entryName));
+			if (imageFiles.size() > 0) {
+				displayFileName = imageFiles.get(new Random().nextInt(imageFiles.size()));
+			}
+			else {
+				displayFileName = null;
+			}
+
+			thumbImageView.setImage(activity, displayFileName, sameThread, ThumbStyle.FOLDER, new Runnable() {
+				@Override
+				public void run() {
+					thumbImageView.setMarkable(markingType);
+					thumbImageView.setMarked(selectedFolderNames.contains(entryName));
+					thumbImageView.setFolderName(new File(entryName).getName());
 				}
 			});
 		}
 		else {
-			fileName = fileNames.get(position - folderNames.size());
-			displayFileName = fileName;
+			entryName = fileNames.get(position - nestedListNames.size() - folderNames.size());
+			displayFileName = entryName;
 
-			thumbImageView.setImage(activity, displayFileName, sameThread, false, new Runnable() {
+			thumbImageView.setImage(activity, displayFileName, sameThread, ThumbStyle.IMAGE, new Runnable() {
 				@Override
 				public void run() {
 					thumbImageView.setMarkable(markingType);
-					thumbImageView.setMarked(selectedFileNames.contains(fileName));
+					thumbImageView.setMarked(selectedFileNames.contains(entryName));
 				}
 			});
 		}
@@ -229,6 +274,17 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			listName = null;
 		}
 
+		final Set<String> selectionList;
+		if (isNestedList) {
+			selectionList = selectedNestedListNames;
+		}
+		else if (isFolder) {
+			selectionList = selectedFolderNames;
+		}
+		else {
+			selectionList = selectedFileNames;
+		}
+
 		thumbImageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -236,12 +292,18 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 				switch (selectionMode) {
 				case ONE:
-					if (isFolder) {
-						DisplayImagesFromFolderActivity.startActivity(activity, fileName, false);
+					if (isNestedList) {
+						if (activity instanceof DisplayAllImagesActivity) {
+							((DisplayAllImagesActivity) activity).switchToImageList(entryName, CreationStyle.NONE);
+						}
+					}
+					else if (isFolder) {
+						DisplayImagesFromFolderActivity.startActivity(activity, entryName, false);
 					}
 					else {
 						if (activity instanceof DisplayImagesFromFolderActivity) {
-							DisplayRandomImageActivity.startActivityForFolder(activity, new File(fileName).getParent(),
+							DisplayRandomImageActivity.startActivityForFolder(activity,
+									new File(entryName).getParent(),
 									displayFileName);
 						}
 						else {
@@ -255,11 +317,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				case MULTIPLE_REMOVE:
 					if (view.isMarked()) {
 						view.setMarked(false);
-						(isFolder ? selectedFolderNames : selectedFileNames).remove(fileName);
+						selectionList.remove(entryName);
 					}
 					else {
 						view.setMarked(true);
-						(isFolder ? selectedFolderNames : selectedFileNames).add(fileName);
+						selectionList.add(entryName);
 					}
 					break;
 				default:
@@ -271,8 +333,13 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		thumbImageView.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				DisplayImageDetailsActivity.startActivity(activity, fileName, listName, true);
-				return true;
+				if (isNestedList) {
+					return false;
+				}
+				else {
+					DisplayImageDetailsActivity.startActivity(activity, entryName, listName, true);
+					return true;
+				}
 			}
 		});
 
@@ -328,6 +395,30 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
+	 * Get the list of selected nested lists.
+	 *
+	 * @return The selected nested lists.
+	 */
+	public final ArrayList<String> getSelectedNestedLists() {
+		return new ArrayList<String>(selectedNestedListNames);
+	}
+
+	/**
+	 * Set the list of selected nested lists.
+	 *
+	 * @param selectedNestedLists
+	 *            The names of the nested lists.
+	 */
+	public final void setSelectedNestedLists(final ArrayList<String> selectedNestedLists) {
+		if (selectedNestedLists == null) {
+			selectedNestedListNames.clear();
+		}
+		else {
+			selectedNestedListNames = new HashSet<String>(selectedNestedLists);
+		}
+	}
+
+	/**
 	 * Set the markability status for all images in the cache.
 	 *
 	 * @param newMarkingType
@@ -346,9 +437,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public final boolean toggleSelectAll() {
 		if (selectionMode != SelectionMode.ONE) {
-			if (selectedFileNames.size() < fileNames.size() || selectedFolderNames.size() < folderNames.size()) {
+			if (selectedFileNames.size() < fileNames.size() || selectedFolderNames.size() < folderNames.size()
+					|| selectedNestedListNames.size() < nestedListNames.size()) {
 				setSelectedFiles(fileNames);
 				setSelectedFolders(folderNames);
+				setSelectedNestedLists(nestedListNames);
 				for (ThumbImageView view : viewCache.getCachedImages()) {
 					view.setMarked(true);
 				}

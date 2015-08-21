@@ -16,6 +16,7 @@
     <string name="menu_create_list">Create new image list</string>
     <string name="menu_switch_list">Switch image list</string>
     <string name="menu_delete_list">Delete image list</string>
+    <string name="menu_include_other_list">Include other list in current list</string>
     <string name="menu_remove_image_from_list">Remove image from list</string>
     <string name="menu_remove_folder_from_list">Remove folder from list</string>
     <string name="menu_display_list">Display image list</string>

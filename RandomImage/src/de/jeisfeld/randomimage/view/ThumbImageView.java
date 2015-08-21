@@ -43,9 +43,9 @@ public class ThumbImageView extends FrameLayout {
 	private MarkingType markingType = MarkingType.NONE;
 
 	/**
-	 * Flag indicating if this view represents a folder instead of a file.
+	 * The style in which the thumb is displayed.
 	 */
-	private boolean isFolder = false;
+	private ThumbStyle thumbStyle = ThumbStyle.IMAGE;
 
 	/**
 	 * Indicates if the view is initialized.
@@ -112,17 +112,32 @@ public class ThumbImageView extends FrameLayout {
 	 *            The image to be displayed.
 	 * @param sameThread
 	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
-	 * @param isImageFolder
-	 *            flag indicating if this view is the thumb of a folder.
+	 * @param style
+	 *            The style in which the thumb is displayed.
 	 * @param postActivities
 	 *            Activities that may be run on the UI thread after loading the image.
 	 */
 	public final void setImage(final Activity activity, final String fileName, final boolean sameThread,
-			final boolean isImageFolder, final Runnable postActivities) {
-		this.isFolder = isImageFolder;
+			final ThumbStyle style, final Runnable postActivities) {
+		this.thumbStyle = style;
+
+		int layoutId = 0;
+		switch (thumbStyle) {
+		case IMAGE:
+			layoutId = R.layout.view_thumb_image;
+			break;
+		case FOLDER:
+			layoutId = R.layout.view_thumb_folder;
+			break;
+		case IMAGE_LIST:
+			layoutId = R.layout.view_thumb_image_list;
+			break;
+		default:
+			break;
+		}
 
 		LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		layoutInflater.inflate(isFolder ? R.layout.view_thumb_image_folder : R.layout.view_thumb_image, this, true);
+		layoutInflater.inflate(layoutId, this, true);
 
 		imageView = (ImageView) findViewById(R.id.imageViewThumb);
 		checkBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
@@ -236,7 +251,7 @@ public class ThumbImageView extends FrameLayout {
 	 *            the folderName to be displayed.
 	 */
 	public final void setFolderName(final String folderName) {
-		if (isFolder) {
+		if (thumbStyle != ThumbStyle.IMAGE) {
 			TextView textViewName = (TextView) findViewById(R.id.textViewFolderName);
 			if (folderName.length() > 50) { // MAGIC_NUMBER
 				textViewName.setText(folderName.substring(0, 50)); // MAGIC_NUMBER
@@ -267,4 +282,23 @@ public class ThumbImageView extends FrameLayout {
 		 */
 		HOOK
 	}
+
+	/**
+	 * The styles in which the thumb may be displayed.
+	 */
+	public enum ThumbStyle {
+		/**
+		 * A thumb representing an image.
+		 */
+		IMAGE,
+		/**
+		 * A thumb representing a folder.
+		 */
+		FOLDER,
+		/**
+		 * A thumb representing an image list.
+		 */
+		IMAGE_LIST
+	}
+
 }

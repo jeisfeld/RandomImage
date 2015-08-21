@@ -100,8 +100,8 @@ public class SelectDirectoryActivity extends Activity {
 													ArrayList<String> addedFolderList = new ArrayList<String>();
 													addedFolderList.add(folderName);
 													String addedFoldersString =
-															DialogUtil.createFileFolderMessageString(addedFolderList,
-																	new ArrayList<String>());
+															DialogUtil.createFileFolderMessageString(
+																	null, addedFolderList, null);
 													DialogUtil.displayToast(SelectDirectoryActivity.this,
 															R.string.toast_added_single, addedFoldersString);
 													imageList.update();

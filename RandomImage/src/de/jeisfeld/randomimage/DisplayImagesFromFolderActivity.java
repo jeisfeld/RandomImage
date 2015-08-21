@@ -161,7 +161,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 				}
 
 				String addedImagesString =
-						DialogUtil.createFileFolderMessageString(new ArrayList<String>(), addedImages);
+						DialogUtil.createFileFolderMessageString(null, null, addedImages);
 
 				int totalAddedCount = addedImages.size();
 				if (totalAddedCount == 0) {
@@ -256,7 +256,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			ArrayList<String> addedFolderList = new ArrayList<String>();
 			addedFolderList.add(folderName);
 			String addedFoldersString =
-					DialogUtil.createFileFolderMessageString(addedFolderList, new ArrayList<String>());
+					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
 			imageList2.update();
@@ -298,7 +298,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			getAdapter().cleanupCache();
 		}
 
-		setAdapter(null, fileNames);
+		setAdapter(null, null, fileNames);
 		setTitle(folderName);
 	}
 

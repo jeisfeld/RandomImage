@@ -24,6 +24,10 @@ public abstract class DisplayImageListActivity extends Activity {
 	 * Temporary storage for selected folders.
 	 */
 	private String[] selectedFolders;
+	/**
+	 * Temporary storage for selected lists.
+	 */
+	private String[] selectedLists;
 
 	/**
 	 * The view showing the photos.
@@ -59,25 +63,31 @@ public abstract class DisplayImageListActivity extends Activity {
 		if (savedInstanceState != null) {
 			selectedFiles = savedInstanceState.getStringArray("selectedFiles");
 			selectedFolders = savedInstanceState.getStringArray("selectedFolders");
+			selectedLists = savedInstanceState.getStringArray("selectedLists");
 		}
 	}
 
 	/**
 	 * Initialize the adapter.
 	 *
+	 * @param nestedListNames
+	 *            The nested list names.
 	 * @param folderNames
 	 *            The list of folders.
 	 * @param fileNames
 	 *            The list of image files.
 	 */
-	protected final void setAdapter(final ArrayList<String> folderNames, final ArrayList<String> fileNames) {
-		adapter = new DisplayImageListArrayAdapter(this, folderNames, fileNames);
+	protected final void setAdapter(final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
+			final ArrayList<String> fileNames) {
+		adapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames);
 		getGridView().setAdapter(adapter);
 		if (selectedFiles != null) {
 			adapter.setSelectedFiles(new ArrayList<String>(Arrays.asList(selectedFiles)));
 			adapter.setSelectedFolders(new ArrayList<String>(Arrays.asList(selectedFolders)));
+			adapter.setSelectedNestedLists(new ArrayList<String>(Arrays.asList(selectedLists)));
 			selectedFiles = null;
 			selectedFolders = null;
+			selectedLists = null;
 		}
 	}
 
@@ -125,6 +135,7 @@ public abstract class DisplayImageListActivity extends Activity {
 		if (getAdapter() != null) {
 			outState.putStringArray("selectedFiles", getAdapter().getSelectedFiles().toArray(new String[0]));
 			outState.putStringArray("selectedFolders", getAdapter().getSelectedFolders().toArray(new String[0]));
+			outState.putStringArray("selectedLists", getAdapter().getSelectedNestedLists().toArray(new String[0]));
 		}
 	}
 

@@ -27,6 +27,7 @@
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
     <string name="toast_failed_to_load_files">%1$d files or folders of the image list “%2$s” could not be found</string>
     <string name="toast_failed_to_load_files_single">One file or folder of the image list “%1$s” could not be found</string>
+    <string name="toast_cyclic_nesting">The list “%1$s” cannot be added because it contains the current list.</string>
     <string name="toast_cancelled_add_images">The addition of images was cancelled.</string>
     <string name="toast_error_while_saving">Error while saving the image list “%1$s”</string>
     <string name="toast_error_while_loading">Error while loading the image list “%1$s”</string>
@@ -55,6 +56,7 @@
     <string name="dialog_select_list_for_restore">Please select the image list which you want to restore.</string>
     <string name="dialog_select_list_for_widget">Please select the image list which you want to associate to this widget.</string>
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
+    <string name="dialog_select_list_for_inclusion">Please select the image list that you want to include in the current list.</string>
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
     <string name="dialog_select_image_folder_for_add">Select the folder from which you want to add images.</string>
@@ -71,6 +73,8 @@
     <string name="partial_and">%1$s and %2$s</string>
     <string name="partial_image_single">the image “%1$s”</string>
     <string name="partial_image_multiple">%1$d images</string>
+    <string name="partial_nested_list_single">the image list “%1$s”</string>
+    <string name="partial_nested_list_multiple">%1$d image lists</string>
     <string name="partial_folder_single">the folder “%1$s”</string>
     <string name="partial_folder_two">the folders „%1$s“ and „%2$s“</string>
     <string name="partial_folder_multiple">%1$d folders</string>

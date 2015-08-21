@@ -161,7 +161,8 @@ public class DisplayImageDetailsActivity extends Activity {
 								filesToBeRemoved.add(fileName);
 							}
 							String filesString =
-									DialogUtil.createFileFolderMessageString(foldersToBeRemoved, filesToBeRemoved);
+									DialogUtil
+											.createFileFolderMessageString(null, foldersToBeRemoved, filesToBeRemoved);
 
 							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
 									new ConfirmDialogListener() {

@@ -45,6 +45,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private static final int REQUEST_CODE_GALLERY = 100;
 
 	/**
+	 * The names of the nested lists to be displayed.
+	 */
+	private ArrayList<String> nestedListNames;
+
+	/**
 	 * The names of the folders to be displayed.
 	 */
 	private ArrayList<String> folderNames;
@@ -108,7 +113,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			changeAction(currentAction);
 		}
 
-		if (fileNames.size() == 0 && folderNames.size() == 0) {
+		if (isEmpty(fileNames) && isEmpty(folderNames) && isEmpty(nestedListNames)) {
 			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
 		}
 
@@ -129,10 +134,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void fillListOfImages() {
 		fileNames = ImageRegistry.getCurrentImageList().getFileNames();
 		folderNames = ImageRegistry.getCurrentImageList().getFolderNames();
+		nestedListNames = ImageRegistry.getCurrentImageList().getNestedListNames();
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
-		setAdapter(folderNames, fileNames);
+		setAdapter(nestedListNames, folderNames, fileNames);
 		setTitle(listName);
 		invalidateOptionsMenu();
 	}
@@ -158,7 +164,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				menu.findItem(R.id.action_switch_list).setEnabled(false);
 				menu.findItem(R.id.action_delete_list).setEnabled(false);
 			}
-			if ((fileNames == null || fileNames.size() == 0) && (folderNames == null || folderNames.size() == 0)) {
+			if (isEmpty(fileNames) && isEmpty(folderNames) && isEmpty(nestedListNames)) {
 				MenuItem menuItemRemove = menu.findItem(R.id.action_select_images_for_removal);
 				menuItemRemove.setEnabled(false);
 				Drawable icon =
@@ -181,6 +187,17 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		default:
 			return false;
 		}
+	}
+
+	/**
+	 * Get information if a list is null or empty.
+	 *
+	 * @param list
+	 *            the list.
+	 * @return true if null or empty.
+	 */
+	private static boolean isEmpty(final ArrayList<String> list) {
+		return list == null || list.size() == 0;
 	}
 
 	@Override
@@ -266,6 +283,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		case R.id.action_delete_list:
 			deleteImageList();
 			return true;
+		case R.id.action_include_other_list:
+			includeOtherList();
+			return true;
 		case R.id.action_settings:
 			SettingsActivity.startActivity(this);
 			return true;
@@ -288,10 +308,13 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 			final ArrayList<String> imagesToBeRemoved = getAdapter().getSelectedFiles();
 			final ArrayList<String> foldersToBeRemoved = getAdapter().getSelectedFolders();
+			final ArrayList<String> nestedListsToBeRemoved = getAdapter().getSelectedNestedLists();
 
-			String imageFolderString = DialogUtil.createFileFolderMessageString(foldersToBeRemoved, imagesToBeRemoved);
+			String imageFolderString =
+					DialogUtil.createFileFolderMessageString(nestedListsToBeRemoved, foldersToBeRemoved,
+							imagesToBeRemoved);
 
-			if (imagesToBeRemoved.size() > 0 || foldersToBeRemoved.size() > 0) {
+			if (nestedListsToBeRemoved.size() > 0 || imagesToBeRemoved.size() > 0 || foldersToBeRemoved.size() > 0) {
 
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 					/**
@@ -301,8 +324,15 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog) {
+						ArrayList<String> removedNestedLists = new ArrayList<String>();
 						ArrayList<String> removedFolders = new ArrayList<String>();
 						ArrayList<String> removedImages = new ArrayList<String>();
+						for (String nestedListName : nestedListsToBeRemoved) {
+							boolean isRemoved = imageList.removeNestedList(nestedListName);
+							if (isRemoved) {
+								removedNestedLists.add(nestedListName);
+							}
+						}
 						for (String removeFolderName : foldersToBeRemoved) {
 							boolean isRemoved = imageList.removeFolder(removeFolderName);
 							if (isRemoved) {
@@ -317,8 +347,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						}
 
 						String fileFolderMessageString =
-								DialogUtil.createFileFolderMessageString(removedFolders, removedImages);
-						int totalRemovedCount = removedFolders.size() + removedImages.size();
+								DialogUtil.createFileFolderMessageString(removedNestedLists, removedFolders, removedImages);
+						int totalRemovedCount = removedNestedLists.size() + removedFolders.size() + removedImages.size();
 						int messageId;
 						if (totalRemovedCount == 0) {
 							messageId = R.string.toast_removed_no_image;
@@ -439,7 +469,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 *
 	 * @return true if successful.
 	 */
-	private boolean switchToImageList(final String name, final CreationStyle creationStyle) {
+	protected final boolean switchToImageList(final String name, final CreationStyle creationStyle) {
 		listName = name;
 		boolean success = ImageRegistry.switchToImageList(name, creationStyle);
 		if (success) {
@@ -466,7 +496,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					public void
 							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						switchToImageList(text, CreationStyle.NONE);
-						fillListOfImages();
 					}
 
 					@Override
@@ -579,7 +608,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 							boolean success = ImageRegistry.renameCurrentList(name);
 							if (success) {
 								switchToImageList(name, CreationStyle.NONE);
-								fillListOfImages();
 							}
 						}
 					}
@@ -687,13 +715,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 										@Override
 										public void onDialogPositiveClick(final DialogFragment dialog2) {
-											boolean success = ImageRegistry.restoreImageList(text);
-											DialogUtil.displayToast(DisplayAllImagesActivity.this,
-													success ? R.string.toast_restore_of_list
-															: R.string.toast_failed_to_restore_list, text);
-											if (success) {
-												switchToImageList(text, CreationStyle.NONE);
-											}
+											doRestore(text);
 										}
 
 										@Override
@@ -704,13 +726,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 						}
 						else {
-							boolean success = ImageRegistry.restoreImageList(text);
-							DialogUtil.displayToast(DisplayAllImagesActivity.this,
-									success ? R.string.toast_restore_of_list
-											: R.string.toast_failed_to_restore_list, text);
-							if (success) {
-								switchToImageList(text, CreationStyle.NONE);
-							}
+							doRestore(text);
 						}
 					}
 
@@ -720,6 +736,53 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					}
 				}, R.string.title_dialog_select_list_name, backupNames,
 						R.string.dialog_select_list_for_restore);
+	}
+
+	/**
+	 * Make a restore of the list without querying.
+	 *
+	 * @param listToBeRestored
+	 *            The list name.
+	 */
+	private void doRestore(final String listToBeRestored) {
+		boolean success = ImageRegistry.restoreImageList(listToBeRestored);
+		DialogUtil.displayToast(DisplayAllImagesActivity.this,
+				success ? R.string.toast_restore_of_list
+						: R.string.toast_failed_to_restore_list, listToBeRestored);
+		if (success) {
+			switchToImageList(listToBeRestored, CreationStyle.NONE);
+		}
+	}
+
+	/**
+	 * Selece another list to include in the current list.
+	 */
+	private void includeOtherList() {
+		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		listNames.remove(listName);
+
+		DialogUtil
+				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void
+							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+						ImageList imageList = ImageRegistry.getCurrentImageList();
+						imageList.addNestedList(text);
+						imageList.update();
+						fillListOfImages();
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_select_list_name, listNames,
+						R.string.dialog_select_list_for_inclusion);
 	}
 
 	/**

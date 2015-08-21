@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.net.Uri;
 import android.util.Log;
@@ -22,14 +24,24 @@ import de.jeisfeld.randomimage.widgets.GenericWidget;
  */
 public abstract class ImageList extends RandomFileProvider {
 	/**
+	 * Separator for properties in the file.
+	 */
+	private static final String PROPERTY_SEPARATOR = "=";
+
+	/**
 	 * Name of the property for the list name.
 	 */
 	private static final String PROP_LIST_NAME = "listName";
 
 	/**
-	 * Separator for properties in the file.
+	 * Prefix for the property used for embedded lists.
 	 */
-	private static final String PROPERTY_SEPARATOR = "=";
+	private static final String PROP_NESTED_LIST_PREFIX = "imageList";
+
+	/**
+	 * The regex pattern used to identify embedded list properties.
+	 */
+	private static final Pattern PROP_NESTED_LIST_PATTERN = Pattern.compile(PROP_NESTED_LIST_PREFIX + "\\[(\\d+)\\]");
 
 	/**
 	 * The list of image files.
@@ -40,6 +52,11 @@ public abstract class ImageList extends RandomFileProvider {
 	 * The list of image folders.
 	 */
 	private ArrayList<String> folderNames = new ArrayList<String>();
+
+	/**
+	 * The list of nested image lists.
+	 */
+	private ArrayList<String> nestedListNames = new ArrayList<String>();
 
 	/**
 	 * The config file where the list of files is stored.
@@ -122,7 +139,31 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if contained in the list.
 	 */
 	public final boolean contains(final String fileName) {
-		return fileName != null && (getFileNames().contains(fileName) || getFolderNames().contains(fileName));
+		return fileName != null && (fileNames.contains(fileName) || folderNames.contains(fileName));
+	}
+
+	/**
+	 * Check if the list contains the other list either directly or in some deeper nesting.
+	 *
+	 * @param listName
+	 *            The list to be checked.
+	 * @return true if it is contained in some way.
+	 */
+	public final boolean containsNestedList(final String listName) {
+		for (String nestedListName : nestedListNames) {
+			if (nestedListName.equals(listName)) {
+				return true;
+			}
+		}
+
+		for (String nestedListName : nestedListNames) {
+			ImageList nestedList = ImageRegistry.getImageListByName(nestedListName);
+			if (nestedList != null && nestedList.containsNestedList(listName)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -196,6 +237,7 @@ public abstract class ImageList extends RandomFileProvider {
 	public synchronized void load() {
 		fileNames.clear();
 		folderNames.clear();
+		nestedListNames.clear();
 		properties.clear();
 		int notFoundFiles = 0;
 
@@ -236,7 +278,17 @@ public abstract class ImageList extends RandomFileProvider {
 						int index = line.indexOf(PROPERTY_SEPARATOR);
 						String name = line.substring(0, index);
 						String value = line.substring(index + 1);
-						properties.setProperty(name, value);
+
+						if (name.startsWith(PROP_NESTED_LIST_PREFIX)) {
+							Matcher matcher = PROP_NESTED_LIST_PATTERN.matcher(name);
+							if (matcher.find()) {
+								// need not care about index.
+								nestedListNames.add(value);
+							}
+						}
+						else {
+							properties.setProperty(name, value);
+						}
 					}
 				}
 				scanner.close();
@@ -280,6 +332,12 @@ public abstract class ImageList extends RandomFileProvider {
 			for (Object keyObject : properties.keySet()) {
 				String key = (String) keyObject;
 				writer.println(key + PROPERTY_SEPARATOR + properties.getProperty(key));
+			}
+			writer.println();
+			writer.println("# Nested List names");
+			for (int i = 0; i < nestedListNames.size(); i++) {
+				String nestedListName = nestedListNames.get(i);
+				writer.println(PROP_NESTED_LIST_PREFIX + "[" + i + "]" + PROPERTY_SEPARATOR + nestedListName);
 			}
 			writer.println();
 			writer.println("# Folder names");
@@ -407,21 +465,30 @@ public abstract class ImageList extends RandomFileProvider {
 	}
 
 	/**
-	 * Get the list of file names in the list as array.
+	 * Get the list of file names in the list.
 	 *
 	 * @return The list of file names.
 	 */
 	public final ArrayList<String> getFileNames() {
-		return fileNames;
+		return new ArrayList<String>(fileNames);
 	}
 
 	/**
-	 * Get the list of folder names in the list as array.
+	 * Get the list of folder names in the list.
 	 *
 	 * @return The list of file names.
 	 */
 	public final ArrayList<String> getFolderNames() {
-		return folderNames;
+		return new ArrayList<String>(folderNames);
+	}
+
+	/**
+	 * Get the list of nested list names in the list.
+	 *
+	 * @return The list of nested list names.
+	 */
+	public final ArrayList<String> getNestedListNames() {
+		return new ArrayList<String>(nestedListNames);
 	}
 
 	/**
@@ -495,6 +562,32 @@ public abstract class ImageList extends RandomFileProvider {
 	}
 
 	/**
+	 * Add a list name. This does not yet update the list of all images!
+	 *
+	 * @param nestedListName
+	 *            The list name to be added.
+	 * @return true if the given list was not included in the current list before and hence has been added.
+	 */
+	public final boolean addNestedList(final String nestedListName) {
+		if (nestedListName == null || nestedListName.equals(getListName()) || nestedListNames.contains(nestedListName)) {
+			return false;
+		}
+
+		if (!ImageRegistry.getImageListNames().contains(nestedListName)) {
+			return false;
+		}
+
+		ImageList otherImageList = ImageRegistry.getImageListByName(nestedListName);
+		if (otherImageList == null || otherImageList.containsNestedList(getListName())) {
+			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_cyclic_nesting, nestedListName);
+			return false;
+		}
+
+		nestedListNames.add(nestedListName);
+		return true;
+	}
+
+	/**
 	 * Remove a single file name. This does not yet update the list of all images!
 	 *
 	 * @param fileName
@@ -502,11 +595,6 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if the file was removed.
 	 */
 	public final boolean removeFile(final String fileName) {
-		File file = new File(fileName);
-
-		if (!file.exists() || file.isDirectory()) {
-			return false;
-		}
 		return fileNames.remove(fileName);
 	}
 
@@ -518,13 +606,26 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if the folder was removed.
 	 */
 	public final boolean removeFolder(final String folderName) {
-		File file = new File(folderName);
-
-		if (!file.exists() || !file.isDirectory()) {
-			return false;
-		}
 		return folderNames.remove(folderName);
 	}
+
+	/**
+	 * Remove a nested list name. This does not yet update the list of all images!
+	 *
+	 * @param nestedListName
+	 *            The nested list name to be removed.
+	 * @return true if the nested list was removed.
+	 */
+	public final boolean removeNestedList(final String nestedListName) {
+		return nestedListNames.remove(nestedListName);
+	}
+
+	/**
+	 * Get the list of all image files contained in the list.
+	 *
+	 * @return The list of all image files contained in the list.
+	 */
+	public abstract ArrayList<String> getAllImageFiles();
 
 	/**
 	 * Class holding information on an image file.

@@ -266,51 +266,75 @@ public final class DialogUtil {
 	/**
 	 * Create a message sub-string telling about the number and names of folders and or files.
 	 *
+	 * @param nestedImageLists
+	 *            The list of nested image lists.
 	 * @param folderList
 	 *            The list of folders.
 	 * @param imageList
 	 *            The list of files.
 	 * @return The message sub-string.
 	 */
-	public static String createFileFolderMessageString(final ArrayList<String> folderList,
+	public static String createFileFolderMessageString(final ArrayList<String> nestedImageLists,
+			final ArrayList<String> folderList,
 			final ArrayList<String> imageList) {
-		int folderCount = folderList.size();
-		int imageCount = imageList.size();
+		int nestedListCount = nestedImageLists == null ? 0 : nestedImageLists.size();
+		int folderCount = folderList == null ? 0 : folderList.size();
+		int imageCount = imageList == null ? 0 : imageList.size();
 
-		String imageString = imageCount == 1
+		if (nestedListCount == 0 && folderCount == 0 && imageCount == 0) {
+			return Application.getResourceString(R.string.partial_none);
+		}
+
+		String imageString = imageList != null && imageCount == 1
 				? getFormattedString(R.string.partial_image_single, new File(imageList.get(0)).getName())
 				: getFormattedString(R.string.partial_image_multiple, imageCount);
 
-		String folderString;
-		switch (folderCount) {
-		case 1:
-			folderString = getFormattedString(R.string.partial_folder_single, new File(folderList.get(0)).getName());
-			break;
-		case 2:
-			folderString = getFormattedString(R.string.partial_folder_two, new File(folderList.get(0)).getName(),
-					new File(folderList.get(1)).getName());
-			break;
-		default:
-			folderString = getFormattedString(R.string.partial_folder_multiple, folderCount);
-			break;
+		String nestedListString = nestedImageLists != null && nestedListCount == 1
+				? getFormattedString(R.string.partial_nested_list_single, nestedImageLists.get(0))
+				: getFormattedString(R.string.partial_nested_list_multiple, nestedListCount);
+
+		String folderString = null;
+		if (folderList != null && folderCount > 0) {
+			switch (folderCount) {
+			case 1:
+				folderString =
+						getFormattedString(R.string.partial_folder_single, new File(folderList.get(0)).getName());
+				break;
+			case 2:
+				folderString = getFormattedString(R.string.partial_folder_two, new File(folderList.get(0)).getName(),
+						new File(folderList.get(1)).getName());
+				break;
+			default:
+				folderString = getFormattedString(R.string.partial_folder_multiple, folderCount);
+				break;
+			}
 		}
 
-		if (folderCount == 0) {
-			if (imageCount == 0) {
-				return Application.getResourceString(R.string.partial_none);
+		String result = null;
+
+		if (nestedListCount > 0) {
+			result = nestedListString;
+		}
+
+		if (folderCount > 0) {
+			if (result == null) {
+				result = folderString;
 			}
 			else {
-				return imageString;
+				result = getFormattedString(R.string.partial_and, result, folderString);
 			}
 		}
-		else {
-			if (imageCount == 0) {
-				return folderString;
+
+		if (imageCount > 0) {
+			if (result == null) {
+				result = imageString;
 			}
 			else {
-				return getFormattedString(R.string.partial_and, folderString, imageString);
+				result = getFormattedString(R.string.partial_and, result, imageString);
 			}
 		}
+
+		return result;
 	}
 
 	/**

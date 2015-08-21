@@ -27,6 +27,7 @@
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
     <string name="toast_failed_to_load_files">%1$d Bilder oder Verzeichnisse der Bildliste  „%2$s“ wurden nicht gefunden</string>
     <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s“ wurde nicht gefunden</string>
+    <string name="toast_cyclic_nesting">Die Liste „%1$s“ kann nicht eingefügt werden, da sie die aktuelle Liste enthält.</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
     <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
     <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
@@ -55,6 +56,7 @@
     <string name="dialog_select_list_for_restore">Bitte wählen Sie die Bildliste, die Sie wiederherstellen wollen.</string>
     <string name="dialog_select_list_for_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
+    <string name="dialog_select_list_for_inclusion">Bitte wählen Sie die Bildliste, die Sie zur aktuellen Liste hinzufügen wollen.</string>
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_select_image_folder_for_add">Wählen Sie das Verzeichnis, aus dem Sie Bilder hinzufügen wollen.</string>
@@ -71,6 +73,8 @@
     <string name="partial_and">%1$s und %2$s</string>
     <string name="partial_image_single">das Bild „%1$s“</string>
     <string name="partial_image_multiple">%1$d Bilder</string>
+    <string name="partial_nested_list_single">die Bildliste „%1$s“</string>
+    <string name="partial_nested_list_multiple">%1$d Bildlisten</string>
     <string name="partial_folder_single">das Verzeichnis „%1$s“</string>
     <string name="partial_folder_two">die Verzeichnisse „%1$s“ und „%2$s“</string>
     <string name="partial_folder_multiple">%1$d Verzeichnisse</string>
