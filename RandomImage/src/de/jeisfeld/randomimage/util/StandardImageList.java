@@ -71,7 +71,9 @@ public final class StandardImageList extends ImageList {
 
 				for (String nestedListName : nestedListNames) {
 					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
-					allImageFileSet.addAll(nestedImageList.getAllImageFiles());
+					if (nestedImageList != null) {
+						allImageFileSet.addAll(nestedImageList.getAllImageFiles());
+					}
 				}
 				for (String folderName : folderNames) {
 					allImageFileSet.addAll(getImageFilesInFolder(folderName));

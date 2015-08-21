@@ -220,9 +220,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
 				public String getFileName() {
-					ArrayList<String> imageFiles =
-							new ArrayList<String>(ImageRegistry.getImageListByName(entryName)
-									.getAllImageFiles());
+					ImageList imageList = ImageRegistry.getImageListByName(entryName);
+					if (imageList == null) {
+						return null;
+					}
+					ArrayList<String> imageFiles = imageList.getAllImageFiles();
 					if (imageFiles.size() > 0) {
 						return imageFiles.get(new Random().nextInt(imageFiles.size()));
 					}
@@ -233,11 +235,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			});
 
 			thumbImageView.initWithStyle(activity, ThumbStyle.IMAGE_LIST);
-			thumbImageView.setMarkable(markingType);
 			thumbImageView.setMarked(selectedNestedListNames.contains(entryName));
 			thumbImageView.setFolderName(entryName);
-
-			thumbImageView.setImage(activity, displayFileName, sameThread);
 		}
 		else if (isFolder) {
 			entryName = folderNames.get(position - nestedListNames.size());
@@ -256,22 +255,19 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			});
 
 			thumbImageView.initWithStyle(activity, ThumbStyle.FOLDER);
-			thumbImageView.setMarkable(markingType);
 			thumbImageView.setMarked(selectedFolderNames.contains(entryName));
 			thumbImageView.setFolderName(new File(entryName).getName());
-
-			thumbImageView.setImage(activity, displayFileName, sameThread);
 		}
 		else {
 			entryName = fileNames.get(position - nestedListNames.size() - folderNames.size());
 			displayFileName = new LoadableFileName(entryName);
 
 			thumbImageView.initWithStyle(activity, ThumbStyle.IMAGE);
-			thumbImageView.setMarkable(markingType);
 			thumbImageView.setMarked(selectedFileNames.contains(entryName));
-
-			thumbImageView.setImage(activity, displayFileName, sameThread);
 		}
+
+		thumbImageView.setMarkable(markingType);
+		thumbImageView.setImage(activity, displayFileName, sameThread);
 
 		final String listName;
 		if (activity instanceof DisplayAllImagesActivity) {
