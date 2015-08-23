@@ -9,6 +9,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -139,6 +141,19 @@ public class DisplayImageDetailsActivity extends Activity {
 				public void onClick(final View v) {
 					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, galleryFileName);
 					returnResult(false, false);
+				}
+			});
+		}
+
+		if (file.isFile()) {
+			listMenu.addItem(R.string.menu_send_to, new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					Intent intent = new Intent(Intent.ACTION_SEND);
+					Uri uri = MediaStoreUtil.getUriFromFile(fileName);
+					intent.putExtra(Intent.EXTRA_STREAM, uri);
+					intent.setType("image/*");
+					startActivity(intent);
 				}
 			});
 		}
