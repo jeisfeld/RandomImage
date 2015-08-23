@@ -410,7 +410,7 @@ public final class ImageRegistry {
 					Log.e(Application.TAG, "Duplicate config list name " + name);
 				}
 				else {
-					fileMap.put(name, new ImageListInfo(name, configFile, imageListInfo.getClass()));
+					fileMap.put(name, new ImageListInfo(name, configFile, imageListInfo.getListClass()));
 				}
 			}
 		}
