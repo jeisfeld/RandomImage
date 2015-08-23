@@ -504,6 +504,14 @@ public final class DialogUtil {
 		}
 
 		@Override
+		public final void onCancel(final DialogInterface dialogInterface) {
+			if (listener != null) {
+				listener.onDialogNegativeClick(ConfirmDialogFragment.this);
+			}
+			super.onCancel(dialogInterface);
+		}
+
+		@Override
 		public final void onSaveInstanceState(final Bundle outState) {
 			if (listener != null) {
 				// Typically cannot serialize the listener due to its reference to the activity.
@@ -584,6 +592,14 @@ public final class DialogUtil {
 						}
 					});
 			return builder.create();
+		}
+
+		@Override
+		public final void onCancel(final DialogInterface dialogInterface) {
+			if (listener != null) {
+				listener.onDialogNegativeClick(RequestInputDialogFragment.this);
+			}
+			super.onCancel(dialogInterface);
 		}
 
 		@Override
@@ -678,6 +694,14 @@ public final class DialogUtil {
 				builder.setIcon(iconId);
 			}
 			return builder.create();
+		}
+
+		@Override
+		public final void onCancel(final DialogInterface dialogInterface) {
+			if (listener != null) {
+				listener.onDialogNegativeClick(SelectFromListDialogFragment.this);
+			}
+			super.onCancel(dialogInterface);
 		}
 
 		@Override
