@@ -88,6 +88,11 @@
             android:theme="@android:style/Theme.Holo.Dialog" >
         </activity>
         <activity
+            android:name=".DisplayNestedListDetailsActivity"
+            android:label="@string/title_activity_display_nested_list_details"
+            android:theme="@android:style/Theme.Holo.Dialog" >
+        </activity>
+        <activity
             android:name=".widgets.MiniWidgetConfigurationActivity"
             android:theme="@android:style/Theme.Holo.Dialog" >
             <intent-filter>

@@ -337,12 +337,12 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			@Override
 			public boolean onLongClick(final View v) {
 				if (isNestedList) {
-					return false;
+					DisplayNestedListDetailsActivity.startActivity(activity, entryName, listName);
 				}
 				else {
 					DisplayImageDetailsActivity.startActivity(activity, entryName, listName, true);
-					return true;
 				}
+				return true;
 			}
 		});
 
