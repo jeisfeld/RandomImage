@@ -32,6 +32,8 @@
 
     <!-- Strings for nested list info -->
     <string name="info_nested_list_images">Number of images: %1$d</string>
-    <string name="info_nested_list_weight">Proportion: %1$,.1f%%</string>
+    <string name="info_nested_list_image_proportion">Image Proportion: %1$,.1f%%</string>
+    <string name="info_nested_list_view_frequency">View Frequency:</string>
+    <string name="percent" translatable="false">%</string>
     
 </resources>

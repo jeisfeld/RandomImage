@@ -1,21 +1,35 @@
 <resources>
 
-	<!-- Base application theme, dependent on API level. This theme is replaced
-		by AppBaseTheme from res/values-vXX/styles.xml on newer devices. -->
-	<style name="AppBaseTheme" parent="android:Theme.Holo">
-		<!-- Theme customizations available in newer API levels can go in res/values-vXX/styles.xml,
-			while customizations related to backward-compatibility can go here. -->
-	</style>
+    <!--
+         Base application theme, dependent on API level. This theme is replaced
+		by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo">
+        <!--
+             Theme customizations available in newer API levels can go in res/values-vXX/styles.xml,
+			while customizations related to backward-compatibility can go here.
+        -->
+    </style>
 
-	<!-- Application theme. -->
-	<style name="AppTheme" parent="AppBaseTheme">
-		<!-- All customizations that are NOT specific to a particular API-level
-			can go here. -->
-	</style>
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!--
+             All customizations that are NOT specific to a particular API-level
+			can go here.
+        -->
+    </style>
 
-	<style name="MenuButton" parent="android:Widget.Holo.Light.ActionButton.Overflow">
-		<item name="android:gravity">center_vertical|start</item>
-		<item name="android:textSize">18sp</item>
-	</style>
+    <style name="MenuButton" parent="android:Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ActionBarButton">
+        <item name="android:background">@drawable/actionbutton</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">0px</item>
+        <item name="android:text"></item>
+    </style>
 
 </resources>

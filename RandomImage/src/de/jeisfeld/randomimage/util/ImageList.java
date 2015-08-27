@@ -49,13 +49,13 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Prefix for the property used for embedded lists.
 	 */
-	private static final String PROP_NESTED_PROPERTY_PREFIX = "nestedProperty.";
+	private static final String PROP_NESTED_PROPERTY_PREFIX = "nestedList";
 
 	/**
 	 * The regex pattern used to identify embedded list properties.
 	 */
 	private static final Pattern PROP_NESTED_PROPERTY_PATTERN =
-			Pattern.compile("^" + PROP_NESTED_PROPERTY_PREFIX + "([^\\[]*)\\[(\\d+)\\]");
+			Pattern.compile("^" + PROP_NESTED_PROPERTY_PREFIX + "\\.([^\\[]*)\\[(\\d+)\\]");
 
 	/**
 	 * The list of image files.
@@ -138,7 +138,8 @@ public abstract class ImageList extends RandomFileProvider {
 	 *
 	 * @return true if both actions were successful.
 	 */
-	public final synchronized boolean update() {
+	// OVERRIDABLE
+	public synchronized boolean update() {
 		if (save()) {
 			load();
 			return true;
@@ -306,7 +307,7 @@ public abstract class ImageList extends RandomFileProvider {
 					String value = line.substring(index + 1);
 
 					// nested list names
-					if (name.startsWith(PROP_NESTED_LIST_PREFIX)) {
+					if (name.startsWith(PROP_NESTED_LIST_PREFIX + "[")) {
 						Matcher matcher = PROP_NESTED_LIST_PATTERN.matcher(name);
 						if (matcher.find()) {
 							int propertyIndex = Integer.parseInt(matcher.group(1));
@@ -314,7 +315,7 @@ public abstract class ImageList extends RandomFileProvider {
 							nestedListIndices.put(value, propertyIndex);
 						}
 					}
-					else if (name.startsWith(PROP_NESTED_PROPERTY_PREFIX)) {
+					else if (name.startsWith(PROP_NESTED_PROPERTY_PREFIX + ".")) {
 						Matcher matcher = PROP_NESTED_PROPERTY_PATTERN.matcher(name);
 						if (matcher.find()) {
 							String propertyName = matcher.group(1);
@@ -390,7 +391,7 @@ public abstract class ImageList extends RandomFileProvider {
 				Properties nestedProperties = nestedListProperties.get(nestedListName);
 				if (nestedProperties != null) {
 					for (String nestedKey : nestedProperties.stringPropertyNames()) {
-						writer.println(PROP_NESTED_PROPERTY_PREFIX + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
+						writer.println(PROP_NESTED_PROPERTY_PREFIX + "." + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
 								+ nestedProperties.getProperty(nestedKey));
 					}
 				}
@@ -673,7 +674,8 @@ public abstract class ImageList extends RandomFileProvider {
 	 *            The nested list name to be removed.
 	 * @return true if the nested list was removed.
 	 */
-	public final boolean removeNestedList(final String nestedListName) {
+	// OVERRIDABLE
+	public boolean removeNestedList(final String nestedListName) {
 		nestedListProperties.remove(nestedListName);
 		return nestedListNames.remove(nestedListName);
 	}
@@ -698,7 +700,13 @@ public abstract class ImageList extends RandomFileProvider {
 	 *            The property value.
 	 */
 	protected final void setProperty(final String key, final String value) {
-		properties.setProperty(key, value);
+		if (value == null) {
+			properties.remove(key);
+		}
+		else {
+			properties.setProperty(key, value);
+		}
+		save();
 	}
 
 	/**
@@ -728,8 +736,14 @@ public abstract class ImageList extends RandomFileProvider {
 	public final void setNestedListProperty(final String nestedListName, final String key, final String value) {
 		Properties nestedProperties = nestedListProperties.get(nestedListName);
 		if (nestedProperties != null) {
-			nestedProperties.setProperty(key, value);
+			if (value == null) {
+				nestedProperties.remove(key);
+			}
+			else {
+				nestedProperties.setProperty(key, value);
+			}
 		}
+		save();
 	}
 
 	/**

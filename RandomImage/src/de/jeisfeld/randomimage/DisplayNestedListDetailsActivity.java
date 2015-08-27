@@ -4,6 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.StandardImageList;
@@ -24,6 +28,11 @@ public class DisplayNestedListDetailsActivity extends Activity {
 	 * The resource key for the name of the parent list from which the nested list is taken.
 	 */
 	private static final String STRING_EXTRA_PARENT_LISTNAME = "de.jeisfeld.randomimage.PARENT_LISTNAME";
+
+	/**
+	 * Number 100. Used for percentage calculation.
+	 */
+	private static final int HUNDRED = 100;
 
 	/**
 	 * The name of the nested list whose details should be displayed.
@@ -70,7 +79,7 @@ public class DisplayNestedListDetailsActivity extends Activity {
 		nestedListName = getIntent().getStringExtra(STRING_EXTRA_NESTED_LISTNAME);
 		parentListName = getIntent().getStringExtra(STRING_EXTRA_PARENT_LISTNAME);
 
-		StandardImageList imageList = ImageRegistry.getStandardImageListByName(parentListName);
+		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(parentListName);
 		if (imageList == null) {
 			finish();
 			return;
@@ -82,7 +91,43 @@ public class DisplayNestedListDetailsActivity extends Activity {
 				String.format(getString(R.string.info_nested_list_images), imageList.getNestedListImageCount(nestedListName)));
 
 		((TextView) findViewById(R.id.textViewWeight)).setText(
-				String.format(getString(R.string.info_nested_list_weight), 100 * imageList.getNestedListWeight(nestedListName))); // MAGIC_NUMBER
+				String.format(getString(R.string.info_nested_list_image_proportion),
+						HUNDRED * imageList.getImagePercentage(nestedListName)));
+
+		final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
+		Double customNestedListWeight = imageList.getCustomNestedListWeight(nestedListName);
+		if (customNestedListWeight == null) {
+			double nestedListWeight = imageList.getNestedListWeight(nestedListName);
+			int percentage = (int) Math.round(nestedListWeight * HUNDRED);
+			editTextViewFrequency.setHint(Integer.toString(percentage));
+		}
+		else {
+			int percentage = (int) Math.round(customNestedListWeight * HUNDRED);
+			editTextViewFrequency.setText(Integer.toString(percentage));
+		}
+
+		ImageButton buttonSave = (ImageButton) findViewById(R.id.button_save);
+
+		buttonSave.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				String percentageString = editTextViewFrequency.getText().toString();
+
+				Double weight = null;
+				if (percentageString != null && percentageString.length() > 0) {
+					weight = Double.parseDouble(percentageString) / HUNDRED;
+					if (weight > 1) {
+						weight = 1.0;
+					}
+					if (weight < 0) {
+						weight = 0.0;
+					}
+				}
+
+				imageList.setCustomNestedListWeight(nestedListName, weight);
+				finish();
+			}
+		});
 
 	}
 
