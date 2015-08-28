@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="de.jeisfeld.randomimage"
-    android:versionCode="10"
-    android:versionName="0.2.1" >
+    android:versionCode="11"
+    android:versionName="0.2.2" >
 
     <uses-sdk
         android:minSdkVersion="16"
