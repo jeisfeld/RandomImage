@@ -89,6 +89,10 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 
 		// This step initializes the adapter.
 		fillListOfImagesFromFolder();
+		if (getAdapter() == null) {
+			finish();
+			return;
+		}
 
 		if (savedInstanceState != null) {
 			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
