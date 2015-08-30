@@ -1,6 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +22,6 @@ import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
-import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
@@ -38,11 +35,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
-
-	/**
-	 * Request code for getting images from gallery.
-	 */
-	private static final int REQUEST_CODE_GALLERY = 100;
 
 	/**
 	 * The names of the nested lists to be displayed.
@@ -241,22 +233,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
 		case R.id.action_add_images:
-			DialogUtil.displayInfo(this, new MessageDialogListener() {
-				/**
-				 * The serial version uid.
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void onDialogFinished() {
-					Intent intent = new Intent();
-					intent.setType("image/*");
-					intent.setAction(Intent.ACTION_GET_CONTENT);
-					intent.putExtra(SelectDirectoryActivity.STRING_EXTRA_ONLY_FOLDER, true);
-
-					startActivityForResult(intent, REQUEST_CODE_GALLERY);
-				}
-			}, R.string.key_info_select_folder, R.string.dialog_info_select_folder);
+			SelectDirectoryActivity.startActivity(this);
 			return true;
 		case R.id.action_backup_list:
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
@@ -525,28 +502,28 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 							onDialogPositiveClick(final DialogFragment dialog, final int positin, final String text) {
 						DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 								new ConfirmDialogListener() {
-									/**
-									 * The serial version id.
-									 */
-									private static final long serialVersionUID = 1L;
+							/**
+							 * The serial version id.
+							 */
+							private static final long serialVersionUID = 1L;
 
-									@Override
-									public void onDialogPositiveClick(final DialogFragment dialog1) {
-										ImageRegistry.deleteImageList(text);
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog1) {
+								ImageRegistry.deleteImageList(text);
 
-										if (GenericWidget.getWidgetIdsForName(text).size() > 0) {
-											DialogUtil.displayInfo(DisplayAllImagesActivity.this, null, 0,
-													R.string.dialog_info_delete_widgets, text);
-										}
+								if (GenericWidget.getWidgetIdsForName(text).size() > 0) {
+									DialogUtil.displayInfo(DisplayAllImagesActivity.this, null, 0,
+											R.string.dialog_info_delete_widgets, text);
+								}
 
-										invalidateOptionsMenu();
-									}
+								invalidateOptionsMenu();
+							}
 
-									@Override
-									public void onDialogNegativeClick(final DialogFragment dialog1) {
-										// do nothing.
-									}
-								}, R.string.button_delete, R.string.dialog_confirmation_delete_list, text);
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog1) {
+								// do nothing.
+							}
+						}, R.string.button_delete, R.string.dialog_confirmation_delete_list, text);
 					}
 
 					@Override
@@ -640,21 +617,21 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						if (backupNames.contains(text)) {
 							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 									new ConfirmDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
 
-										@Override
-										public void onDialogPositiveClick(final DialogFragment dialog2) {
-											doBackup(text);
-										}
+								@Override
+								public void onDialogPositiveClick(final DialogFragment dialog2) {
+									doBackup(text);
+								}
 
-										@Override
-										public void onDialogNegativeClick(final DialogFragment dialog2) {
-											// do nothing
-										}
-									}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, text);
+								@Override
+								public void onDialogNegativeClick(final DialogFragment dialog2) {
+									// do nothing
+								}
+							}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, text);
 
 						}
 						else {
@@ -680,7 +657,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		String backupFile = ImageRegistry.backupImageList(listToBeBackuped);
 		DialogUtil.displayToast(DisplayAllImagesActivity.this,
 				backupFile == null ? R.string.toast_failed_to_backup_list
-						: R.string.toast_backup_of_list, listToBeBackuped);
+						: R.string.toast_backup_of_list,
+				listToBeBackuped);
 		if (backupFile != null) {
 			DialogUtil.displayInfo(DisplayAllImagesActivity.this, null,
 					R.string.key_info_backup, R.string.dialog_info_backup, listToBeBackuped,
@@ -708,21 +686,21 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						if (listNames.contains(text)) {
 							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 									new ConfirmDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
 
-										@Override
-										public void onDialogPositiveClick(final DialogFragment dialog2) {
-											doRestore(text);
-										}
+								@Override
+								public void onDialogPositiveClick(final DialogFragment dialog2) {
+									doRestore(text);
+								}
 
-										@Override
-										public void onDialogNegativeClick(final DialogFragment dialog2) {
-											// do nothing
-										}
-									}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, text);
+								@Override
+								public void onDialogNegativeClick(final DialogFragment dialog2) {
+									// do nothing
+								}
+							}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, text);
 
 						}
 						else {
@@ -748,7 +726,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		boolean success = ImageRegistry.restoreImageList(listToBeRestored);
 		DialogUtil.displayToast(DisplayAllImagesActivity.this,
 				success ? R.string.toast_restore_of_list
-						: R.string.toast_failed_to_restore_list, listToBeRestored);
+						: R.string.toast_failed_to_restore_list,
+				listToBeRestored);
 		if (success) {
 			switchToImageList(listToBeRestored, CreationStyle.NONE);
 		}
@@ -829,31 +808,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				fillListOfImages();
 			}
 			break;
-		case REQUEST_CODE_GALLERY:
+		case SelectDirectoryActivity.REQUEST_CODE:
 			if (resultCode == RESULT_OK) {
-
-				boolean handledInternally =
-						SelectDirectoryActivity.getResultWasSelectDirectoryActivity(resultCode, data);
-				String folderName;
-
-				if (handledInternally) {
-					// got folder from SelectDirectoryActivity
-					folderName = SelectDirectoryActivity.getResultFolder(resultCode, data);
-					if (SelectDirectoryActivity.getResultUpdatedList(resultCode, data)) {
-						fillListOfImages();
-					}
-				}
-				else {
-					// got URI from external app
-					Uri selectedImageUri = data.getData();
-					String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
-
-					if (fileName == null) {
-						DialogUtil.displayToast(this, R.string.toast_error_select_folder);
-						return;
-					}
-
-					folderName = new File(fileName).getParent();
+				String folderName = SelectDirectoryActivity.getResultFolder(resultCode, data);
+				if (SelectDirectoryActivity.getResultUpdatedList(resultCode, data)) {
+					fillListOfImages();
 				}
 
 				if (folderName != null) {

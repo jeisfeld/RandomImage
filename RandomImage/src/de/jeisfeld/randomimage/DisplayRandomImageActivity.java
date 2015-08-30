@@ -246,7 +246,9 @@ public class DisplayRandomImageActivity extends Activity {
 			setContentView(currentImageView);
 			if (doPreload && randomFileProvider.isReady()) {
 				nextFileName = randomFileProvider.getRandomFileName();
-				nextImageView = createImageView(nextFileName, nextCacheIndex);
+				if (nextFileName != null) {
+					nextImageView = createImageView(nextFileName, nextCacheIndex);
+				}
 			}
 		}
 

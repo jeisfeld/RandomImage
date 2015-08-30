@@ -101,10 +101,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			currentAction = forAddition ? CurrentAction.ADD : CurrentAction.DISPLAY;
 		}
 		changeAction(currentAction);
-
-		if (forAddition) {
-			DialogUtil.displayInfo(this, null, R.string.key_info_add_images, R.string.dialog_info_add_images);
-		}
 	}
 
 	@Override
@@ -203,33 +199,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 						returnResult(false);
 					}
 				}, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
-						new File(folderName).getName());
-			}
-			return true;
-		case R.id.action_add_image_folder:
-			int selectedImagesCount = getAdapter().getSelectedFiles().size();
-
-			if (selectedImagesCount == 0) {
-				addFolderToImageList();
-			}
-			else {
-				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
-					/**
-					 * The serial version id.
-					 */
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog) {
-						addFolderToImageList();
-					}
-
-					@Override
-					public void onDialogNegativeClick(final DialogFragment dialog) {
-						// stay in the activity.
-						return;
-					}
-				}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
 						new File(folderName).getName());
 			}
 			return true;

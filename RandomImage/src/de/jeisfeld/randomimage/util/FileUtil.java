@@ -14,6 +14,7 @@ import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 import de.jeisfeld.randomimage.Application;
 
@@ -267,6 +268,53 @@ public final class FileUtil {
 	@TargetApi(Build.VERSION_CODES.KITKAT)
 	public static boolean isOnExtSdCard(final File file) {
 		return getExtSdCardFolder(file) != null;
+	}
+
+	/**
+	 * Get the SD card directory.
+	 *
+	 * @return The SD card directory.
+	 */
+	public static String getSdCardDirectory() {
+		String sdCardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+		try {
+			sdCardDirectory = new File(sdCardDirectory).getCanonicalPath();
+		}
+		catch (IOException ioe) {
+			Log.e(Application.TAG, "Could not get SD directory", ioe);
+		}
+		return sdCardDirectory;
+	}
+
+	/**
+	 * Determine the camera folder. There seems to be no Android API to work for real devices, so this is a best guess.
+	 *
+	 * @return the default camera folder.
+	 */
+	public static String getDefaultCameraFolder() {
+		File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+		if (path.exists()) {
+			File test1 = new File(path, "Camera/");
+			if (test1.exists()) {
+				path = test1;
+			}
+			else {
+				File test2 = new File(path, "100ANDRO/");
+				if (test2.exists()) {
+					path = test2;
+				}
+				else {
+					File test3 = new File(path, "100MEDIA/");
+					path = test3;
+				}
+			}
+		}
+		else {
+			File test3 = new File(path, "Camera/");
+			path = test3;
+		}
+		return path.getAbsolutePath();
 	}
 
 }

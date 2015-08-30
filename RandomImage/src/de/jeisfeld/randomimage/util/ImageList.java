@@ -124,7 +124,7 @@ public abstract class ImageList extends RandomFileProvider {
 				load(); // OVERRIDABLE
 			}
 			setListName(listName);
-			save();
+			update(); // OVERRIDABLE
 		}
 	}
 

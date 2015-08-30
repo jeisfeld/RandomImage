@@ -35,9 +35,7 @@
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
     <!-- Messages of dialogs -->
-    <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.\n\nSie können auch Ihre Galerie-App nutzen und von dort Bilder an die Überraschungsbild-App senden, um Sie Ihrer Liste hinzuzufügen.</string>
-    <string name="dialog_info_select_folder">Zunächst müssen Sie das Verzeichnis auswählen, aus dem Sie Bilder hinzufügen wollen.\n\nIm folgenden Dialog, wählen Sie „Überraschungsbild“, wenn Sie das Bildverzeichnis im Dateisystem auswählen wollen.\n\nOder wählen Sie Ihre Galerie-App, wenn Sie das Verzeichnis dort auswählen wollen - wählen Sie dann ein Bild in diesem Verzeichnis aus.</string>
-    <string name="dialog_info_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.</string>
+    <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.</string>
     <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Mülleimer-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
@@ -59,11 +57,10 @@
     <string name="dialog_select_list_for_inclusion">Bitte wählen Sie die Bildliste, die Sie zur aktuellen Liste hinzufügen wollen.</string>
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
-    <string name="dialog_select_image_folder_for_add">Wählen Sie das Verzeichnis, aus dem Sie Bilder hinzufügen wollen.</string>
+    <string name="dialog_select_image_folder_for_add">Wählen Sie das Verzeichnis, dessen Bilder Sie zur Liste hinzufügen wollen.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%1$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s“ entfernen?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
-    <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>
     <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s“ zur Bildliste hinzufügen?</string>
     <string name="dialog_confirmation_overwrite_list">Die Bildliste „%1$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup">Das Backup von „%1$s“ existiert bereits. Wollen Sie es überschreiben?</string>

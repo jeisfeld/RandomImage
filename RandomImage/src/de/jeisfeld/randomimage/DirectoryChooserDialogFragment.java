@@ -19,7 +19,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -43,7 +43,9 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
  * Class to present a dialog for selection of a directory.
  *
  * <p>
- * Inspired by http://www.codeproject.com/Articles/547636/Android-Ready-to-use-simple-directory-chooser-dial
+ * Inspired by
+ * http://www.codeproject.com/Articles/547636/Android-Ready-to-use-simple-
+ * directory-chooser-dial
  */
 public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
@@ -141,7 +143,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	@Override
 	public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 		// Listeners cannot retain functionality when automatically recreated.
-		// Therefore, dialogs with listeners must be re-created by the activity on orientation change.
+		// Therefore, dialogs with listeners must be re-created by the activity
+		// on orientation change.
 		boolean preventRecreation = false;
 		if (savedInstanceState != null) {
 			preventRecreation = savedInstanceState.getBoolean("preventRecreation");
@@ -153,8 +156,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		// retrieve arguments
 		String dir = getArguments().getString(STRING_EXTRA_FOLDER);
 		listener = (ChosenDirectoryListener) getArguments().getSerializable(STRING_EXTRA_LISTENER);
-		longClickListener =
-				(OnFolderLongClickListener) getArguments().getSerializable(STRING_EXTRA_LONG_CLICK_LISTENER);
+		longClickListener = (OnFolderLongClickListener) getArguments()
+				.getSerializable(STRING_EXTRA_LONG_CLICK_LISTENER);
 
 		if (dir == null) {
 			dir = PreferenceUtil.getSharedPreferenceString(R.string.key_directory_chooser_last_folder);
@@ -162,7 +165,12 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 
 		File dirFile = dir == null ? null : new File(dir);
 		if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
-			dir = getSdCardDirectory();
+			dir = FileUtil.getDefaultCameraFolder();
+			dirFile = dir == null ? null : new File(dir);
+
+			if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
+				dir = FileUtil.getSdCardDirectory();
+			}
 		}
 
 		try {
@@ -183,8 +191,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 
 		dialogBuilder.setTitle(R.string.title_dialog_select_folder);
 
-		View layout =
-				LayoutInflater.from(context).inflate(R.layout.dialog_directory_chooser, new LinearLayout(context));
+		View layout = LayoutInflater.from(context).inflate(R.layout.dialog_directory_chooser,
+				new LinearLayout(context));
 		dialogBuilder.setView(layout);
 
 		((TextView) layout.findViewById(R.id.textViewMessage)).setText(R.string.dialog_select_image_folder_for_add);
@@ -219,14 +227,22 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 
 		dialogBuilder.setCancelable(false);
 
-		dialogBuilder.setPositiveButton(R.string.button_select_folder, new OnClickListener() {
+		dialogBuilder.setNeutralButton(R.string.button_add_images, new OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
-				// Current directory chosen
 				if (listener != null) {
 					// Call registered listener supplied with the chosen directory
 					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, currentFolder);
-					listener.onChosenDir(currentFolder);
+					listener.onAddImages(currentFolder);
+				}
+			}
+		}).setPositiveButton(R.string.button_add_folder, new OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				if (listener != null) {
+					// Call registered listener supplied with the chosen directory
+					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, currentFolder);
+					listener.onAddFolder(currentFolder);
 				}
 			}
 		}).setNegativeButton(R.string.button_cancel, new OnClickListener() {
@@ -244,7 +260,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			@Override
 			public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-					// Back button pressed - go to the last directory if existing - otherwise cancel the dialog.
+					// Back button pressed - go to the last directory if
+					// existing - otherwise cancel the dialog.
 					if (backStack.size() == 0) {
 						dirsDialog.dismiss();
 						if (listener != null) {
@@ -281,6 +298,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	 */
 	private void enablePositiveButton(final boolean enabled) {
 		dirsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enabled);
+		dirsDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(enabled);
 	}
 
 	/**
@@ -296,7 +314,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	}
 
 	/**
-	 * Get the list of subdirectories of the current directory. Returns ".." as first value if appropriate.
+	 * Get the list of subdirectories of the current directory. Returns ".." as
+	 * first value if appropriate.
 	 *
 	 * @param dir
 	 *            The current directory.
@@ -387,27 +406,11 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		};
 	}
 
-	/**
-	 * Get the SD card directory.
-	 *
-	 * @return The SD card directory.
-	 */
-	private String getSdCardDirectory() {
-		String sdCardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
-
-		try {
-			sdCardDirectory = new File(sdCardDirectory).getCanonicalPath();
-		}
-		catch (IOException ioe) {
-			Log.e(Application.TAG, "Could not get SD directory", ioe);
-		}
-		return sdCardDirectory;
-	}
-
 	@Override
 	public final void onSaveInstanceState(final Bundle outState) {
 		if (listener != null || longClickListener != null) {
-			// Typically cannot serialize the listener due to its reference to the activity.
+			// Typically cannot serialize the listener due to its reference to
+			// the activity.
 			listener = null;
 			longClickListener = null;
 			outState.putBoolean("preventRecreation", true);
@@ -425,7 +428,15 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 * @param chosenDir
 		 *            The selected folder.
 		 */
-		void onChosenDir(final String chosenDir);
+		void onAddImages(final String chosenDir);
+
+		/**
+		 * Called when a folder is selected.
+		 *
+		 * @param chosenDir
+		 *            The selected folder.
+		 */
+		void onAddFolder(final String chosenDir);
 
 		/**
 		 * Called when the dialog is cancelled.
@@ -492,8 +503,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			new Thread() {
 				@Override
 				public void run() {
-					final Bitmap bitmap =
-							ImageUtil.getImageBitmap(fileNames.get(position), MediaStoreUtil.MINI_THUMB_SIZE);
+					final Bitmap bitmap = ImageUtil.getImageBitmap(fileNames.get(position),
+							MediaStoreUtil.MINI_THUMB_SIZE);
 
 					try {
 						getActivity().runOnUiThread(new Runnable() {

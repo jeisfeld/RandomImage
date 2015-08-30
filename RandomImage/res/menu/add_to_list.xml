@@ -15,12 +15,6 @@
         android:showAsAction="ifRoom"
         android:title="@string/menu_cancel"/>
     <item
-        android:id="@+id/action_add_image_folder"
-        android:icon="@drawable/ic_action_add_folder"
-        android:orderInCategory="100"
-        android:showAsAction="always"
-        android:title="@string/menu_add_image_folder"/>
-    <item
         android:id="@+id/action_add_images"
         android:icon="@drawable/ic_action_add_checked"
         android:orderInCategory="100"
