@@ -43,19 +43,14 @@ public final class StandardImageList extends ImageList {
 	private volatile Map<String, Double> customNestedListWeights = new HashMap<String, Double>();
 
 	/**
-	 * The thread currently loading the allImageFiles list.
-	 */
-	private volatile Thread loaderThread;
-
-	/**
-	 * The thread waiting to load the allImageFile list.
-	 */
-	private volatile Thread waitingLoaderThread;
-
-	/**
 	 * The random number generator.
 	 */
 	private Random random;
+
+	/**
+	 * An asynchronous loader for the image lists.
+	 */
+	private volatile AsyncLoader asyncLoader;
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -87,64 +82,7 @@ public final class StandardImageList extends ImageList {
 	public synchronized void load() {
 		super.load();
 
-		// Asynchronously parse the list of images, working on a copy of file and folder names to prevent concurrent
-		// modification.
-		final ArrayList<String> folderNames = getFolderNames();
-		final ArrayList<String> fileNames = getFileNames();
-		final ArrayList<String> nestedListNames = getNestedListNames();
-
-		waitingLoaderThread = new Thread() {
-			@Override
-			public void run() {
-				Map<String, ArrayList<String>> imageFilesByNestedListNew = new HashMap<String, ArrayList<String>>();
-
-				Set<String> allImageFileSet = new HashSet<String>();
-
-				for (String folderName : folderNames) {
-					allImageFileSet.addAll(getImageFilesInFolder(folderName));
-				}
-				for (String fileName : fileNames) {
-					allImageFileSet.add(fileName);
-				}
-
-				imageFilesByNestedListNew.put(DEFAULT_NESTED_LIST, new ArrayList<String>(allImageFileSet));
-
-				for (String nestedListName : nestedListNames) {
-					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
-					if (nestedImageList != null) {
-						ArrayList<String> nestedListFiles = nestedImageList.getAllImageFiles();
-						imageFilesByNestedListNew.put(nestedListName, nestedListFiles);
-					}
-					String customWeightString = getNestedListProperty(nestedListName, PARAM_WEIGHT);
-					if (customWeightString != null) {
-						double customWeight = Double.parseDouble(customWeightString);
-						customNestedListWeights.put(nestedListName, customWeight);
-					}
-				}
-
-				// Set it only here so that it is only visible when completed, and has always a complete state.
-				imageFilesByNestedList = imageFilesByNestedListNew;
-
-				calculateWeights();
-
-				synchronized (this) {
-					if (waitingLoaderThread != null) {
-						loaderThread = waitingLoaderThread;
-						waitingLoaderThread = null;
-						loaderThread.start();
-					}
-					else {
-						loaderThread = null;
-					}
-				}
-			}
-		};
-
-		if (loaderThread == null) {
-			loaderThread = waitingLoaderThread;
-			waitingLoaderThread = null;
-			loaderThread.start();
-		}
+		asyncLoader.load();
 	}
 
 	/**
@@ -158,6 +96,8 @@ public final class StandardImageList extends ImageList {
 		nestedListWeights = new HashMap<String, Double>();
 		customNestedListWeights = new HashMap<String, Double>();
 		random = new Random();
+
+		asyncLoader = new AsyncLoader(getAsyncRunnable());
 	}
 
 	/**
@@ -230,25 +170,12 @@ public final class StandardImageList extends ImageList {
 
 	@Override
 	public boolean isReady() {
-		return imageFilesByNestedList != null;
+		return asyncLoader.isReady();
 	}
 
 	@Override
 	public void waitUntilReady() {
-		if (isReady()) {
-			return;
-		}
-
-		// prevent exception if loaderThread gets deleted after check.
-		Thread localLoaderThread = loaderThread;
-		if (localLoaderThread != null) {
-			try {
-				localLoaderThread.join();
-			}
-			catch (InterruptedException e) {
-				// do nothing
-			}
-		}
+		asyncLoader.waitUntilReady();
 	}
 
 	@Override
@@ -434,5 +361,52 @@ public final class StandardImageList extends ImageList {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Instantiate the runnable loading the image lists.
+	 *
+	 * @return The runnable loading the image lists.
+	 */
+	private Runnable getAsyncRunnable() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				final ArrayList<String> folderNames = getFolderNames();
+				final ArrayList<String> fileNames = getFileNames();
+				final ArrayList<String> nestedListNames = getNestedListNames();
+
+				Map<String, ArrayList<String>> imageFilesByNestedListNew = new HashMap<String, ArrayList<String>>();
+
+				Set<String> allImageFileSet = new HashSet<String>();
+
+				for (String folderName : folderNames) {
+					allImageFileSet.addAll(getImageFilesInFolder(folderName));
+				}
+				for (String fileName : fileNames) {
+					allImageFileSet.add(fileName);
+				}
+
+				imageFilesByNestedListNew.put(DEFAULT_NESTED_LIST, new ArrayList<String>(allImageFileSet));
+
+				for (String nestedListName : nestedListNames) {
+					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
+					if (nestedImageList != null) {
+						ArrayList<String> nestedListFiles = nestedImageList.getAllImageFiles();
+						imageFilesByNestedListNew.put(nestedListName, nestedListFiles);
+					}
+					String customWeightString = getNestedListProperty(nestedListName, PARAM_WEIGHT);
+					if (customWeightString != null) {
+						double customWeight = Double.parseDouble(customWeightString);
+						customNestedListWeights.put(nestedListName, customWeight);
+					}
+				}
+
+				// Set it only here so that it is only visible when completed, and has always a complete state.
+				imageFilesByNestedList = imageFilesByNestedListNew;
+
+				calculateWeights();
+			}
+		};
 	}
 }
