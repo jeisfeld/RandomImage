@@ -43,6 +43,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	protected static final String EXTRA_NEW_IMAGE = "de.jeisfeld.randomimage.NEW_IMAGE";
 
 	/**
+	 * Intent flag to indicate that this intent was triggered by the user.
+	 */
+	protected static final String EXTRA_USER_TRIGGERED = "de.jeisfeld.randomimage.USER_TRIGGERED";
+
+	/**
 	 * The names of the image lists associated to any widget.
 	 */
 	private static SparseArray<String> listNames = new SparseArray<String>();
@@ -58,6 +63,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	private static Set<Integer> dirtyWidgets = new HashSet<Integer>();
 
+	/**
+	 * Id of an app widget triggered for update by user.
+	 */
+	private static Integer userUpdatedAppWidgetId = null;
+
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
 		String action = intent.getAction();
@@ -71,23 +81,31 @@ public abstract class GenericWidget extends AppWidgetProvider {
 					}
 				}
 			}
+			if (appWidgetIds != null && appWidgetIds.length == 1 && userUpdatedAppWidgetId == null) {
+				boolean updateFlag = intent.getBooleanExtra(EXTRA_USER_TRIGGERED, false);
+				if (updateFlag) {
+					userUpdatedAppWidgetId = appWidgetIds[0];
+				}
+			}
 		}
 
 		super.onReceive(context, intent);
 	}
 
 	@Override
-	public final void
-			onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
+	public final void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
 		for (int i = 0; i < appWidgetIds.length; i++) {
 			int appWidgetId = appWidgetIds[i];
 
 			String listName = getListName(appWidgetId);
-			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, dirtyWidgets.contains(appWidgetId));
+			boolean userTriggered = userUpdatedAppWidgetId == null ? false : userUpdatedAppWidgetId == appWidgetId;
+
+			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, dirtyWidgets.contains(appWidgetId), userTriggered);
 
 			dirtyWidgets.remove(appWidgetId);
+			userUpdatedAppWidgetId = null;
 		}
 	}
 
@@ -103,10 +121,13 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 *            for this provider, or just a subset of them.
 	 * @param listName
 	 *            the list name of the widget.
-	 * @changeImage flag indicating if the image should be changed.
+	 * @param changeImage
+	 *            flag indicating if the image should be changed.
+	 * @param userTriggered
+	 *            flag indicating if the call was triggered by the user.
 	 */
 	protected abstract void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage);
+			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered);
 
 	// OVERRIDABLE
 	@Override

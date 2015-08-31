@@ -15,6 +15,7 @@ import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 
@@ -29,12 +30,17 @@ public class ImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage) {
+			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
 		boolean requireNewImage = changeImage || currentFileNames.get(appWidgetId) == null;
 
 		String fileName = null;
 		if (requireNewImage) {
+			if (userTriggered) {
+				ImageRegistry.switchToImageList(listName, CreationStyle.NONE);
+			}
+
 			ImageList imageList = ImageRegistry.getImageListByName(listName);
+
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
@@ -42,6 +48,7 @@ public class ImageWidget extends GenericWidget {
 
 			if (imageList != null) {
 				imageList.waitUntilReady();
+
 				fileName = imageList.getRandomFileName();
 			}
 		}
@@ -158,6 +165,7 @@ public class ImageWidget extends GenericWidget {
 		nextIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { appWidgetId });
 		nextIntent.putExtra(EXTRA_NEW_IMAGE, true);
+		nextIntent.putExtra(EXTRA_USER_TRIGGERED, true);
 		PendingIntent pendingNextIntent =
 				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);

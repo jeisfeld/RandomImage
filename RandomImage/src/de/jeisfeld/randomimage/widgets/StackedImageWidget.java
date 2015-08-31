@@ -32,7 +32,7 @@ public class StackedImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage) {
+			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
 
 		Intent intent = new Intent(context, StackedImageWidgetService.class);
 		// Add the app widget ID to the intent extras.
