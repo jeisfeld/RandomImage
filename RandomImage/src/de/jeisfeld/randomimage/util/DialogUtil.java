@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,12 +13,14 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
@@ -646,6 +649,7 @@ public final class DialogUtil {
 		 */
 		private SelectFromListDialogListener listener = null;
 
+		@SuppressLint("InflateParams")
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
@@ -656,14 +660,19 @@ public final class DialogUtil {
 
 			// setMessage is not combinable with setItems, therefore using setView for the list of names.
 			ListView listView = new ListView(getActivity());
+
+			TextView messageView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.text_view_list_header, null);
+			messageView.setText(message);
+			listView.addHeaderView(messageView, null, false);
+
 			ArrayAdapter<String> listViewAdapter =
 					new ArrayAdapter<String>(getActivity(), R.layout.adapter_list_names, items);
 			listView.setAdapter(listViewAdapter);
 			listView.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void
-						onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-					listener.onDialogPositiveClick(SelectFromListDialogFragment.this, position, items[position]);
+				public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+					int listPosition = (int) id;
+					listener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
 					dismiss();
 				}
 			});
@@ -679,8 +688,7 @@ public final class DialogUtil {
 			}
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(titleResource) //
-					.setMessage(message)
+			builder.setTitle(titleResource)
 					.setView(listView)
 					.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
 						@Override
