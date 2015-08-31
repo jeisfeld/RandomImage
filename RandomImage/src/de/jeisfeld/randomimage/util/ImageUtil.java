@@ -18,6 +18,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import de.jeisfeld.randomimage.Application;
@@ -360,26 +361,39 @@ public final class ImageUtil {
 	}
 
 	/**
-	 * Get all image folders on the device.
+	 * Get all image folders on the device in a separate thread.
 	 *
-	 * @return The array of image folders.
+	 * @param listener
+	 *            A listener handling the response via callback.
 	 */
-	public static ArrayList<String> getAllImageFolders() {
-		ArrayList<String> result = new ArrayList<String>();
+	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
+		final Handler handler = new Handler();
 
-		if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.KITKAT)) {
-			result.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath())));
+		new Thread() {
+			@Override
+			public void run() {
+				final ArrayList<String> imageFolders = new ArrayList<String>();
 
-			for (String path : FileUtil.getExtSdCardPaths()) {
-				result.addAll(getAllImageSubfolders(new File(path)));
+				if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.KITKAT)) {
+					imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
+
+//					for (String path : FileUtil.getExtSdCardPaths()) {
+//						imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
+//					}
+				}
+				else {
+					imageFolders.addAll(getAllImageSubfolders(new File("/mnt"), handler, listener));
+					imageFolders.addAll(getAllImageSubfolders(new File("/Removable"), handler, listener));
+				}
+
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						listener.handleImageFolders(imageFolders);
+					}
+				});
 			}
-		}
-		else {
-			result.addAll(getAllImageSubfolders(new File("/mnt")));
-			result.addAll(getAllImageSubfolders(new File("/Removable")));
-		}
-
-		return result;
+		}.start();
 	}
 
 	/**
@@ -387,9 +401,14 @@ public final class ImageUtil {
 	 *
 	 * @param parentFolder
 	 *            the folder where to look for image sub folders
+	 * @param handler
+	 *            A handler running on the GUI thread.
+	 * @param listener
+	 *            A listener handling the response via callback.
 	 * @return The array of image folders.
 	 */
-	private static ArrayList<String> getAllImageSubfolders(final File parentFolder) {
+	private static ArrayList<String> getAllImageSubfolders(final File parentFolder, final Handler handler,
+			final OnImageFoldersFoundListener listener) {
 		ArrayList<String> result = new ArrayList<String>();
 		if (parentFolder == null) {
 			return result;
@@ -408,6 +427,14 @@ public final class ImageUtil {
 
 		if (isImageFolder(parentFolder.getAbsolutePath())) {
 			result.add(parentFolder.getAbsolutePath());
+			if (handler != null && listener != null) {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						listener.handleImageFolder(parentFolder.getAbsolutePath());
+					}
+				});
+			}
 		}
 
 		File[] children = parentFolder.listFiles(new FileFilter() {
@@ -421,7 +448,7 @@ public final class ImageUtil {
 		}
 
 		for (int i = 0; i < children.length; i++) {
-			result.addAll(getAllImageSubfolders(children[i]));
+			result.addAll(getAllImageSubfolders(children[i], handler, listener));
 		}
 
 		return result;
@@ -468,7 +495,27 @@ public final class ImageUtil {
 			Uri uri = Uri.fromFile(file);
 			return file.exists() && file.isFile() && ImageUtil.getMimeType(uri).startsWith("image/");
 		}
+	}
 
+	/**
+	 * A listener to be called after all image folders have been found.
+	 */
+	public interface OnImageFoldersFoundListener {
+		/**
+		 * Handler for actions done after retrieving the complete list of image folders.
+		 *
+		 * @param imageFolders
+		 *            The list of image folders.
+		 */
+		void handleImageFolders(ArrayList<String> imageFolders);
+
+		/**
+		 * Handler for actions done after finding one image folder.
+		 *
+		 * @param imageFolder
+		 *            The image folder found.
+		 */
+		void handleImageFolder(String imageFolder);
 	}
 
 }

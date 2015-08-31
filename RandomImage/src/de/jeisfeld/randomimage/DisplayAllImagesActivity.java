@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,7 @@ import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
@@ -35,6 +38,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+
+	/**
+	 * Request code for getting images from gallery.
+	 */
+	private static final int REQUEST_CODE_GALLERY = 100;
 
 	/**
 	 * The names of the nested lists to be displayed.
@@ -233,7 +241,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
 		case R.id.action_add_images:
-			SelectDirectoryActivity.startActivity(this);
+			addImagesToList();
 			return true;
 		case R.id.action_backup_list:
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
@@ -377,6 +385,32 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	}
 
 	/**
+	 * Add images to the image list.
+	 */
+	private void addImagesToList() {
+		int folderSelectionMode = Integer.parseInt(PreferenceUtil.getSharedPreferenceString(R.string.key_pref_folder_selection_mechanism,
+				R.string.pref_default_folder_selection_mechanism));
+
+		switch (folderSelectionMode) {
+		case 0:
+			SelectImageFolderActivity.startActivity(this);
+			break;
+		case 1:
+			SelectDirectoryActivity.startActivity(this);
+			break;
+		case 2:
+			// via Gallery
+			Intent intent = new Intent();
+			intent.setType("image/*");
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			startActivityForResult(intent, REQUEST_CODE_GALLERY);
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
 	 * Create a new image list after requesting to enter its name.
 	 *
 	 * @param creationStyle
@@ -470,8 +504,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void
-							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						switchToImageList(text, CreationStyle.NONE);
 					}
 
@@ -498,8 +531,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void
-							onDialogPositiveClick(final DialogFragment dialog, final int positin, final String text) {
+					public void onDialogPositiveClick(final DialogFragment dialog, final int positin, final String text) {
 						DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 								new ConfirmDialogListener() {
 							/**
@@ -612,8 +644,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void
-							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						if (backupNames.contains(text)) {
 							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 									new ConfirmDialogListener() {
@@ -681,8 +712,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void
-							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						if (listNames.contains(text)) {
 							DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 									new ConfirmDialogListener() {
@@ -749,8 +779,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void
-							onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						ImageList imageList = ImageRegistry.getCurrentImageList();
 						imageList.addNestedList(text);
 						imageList.update();
@@ -815,6 +844,30 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					fillListOfImages();
 				}
 
+				if (folderName != null) {
+					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
+				}
+			}
+			break;
+		case SelectImageFolderActivity.REQUEST_CODE:
+			if (resultCode == RESULT_OK) {
+				String folderName = SelectImageFolderActivity.getSelectedFolder(resultCode, data);
+				if (folderName != null) {
+					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
+				}
+			}
+			break;
+		case REQUEST_CODE_GALLERY:
+			if (resultCode == RESULT_OK) {
+				Uri selectedImageUri = data.getData();
+				String fileName = MediaStoreUtil.getRealPathFromUri(selectedImageUri);
+
+				if (fileName == null) {
+					DialogUtil.displayToast(this, R.string.toast_error_select_folder);
+					return;
+				}
+
+				String folderName = new File(fileName).getParent();
 				if (folderName != null) {
 					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
 				}

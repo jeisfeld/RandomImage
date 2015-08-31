@@ -4,6 +4,7 @@
     <!-- Keys for settings -->
 
     <string name="key_pref_language" translatable="false">pref_language</string>
+    <string name="key_pref_folder_selection_mechanism" translatable="false">pref_folder_selection_mechanism</string>
     <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
 
     <!-- Dummy keys only required as menu reference -->
@@ -50,8 +51,10 @@
     <string name="pref_category_support">Support</string>
     <string name="pref_category_other">Other settings</string>
     <string name="pref_title_language">Language</string>
+    <string name="pref_title_folder_selection_mechanism">Folder selection via &#8230;</string>
     <string name="pref_default_language" translatable="false">0</string>
-
+    <string name="pref_default_folder_selection_mechanism" translatable="false">0</string>
+    
     <!-- Strings related to Setting arrays -->
 
     <string-array name="pref_list_titles_language">
@@ -64,5 +67,14 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-
-</resources>
+    <string-array name="pref_list_titles_folder_selection_mechanism">
+        <item>List of image folders</item>
+        <item>File browser</item>
+        <item>Gallery</item>
+    </string-array>
+    <string-array name="pref_list_values_folder_selection_mechanism" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>

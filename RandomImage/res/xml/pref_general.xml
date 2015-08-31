@@ -20,6 +20,15 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_other" >
         <ListPreference
+            android:defaultValue="@string/pref_default_folder_selection_mechanism"
+            android:entries="@array/pref_list_titles_folder_selection_mechanism"
+            android:entryValues="@array/pref_list_values_folder_selection_mechanism"
+            android:key="@string/key_pref_folder_selection_mechanism"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_folder_selection_mechanism" />
+        
+        <ListPreference
             android:defaultValue="@string/pref_default_language"
             android:entries="@array/pref_list_titles_language"
             android:entryValues="@array/pref_list_values_language"

@@ -76,6 +76,10 @@
             android:label="@string/title_activity_display_images" >
         </activity>
         <activity
+            android:name=".SelectImageFolderActivity"
+            android:label="@string/title_activity_select_image_folder" >
+        </activity>
+        <activity
             android:name=".DisplayImageDetailsActivity"
             android:label="@string/title_activity_display_image_details"
             android:theme="@android:style/Theme.Holo.Dialog" >

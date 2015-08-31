@@ -2,6 +2,10 @@ package de.jeisfeld.randomimage;
 
 import java.util.List;
 
+import com.android.vending.billing.Purchase;
+import com.android.vending.billing.PurchasedSku;
+import com.android.vending.billing.SkuDetails;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,11 +16,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-
-import com.android.vending.billing.Purchase;
-import com.android.vending.billing.PurchasedSku;
-import com.android.vending.billing.SkuDetails;
-
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.GoogleBillingHelper;
@@ -54,6 +53,7 @@ public class SettingsFragment extends PreferenceFragment {
 		languageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
+		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);

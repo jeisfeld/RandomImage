@@ -9,6 +9,7 @@
     <string name="title_activity_display_image_details">Image Details</string>
     <string name="title_activity_display_nested_list_details">Nested List Details</string>
     <string name="title_activity_display_images">Surprise List Setup</string>
+    <string name="title_activity_select_image_folder">Select Image Folder</string>
     <string name="title_activity_settings">Settings</string>
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="text_loading">Loading image list&#8230;</string>

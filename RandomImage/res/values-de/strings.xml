@@ -9,6 +9,7 @@
     <string name="title_activity_display_image_details">Bildinformationen</string>
     <string name="title_activity_display_nested_list_details">Unterlisteninformationen</string>
     <string name="title_activity_display_images">Ü-Bild Einrichtung</string>
+    <string name="title_activity_select_image_folder">Bildverzeichnis wählen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="text_loading">Bildliste wird geladen&#8230;</string>
@@ -35,5 +36,5 @@
     <string name="info_nested_list_images">Zahl der Bilder: %1$d</string>
     <string name="info_nested_list_image_proportion">Anteil der Bilder: %1$,.1f%%</string>
     <string name="info_nested_list_view_frequency">Anzeigehäufigkeit:</string>
-    
+
 </resources>

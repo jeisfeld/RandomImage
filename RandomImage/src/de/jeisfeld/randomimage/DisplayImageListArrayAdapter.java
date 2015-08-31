@@ -169,11 +169,17 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			this.folderNames = folderNames;
 			addAll(folderNames);
 		}
+		if (fileNames == null) {
+			this.fileNames = new ArrayList<String>();
+		}
+		else {
+			this.fileNames = fileNames;
+			addAll(fileNames);
+		}
 
-		addAll(fileNames);
-		this.fileNames = fileNames;
+		int totalSize = this.fileNames.size() + this.folderNames.size() + this.nestedListNames.size();
 
-		this.viewCache = new ViewCache(fileNames.size() - 1, PRELOAD_SIZE);
+		this.viewCache = new ViewCache(totalSize - 1, PRELOAD_SIZE);
 	}
 
 	/**
@@ -301,7 +307,12 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 						}
 					}
 					else if (isFolder) {
-						DisplayImagesFromFolderActivity.startActivity(activity, entryName, false);
+						if (activity instanceof SelectImageFolderActivity) {
+							((SelectImageFolderActivity) activity).returnResult(entryName);
+						}
+						else {
+							DisplayImagesFromFolderActivity.startActivity(activity, entryName, false);
+						}
 					}
 					else {
 						if (activity instanceof DisplayImagesFromFolderActivity) {
