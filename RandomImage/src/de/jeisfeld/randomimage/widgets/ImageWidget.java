@@ -31,15 +31,14 @@ public class ImageWidget extends GenericWidget {
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
 			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
-		boolean requireNewImage = changeImage || currentFileNames.get(appWidgetId) == null;
+		final boolean requireNewImage = changeImage || currentFileNames.get(appWidgetId) == null;
 
-		String fileName = null;
 		if (requireNewImage) {
 			if (userTriggered) {
 				ImageRegistry.switchToImageList(listName, CreationStyle.NONE);
 			}
 
-			ImageList imageList = ImageRegistry.getImageListByName(listName);
+			final ImageList imageList = ImageRegistry.getImageListByName(listName);
 
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
@@ -47,22 +46,16 @@ public class ImageWidget extends GenericWidget {
 			}
 
 			if (imageList != null) {
-				imageList.waitUntilReady();
-
-				fileName = imageList.getRandomFileName();
+				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName);
 			}
 		}
 		else {
-			fileName = currentFileNames.get(appWidgetId);
+			String fileName = currentFileNames.get(appWidgetId);
+
+			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			configureButtons(context, appWidgetManager, appWidgetId);
 		}
 
-		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-		configureButtons(context, appWidgetManager, appWidgetId);
-
-		if (requireNewImage) {
-			new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
-					R.id.buttonNextImage, R.id.buttonSettings).start();
-		}
 	}
 
 	@Override
@@ -70,9 +63,9 @@ public class ImageWidget extends GenericWidget {
 			final int appWidgetId, final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
-		String listName = getListName(appWidgetId);
+		final String listName = getListName(appWidgetId);
 
-		ImageList imageList = ImageRegistry.getImageListByName(listName);
+		final ImageList imageList = ImageRegistry.getImageListByName(listName);
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list " + listName + " for ImageWidget option change");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
@@ -81,14 +74,54 @@ public class ImageWidget extends GenericWidget {
 		String fileName = currentFileNames.get(appWidgetId);
 
 		if (fileName == null && imageList != null) {
-			imageList.waitUntilReady();
-			fileName = imageList.getRandomFileName();
+			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName);
+		}
+		else {
+			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			configureButtons(context, appWidgetManager, appWidgetId);
+			new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
+					R.id.buttonNextImage, R.id.buttonSettings).start();
 		}
 
-		setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-		configureButtons(context, appWidgetManager, appWidgetId);
-		new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
-				R.id.buttonNextImage, R.id.buttonSettings).start();
+	}
+
+	/**
+	 * Put a random image onto the view in an asynchronous way (after ensuring that the list is loaded).
+	 *
+	 * @param context
+	 *            The {@link android.content.Context Context} in which this receiver is running.
+	 * @param appWidgetManager
+	 *            A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+	 * @param imageList
+	 *            the list from which to get a random image.
+	 * @param appWidgetId
+	 *            The appWidgetId of the widget whose size changed.
+	 * @param listName
+	 *            The name of the image list from which the file is taken.
+	 */
+	private void setImageAsynchronously(final Context context, final AppWidgetManager appWidgetManager, final ImageList imageList,
+			final int appWidgetId, final String listName) {
+		imageList.executeWhenReady(new Runnable() {
+			@Override
+			public void run() {
+				RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+				remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
+				remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_loading));
+				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				String fileName = imageList.getRandomFileName();
+
+				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+				configureButtons(context, appWidgetManager, appWidgetId);
+
+				new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
+						R.id.buttonNextImage, R.id.buttonSettings).start();
+			}
+		});
+
 	}
 
 	@Override
@@ -127,6 +160,7 @@ public class ImageWidget extends GenericWidget {
 
 		if (fileName == null) {
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
+			remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
 		}
 		else {
 			currentFileNames.put(appWidgetId, fileName);

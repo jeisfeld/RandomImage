@@ -15,12 +15,12 @@
         android:id="@+id/textViewWidgetEmpty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#9F000000"
+        android:background="#7F000000"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/text_no_image"
         android:textColor="@android:color/white"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:visibility="gone" />
 

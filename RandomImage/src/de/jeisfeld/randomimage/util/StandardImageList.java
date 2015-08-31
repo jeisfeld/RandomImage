@@ -174,13 +174,13 @@ public final class StandardImageList extends ImageList {
 	}
 
 	@Override
-	public void waitUntilReady() {
-		asyncLoader.waitUntilReady();
+	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading) {
+		asyncLoader.executeWhenReady(whileLoading, afterLoading);
 	}
 
 	@Override
 	public ArrayList<String> getAllImageFiles() {
-		waitUntilReady();
+		asyncLoader.waitUntilReady();
 		Set<String> allImageFiles = new HashSet<String>();
 		for (ArrayList<String> nestedListImages : imageFilesByNestedList.values()) {
 			allImageFiles.addAll(nestedListImages);

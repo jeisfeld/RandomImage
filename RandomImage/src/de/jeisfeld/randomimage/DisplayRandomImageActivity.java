@@ -236,10 +236,8 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 
 		if (currentFileName == null) {
-			boolean success = displayRandomImage();
-			if (success) {
-				DialogUtil.displayInfo(this, null, R.string.key_info_display_image, R.string.dialog_info_display_image);
-			}
+			displayRandomImage();
+			DialogUtil.displayInfo(this, null, R.string.key_info_display_image, R.string.dialog_info_display_image);
 		}
 		else {
 			currentImageView = createImageView(currentFileName, currentCacheIndex);
@@ -275,51 +273,57 @@ public class DisplayRandomImageActivity extends Activity {
 
 	/**
 	 * Display a random image.
-	 *
-	 * @return false if there was no image to be displayed.
 	 */
-	private boolean displayRandomImage() {
-		randomFileProvider.waitUntilReady();
+	private void displayRandomImage() {
+		randomFileProvider.executeWhenReady(new Runnable() {
 
-		int tempCacheIndex = 0;
-		previousFileName = currentFileName;
-		if (doPreload) {
-			previousImageView = currentImageView;
-			tempCacheIndex = previousCacheIndex;
-			previousCacheIndex = currentCacheIndex;
-		}
-		if (nextImageView == null) {
-			currentFileName = randomFileProvider.getRandomFileName();
-			if (doPreload) {
-				currentCacheIndex = tempCacheIndex;
+			@Override
+			public void run() {
+				setContentView(R.layout.text_view_loading);
 			}
-			if (currentFileName == null) {
-				// Handle the case where the provider does not return any image.
-				if (listName != null) {
-					DisplayAllImagesActivity.startActivity(this, listName);
+		}, new Runnable() {
+			@Override
+			public void run() {
+				int tempCacheIndex = 0;
+				previousFileName = currentFileName;
+				if (doPreload) {
+					previousImageView = currentImageView;
+					tempCacheIndex = previousCacheIndex;
+					previousCacheIndex = currentCacheIndex;
 				}
-				finish();
-				return false;
+				if (nextImageView == null) {
+					currentFileName = randomFileProvider.getRandomFileName();
+					if (doPreload) {
+						currentCacheIndex = tempCacheIndex;
+					}
+					if (currentFileName == null) {
+						// Handle the case where the provider does not return any image.
+						if (listName != null) {
+							DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
+						}
+						finish();
+					}
+					currentImageView = createImageView(currentFileName, currentCacheIndex);
+				}
+				else {
+					currentFileName = nextFileName;
+					currentImageView = nextImageView;
+					if (doPreload) {
+						currentCacheIndex = nextCacheIndex;
+						nextCacheIndex = tempCacheIndex;
+					}
+				}
+
+				setContentView(currentImageView);
+
+				if (doPreload) {
+					nextFileName = randomFileProvider.getRandomFileName();
+					nextImageView = createImageView(nextFileName, nextCacheIndex);
+				}
+
 			}
-			currentImageView = createImageView(currentFileName, currentCacheIndex);
-		}
-		else {
-			currentFileName = nextFileName;
-			currentImageView = nextImageView;
-			if (doPreload) {
-				currentCacheIndex = nextCacheIndex;
-				nextCacheIndex = tempCacheIndex;
-			}
-		}
+		});
 
-		setContentView(currentImageView);
-
-		if (doPreload) {
-			nextFileName = randomFileProvider.getRandomFileName();
-			nextImageView = createImageView(nextFileName, nextCacheIndex);
-		}
-
-		return true;
 	}
 
 	/**
