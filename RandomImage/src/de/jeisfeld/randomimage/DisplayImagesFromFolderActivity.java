@@ -202,6 +202,33 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 						new File(folderName).getName());
 			}
 			return true;
+		case R.id.action_add_image_folder:
+			int selectedImagesCount = getAdapter().getSelectedFiles().size();
+
+			if (selectedImagesCount == 0) {
+				addFolderToImageList();
+			}
+			else {
+				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						addFolderToImageList();
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// stay in the activity.
+						return;
+					}
+				}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
+						new File(folderName).getName());
+			}
+			return true;
 		case R.id.action_cancel:
 			returnResult(false);
 			return true;
