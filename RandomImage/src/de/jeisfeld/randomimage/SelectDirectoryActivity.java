@@ -96,7 +96,7 @@ public class SelectDirectoryActivity extends Activity {
 
 						String folderShortName = new File(folderName).getName();
 
-						if (ImageUtil.getImagesInFolder(folderName).size() > 0
+						if (ImageUtil.isImageFolder(folderName)
 								&& !imageList.contains(folderName)) {
 							DialogUtil.displayConfirmationMessage(SelectDirectoryActivity.this,
 									new ConfirmDialogListener() {

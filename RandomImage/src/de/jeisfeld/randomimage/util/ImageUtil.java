@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import de.jeisfeld.randomimage.Application;
@@ -287,7 +288,14 @@ public final class ImageUtil {
 		if (file == null || !file.exists() || file.isDirectory()) {
 			return false;
 		}
-		if (!strict) {
+		if (strict) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(file.getPath(), options);
+
+			return options.outWidth > 0 && options.outHeight > 0;
+		}
+		else {
 			String fileName = file.getName();
 			int index = fileName.lastIndexOf('.');
 			if (index >= 0) {
@@ -295,12 +303,16 @@ public final class ImageUtil {
 				if (IMAGE_SUFFIXES.contains(suffix.toUpperCase(Locale.getDefault()))) {
 					return true;
 				}
+				else {
+					String mimeType = ImageUtil.getMimeType(Uri.fromFile(file));
+					return mimeType != null && mimeType.startsWith("image/");
+				}
+			}
+			else {
+				return false;
 			}
 		}
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(file.getPath(), options);
-		return options.outWidth >= 0 - 1 && options.outHeight >= 0;
+
 	}
 
 	/**
@@ -334,6 +346,85 @@ public final class ImageUtil {
 		}
 		Collections.sort(fileNames);
 		return fileNames;
+	}
+
+	/**
+	 * Get information if a path represents an image folder.
+	 *
+	 * @param folderName
+	 *            The path.
+	 * @return True if this is an image folder.
+	 */
+	public static boolean isImageFolder(final String folderName) {
+		return getImagesInFolder(folderName).size() > 0;
+	}
+
+	/**
+	 * Get all image folders on the device.
+	 *
+	 * @return The array of image folders.
+	 */
+	public static ArrayList<String> getAllImageFolders() {
+		ArrayList<String> result = new ArrayList<String>();
+
+		if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.KITKAT)) {
+			result.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath())));
+
+			for (String path : FileUtil.getExtSdCardPaths()) {
+				result.addAll(getAllImageSubfolders(new File(path)));
+			}
+		}
+		else {
+			result.addAll(getAllImageSubfolders(new File("/mnt")));
+			result.addAll(getAllImageSubfolders(new File("/Removable")));
+		}
+
+		return result;
+	}
+
+	/**
+	 * Get all image folders below one parent folder.
+	 *
+	 * @param parentFolder
+	 *            the folder where to look for image sub folders
+	 * @return The array of image folders.
+	 */
+	private static ArrayList<String> getAllImageSubfolders(final File parentFolder) {
+		ArrayList<String> result = new ArrayList<String>();
+		if (parentFolder == null) {
+			return result;
+		}
+		if (!parentFolder.exists() || !parentFolder.isDirectory()) {
+			return result;
+		}
+		if (parentFolder.getName().startsWith(".")) {
+			// do not consider hidden paths
+			return result;
+		}
+		if (parentFolder.getAbsolutePath().endsWith("Android/data")) {
+			// do not consider Android data paths.
+			return result;
+		}
+
+		if (isImageFolder(parentFolder.getAbsolutePath())) {
+			result.add(parentFolder.getAbsolutePath());
+		}
+
+		File[] children = parentFolder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(final File file) {
+				return file.isDirectory();
+			}
+		});
+		if (children == null) {
+			return result;
+		}
+
+		for (int i = 0; i < children.length; i++) {
+			result.addAll(getAllImageSubfolders(children[i]));
+		}
+
+		return result;
 	}
 
 	/**

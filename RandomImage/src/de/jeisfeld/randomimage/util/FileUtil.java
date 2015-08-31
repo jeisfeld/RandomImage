@@ -211,7 +211,7 @@ public final class FileUtil {
 	 * @return A list of external SD card paths.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
-	private static String[] getExtSdCardPaths() {
+	protected static String[] getExtSdCardPaths() {
 		List<String> paths = new ArrayList<String>();
 		for (File file : Application.getAppContext().getExternalFilesDirs("external")) {
 			if (file != null && !file.equals(Application.getAppContext().getExternalFilesDir("external"))) {
@@ -275,7 +275,7 @@ public final class FileUtil {
 	 *
 	 * @return The SD card directory.
 	 */
-	public static String getSdCardDirectory() {
+	public static String getSdCardPath() {
 		String sdCardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
 
 		try {

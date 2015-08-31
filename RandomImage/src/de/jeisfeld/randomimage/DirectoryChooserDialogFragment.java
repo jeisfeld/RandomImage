@@ -169,7 +169,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			dirFile = dir == null ? null : new File(dir);
 
 			if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
-				dir = FileUtil.getSdCardDirectory();
+				dir = FileUtil.getSdCardPath();
 			}
 		}
 
