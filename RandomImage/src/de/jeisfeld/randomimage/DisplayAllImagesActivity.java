@@ -855,6 +855,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				if (folderName != null) {
 					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
 				}
+				else if (SelectImageFolderActivity.triggeredSelectDirectoryActivity(resultCode, data)) {
+					SelectDirectoryActivity.startActivity(this);
+				}
 			}
 			break;
 		case REQUEST_CODE_GALLERY:

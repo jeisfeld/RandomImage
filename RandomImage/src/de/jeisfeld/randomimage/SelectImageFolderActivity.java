@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 
@@ -21,6 +23,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the selected folder.
 	 */
 	private static final String STRING_RESULT_SELECTED_FOLDER = "de.jeisfeld.randomimage.SELECTED_FOLDER";
+
+	/**
+	 * The resource key for the flag to trigger SelectDirectoryActivity.
+	 */
+	private static final String STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY = "de.jeisfeld.randomimage.TRIGGER_SELECT_DIRECTORY_ACTIVITY";
 
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
@@ -83,6 +90,25 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		});
 	}
 
+	@Override
+	public final boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.select_image_folder, menu);
+		return true;
+	}
+
+	@Override
+	public final boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == R.id.action_browse_folders) {
+			triggerSelectDirectoryActivity();
+			finish();
+			return true;
+		}
+		else {
+			return false;
+		}
+
+	}
+
 	/**
 	 * Static helper method to extract the selected folder.
 	 *
@@ -103,6 +129,25 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	/**
+	 * Static helper method to extract the flag indicating if SelectDirectoryActivity was triggered.
+	 *
+	 * @param resultCode
+	 *            The result code indicating if the response was successful.
+	 * @param data
+	 *            The activity response data.
+	 * @return the flag indicating if SelectDirectoryActivity was triggered.
+	 */
+	public static final boolean triggeredSelectDirectoryActivity(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			Bundle res = data.getExtras();
+			return res.getBoolean(STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY);
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
 	 * Helper method: Return the selected folder.
 	 *
 	 * @param selectedFolder
@@ -111,6 +156,18 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	protected final void returnResult(final String selectedFolder) {
 		Bundle resultData = new Bundle();
 		resultData.putString(STRING_RESULT_SELECTED_FOLDER, selectedFolder);
+		Intent intent = new Intent();
+		intent.putExtras(resultData);
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+
+	/**
+	 * Helper method: Return to parent in order to trigger SelectDirectoryActivity.
+	 */
+	private void triggerSelectDirectoryActivity() {
+		Bundle resultData = new Bundle();
+		resultData.putBoolean(STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY, true);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);

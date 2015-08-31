@@ -23,7 +23,8 @@
     <string name="menu_view_in_gallery">View in gallery</string>
     <string name="menu_send_to">Send to&#8230;</string>
     <string name="menu_settings">Settings</string>
-
+    <string name="menu_browse_folders">Browse in file manager</string>
+    
     <!-- Entries related to buttons in the settings -->
 
     <string name="menu_hide_all_info">Do not display info messages</string>
