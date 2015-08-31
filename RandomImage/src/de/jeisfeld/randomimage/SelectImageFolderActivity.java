@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
-import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
-import de.jeisfeld.randomimage.util.Logger;
 
 /**
  * Activity to display the list of images of a folder.
@@ -61,19 +58,19 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 			@Override
 			public void handleImageFolders(final ArrayList<String> imageFolders) {
-				if (imageFolders.size() == 0) {
-					imageFolders.add(FileUtil.getDefaultCameraFolder());
-				}
-				if (getAdapter() != null) {
-					getAdapter().cleanupCache();
-				}
-				setAdapter(null, imageFolders, null);
-				getAdapter().setSelectionMode(SelectionMode.ONE);
+				// No action required, as folders are added one by one.
 			}
 
 			@Override
 			public void handleImageFolder(final String imageFolder) {
-				Logger.log("Found image folder " + imageFolder);
+				if (getAdapter() == null) {
+					ArrayList<String> folderNames = new ArrayList<String>();
+					folderNames.add(imageFolder);
+					setAdapter(null, folderNames, null);
+				}
+				else {
+					getAdapter().addFolder(imageFolder);
+				}
 			}
 		});
 	}

@@ -377,9 +377,9 @@ public final class ImageUtil {
 				if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.KITKAT)) {
 					imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
 
-//					for (String path : FileUtil.getExtSdCardPaths()) {
-//						imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
-//					}
+					for (String path : FileUtil.getExtSdCardPaths()) {
+						imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
+					}
 				}
 				else {
 					imageFolders.addAll(getAllImageSubfolders(new File("/mnt"), handler, listener));

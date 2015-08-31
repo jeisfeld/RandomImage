@@ -193,6 +193,24 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		this.activity = (DisplayImageListActivity) context;
 	}
 
+	/**
+	 * Add a folder to the list. Only allowed for lists containint no files.
+	 *
+	 * @param folderName
+	 *            The folder added.
+	 */
+	public final void addFolder(final String folderName) {
+		if (fileNames.size() > 0) {
+			// only allowed if there are no files in the list
+			throw new UnsupportedOperationException("DisplayImageListArrayAdapter: added folderName after having fileNames");
+		}
+
+		folderNames.add(folderName);
+		add(folderName);
+		viewCache.incrementMaxPosition();
+		notifyDataSetChanged();
+	}
+
 	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {
 		return viewCache.get(position, parent);
@@ -566,6 +584,13 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			this.maxPosition = maxPosition;
 			plannedSize = 2 * preloadSize;
 			cache = new SparseArray<ThumbImageView>(plannedSize);
+		}
+
+		/**
+		 * Increment the max position by 1.
+		 */
+		private void incrementMaxPosition() {
+			maxPosition++;
 		}
 
 		/**
