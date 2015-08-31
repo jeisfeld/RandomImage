@@ -301,13 +301,7 @@ public final class ImageUtil {
 			int index = fileName.lastIndexOf('.');
 			if (index >= 0) {
 				String suffix = fileName.substring(index + 1);
-				if (IMAGE_SUFFIXES.contains(suffix.toUpperCase(Locale.getDefault()))) {
-					return true;
-				}
-				else {
-					String mimeType = ImageUtil.getMimeType(Uri.fromFile(file));
-					return mimeType != null && mimeType.startsWith("image/");
-				}
+				return IMAGE_SUFFIXES.contains(suffix.toUpperCase(Locale.getDefault()));
 			}
 			else {
 				return false;
@@ -386,12 +380,16 @@ public final class ImageUtil {
 					imageFolders.addAll(getAllImageSubfolders(new File("/Removable"), handler, listener));
 				}
 
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						listener.handleImageFolders(imageFolders);
-					}
-				});
+				if (listener != null) {
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							listener.handleImageFolders(imageFolders);
+						}
+					});
+				}
+
+				saveAllImageFolders(imageFolders);
 			}
 		}.start();
 	}
@@ -452,6 +450,45 @@ public final class ImageUtil {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Save the list of image folders in a shared preference.
+	 *
+	 * @param imageFolders
+	 *            The list of image folders.
+	 */
+	private static void saveAllImageFolders(final ArrayList<String> imageFolders) {
+		if (imageFolders == null || imageFolders.size() == 0) {
+			PreferenceUtil.removeSharedPreference(R.string.key_all_image_folders);
+			return;
+		}
+
+		StringBuffer saveStringBuffer = new StringBuffer();
+
+		for (String imageFolder : imageFolders) {
+			saveStringBuffer.append("\n");
+			saveStringBuffer.append(imageFolder);
+		}
+
+		String saveString = saveStringBuffer.substring("\n".length());
+
+		PreferenceUtil.setSharedPreferenceString(R.string.key_all_image_folders, saveString);
+	}
+
+	/**
+	 * Restore the saved list of image folders from shared preference.
+	 *
+	 * @return The retrieved list of image folders.
+	 */
+	public static ArrayList<String> getAllImageFoldersFromStorage() {
+		String restoreString = PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders);
+		if (restoreString == null || restoreString.length() == 0) {
+			return new ArrayList<String>();
+		}
+
+		String[] folderArray = restoreString.split("\\r?\\n");
+		return new ArrayList<String>(Arrays.asList(folderArray));
 	}
 
 	/**

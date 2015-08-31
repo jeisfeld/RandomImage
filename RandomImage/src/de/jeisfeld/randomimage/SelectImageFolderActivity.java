@@ -54,6 +54,9 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * Fill the view with the list of all image folders.
 	 */
 	private void fillListOfFolders() {
+		ArrayList<String> allImageFolders = ImageUtil.getAllImageFoldersFromStorage();
+		setAdapter(null, allImageFolders, null);
+
 		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
 
 			@Override
@@ -66,6 +69,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				if (getAdapter() == null) {
 					ArrayList<String> folderNames = new ArrayList<String>();
 					folderNames.add(imageFolder);
+
+					if (getAdapter() != null) {
+						getAdapter().cleanupCache();
+					}
+
 					setAdapter(null, folderNames, null);
 				}
 				else {

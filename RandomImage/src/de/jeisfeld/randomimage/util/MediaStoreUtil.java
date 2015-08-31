@@ -207,7 +207,7 @@ public final class MediaStoreUtil {
 							: MediaStore.Images.Thumbnails.MINI_KIND,
 					options);
 		}
-		catch (ImageNotFoundException e) {
+		catch (Exception e) {
 			return null;
 		}
 	}

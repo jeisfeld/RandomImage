@@ -19,7 +19,8 @@
     <!-- Keys for shared preferences -->
 
     <string name="key_current_list_name" translatable="false">current_list_name</string>
-
+    <string name="key_all_image_folders" translatable="false">all_image_folders</string>
+    
     <!-- Indexed keys for temporary storage -->
 
     <string name="key_widget_list_name" translatable="false">widget_list_name</string>

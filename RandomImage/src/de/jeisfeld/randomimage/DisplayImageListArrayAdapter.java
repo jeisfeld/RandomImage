@@ -204,6 +204,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			// only allowed if there are no files in the list
 			throw new UnsupportedOperationException("DisplayImageListArrayAdapter: added folderName after having fileNames");
 		}
+		if (folderNames.contains(folderName)) {
+			return;
+		}
 
 		folderNames.add(folderName);
 		add(folderName);
@@ -316,7 +319,6 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			@Override
 			public void onClick(final View v) {
 				ThumbImageView view = (ThumbImageView) v;
-
 				switch (selectionMode) {
 				case ONE:
 					if (isNestedList) {

@@ -302,6 +302,7 @@ public class DisplayRandomImageActivity extends Activity {
 							DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, listName);
 						}
 						finish();
+						return;
 					}
 					currentImageView = createImageView(currentFileName, currentCacheIndex);
 				}
