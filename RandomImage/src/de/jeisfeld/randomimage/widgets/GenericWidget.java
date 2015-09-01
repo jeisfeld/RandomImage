@@ -116,9 +116,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 *            The {@link android.content.Context Context} in which this receiver is running.
 	 * @param appWidgetManager
 	 *            A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetIds
-	 *            The appWidgetIds for which an update is needed. Note that this may be all of the AppWidget instances
-	 *            for this provider, or just a subset of them.
+	 * @param appWidgetId
+	 *            The appWidgetId for which an update is needed.
 	 * @param listName
 	 *            the list name of the widget.
 	 * @param changeImage

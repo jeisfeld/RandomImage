@@ -343,7 +343,7 @@ public final class DialogUtil {
 	/**
 	 * Get a formatted String out of a message resource and parameter strings.
 	 *
-	 * @param resource
+	 * @param resourceId
 	 *            The message resource.
 	 * @param args
 	 *            The parameter strings.
@@ -732,8 +732,8 @@ public final class DialogUtil {
 			 *
 			 * @param dialog
 			 *            the confirmation dialog fragment.
-			 * @param the
-			 *            position of the array that was selected.
+			 * @param position
+			 *            the position of the array that was selected.
 			 * @param text
 			 *            the text returned from the input.
 			 */
