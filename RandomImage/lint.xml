@@ -7,7 +7,7 @@
 
     <issue id="UnusedResources" >
 
-        <ignore regexp="res/drawable.*/ic_action_trash.png" />
+        <ignore regexp="res/drawable.*/ic_action_trash\.png" />
     </issue>
 
 </lint>
