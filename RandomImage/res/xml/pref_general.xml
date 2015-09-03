@@ -27,7 +27,6 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_folder_selection_mechanism" />
-        
         <ListPreference
             android:defaultValue="@string/pref_default_language"
             android:entries="@array/pref_list_titles_language"
@@ -36,6 +35,12 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_language" />
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:inputType="text"
+            android:key="@string/key_pref_hidden_lists_pattern"
+            android:title="@string/pref_title_hidden_lists_pattern" />
 
         <Preference
             android:key="@string/key_pref_show_info"

@@ -21,6 +21,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.Mess
 import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.GoogleBillingHelper.OnInventoryFinishedListener;
 import de.jeisfeld.randomimage.util.GoogleBillingHelper.OnPurchaseSuccessListener;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 
 /**
@@ -38,6 +39,11 @@ public class SettingsFragment extends PreferenceFragment {
 	private String languageString;
 
 	/**
+	 * Field holding the value of the hidden lists pattern, in order to detect a real change.
+	 */
+	private String hiddenListsPattern;
+
+	/**
 	 * The preference screen handling donations.
 	 */
 	private PreferenceCategory prefCategoryPremium;
@@ -51,9 +57,11 @@ public class SettingsFragment extends PreferenceFragment {
 
 		// Fill variables in order to detect changed values.
 		languageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
+		hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
+		bindPreferenceSummaryToValue(R.string.key_pref_hidden_lists_pattern);
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);
@@ -181,6 +189,14 @@ public class SettingsFragment extends PreferenceFragment {
 							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, (String) value);
 
 							System.exit(0);
+						}
+					}
+
+					// In case of switch of hidden lists pattern, refresh
+					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
+						if (!hiddenListsPattern.equals(value)) {
+							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
+							ImageRegistry.parseConfigFiles();
 						}
 					}
 

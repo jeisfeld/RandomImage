@@ -375,7 +375,7 @@ public final class ImageRegistry {
 	/**
 	 * Get the list of available config files.
 	 */
-	private static void parseConfigFiles() {
+	public static void parseConfigFiles() {
 		imageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
 	}
 
@@ -387,6 +387,8 @@ public final class ImageRegistry {
 	 * @return The map from list names to image list files.
 	 */
 	private static Map<String, ImageListInfo> parseConfigFiles(final File configFileFolder) {
+		String hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
+
 		File[] configFiles = configFileFolder.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(final File file) {
@@ -406,7 +408,13 @@ public final class ImageRegistry {
 			if (imageListInfo != null) {
 				String name = imageListInfo.getName();
 
-				if (fileMap.containsKey(name)) {
+				if (name == null) {
+					Log.e(Application.TAG, "List name is null");
+				}
+				else if (hiddenListsPattern != null && hiddenListsPattern.length() > 0 && name.matches(hiddenListsPattern)) {
+					Log.d(Application.TAG, "Hiding list " + name);
+				}
+				else if (fileMap.containsKey(name)) {
 					Log.e(Application.TAG, "Duplicate config list name " + name);
 				}
 				else {
