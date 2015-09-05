@@ -25,7 +25,7 @@ public class Application extends android.app.Application {
 	/**
 	 * The default tag for logging.
 	 */
-	public static final String TAG = "Application";
+	public static final String TAG = "Randomimage.Application.JE";
 
 	@Override
 	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
