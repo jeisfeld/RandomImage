@@ -1,13 +1,8 @@
 package de.jeisfeld.randomimage.util;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
 
 import com.android.vending.billing.IabHelper;
 import com.android.vending.billing.IabResult;
@@ -16,6 +11,10 @@ import com.android.vending.billing.Purchase;
 import com.android.vending.billing.PurchasedSku;
 import com.android.vending.billing.SkuDetails;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.R;
 
 /**
@@ -126,18 +125,8 @@ public final class GoogleBillingHelper {
 	 * Initialize the GoogleBillingHelper.
 	 */
 	private void initialize() {
+		String base64EncodedPublicKey = Application.getResourceString(R.string.private_license_key);
 
-		String base64EncodedPublicKey = null;
-		try {
-			// Looking for a class PrivateConstants with field LICENSE_KEY - not in repository.
-			Class<?> privateConstants = Class.forName("de.jeisfeld.randomimage.util.PrivateConstants");
-			Field specialKeysField = privateConstants.getDeclaredField("LICENSE_KEY");
-			base64EncodedPublicKey = (String) specialKeysField.get(null);
-		}
-		catch (Exception e) {
-			Log.e(TAG, "Did not find PrivateConstants", e);
-			return;
-		}
 		// compute your public key and store it in base64EncodedPublicKey
 		iabHelper = new IabHelper(activity, base64EncodedPublicKey);
 		iabHelper.enableDebugLogging(false, TAG);

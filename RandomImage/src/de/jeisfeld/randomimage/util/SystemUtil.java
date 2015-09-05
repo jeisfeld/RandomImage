@@ -1,7 +1,6 @@
 package de.jeisfeld.randomimage.util;
 
-import java.lang.reflect.Field;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
 
 import android.app.ActivityManager;
@@ -12,10 +11,10 @@ import android.graphics.Point;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.R;
 
 /**
  * Utility class for getting system information.
@@ -90,8 +89,8 @@ public final class SystemUtil {
 	 * @return true if the app is running on a tablet.
 	 */
 	public static boolean isTablet() {
-		return (Application.getAppContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)
-		>= Configuration.SCREENLAYOUT_SIZE_LARGE;
+		return (Application.getAppContext().getResources().getConfiguration().screenLayout
+				& Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
 	}
 
 	/**
@@ -172,17 +171,8 @@ public final class SystemUtil {
 	 * @return true if one of JE's devices.
 	 */
 	public static boolean isJeDevice() {
-		try {
-			// Looking for a class PrivateConstants with field LICENSE_KEY - not in repository.
-			Class<?> privateConstants = Class.forName("de.jeisfeld.randomimage.util.PrivateConstants");
-			Field specialKeysField = privateConstants.getDeclaredField("JE_DEVICES");
-			@SuppressWarnings("unchecked")
-			List<String> jeDevices = (List<String>) specialKeysField.get(null);
-			return jeDevices.contains(getDeviceId());
-		}
-		catch (Exception e) {
-			Log.e(Application.TAG, "Did not find PrivateConstants", e);
-			return false;
-		}
+		String[] jeDevices = Application.getAppContext().getResources().getStringArray(R.array.private_je_devices);
+
+		return Arrays.asList(jeDevices).contains(getDeviceId());
 	}
 }
