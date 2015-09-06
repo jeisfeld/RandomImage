@@ -70,10 +70,10 @@ public class SelectDirectoryActivity extends Activity {
 
 					@Override
 					public void onAddFolder(final String chosenDir) {
-						final ImageList imageList = ImageRegistry.getCurrentImageList();
+						final ImageList imageList = ImageRegistry.getCurrentImageList(true);
 						boolean success = imageList.addFolder(chosenDir);
 						if (success) {
-							imageList.update();
+							imageList.update(true);
 							updatedList = true;
 						}
 						sendResult(null);
@@ -92,7 +92,7 @@ public class SelectDirectoryActivity extends Activity {
 
 					@Override
 					public boolean onFolderLongClick(final String folderName) {
-						final ImageList imageList = ImageRegistry.getCurrentImageList();
+						final ImageList imageList = ImageRegistry.getCurrentImageList(true);
 
 						String folderShortName = new File(folderName).getName();
 
@@ -117,7 +117,7 @@ public class SelectDirectoryActivity extends Activity {
 														null, addedFolderList, null);
 										DialogUtil.displayToast(SelectDirectoryActivity.this,
 												R.string.toast_added_single, addedFoldersString);
-										imageList.update();
+										imageList.update(true);
 										updatedList = true;
 									}
 								}

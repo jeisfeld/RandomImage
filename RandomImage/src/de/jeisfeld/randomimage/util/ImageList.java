@@ -92,12 +92,14 @@ public abstract class ImageList extends RandomFileProvider {
 	 *
 	 * @param configFile
 	 *            the configuration file of this list.
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 *
 	 */
-	protected ImageList(final File configFile) {
-		init(); // OVERRIDABLE
+	protected ImageList(final File configFile, final boolean toastIfFilesMissing) {
+		init(toastIfFilesMissing); // OVERRIDABLE
 		this.configFile = configFile;
-		load(); // OVERRIDABLE
+		load(toastIfFilesMissing); // OVERRIDABLE
 	}
 
 	/**
@@ -112,36 +114,42 @@ public abstract class ImageList extends RandomFileProvider {
 	 *
 	 */
 	protected ImageList(final File configFile, final String listName, final File cloneFile) {
-		init(); // OVERRIDABLE
+		init(false); // OVERRIDABLE
 		if (configFile.exists()) {
 			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
 			this.configFile = configFile;
-			load(); // OVERRIDABLE
+			load(false); // OVERRIDABLE
 		}
 		else {
 			this.configFile = configFile;
 			if (cloneFile != null) {
-				load(); // OVERRIDABLE
+				load(false); // OVERRIDABLE
 			}
 			setListName(listName);
-			update(); // OVERRIDABLE
+			update(false); // OVERRIDABLE
 		}
 	}
 
 	/**
 	 * Do initialization steps of the subclass of ImageList.
+	 *
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 */
-	protected abstract void init();
+	protected abstract void init(final boolean toastIfFilesMissing);
 
 	/**
 	 * Save and reload the list.
 	 *
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
+	 *
 	 * @return true if both actions were successful.
 	 */
 	// OVERRIDABLE
-	public synchronized boolean update() {
+	public synchronized boolean update(final boolean toastIfFilesMissing) {
 		if (save()) {
-			load();
+			load(toastIfFilesMissing);
 			return true;
 		}
 		else {
@@ -175,7 +183,7 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 
 		for (String nestedListName : nestedListNames) {
-			ImageList nestedList = ImageRegistry.getImageListByName(nestedListName);
+			ImageList nestedList = ImageRegistry.getImageListByName(nestedListName, true);
 			if (nestedList != null && nestedList.containsNestedList(listName)) {
 				return true;
 			}
@@ -189,11 +197,13 @@ public abstract class ImageList extends RandomFileProvider {
 	 *
 	 * @param configFile
 	 *            the config file.
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list.
 	 */
-	protected static ImageList getListFromConfigFile(final File configFile) {
+	protected static ImageList getListFromConfigFile(final File configFile, final boolean toastIfFilesMissing) {
 		// TODO: enhance for other classes.
-		return new StandardImageList(configFile);
+		return new StandardImageList(configFile, toastIfFilesMissing);
 	}
 
 	/**
@@ -252,9 +262,12 @@ public abstract class ImageList extends RandomFileProvider {
 
 	/**
 	 * Load the list if image file names from the config file.
+	 *
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 */
 	// OVERRIDABLE
-	public synchronized void load() {
+	public synchronized void load(final boolean toastIfFilesMissing) {
 		if (!configFile.exists()) {
 			return;
 		}
@@ -337,13 +350,15 @@ public abstract class ImageList extends RandomFileProvider {
 			Log.e(Application.TAG, "Could not find configuration file", e);
 		}
 
-		if (notFoundFiles > 1) {
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files,
-					notFoundFiles, getListName());
-		}
-		else if (notFoundFiles == 1) {
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
-					getListName());
+		if (toastIfFilesMissing) {
+			if (notFoundFiles > 1) {
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files,
+						notFoundFiles, getListName());
+			}
+			else if (notFoundFiles == 1) {
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
+						getListName());
+			}
 		}
 
 		// Nested properties are filled now.
@@ -634,7 +649,7 @@ public abstract class ImageList extends RandomFileProvider {
 			return false;
 		}
 
-		ImageList otherImageList = ImageRegistry.getImageListByName(nestedListName);
+		ImageList otherImageList = ImageRegistry.getImageListByName(nestedListName, true);
 		if (otherImageList == null || otherImageList.containsNestedList(getListName())) {
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_cyclic_nesting, nestedListName);
 			return false;

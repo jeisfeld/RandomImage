@@ -35,10 +35,10 @@ public class ImageWidget extends GenericWidget {
 
 		if (requireNewImage) {
 			if (userTriggered) {
-				ImageRegistry.switchToImageList(listName, CreationStyle.NONE);
+				ImageRegistry.switchToImageList(listName, CreationStyle.NONE, false);
 			}
 
-			final ImageList imageList = ImageRegistry.getImageListByName(listName);
+			final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
@@ -65,7 +65,7 @@ public class ImageWidget extends GenericWidget {
 
 		final String listName = getListName(appWidgetId);
 
-		final ImageList imageList = ImageRegistry.getImageListByName(listName);
+		final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list " + listName + " for ImageWidget option change");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);

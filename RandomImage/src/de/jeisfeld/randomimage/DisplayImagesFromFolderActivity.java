@@ -152,7 +152,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedAdd(final int menuId) {
 		switch (menuId) {
 		case R.id.action_add_images:
-			final ImageList imageList = ImageRegistry.getCurrentImageList();
+			final ImageList imageList = ImageRegistry.getCurrentImageList(true);
 			final ArrayList<String> imagesToBeAdded = getAdapter().getSelectedFiles();
 			if (imagesToBeAdded.size() > 0) {
 
@@ -182,7 +182,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 
 				if (totalAddedCount > 0) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
-					imageList.update();
+					imageList.update(true);
 				}
 				returnResult(totalAddedCount > 0);
 			}
@@ -254,7 +254,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * Add the current folder to the current imageList.
 	 */
 	private void addFolderToImageList() {
-		final ImageList imageList2 = ImageRegistry.getCurrentImageList();
+		final ImageList imageList2 = ImageRegistry.getCurrentImageList(true);
 		boolean success = imageList2.addFolder(folderName);
 		if (success) {
 			ArrayList<String> addedFolderList = new ArrayList<String>();
@@ -263,7 +263,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
-			imageList2.update();
+			imageList2.update(true);
 		}
 		else {
 			if (imageList2.contains(folderName)) {

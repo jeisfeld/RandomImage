@@ -217,15 +217,15 @@ public class DisplayRandomImageActivity extends Activity {
 			if (listName == null) {
 				if (currentFileName == null) {
 					// Reload the file when starting the activity.
-					imageList = ImageRegistry.getCurrentImageListRefreshed();
+					imageList = ImageRegistry.getCurrentImageListRefreshed(false);
 				}
 				else {
-					imageList = ImageRegistry.getCurrentImageList();
+					imageList = ImageRegistry.getCurrentImageList(false);
 				}
 				listName = imageList.getListName();
 			}
 			else {
-				imageList = ImageRegistry.getImageListByName(listName);
+				imageList = ImageRegistry.getImageListByName(listName, false);
 				if (imageList == null) {
 					Log.e(Application.TAG, "Could not load image list");
 					DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);

@@ -247,7 +247,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
 				public String getFileName() {
-					ImageList imageList = ImageRegistry.getImageListByName(entryName);
+					ImageList imageList = ImageRegistry.getImageListByName(entryName, true);
 					if (imageList == null) {
 						return null;
 					}

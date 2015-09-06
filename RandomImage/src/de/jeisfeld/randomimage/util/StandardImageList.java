@@ -57,10 +57,12 @@ public final class StandardImageList extends ImageList {
 	 *
 	 * @param configFile
 	 *            the configuration file of this list.
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 *
 	 */
-	protected StandardImageList(final File configFile) {
-		super(configFile);
+	protected StandardImageList(final File configFile, final boolean toastIfFilesMissing) {
+		super(configFile, toastIfFilesMissing);
 	}
 
 	/**
@@ -79,17 +81,14 @@ public final class StandardImageList extends ImageList {
 	}
 
 	@Override
-	public synchronized void load() {
-		super.load();
+	public synchronized void load(final boolean toastIfFilesMissing) {
+		super.load(toastIfFilesMissing);
 
 		asyncLoader.load();
 	}
 
-	/**
-	 * Do initialization steps of this subclass of ImageList.
-	 */
 	@Override
-	protected void init() {
+	protected void init(final boolean toastIfFilesMissing) {
 		// This needs to be null, as it is taken as criterion for successful loading.
 		imageFilesByNestedList = null;
 
@@ -97,7 +96,7 @@ public final class StandardImageList extends ImageList {
 		customNestedListWeights = new HashMap<String, Double>();
 		random = new Random();
 
-		asyncLoader = new AsyncLoader(getAsyncRunnable());
+		asyncLoader = new AsyncLoader(getAsyncRunnable(toastIfFilesMissing));
 	}
 
 	/**
@@ -189,8 +188,8 @@ public final class StandardImageList extends ImageList {
 	}
 
 	@Override
-	public synchronized boolean update() {
-		boolean success = super.update();
+	public synchronized boolean update(final boolean toastIfFilesMissing) {
+		boolean success = super.update(toastIfFilesMissing);
 		if (success) {
 			calculateWeights();
 		}
@@ -366,9 +365,12 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Instantiate the runnable loading the image lists.
 	 *
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
+	 *
 	 * @return The runnable loading the image lists.
 	 */
-	private Runnable getAsyncRunnable() {
+	private Runnable getAsyncRunnable(final boolean toastIfFilesMissing) {
 		return new Runnable() {
 			@Override
 			public void run() {
@@ -390,7 +392,7 @@ public final class StandardImageList extends ImageList {
 				imageFilesByNestedListNew.put(DEFAULT_NESTED_LIST, new ArrayList<String>(allImageFileSet));
 
 				for (String nestedListName : nestedListNames) {
-					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName);
+					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName, toastIfFilesMissing);
 					if (nestedImageList != null) {
 						ArrayList<String> nestedListFiles = nestedImageList.getAllImageFiles();
 						imageFilesByNestedListNew.put(nestedListName, nestedListFiles);

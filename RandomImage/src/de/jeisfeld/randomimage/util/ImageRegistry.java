@@ -65,23 +65,26 @@ public final class ImageRegistry {
 	/**
 	 * Get the currentImageList.
 	 *
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
+	 *
 	 * @return The currentImageList.
 	 */
-	public static ImageList getCurrentImageList() {
+	public static ImageList getCurrentImageList(final boolean toastIfFilesMissing) {
 		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
 
 		if (currentImageList == null && currentListName != null) {
-			switchToImageList(currentListName, CreationStyle.NONE);
+			switchToImageList(currentListName, CreationStyle.NONE, toastIfFilesMissing);
 		}
 
 		if (currentImageList == null && imageListInfoMap.size() > 0) {
 			String firstName = getImageListNames().get(0);
-			switchToImageList(firstName, CreationStyle.NONE);
+			switchToImageList(firstName, CreationStyle.NONE, toastIfFilesMissing);
 		}
 
 		if (currentImageList == null) {
 			String newName = getNewListName();
-			switchToImageList(newName, CreationStyle.CREATE_EMPTY);
+			switchToImageList(newName, CreationStyle.CREATE_EMPTY, toastIfFilesMissing);
 		}
 		return currentImageList;
 	}
@@ -89,14 +92,16 @@ public final class ImageRegistry {
 	/**
 	 * Get the currentImageList, ensuring that it is freshly loaded.
 	 *
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 * @return The currentImageList.
 	 */
-	public static ImageList getCurrentImageListRefreshed() {
+	public static ImageList getCurrentImageListRefreshed(final boolean toastIfFilesMissing) {
 		if (currentImageList == null) {
-			return getCurrentImageList();
+			return getCurrentImageList(toastIfFilesMissing);
 		}
 		else {
-			currentImageList.load();
+			currentImageList.load(toastIfFilesMissing);
 			return currentImageList;
 		}
 	}
@@ -107,7 +112,7 @@ public final class ImageRegistry {
 	 * @return The name of the current list.
 	 */
 	public static String getCurrentListName() {
-		return getCurrentImageList().getListName();
+		return getCurrentImageList(false).getListName();
 	}
 
 	/**
@@ -158,15 +163,17 @@ public final class ImageRegistry {
 	 *            The name of the target image list.
 	 * @param creationStyle
 	 *            Flag indicating if the list should be created if non-existing.
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 *
 	 * @return true if successful.
 	 */
-	public static boolean switchToImageList(final String name, final CreationStyle creationStyle) {
+	public static boolean switchToImageList(final String name, final CreationStyle creationStyle, final boolean toastIfFilesMissing) {
 		if (name == null) {
 			return false;
 		}
 		else if (currentImageList != null && name.equals(currentImageList.getListName())) {
-			currentImageList.load();
+			currentImageList.load(toastIfFilesMissing);
 			return true;
 		}
 
@@ -188,7 +195,7 @@ public final class ImageRegistry {
 			}
 		}
 		else {
-			currentImageList = ImageList.getListFromConfigFile(configFile);
+			currentImageList = ImageList.getListFromConfigFile(configFile, toastIfFilesMissing);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 			return true;
 		}
@@ -278,7 +285,7 @@ public final class ImageRegistry {
 				tempBackupFile.delete();
 			}
 			parseConfigFiles();
-			switchToImageList(name, CreationStyle.NONE);
+			switchToImageList(name, CreationStyle.NONE, true);
 		}
 		return success;
 	}
@@ -314,14 +321,16 @@ public final class ImageRegistry {
 	 *
 	 * @param name
 	 *            The name.
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list for this name, if existing. Otherwise null.
 	 */
-	public static ImageList getImageListByName(final String name) {
+	public static ImageList getImageListByName(final String name, final boolean toastIfFilesMissing) {
 		if (name == null) {
 			return null;
 		}
 		if (getCurrentListName().equals(name)) {
-			return getCurrentImageList();
+			return getCurrentImageList(toastIfFilesMissing);
 		}
 
 		File configFile = getConfigFile(name);
@@ -329,7 +338,7 @@ public final class ImageRegistry {
 			return null;
 		}
 		else {
-			return ImageList.getListFromConfigFile(configFile);
+			return ImageList.getListFromConfigFile(configFile, toastIfFilesMissing);
 		}
 	}
 
@@ -338,10 +347,12 @@ public final class ImageRegistry {
 	 *
 	 * @param name
 	 *            The name.
+	 * @param toastIfFilesMissing
+	 *            Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list for this name, if existing. Otherwise null.
 	 */
-	public static StandardImageList getStandardImageListByName(final String name) {
-		ImageList imageList = getImageListByName(name);
+	public static StandardImageList getStandardImageListByName(final String name, final boolean toastIfFilesMissing) {
+		ImageList imageList = getImageListByName(name, toastIfFilesMissing);
 
 		if (imageList != null && imageList instanceof StandardImageList) {
 			return (StandardImageList) imageList;

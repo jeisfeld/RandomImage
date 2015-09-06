@@ -19,10 +19,10 @@ import android.widget.TextView;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.MediaStoreUtil;
-import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ListMenuView;
 
@@ -158,7 +158,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
-		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName);
+		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, false);
 		if (imageList != null && imageList.contains(fileName)) {
 			final boolean isDirectory = new File(fileName).isDirectory();
 
@@ -181,24 +181,24 @@ public class DisplayImageDetailsActivity extends Activity {
 
 							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
 									new ConfirmDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
+								/**
+								 * The serial version id.
+								 */
+								private static final long serialVersionUID = 1L;
 
-										@Override
-										public void onDialogPositiveClick(final DialogFragment dialog) {
-											imageList.removeFile(fileName);
-											imageList.removeFolder(fileName);
-											imageList.update();
-											returnResult(preventDisplayAll, true);
-										}
+								@Override
+								public void onDialogPositiveClick(final DialogFragment dialog) {
+									imageList.removeFile(fileName);
+									imageList.removeFolder(fileName);
+									imageList.update(true);
+									returnResult(preventDisplayAll, true);
+								}
 
-										@Override
-										public void onDialogNegativeClick(final DialogFragment dialog) {
-											returnResult(false, false);
-										}
-									}, R.string.button_remove, R.string.dialog_confirmation_remove, listName,
+								@Override
+								public void onDialogNegativeClick(final DialogFragment dialog) {
+									returnResult(false, false);
+								}
+							}, R.string.button_remove, R.string.dialog_confirmation_remove, listName,
 									filesString);
 						}
 					});

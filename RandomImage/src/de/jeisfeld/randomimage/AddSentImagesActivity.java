@@ -11,9 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
-import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.StandardImageList;
 
 /**
  * Add images sent to the app via intent.
@@ -67,7 +67,7 @@ public class AddSentImagesActivity extends Activity {
 	 *            The name of the list to which the images should be added.
 	 */
 	private void addImages(final String listName) {
-		StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName);
+		StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, true);
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list");
 			DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
@@ -84,7 +84,7 @@ public class AddSentImagesActivity extends Activity {
 				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 				String shortFileName = new File(addedFileName).getName();
 				DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
-				imageList.update();
+				imageList.update(true);
 			}
 		}
 		else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null
@@ -105,14 +105,14 @@ public class AddSentImagesActivity extends Activity {
 				if (addedFileCount > 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedFileCount, listName);
-					imageList.update();
+					imageList.update(true);
 				}
 				else if (addedFileCount == 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					String shortFileName = new File(lastAddedFileName).getName();
 					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName,
 							listName);
-					imageList.update();
+					imageList.update(true);
 				}
 				else {
 					DialogUtil.displayToast(this, R.string.toast_added_images_none_external, listName);

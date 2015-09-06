@@ -12,11 +12,11 @@ import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.R;
 import de.jeisfeld.randomimage.util.DialogUtil;
-import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.StandardImageList;
 
 /**
  * Service handling the image stack for the stacked image widget.
@@ -101,7 +101,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public final void onCreate() {
-			StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName);
+			StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, false);
 
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + " for StackedImageWidget creation");
@@ -183,7 +183,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			imageSize = calculateImageSize(viewWidth);
 
 			// create new image list
-			StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName);
+			StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, false);
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + " for StackedImageWidget data change");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);

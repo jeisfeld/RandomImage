@@ -132,9 +132,10 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Fill the view with the current list of images.
 	 */
 	private void fillListOfImages() {
-		fileNames = ImageRegistry.getCurrentImageList().getFileNames();
-		folderNames = ImageRegistry.getCurrentImageList().getFolderNames();
-		nestedListNames = ImageRegistry.getCurrentImageList().getNestedListNames();
+		ImageList imageList = ImageRegistry.getCurrentImageList(true);
+		fileNames = imageList.getFileNames();
+		folderNames = imageList.getFolderNames();
+		nestedListNames = imageList.getNestedListNames();
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
@@ -289,7 +290,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedDelete(final int menuId) {
 		switch (menuId) {
 		case R.id.action_remove_images:
-			final ImageList imageList = ImageRegistry.getCurrentImageList();
+			final ImageList imageList = ImageRegistry.getCurrentImageList(true);
 
 			final ArrayList<String> imagesToBeRemoved = getAdapter().getSelectedFiles();
 			final ArrayList<String> foldersToBeRemoved = getAdapter().getSelectedFolders();
@@ -348,7 +349,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						DialogUtil.displayToast(DisplayAllImagesActivity.this, messageId, fileFolderMessageString);
 
 						if (totalRemovedCount > 0) {
-							imageList.update();
+							imageList.update(true);
 							fillListOfImages();
 						}
 						changeAction(CurrentAction.DISPLAY);
@@ -482,7 +483,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	protected final boolean switchToImageList(final String name, final CreationStyle creationStyle) {
 		listName = name;
-		boolean success = ImageRegistry.switchToImageList(name, creationStyle);
+		boolean success = ImageRegistry.switchToImageList(name, creationStyle, true);
 		if (success) {
 			fillListOfImages();
 		}
@@ -780,9 +781,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-						ImageList imageList = ImageRegistry.getCurrentImageList();
+						ImageList imageList = ImageRegistry.getCurrentImageList(true);
 						imageList.addNestedList(text);
-						imageList.update();
+						imageList.update(true);
 						fillListOfImages();
 					}
 
