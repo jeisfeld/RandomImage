@@ -43,10 +43,15 @@ public class ImageWidget extends GenericWidget {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+
+				// Put view in good state again.
+				RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+				remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
+				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 			}
 
 			if (imageList != null) {
-				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName);
+				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, userTriggered);
 			}
 		}
 		else {
@@ -74,7 +79,7 @@ public class ImageWidget extends GenericWidget {
 		String fileName = currentFileNames.get(appWidgetId);
 
 		if (fileName == null && imageList != null) {
-			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName);
+			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
 		}
 		else {
 			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
@@ -98,16 +103,20 @@ public class ImageWidget extends GenericWidget {
 	 *            The appWidgetId of the widget whose size changed.
 	 * @param listName
 	 *            The name of the image list from which the file is taken.
+	 * @param userTriggered
+	 *            flag indicating if the call was triggered by the user.
 	 */
 	private void setImageAsynchronously(final Context context, final AppWidgetManager appWidgetManager, final ImageList imageList,
-			final int appWidgetId, final String listName) {
+			final int appWidgetId, final String listName, final boolean userTriggered) {
 		imageList.executeWhenReady(new Runnable() {
 			@Override
 			public void run() {
-				RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
-				remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
-				remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_loading));
-				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+				if (userTriggered) {
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+					remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
+					remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_loading));
+					appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+				}
 			}
 		}, new Runnable() {
 			@Override
@@ -119,6 +128,16 @@ public class ImageWidget extends GenericWidget {
 
 				new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
 						R.id.buttonNextImage, R.id.buttonSettings).start();
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				if (userTriggered) {
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+					remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
+					remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_loading));
+					appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+				}
 			}
 		});
 

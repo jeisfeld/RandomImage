@@ -323,7 +323,7 @@ public class DisplayRandomImageActivity extends Activity {
 				}
 
 			}
-		});
+		}, null);
 
 	}
 

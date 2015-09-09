@@ -173,8 +173,8 @@ public final class StandardImageList extends ImageList {
 	}
 
 	@Override
-	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading) {
-		asyncLoader.executeWhenReady(whileLoading, afterLoading);
+	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
+		asyncLoader.executeWhenReady(whileLoading, afterLoading, ifError);
 	}
 
 	@Override

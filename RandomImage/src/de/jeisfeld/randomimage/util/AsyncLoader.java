@@ -103,8 +103,10 @@ public final class AsyncLoader {
 	 *            Actions to be done while loading to inform the user about the loading.
 	 * @param afterLoading
 	 *            Actions to be done after loading.
+	 * @param ifError
+	 *            Actions to be done in case of error.
 	 */
-	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading) {
+	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
 		// Put the loading thread into a safe environment, as activity may have been closed when loading is finished.
 		final Runnable safeAfterLoading = new Runnable() {
 			@Override
@@ -113,7 +115,9 @@ public final class AsyncLoader {
 					afterLoading.run();
 				}
 				catch (Exception e) {
-					// ignore
+					if (ifError != null) {
+						ifError.run();
+					}
 				}
 			}
 		};
@@ -143,7 +147,9 @@ public final class AsyncLoader {
 					handler.post(safeAfterLoading);
 				}
 				catch (InterruptedException e) {
-					// should not happen - do nothing
+					if (ifError != null) {
+						ifError.run();
+					}
 				}
 			}
 		}.start();
