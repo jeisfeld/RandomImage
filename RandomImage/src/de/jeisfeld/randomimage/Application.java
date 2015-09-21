@@ -21,7 +21,7 @@ public class Application extends android.app.Application {
 	/**
 	 * A utility field to store a context statically.
 	 */
-	private static Context context;
+	private static Context mContext;
 	/**
 	 * The default tag for logging.
 	 */
@@ -32,7 +32,7 @@ public class Application extends android.app.Application {
 			justification = "Make some context visible statically (no matter which one)")
 	public final void onCreate() {
 		super.onCreate();
-		Application.context = getApplicationContext();
+		Application.mContext = getApplicationContext();
 		setLanguage();
 
 		// Set statistics
@@ -55,7 +55,7 @@ public class Application extends android.app.Application {
 	 * @return The (statically stored) application context
 	 */
 	public static Context getAppContext() {
-		return Application.context;
+		return Application.mContext;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Application extends android.app.Application {
 	public static int getVersion() {
 		PackageInfo pInfo;
 		try {
-			pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
 			return pInfo.versionCode;
 		}
 		catch (NameNotFoundException e) {
@@ -94,7 +94,7 @@ public class Application extends android.app.Application {
 	public static String getVersionString() {
 		PackageInfo pInfo;
 		try {
-			pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
 			return pInfo.versionName;
 		}
 		catch (NameNotFoundException e) {

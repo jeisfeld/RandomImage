@@ -9,22 +9,22 @@ public final class AsyncLoader {
 	/**
 	 * The thread currently loading the allImageFiles list.
 	 */
-	private volatile Thread loaderThread;
+	private volatile Thread mLoaderThread;
 
 	/**
 	 * The thread waiting to load the allImageFile list.
 	 */
-	private volatile Thread waitingLoaderThread;
+	private volatile Thread mWaitingLoaderThread;
 
 	/**
 	 * The runnable executed in this loader.
 	 */
-	private volatile Runnable runnable;
+	private volatile Runnable mRunnable;
 
 	/**
 	 * Flag indicating if the loading has once been done.
 	 */
-	private boolean isReady = false;
+	private boolean mIsReady = false;
 
 	/**
 	 * Initialize the loader with a runnable.
@@ -33,7 +33,7 @@ public final class AsyncLoader {
 	 *            The runnable to be executed by the loader.
 	 */
 	protected AsyncLoader(final Runnable runnable) {
-		this.runnable = runnable;
+		this.mRunnable = runnable;
 	}
 
 	/**
@@ -41,29 +41,29 @@ public final class AsyncLoader {
 	 */
 	public synchronized void load() {
 
-		waitingLoaderThread = new Thread() {
+		mWaitingLoaderThread = new Thread() {
 			@Override
 			public void run() {
-				runnable.run();
+				mRunnable.run();
 
 				synchronized (this) {
-					isReady = true;
-					if (waitingLoaderThread != null) {
-						loaderThread = waitingLoaderThread;
-						waitingLoaderThread = null;
-						loaderThread.start();
+					mIsReady = true;
+					if (mWaitingLoaderThread != null) {
+						mLoaderThread = mWaitingLoaderThread;
+						mWaitingLoaderThread = null;
+						mLoaderThread.start();
 					}
 					else {
-						loaderThread = null;
+						mLoaderThread = null;
 					}
 				}
 			}
 		};
 
-		if (loaderThread == null) {
-			loaderThread = waitingLoaderThread;
-			waitingLoaderThread = null;
-			loaderThread.start();
+		if (mLoaderThread == null) {
+			mLoaderThread = mWaitingLoaderThread;
+			mWaitingLoaderThread = null;
+			mLoaderThread.start();
 		}
 	}
 
@@ -73,7 +73,7 @@ public final class AsyncLoader {
 	 * @return true if loading has once been done.
 	 */
 	public boolean isReady() {
-		return isReady;
+		return mIsReady;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public final class AsyncLoader {
 		}
 
 		// prevent exception if loaderThread gets deleted after check.
-		Thread localLoaderThread = loaderThread;
+		Thread localLoaderThread = mLoaderThread;
 		if (localLoaderThread != null) {
 			try {
 				localLoaderThread.join();
@@ -122,12 +122,12 @@ public final class AsyncLoader {
 			}
 		};
 
-		if (loaderThread == null && !isReady()) {
+		if (mLoaderThread == null && !isReady()) {
 			// Loading not yet started
 			load();
 		}
 
-		final Thread localLoaderThread = loaderThread;
+		final Thread localLoaderThread = mLoaderThread;
 		if (isReady()) {
 			afterLoading.run();
 			return;

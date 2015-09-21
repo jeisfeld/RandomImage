@@ -37,12 +37,12 @@ public class DisplayNestedListDetailsActivity extends Activity {
 	/**
 	 * The name of the nested list whose details should be displayed.
 	 */
-	private String nestedListName;
+	private String mNestedListName;
 
 	/**
 	 * The name of the parent list from which the nested list is taken.
 	 */
-	private String parentListName;
+	private String mParentListName;
 
 	/**
 	 * Static helper method to start the activity.
@@ -76,28 +76,28 @@ public class DisplayNestedListDetailsActivity extends Activity {
 			title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_title_info, 0, 0, 0);
 		}
 
-		nestedListName = getIntent().getStringExtra(STRING_EXTRA_NESTED_LISTNAME);
-		parentListName = getIntent().getStringExtra(STRING_EXTRA_PARENT_LISTNAME);
+		mNestedListName = getIntent().getStringExtra(STRING_EXTRA_NESTED_LISTNAME);
+		mParentListName = getIntent().getStringExtra(STRING_EXTRA_PARENT_LISTNAME);
 
-		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(parentListName, true);
+		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mParentListName, true);
 		if (imageList == null) {
 			finish();
 			return;
 		}
 
-		((TextView) findViewById(R.id.textViewNestedListName)).setText(nestedListName);
+		((TextView) findViewById(R.id.textViewNestedListName)).setText(mNestedListName);
 
 		((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
-				String.format(getString(R.string.info_nested_list_images), imageList.getNestedListImageCount(nestedListName)));
+				String.format(getString(R.string.info_nested_list_images), imageList.getNestedListImageCount(mNestedListName)));
 
 		((TextView) findViewById(R.id.textViewWeight)).setText(
 				String.format(getString(R.string.info_nested_list_image_proportion),
-						HUNDRED * imageList.getImagePercentage(nestedListName)));
+						HUNDRED * imageList.getImagePercentage(mNestedListName)));
 
 		final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
-		Double customNestedListWeight = imageList.getCustomNestedListWeight(nestedListName);
+		Double customNestedListWeight = imageList.getCustomNestedListWeight(mNestedListName);
 		if (customNestedListWeight == null) {
-			double nestedListWeight = imageList.getNestedListWeight(nestedListName);
+			double nestedListWeight = imageList.getNestedListWeight(mNestedListName);
 			int percentage = (int) Math.round(nestedListWeight * HUNDRED);
 			editTextViewFrequency.setHint(Integer.toString(percentage));
 		}
@@ -124,7 +124,7 @@ public class DisplayNestedListDetailsActivity extends Activity {
 					}
 				}
 
-				imageList.setCustomNestedListWeight(nestedListName, weight);
+				imageList.setCustomNestedListWeight(mNestedListName, weight);
 				finish();
 			}
 		});

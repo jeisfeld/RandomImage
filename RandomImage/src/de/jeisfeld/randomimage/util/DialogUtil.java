@@ -376,7 +376,7 @@ public final class DialogUtil {
 		/**
 		 * The listener called when the dialog is ended.
 		 */
-		private MessageDialogListener listener = null;
+		private MessageDialogListener mListener = null;
 
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -385,7 +385,7 @@ public final class DialogUtil {
 			final int iconResource = getArguments().getInt(PARAM_ICON);
 			final int skipPreference = getArguments().getInt(PARAM_SKIPPREFERENCE); // STORE_PROPERTY
 
-			listener = (MessageDialogListener) getArguments().getSerializable(
+			mListener = (MessageDialogListener) getArguments().getSerializable(
 					PARAM_LISTENER);
 			getArguments().putSerializable(PARAM_LISTENER, null);
 
@@ -406,8 +406,8 @@ public final class DialogUtil {
 					.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
-							if (listener != null) {
-								listener.onDialogFinished();
+							if (mListener != null) {
+								mListener.onDialogFinished();
 							}
 							dialog.dismiss();
 						}
@@ -418,8 +418,8 @@ public final class DialogUtil {
 					@Override
 					public void onClick(final DialogInterface dialog, final int id) {
 						PreferenceUtil.setSharedPreferenceBoolean(skipPreference, true);
-						if (listener != null) {
-							listener.onDialogFinished();
+						if (mListener != null) {
+							mListener.onDialogFinished();
 						}
 						dialog.dismiss();
 					}
@@ -432,17 +432,17 @@ public final class DialogUtil {
 
 		@Override
 		public final void onCancel(final DialogInterface dialogInterface) {
-			if (listener != null) {
-				listener.onDialogFinished();
+			if (mListener != null) {
+				mListener.onDialogFinished();
 			}
 			super.onCancel(dialogInterface);
 		}
 
 		@Override
 		public final void onSaveInstanceState(final Bundle outState) {
-			if (listener != null) {
+			if (mListener != null) {
 				// Typically cannot serialize the listener due to its reference to the activity.
-				listener = null;
+				mListener = null;
 				outState.putBoolean(PREVENT_RECREATION, true);
 			}
 			super.onSaveInstanceState(outState);
@@ -467,13 +467,13 @@ public final class DialogUtil {
 		/**
 		 * The listener called when the dialog is ended.
 		 */
-		private ConfirmDialogListener listener = null;
+		private ConfirmDialogListener mListener = null;
 
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int confirmButtonResource = getArguments().getInt(PARAM_BUTTON_RESOURCE);
-			listener = (ConfirmDialogListener) getArguments().getSerializable(PARAM_LISTENER);
+			mListener = (ConfirmDialogListener) getArguments().getSerializable(PARAM_LISTENER);
 
 			// Listeners cannot retain functionality when automatically recreated.
 			// Therefore, dialogs with listeners must be re-created by the activity on orientation change.
@@ -493,14 +493,14 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							listener.onDialogNegativeClick(ConfirmDialogFragment.this);
+							mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
 						}
 					}) //
 					.setPositiveButton(confirmButtonResource, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the negative button event back to the host activity
-							listener.onDialogPositiveClick(ConfirmDialogFragment.this);
+							mListener.onDialogPositiveClick(ConfirmDialogFragment.this);
 						}
 					});
 			return builder.create();
@@ -508,17 +508,17 @@ public final class DialogUtil {
 
 		@Override
 		public final void onCancel(final DialogInterface dialogInterface) {
-			if (listener != null) {
-				listener.onDialogNegativeClick(ConfirmDialogFragment.this);
+			if (mListener != null) {
+				mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
 			}
 			super.onCancel(dialogInterface);
 		}
 
 		@Override
 		public final void onSaveInstanceState(final Bundle outState) {
-			if (listener != null) {
+			if (mListener != null) {
 				// Typically cannot serialize the listener due to its reference to the activity.
-				listener = null;
+				mListener = null;
 				outState.putBoolean(PREVENT_RECREATION, true);
 			}
 			super.onSaveInstanceState(outState);
@@ -554,14 +554,14 @@ public final class DialogUtil {
 		/**
 		 * The listener called when the dialog is ended.
 		 */
-		private RequestInputDialogListener listener = null;
+		private RequestInputDialogListener mListener = null;
 
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int confirmButtonResource = getArguments().getInt(PARAM_BUTTON_RESOURCE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
-			listener = (RequestInputDialogListener) getArguments().getSerializable(PARAM_LISTENER);
+			mListener = (RequestInputDialogListener) getArguments().getSerializable(PARAM_LISTENER);
 
 			final EditText input = new EditText(getActivity());
 			input.setText(getArguments().getString(PARAM_TEXT_VALUE));
@@ -584,14 +584,14 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							listener.onDialogNegativeClick(RequestInputDialogFragment.this);
+							mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
 						}
 					}) //
 					.setPositiveButton(confirmButtonResource, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the negative button event back to the host activity
-							listener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
+							mListener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
 						}
 					});
 			return builder.create();
@@ -599,17 +599,17 @@ public final class DialogUtil {
 
 		@Override
 		public final void onCancel(final DialogInterface dialogInterface) {
-			if (listener != null) {
-				listener.onDialogNegativeClick(RequestInputDialogFragment.this);
+			if (mListener != null) {
+				mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
 			}
 			super.onCancel(dialogInterface);
 		}
 
 		@Override
 		public final void onSaveInstanceState(final Bundle outState) {
-			if (listener != null) {
+			if (mListener != null) {
 				// Typically cannot serialize the listener due to its reference to the activity.
-				listener = null;
+				mListener = null;
 				outState.putBoolean(PREVENT_RECREATION, true);
 			}
 			super.onSaveInstanceState(outState);
@@ -647,14 +647,14 @@ public final class DialogUtil {
 		/**
 		 * The listener called when the dialog is ended.
 		 */
-		private SelectFromListDialogListener listener = null;
+		private SelectFromListDialogListener mListener = null;
 
 		@SuppressLint("InflateParams")
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
-			listener = (SelectFromListDialogListener) getArguments().getSerializable(PARAM_LISTENER);
+			mListener = (SelectFromListDialogListener) getArguments().getSerializable(PARAM_LISTENER);
 			final String[] items = getArguments().getStringArrayList(PARAM_LIST_ITEMS).toArray(new String[0]);
 			final int iconId = getArguments().getInt(PARAM_ICON);
 
@@ -672,7 +672,7 @@ public final class DialogUtil {
 				@Override
 				public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 					int listPosition = (int) id;
-					listener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
+					mListener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
 					dismiss();
 				}
 			});
@@ -694,7 +694,7 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							listener.onDialogNegativeClick(SelectFromListDialogFragment.this);
+							mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
 						}
 					});
 
@@ -706,17 +706,17 @@ public final class DialogUtil {
 
 		@Override
 		public final void onCancel(final DialogInterface dialogInterface) {
-			if (listener != null) {
-				listener.onDialogNegativeClick(SelectFromListDialogFragment.this);
+			if (mListener != null) {
+				mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
 			}
 			super.onCancel(dialogInterface);
 		}
 
 		@Override
 		public final void onSaveInstanceState(final Bundle outState) {
-			if (listener != null) {
+			if (mListener != null) {
 				// Typically cannot serialize the listener due to its reference to the activity.
-				listener = null;
+				mListener = null;
 				outState.putBoolean(PREVENT_RECREATION, true);
 			}
 			super.onSaveInstanceState(outState);

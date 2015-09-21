@@ -46,17 +46,17 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * The names of the files to be displayed.
 	 */
-	private ArrayList<String> fileNames;
+	private ArrayList<String> mFileNames;
 
 	/**
 	 * The folder whose images should be displayed.
 	 */
-	private String folderName;
+	private String mFolderName;
 
 	/**
 	 * The current action within this activity.
 	 */
-	private CurrentAction currentAction = CurrentAction.DISPLAY;
+	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
 
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
@@ -84,7 +84,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
+		mFolderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		boolean forAddition = getIntent().getBooleanExtra(STRING_EXTRA_FORADDITION, false);
 
 		// This step initializes the adapter.
@@ -95,12 +95,12 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		}
 
 		if (savedInstanceState != null) {
-			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
+			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 		}
 		else {
-			currentAction = forAddition ? CurrentAction.ADD : CurrentAction.DISPLAY;
+			mCurrentAction = forAddition ? CurrentAction.ADD : CurrentAction.DISPLAY;
 		}
-		changeAction(currentAction);
+		changeAction(mCurrentAction);
 
 		if (forAddition) {
 			DialogUtil.displayInfo(this, null, R.string.key_info_add_images, R.string.dialog_info_add_images);
@@ -117,7 +117,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
-		switch (currentAction) {
+		switch (mCurrentAction) {
 		case DISPLAY:
 			return false;
 		case ADD:
@@ -132,7 +132,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	public final boolean onOptionsItemSelected(final MenuItem item) {
 		int id = item.getItemId();
 
-		switch (currentAction) {
+		switch (mCurrentAction) {
 		case DISPLAY:
 			return super.onOptionsItemSelected(item);
 		case ADD:
@@ -203,7 +203,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 						returnResult(false);
 					}
 				}, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
-						new File(folderName).getName());
+						new File(mFolderName).getName());
 			}
 			return true;
 		case R.id.action_add_image_folder:
@@ -230,7 +230,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 						return;
 					}
 				}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
-						new File(folderName).getName());
+						new File(mFolderName).getName());
 			}
 			return true;
 		case R.id.action_cancel:
@@ -255,10 +255,10 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 */
 	private void addFolderToImageList() {
 		final ImageList imageList2 = ImageRegistry.getCurrentImageList(true);
-		boolean success = imageList2.addFolder(folderName);
+		boolean success = imageList2.addFolder(mFolderName);
 		if (success) {
 			ArrayList<String> addedFolderList = new ArrayList<String>();
-			addedFolderList.add(folderName);
+			addedFolderList.add(mFolderName);
 			String addedFoldersString =
 					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
@@ -266,8 +266,8 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			imageList2.update(true);
 		}
 		else {
-			if (imageList2.contains(folderName)) {
-				DialogUtil.displayToast(this, R.string.toast_added_folder_none, new File(folderName).getName());
+			if (imageList2.contains(mFolderName)) {
+				DialogUtil.displayToast(this, R.string.toast_added_folder_none, new File(mFolderName).getName());
 			}
 			else {
 				DialogUtil.displayToast(this, R.string.toast_error_select_folder);
@@ -280,9 +280,9 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * Fill the view with the images of a folder.
 	 */
 	private void fillListOfImagesFromFolder() {
-		fileNames = ImageUtil.getImagesInFolder(folderName);
+		mFileNames = ImageUtil.getImagesInFolder(mFolderName);
 
-		if (fileNames.size() == 0) {
+		if (mFileNames.size() == 0) {
 			DialogUtil.displayInfo(this, new MessageDialogListener() {
 				/**
 				 * The serial version id.
@@ -294,7 +294,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 					// Nothing to display.
 					returnResult(false);
 				}
-			}, 0, R.string.dialog_info_no_images_in_folder, folderName);
+			}, 0, R.string.dialog_info_no_images_in_folder, mFolderName);
 			return;
 		}
 
@@ -302,8 +302,8 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			getAdapter().cleanupCache();
 		}
 
-		setAdapter(null, null, fileNames);
-		setTitle(folderName);
+		setAdapter(null, null, mFileNames);
+		setTitle(mFolderName);
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 */
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
-			currentAction = action;
+			mCurrentAction = action;
 			setSelectionMode(action == CurrentAction.ADD ? SelectionMode.MULTIPLE_ADD : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
@@ -357,7 +357,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putSerializable("currentAction", currentAction);
+		outState.putSerializable("currentAction", mCurrentAction);
 	}
 
 	/**

@@ -45,12 +45,12 @@ public final class ImageRegistry {
 	/**
 	 * The singleton currentImageList of the imageRegistry.
 	 */
-	private static volatile ImageList currentImageList = null;
+	private static volatile ImageList mCurrentImageList = null;
 
 	/**
 	 * A map from image list name to corresponding config file.
 	 */
-	private static Map<String, ImageListInfo> imageListInfoMap = new HashMap<String, ImageListInfo>();
+	private static Map<String, ImageListInfo> mImageListInfoMap = new HashMap<String, ImageListInfo>();
 
 	static {
 		parseConfigFiles();
@@ -73,20 +73,20 @@ public final class ImageRegistry {
 	public static ImageList getCurrentImageList(final boolean toastIfFilesMissing) {
 		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
 
-		if (currentImageList == null && currentListName != null) {
+		if (mCurrentImageList == null && currentListName != null) {
 			switchToImageList(currentListName, CreationStyle.NONE, toastIfFilesMissing);
 		}
 
-		if (currentImageList == null && imageListInfoMap.size() > 0) {
+		if (mCurrentImageList == null && mImageListInfoMap.size() > 0) {
 			String firstName = getImageListNames().get(0);
 			switchToImageList(firstName, CreationStyle.NONE, toastIfFilesMissing);
 		}
 
-		if (currentImageList == null) {
+		if (mCurrentImageList == null) {
 			String newName = getNewListName();
 			switchToImageList(newName, CreationStyle.CREATE_EMPTY, toastIfFilesMissing);
 		}
-		return currentImageList;
+		return mCurrentImageList;
 	}
 
 	/**
@@ -97,12 +97,12 @@ public final class ImageRegistry {
 	 * @return The currentImageList.
 	 */
 	public static ImageList getCurrentImageListRefreshed(final boolean toastIfFilesMissing) {
-		if (currentImageList == null) {
+		if (mCurrentImageList == null) {
 			return getCurrentImageList(toastIfFilesMissing);
 		}
 		else {
-			currentImageList.load(toastIfFilesMissing);
-			return currentImageList;
+			mCurrentImageList.load(toastIfFilesMissing);
+			return mCurrentImageList;
 		}
 	}
 
@@ -121,7 +121,7 @@ public final class ImageRegistry {
 	 * @return The names of all available image lists.
 	 */
 	public static ArrayList<String> getImageListNames() {
-		ArrayList<String> nameList = new ArrayList<String>(imageListInfoMap.keySet());
+		ArrayList<String> nameList = new ArrayList<String>(mImageListInfoMap.keySet());
 		Collections.sort(nameList);
 		return nameList;
 	}
@@ -134,8 +134,8 @@ public final class ImageRegistry {
 	public static ArrayList<String> getStandardImageListNames() {
 		ArrayList<String> nameList = new ArrayList<String>();
 
-		for (String name : imageListInfoMap.keySet()) {
-			if (imageListInfoMap.get(name).getListClass().equals(StandardImageList.class)) {
+		for (String name : mImageListInfoMap.keySet()) {
+			if (mImageListInfoMap.get(name).getListClass().equals(StandardImageList.class)) {
 				nameList.add(name);
 			}
 		}
@@ -172,8 +172,8 @@ public final class ImageRegistry {
 		if (name == null) {
 			return false;
 		}
-		else if (currentImageList != null && name.equals(currentImageList.getListName())) {
-			currentImageList.load(toastIfFilesMissing);
+		else if (mCurrentImageList != null && name.equals(mCurrentImageList.getListName())) {
+			mCurrentImageList.load(toastIfFilesMissing);
 			return true;
 		}
 
@@ -186,8 +186,8 @@ public final class ImageRegistry {
 			}
 			else {
 				File newFile = getFileForListName(name);
-				imageListInfoMap.put(name, new ImageListInfo(name, newFile, StandardImageList.class));
-				currentImageList =
+				mImageListInfoMap.put(name, new ImageListInfo(name, newFile, StandardImageList.class));
+				mCurrentImageList =
 						new StandardImageList(newFile, name, creationStyle == CreationStyle.CREATE_EMPTY ? null
 								: getConfigFile(getCurrentListName()));
 				PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
@@ -195,7 +195,7 @@ public final class ImageRegistry {
 			}
 		}
 		else {
-			currentImageList = ImageList.getListFromConfigFile(configFile, toastIfFilesMissing);
+			mCurrentImageList = ImageList.getListFromConfigFile(configFile, toastIfFilesMissing);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 			return true;
 		}
@@ -306,11 +306,11 @@ public final class ImageRegistry {
 			return true;
 		}
 		File newConfigFile = getFileForListName(newName);
-		boolean success = currentImageList.changeListName(newName, newConfigFile);
+		boolean success = mCurrentImageList.changeListName(newName, newConfigFile);
 		if (success) {
-			imageListInfoMap.put(newName, new ImageListInfo(newName, newConfigFile,
-					imageListInfoMap.get(currentName).getClass()));
-			imageListInfoMap.remove(currentName);
+			mImageListInfoMap.put(newName, new ImageListInfo(newName, newConfigFile,
+					mImageListInfoMap.get(currentName).getClass()));
+			mImageListInfoMap.remove(currentName);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
 		}
 		return success;
@@ -370,13 +370,13 @@ public final class ImageRegistry {
 	 * @return The config file, if existing, otherwise null.
 	 */
 	private static File getConfigFile(final String name) {
-		ImageListInfo imageListInfo = imageListInfoMap.get(name);
+		ImageListInfo imageListInfo = mImageListInfoMap.get(name);
 
 		File configFile = imageListInfo == null ? null : imageListInfo.getConfigFile();
 
 		if (configFile == null) {
 			parseConfigFiles();
-			imageListInfo = imageListInfoMap.get(name);
+			imageListInfo = mImageListInfoMap.get(name);
 			configFile = imageListInfo == null ? null : imageListInfo.getConfigFile();
 		}
 
@@ -387,7 +387,7 @@ public final class ImageRegistry {
 	 * Get the list of available config files.
 	 */
 	public static void parseConfigFiles() {
-		imageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
+		mImageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
 	}
 
 	/**
@@ -448,7 +448,7 @@ public final class ImageRegistry {
 		String listName = baseListName;
 
 		int counter = 1;
-		while (imageListInfoMap.containsKey(listName)) {
+		while (mImageListInfoMap.containsKey(listName)) {
 			listName = baseListName + " (" + (++counter) + ")";
 		}
 

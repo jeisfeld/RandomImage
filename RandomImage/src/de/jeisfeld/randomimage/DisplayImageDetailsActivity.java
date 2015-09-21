@@ -58,17 +58,17 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * The name of the file whose details should be displayed.
 	 */
-	private String fileName;
+	private String mFileName;
 
 	/**
 	 * The name of the list from which this file is taken.
 	 */
-	private String listName;
+	private String mListName;
 
 	/**
 	 * flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
 	 */
-	private boolean preventDisplayAll;
+	private boolean mPreventDisplayAll;
 
 	/**
 	 * Static helper method to start the activity.
@@ -106,9 +106,9 @@ public class DisplayImageDetailsActivity extends Activity {
 			title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_title_info, 0, 0, 0);
 		}
 
-		fileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
-		listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
-		preventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
+		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
 		ListMenuView listMenu = (ListMenuView) findViewById(R.id.listViewImageDetailsMenu);
 
@@ -119,12 +119,12 @@ public class DisplayImageDetailsActivity extends Activity {
 		listMenu.addHeaderView(textView, null, false);
 
 		final String galleryFileName;
-		File file = new File(fileName);
+		File file = new File(mFileName);
 		if (file.isFile()) {
-			galleryFileName = fileName;
+			galleryFileName = mFileName;
 		}
 		else if (file.isDirectory()) {
-			ArrayList<String> files = ImageUtil.getImagesInFolder(fileName);
+			ArrayList<String> files = ImageUtil.getImagesInFolder(mFileName);
 			if (files.size() > 0) {
 				galleryFileName = files.get(0);
 			}
@@ -150,7 +150,7 @@ public class DisplayImageDetailsActivity extends Activity {
 				@Override
 				public void onClick(final View v) {
 					Intent intent = new Intent(Intent.ACTION_SEND);
-					Uri uri = MediaStoreUtil.getUriFromFile(fileName);
+					Uri uri = MediaStoreUtil.getUriFromFile(mFileName);
 					intent.putExtra(Intent.EXTRA_STREAM, uri);
 					intent.setType("image/*");
 					startActivity(intent);
@@ -158,9 +158,9 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
-		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, false);
-		if (imageList != null && imageList.contains(fileName)) {
-			final boolean isDirectory = new File(fileName).isDirectory();
+		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
+		if (imageList != null && imageList.contains(mFileName)) {
+			final boolean isDirectory = new File(mFileName).isDirectory();
 
 			listMenu.addItem(
 					isDirectory ? R.string.menu_remove_folder_from_list : R.string.menu_remove_image_from_list,
@@ -170,10 +170,10 @@ public class DisplayImageDetailsActivity extends Activity {
 							ArrayList<String> filesToBeRemoved = new ArrayList<String>();
 							ArrayList<String> foldersToBeRemoved = new ArrayList<String>();
 							if (isDirectory) {
-								foldersToBeRemoved.add(fileName);
+								foldersToBeRemoved.add(mFileName);
 							}
 							else {
-								filesToBeRemoved.add(fileName);
+								filesToBeRemoved.add(mFileName);
 							}
 							String filesString =
 									DialogUtil
@@ -188,31 +188,31 @@ public class DisplayImageDetailsActivity extends Activity {
 
 								@Override
 								public void onDialogPositiveClick(final DialogFragment dialog) {
-									imageList.removeFile(fileName);
-									imageList.removeFolder(fileName);
+									imageList.removeFile(mFileName);
+									imageList.removeFolder(mFileName);
 									imageList.update(true);
-									returnResult(preventDisplayAll, true);
+									returnResult(mPreventDisplayAll, true);
 								}
 
 								@Override
 								public void onDialogNegativeClick(final DialogFragment dialog) {
 									returnResult(false, false);
 								}
-							}, R.string.button_remove, R.string.dialog_confirmation_remove, listName,
+							}, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
 									filesString);
 						}
 					});
 		}
 
-		if (listName != null) {
+		if (mListName != null) {
 			listMenu.addItem(R.string.menu_display_list, new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					if (preventDisplayAll) {
+					if (mPreventDisplayAll) {
 						returnResult(true, false);
 					}
 					else {
-						DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, listName);
+						DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
 						returnResult(false, false);
 					}
 				}
@@ -286,14 +286,14 @@ public class DisplayImageDetailsActivity extends Activity {
 	 */
 	private CharSequence getImageInfo() {
 		StringBuffer imageInfo = new StringBuffer();
-		File file = new File(fileName);
+		File file = new File(mFileName);
 
 		imageInfo.append(formatImageInfoLine(this,
 				file.isDirectory() ? R.string.info_folder_name : R.string.info_file_name, file.getName()));
 		imageInfo.append(formatImageInfoLine(this,
 				file.isDirectory() ? R.string.info_folder_location : R.string.info_file_location, file.getParent()));
 
-		Date imageDate = ImageUtil.getExifDate(fileName);
+		Date imageDate = ImageUtil.getExifDate(mFileName);
 		if (imageDate != null) {
 			imageInfo.append(formatImageInfoLine(this, R.string.info_file_date, DateUtil.format(imageDate)));
 

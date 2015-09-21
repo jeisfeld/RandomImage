@@ -37,52 +37,52 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * The cache where views of the displays are stored for smoother scrolling.
 	 */
-	private ViewCache viewCache;
+	private ViewCache mViewCache;
 
 	/**
 	 * The activity holding this adapter.
 	 */
-	private final DisplayImageListActivity activity;
+	private final DisplayImageListActivity mActivity;
 
 	/**
 	 * The names of the nested lists.
 	 */
-	private ArrayList<String> nestedListNames;
+	private ArrayList<String> mNestedListNames;
 
 	/**
 	 * The names of the folders.
 	 */
-	private ArrayList<String> folderNames;
+	private ArrayList<String> mFolderNames;
 
 	/**
 	 * The names of the files.
 	 */
-	private ArrayList<String> fileNames;
+	private ArrayList<String> mFileNames;
 
 	/**
 	 * The set of nested list names selected for deletion.
 	 */
-	private Set<String> selectedNestedListNames = new HashSet<String>();
+	private Set<String> mSelectedNestedListNames = new HashSet<String>();
 
 	/**
 	 * The set of foldernames selected for deletion.
 	 */
-	private Set<String> selectedFolderNames = new HashSet<String>();
+	private Set<String> mSelectedFolderNames = new HashSet<String>();
 
 	/**
 	 * The set of filenames selected for deletion.
 	 */
-	private Set<String> selectedFileNames = new HashSet<String>();
+	private Set<String> mSelectedFileNames = new HashSet<String>();
 
 	/**
 	 * Flag indicating how selection is handled.
 	 */
-	private volatile SelectionMode selectionMode = SelectionMode.ONE;
+	private volatile SelectionMode mSelectionMode = SelectionMode.ONE;
 
 	/**
 	 * The way in which the thumbs are marked.
 	 */
-	private MarkingType markingType = MarkingType.NONE;
+	private MarkingType mMarkingType = MarkingType.NONE;
 
 	static {
 		// Set cache size in dependence of device memory.
@@ -106,15 +106,15 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *            The selection mode.
 	 */
 	public final void setSelectionMode(final SelectionMode selectionMode) {
-		this.selectionMode = selectionMode;
+		this.mSelectionMode = selectionMode;
 
 		if (selectionMode == SelectionMode.ONE) {
-			selectedFolderNames.clear();
-			selectedFileNames.clear();
+			mSelectedFolderNames.clear();
+			mSelectedFileNames.clear();
 		}
 
-		markingType = getMarkingTypeFromSelectionMode(selectionMode);
-		setMarkabilityStatus(markingType);
+		mMarkingType = getMarkingTypeFromSelectionMode(selectionMode);
+		setMarkabilityStatus(mMarkingType);
 	}
 
 	/**
@@ -153,33 +153,33 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
 			final ArrayList<String> fileNames) {
 		super(activity, R.layout.text_view_initializing);
-		this.activity = activity;
+		this.mActivity = activity;
 
 		if (nestedListNames == null) {
-			this.nestedListNames = new ArrayList<String>();
+			this.mNestedListNames = new ArrayList<String>();
 		}
 		else {
-			this.nestedListNames = nestedListNames;
+			this.mNestedListNames = nestedListNames;
 			addAll(nestedListNames);
 		}
 		if (folderNames == null) {
-			this.folderNames = new ArrayList<String>();
+			this.mFolderNames = new ArrayList<String>();
 		}
 		else {
-			this.folderNames = folderNames;
+			this.mFolderNames = folderNames;
 			addAll(folderNames);
 		}
 		if (fileNames == null) {
-			this.fileNames = new ArrayList<String>();
+			this.mFileNames = new ArrayList<String>();
 		}
 		else {
-			this.fileNames = fileNames;
+			this.mFileNames = fileNames;
 			addAll(fileNames);
 		}
 
-		int totalSize = this.fileNames.size() + this.folderNames.size() + this.nestedListNames.size();
+		int totalSize = this.mFileNames.size() + this.mFolderNames.size() + this.mNestedListNames.size();
 
-		this.viewCache = new ViewCache(totalSize - 1, PRELOAD_SIZE);
+		this.mViewCache = new ViewCache(totalSize - 1, PRELOAD_SIZE);
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public DisplayImageListArrayAdapter(final Context context) {
 		super(context, R.layout.text_view_initializing);
-		this.activity = (DisplayImageListActivity) context;
+		this.mActivity = (DisplayImageListActivity) context;
 	}
 
 	/**
@@ -200,23 +200,23 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *            The folder added.
 	 */
 	public final void addFolder(final String folderName) {
-		if (fileNames.size() > 0) {
+		if (mFileNames.size() > 0) {
 			// only allowed if there are no files in the list
 			throw new UnsupportedOperationException("DisplayImageListArrayAdapter: added folderName after having fileNames");
 		}
-		if (folderNames.contains(folderName)) {
+		if (mFolderNames.contains(folderName)) {
 			return;
 		}
 
-		folderNames.add(folderName);
+		mFolderNames.add(folderName);
 		add(folderName);
-		viewCache.incrementMaxPosition();
+		mViewCache.incrementMaxPosition();
 		notifyDataSetChanged();
 	}
 
 	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {
-		return viewCache.get(position, parent);
+		return mViewCache.get(position, parent);
 	}
 
 	/**
@@ -231,18 +231,18 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The ThumbImageView.
 	 */
 	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent, final boolean sameThread) {
-		final boolean isNestedList = position < nestedListNames.size();
-		final boolean isFolder = !isNestedList && position < nestedListNames.size() + folderNames.size();
+		final boolean isNestedList = position < mNestedListNames.size();
+		final boolean isFolder = !isNestedList && position < mNestedListNames.size() + mFolderNames.size();
 
 		final ThumbImageView thumbImageView =
-				(ThumbImageView) LayoutInflater.from(activity).inflate(R.layout.adapter_display_images,
+				(ThumbImageView) LayoutInflater.from(mActivity).inflate(R.layout.adapter_display_images,
 						parent, false);
 
 		final String entryName;
 		final LoadableFileName displayFileName;
 
 		if (isNestedList) {
-			entryName = nestedListNames.get(position);
+			entryName = mNestedListNames.get(position);
 
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
@@ -261,12 +261,12 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				}
 			});
 
-			thumbImageView.initWithStyle(activity, ThumbStyle.IMAGE_LIST);
-			thumbImageView.setMarked(selectedNestedListNames.contains(entryName));
+			thumbImageView.initWithStyle(mActivity, ThumbStyle.IMAGE_LIST);
+			thumbImageView.setMarked(mSelectedNestedListNames.contains(entryName));
 			thumbImageView.setFolderName(entryName);
 		}
 		else if (isFolder) {
-			entryName = folderNames.get(position - nestedListNames.size());
+			entryName = mFolderNames.get(position - mNestedListNames.size());
 
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
@@ -281,24 +281,24 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				}
 			});
 
-			thumbImageView.initWithStyle(activity, ThumbStyle.FOLDER);
-			thumbImageView.setMarked(selectedFolderNames.contains(entryName));
+			thumbImageView.initWithStyle(mActivity, ThumbStyle.FOLDER);
+			thumbImageView.setMarked(mSelectedFolderNames.contains(entryName));
 			thumbImageView.setFolderName(new File(entryName).getName());
 		}
 		else {
-			entryName = fileNames.get(position - nestedListNames.size() - folderNames.size());
+			entryName = mFileNames.get(position - mNestedListNames.size() - mFolderNames.size());
 			displayFileName = new LoadableFileName(entryName);
 
-			thumbImageView.initWithStyle(activity, ThumbStyle.IMAGE);
-			thumbImageView.setMarked(selectedFileNames.contains(entryName));
+			thumbImageView.initWithStyle(mActivity, ThumbStyle.IMAGE);
+			thumbImageView.setMarked(mSelectedFileNames.contains(entryName));
 		}
 
-		thumbImageView.setMarkable(markingType);
-		thumbImageView.setImage(activity, displayFileName, sameThread);
+		thumbImageView.setMarkable(mMarkingType);
+		thumbImageView.setImage(mActivity, displayFileName, sameThread);
 
 		final String listName;
-		if (activity instanceof DisplayAllImagesActivity) {
-			listName = ((DisplayAllImagesActivity) activity).getListName();
+		if (mActivity instanceof DisplayAllImagesActivity) {
+			listName = ((DisplayAllImagesActivity) mActivity).getListName();
 		}
 		else {
 			listName = null;
@@ -306,43 +306,43 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 		final Set<String> selectionList;
 		if (isNestedList) {
-			selectionList = selectedNestedListNames;
+			selectionList = mSelectedNestedListNames;
 		}
 		else if (isFolder) {
-			selectionList = selectedFolderNames;
+			selectionList = mSelectedFolderNames;
 		}
 		else {
-			selectionList = selectedFileNames;
+			selectionList = mSelectedFileNames;
 		}
 
 		thumbImageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				ThumbImageView view = (ThumbImageView) v;
-				switch (selectionMode) {
+				switch (mSelectionMode) {
 				case ONE:
 					if (isNestedList) {
-						if (activity instanceof DisplayAllImagesActivity) {
-							((DisplayAllImagesActivity) activity).switchToImageList(entryName, CreationStyle.NONE);
+						if (mActivity instanceof DisplayAllImagesActivity) {
+							((DisplayAllImagesActivity) mActivity).switchToImageList(entryName, CreationStyle.NONE);
 						}
 					}
 					else if (isFolder) {
-						if (activity instanceof SelectImageFolderActivity) {
-							((SelectImageFolderActivity) activity).returnResult(entryName);
+						if (mActivity instanceof SelectImageFolderActivity) {
+							((SelectImageFolderActivity) mActivity).returnResult(entryName);
 						}
 						else {
-							DisplayImagesFromFolderActivity.startActivity(activity, entryName, false);
+							DisplayImagesFromFolderActivity.startActivity(mActivity, entryName, false);
 						}
 					}
 					else {
-						if (activity instanceof DisplayImagesFromFolderActivity) {
-							DisplayRandomImageActivity.startActivityForFolder(activity,
+						if (mActivity instanceof DisplayImagesFromFolderActivity) {
+							DisplayRandomImageActivity.startActivityForFolder(mActivity,
 									new File(entryName).getParent(),
 									displayFileName.getFileName());
 						}
 						else {
-							activity.startActivityForResult(DisplayRandomImageActivity
-									.createIntent(activity, null, displayFileName.getFileName(), true),
+							mActivity.startActivityForResult(DisplayRandomImageActivity
+									.createIntent(mActivity, null, displayFileName.getFileName(), true),
 									DisplayRandomImageActivity.REQUEST_CODE);
 						}
 					}
@@ -368,10 +368,10 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			@Override
 			public boolean onLongClick(final View v) {
 				if (isNestedList) {
-					DisplayNestedListDetailsActivity.startActivity(activity, entryName, listName);
+					DisplayNestedListDetailsActivity.startActivity(mActivity, entryName, listName);
 				}
 				else {
-					DisplayImageDetailsActivity.startActivity(activity, entryName, listName, true);
+					DisplayImageDetailsActivity.startActivity(mActivity, entryName, listName, true);
 				}
 				return true;
 			}
@@ -386,7 +386,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The selected files.
 	 */
 	public final ArrayList<String> getSelectedFiles() {
-		return new ArrayList<String>(selectedFileNames);
+		return new ArrayList<String>(mSelectedFileNames);
 	}
 
 	/**
@@ -397,10 +397,10 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public final void setSelectedFiles(final ArrayList<String> selectedFiles) {
 		if (selectedFiles == null) {
-			selectedFileNames.clear();
+			mSelectedFileNames.clear();
 		}
 		else {
-			selectedFileNames = new HashSet<String>(selectedFiles);
+			mSelectedFileNames = new HashSet<String>(selectedFiles);
 		}
 	}
 
@@ -410,7 +410,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The selected folders.
 	 */
 	public final ArrayList<String> getSelectedFolders() {
-		return new ArrayList<String>(selectedFolderNames);
+		return new ArrayList<String>(mSelectedFolderNames);
 	}
 
 	/**
@@ -421,10 +421,10 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public final void setSelectedFolders(final ArrayList<String> selectedFolders) {
 		if (selectedFolders == null) {
-			selectedFolderNames.clear();
+			mSelectedFolderNames.clear();
 		}
 		else {
-			selectedFolderNames = new HashSet<String>(selectedFolders);
+			mSelectedFolderNames = new HashSet<String>(selectedFolders);
 		}
 	}
 
@@ -434,7 +434,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The selected nested lists.
 	 */
 	public final ArrayList<String> getSelectedNestedLists() {
-		return new ArrayList<String>(selectedNestedListNames);
+		return new ArrayList<String>(mSelectedNestedListNames);
 	}
 
 	/**
@@ -445,10 +445,10 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 */
 	public final void setSelectedNestedLists(final ArrayList<String> selectedNestedLists) {
 		if (selectedNestedLists == null) {
-			selectedNestedListNames.clear();
+			mSelectedNestedListNames.clear();
 		}
 		else {
-			selectedNestedListNames = new HashSet<String>(selectedNestedLists);
+			mSelectedNestedListNames = new HashSet<String>(selectedNestedLists);
 		}
 	}
 
@@ -459,7 +459,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *            the new marking type.
 	 */
 	private void setMarkabilityStatus(final MarkingType newMarkingType) {
-		for (ThumbImageView view : viewCache.getCachedImages()) {
+		for (ThumbImageView view : mViewCache.getCachedImages()) {
 			view.setMarkable(newMarkingType);
 		}
 	}
@@ -470,13 +470,13 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return true if all have been selected, false if all have been deselected or if not in selection mode.
 	 */
 	public final boolean toggleSelectAll() {
-		if (selectionMode != SelectionMode.ONE) {
-			if (selectedFileNames.size() < fileNames.size() || selectedFolderNames.size() < folderNames.size()
-					|| selectedNestedListNames.size() < nestedListNames.size()) {
-				setSelectedFiles(fileNames);
-				setSelectedFolders(folderNames);
-				setSelectedNestedLists(nestedListNames);
-				for (ThumbImageView view : viewCache.getCachedImages()) {
+		if (mSelectionMode != SelectionMode.ONE) {
+			if (mSelectedFileNames.size() < mFileNames.size() || mSelectedFolderNames.size() < mFolderNames.size()
+					|| mSelectedNestedListNames.size() < mNestedListNames.size()) {
+				setSelectedFiles(mFileNames);
+				setSelectedFolders(mFolderNames);
+				setSelectedNestedLists(mNestedListNames);
+				for (ThumbImageView view : mViewCache.getCachedImages()) {
 					view.setMarked(true);
 				}
 				return true;
@@ -484,7 +484,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			else {
 				setSelectedFiles(null);
 				setSelectedFolders(null);
-				for (ThumbImageView view : viewCache.getCachedImages()) {
+				for (ThumbImageView view : mViewCache.getCachedImages()) {
 					view.setMarked(false);
 				}
 				return false;
@@ -497,7 +497,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * Cleanup the adapter cache and stop further preloading.
 	 */
 	public final void cleanupCache() {
-		viewCache.interrupt();
+		mViewCache.interrupt();
 	}
 
 	/**
@@ -525,53 +525,53 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		/**
 		 * The map from positions to views.
 		 */
-		private SparseArray<ThumbImageView> cache;
+		private SparseArray<ThumbImageView> mCache;
 
 		/**
 		 * The preload size.
 		 */
-		private int preloadSize;
+		private int mPreloadSize;
 
 		/**
 		 * The planned size of the cache.
 		 */
-		private int plannedSize;
+		private int mPlannedSize;
 
 		/**
 		 * The current number of views on the grid.
 		 */
-		private int currentViewSize = 1;
+		private int mCurrentViewSize = 1;
 
 		/**
 		 * The maximum position.
 		 */
-		private int maxPosition;
+		private int mMaxPosition;
 
 		/**
 		 * Center position of the cache.
 		 */
-		private volatile int currentCenter;
+		private volatile int mCurrentCenter;
 
 		/**
 		 * Flag indicating if a preload thread is running.
 		 */
-		private boolean isPreloadRunning = false;
+		private boolean mIsPreloadRunning = false;
 
 		/**
 		 * The parentView view h olding the cached views.
 		 */
-		private ViewGroup parentView = null;
+		private ViewGroup mParentView = null;
 
 		/**
 		 * Waiting preload thread. Always contains one element - this is done so that the array can be used as
 		 * synchronization object.
 		 */
-		private Thread[] waitingThreads = new Thread[1];
+		private Thread[] mWaitingThreads = new Thread[1];
 
 		/**
 		 * Flad indicating if the preload thread is interrupted and the thread is in the process of deletion.
 		 */
-		private boolean isInterrupted = false;
+		private boolean mIsInterrupted = false;
 
 		/**
 		 * Constructor of the cache.
@@ -582,17 +582,17 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 *            The number of views to be preloaded.
 		 */
 		private ViewCache(final int maxPosition, final int preloadSize) {
-			this.preloadSize = preloadSize;
-			this.maxPosition = maxPosition;
-			plannedSize = 2 * preloadSize;
-			cache = new SparseArray<ThumbImageView>(plannedSize);
+			this.mPreloadSize = preloadSize;
+			this.mMaxPosition = maxPosition;
+			mPlannedSize = 2 * preloadSize;
+			mCache = new SparseArray<ThumbImageView>(mPlannedSize);
 		}
 
 		/**
 		 * Increment the max position by 1.
 		 */
 		private void incrementMaxPosition() {
-			maxPosition++;
+			mMaxPosition++;
 		}
 
 		/**
@@ -604,8 +604,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 *            Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void doPreload(final int position, final boolean atEnd) {
-			synchronized (cache) {
-				isPreloadRunning = true;
+			synchronized (mCache) {
+				mIsPreloadRunning = true;
 				int startPosition;
 				int endPosition;
 
@@ -613,20 +613,20 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 				// Skipping 0, because this is frequently loaded.
 				if (atEnd) {
-					startPosition = Math.max(1, Math.min(position + preloadSize, maxPosition) - plannedSize + 1);
+					startPosition = Math.max(1, Math.min(position + mPreloadSize, mMaxPosition) - mPlannedSize + 1);
 				}
 				else {
-					startPosition = Math.max(1, position - preloadSize);
+					startPosition = Math.max(1, position - mPreloadSize);
 				}
-				endPosition = Math.min(startPosition + plannedSize - 1, maxPosition);
+				endPosition = Math.min(startPosition + mPlannedSize - 1, mMaxPosition);
 
-				currentCenter = atEnd ? position - currentViewSize / 2 : position + currentViewSize / 2;
+				mCurrentCenter = atEnd ? position - mCurrentViewSize / 2 : position + mCurrentViewSize / 2;
 
 				// clean up, ignoring the first index which carries position 0.
 				int index = 1;
-				while (index < cache.size()) {
-					if (cache.keyAt(index) < startPosition || cache.keyAt(index) > endPosition) {
-						cache.removeAt(index);
+				while (index < mCache.size()) {
+					if (mCache.keyAt(index) < startPosition || mCache.keyAt(index) > endPosition) {
+						mCache.removeAt(index);
 					}
 					else {
 						index++;
@@ -635,27 +635,27 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 				// preload.
 				for (int i = startPosition; i <= endPosition; i++) {
-					if (cache.indexOfKey(i) < 0) {
-						ThumbImageView view = createThumbImageView(i, parentView, true);
-						if (isInterrupted) {
-							isPreloadRunning = false;
+					if (mCache.indexOfKey(i) < 0) {
+						ThumbImageView view = createThumbImageView(i, mParentView, true);
+						if (mIsInterrupted) {
+							mIsPreloadRunning = false;
 							return;
 						}
-						cache.put(i, view);
+						mCache.put(i, view);
 
 						// Prevent wrong marking status in race conditions.
-						view.setMarkable(markingType);
+						view.setMarkable(mMarkingType);
 					}
 				}
 
-				synchronized (waitingThreads) {
-					if (waitingThreads[0] != null) {
-						waitingThreads[0].start();
-						waitingThreads[0] = null;
+				synchronized (mWaitingThreads) {
+					if (mWaitingThreads[0] != null) {
+						mWaitingThreads[0].start();
+						mWaitingThreads[0] = null;
 					}
 				}
 
-				isPreloadRunning = false;
+				mIsPreloadRunning = false;
 			}
 		}
 
@@ -668,7 +668,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 *            Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void triggerPreload(final int position, final boolean atEnd) {
-			if (position == 0 || isInterrupted) {
+			if (position == 0 || mIsInterrupted) {
 				return;
 			}
 
@@ -684,12 +684,12 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				}
 			};
 
-			synchronized (waitingThreads) {
-				if (isPreloadRunning) {
-					waitingThreads[0] = preloadThread;
+			synchronized (mWaitingThreads) {
+				if (mIsPreloadRunning) {
+					mWaitingThreads[0] = preloadThread;
 				}
 				else {
-					waitingThreads[0] = null;
+					mWaitingThreads[0] = null;
 					preloadThread.start();
 				}
 
@@ -700,18 +700,18 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 * Interrupt the preloading thread and clean the cache.
 		 */
 		private void interrupt() {
-			isInterrupted = true;
-			cache.clear();
+			mIsInterrupted = true;
+			mCache.clear();
 		}
 
 		/**
 		 * Adjust the planned size according to the size of the view.
 		 */
 		private void adjustPlannedSize() {
-			currentViewSize = parentView.getChildCount();
-			int wishSize = Math.max(currentViewSize * 2, currentViewSize + 2 * preloadSize);
-			if (plannedSize < wishSize) {
-				plannedSize = wishSize;
+			mCurrentViewSize = mParentView.getChildCount();
+			int wishSize = Math.max(mCurrentViewSize * 2, mCurrentViewSize + 2 * mPreloadSize);
+			if (mPlannedSize < wishSize) {
+				mPlannedSize = wishSize;
 			}
 		}
 
@@ -725,23 +725,23 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 * @return The view from cache, if existing. Otherwise a new view.
 		 */
 		private ThumbImageView get(final int position, final ViewGroup parent) {
-			if (parentView == null) {
-				parentView = parent;
+			if (mParentView == null) {
+				mParentView = parent;
 			}
-			else if (parentView != parent) {
-				parentView = parent;
-				cache.clear();
+			else if (mParentView != parent) {
+				mParentView = parent;
+				mCache.clear();
 			}
 
 			ThumbImageView thumbImageView;
-			if (cache.indexOfKey(position) >= 0) {
-				thumbImageView = cache.get(position);
+			if (mCache.indexOfKey(position) >= 0) {
+				thumbImageView = mCache.get(position);
 			}
 			else {
-				thumbImageView = createThumbImageView(position, parentView, false);
-				cache.put(position, thumbImageView);
+				thumbImageView = createThumbImageView(position, mParentView, false);
+				mCache.put(position, thumbImageView);
 			}
-			triggerPreload(position, position > currentCenter);
+			triggerPreload(position, position > mCurrentCenter);
 
 			return thumbImageView;
 		}
@@ -752,9 +752,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 * @return the array of cached images.
 		 */
 		private ThumbImageView[] getCachedImages() {
-			ThumbImageView[] result = new ThumbImageView[cache.size()];
-			for (int i = 0; i < cache.size(); i++) {
-				result[i] = cache.valueAt(i);
+			ThumbImageView[] result = new ThumbImageView[mCache.size()];
+			for (int i = 0; i < mCache.size(); i++) {
+				result[i] = mCache.valueAt(i);
 			}
 			return result;
 		}

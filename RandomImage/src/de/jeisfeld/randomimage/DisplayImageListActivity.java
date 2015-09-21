@@ -19,37 +19,37 @@ public abstract class DisplayImageListActivity extends Activity {
 	/**
 	 * Temporary storage for selected files.
 	 */
-	private String[] selectedFiles;
+	private String[] mSelectedFiles;
 	/**
 	 * Temporary storage for selected folders.
 	 */
-	private String[] selectedFolders;
+	private String[] mSelectedFolders;
 	/**
 	 * Temporary storage for selected lists.
 	 */
-	private String[] selectedLists;
+	private String[] mSelectedLists;
 
 	/**
 	 * The view showing the photos.
 	 */
-	private GridView gridView;
+	private GridView mGridView;
 
 	protected final GridView getGridView() {
-		return gridView;
+		return mGridView;
 	}
 
 	/**
 	 * The view showing the name of the list or folder.
 	 */
-	private TextView textViewTitle;
+	private TextView mTextViewTitle;
 
 	/**
 	 * The adapter handling the list of images.
 	 */
-	private DisplayImageListArrayAdapter adapter;
+	private DisplayImageListArrayAdapter mAdapter;
 
 	protected final DisplayImageListArrayAdapter getAdapter() {
-		return adapter;
+		return mAdapter;
 	}
 
 	// OVERRIDABLE
@@ -57,13 +57,13 @@ public abstract class DisplayImageListActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_images);
-		gridView = (GridView) findViewById(R.id.gridViewDisplayImages);
-		textViewTitle = (TextView) findViewById(R.id.textViewTitle);
+		mGridView = (GridView) findViewById(R.id.gridViewDisplayImages);
+		mTextViewTitle = (TextView) findViewById(R.id.textViewTitle);
 
 		if (savedInstanceState != null) {
-			selectedFiles = savedInstanceState.getStringArray("selectedFiles");
-			selectedFolders = savedInstanceState.getStringArray("selectedFolders");
-			selectedLists = savedInstanceState.getStringArray("selectedLists");
+			mSelectedFiles = savedInstanceState.getStringArray("selectedFiles");
+			mSelectedFolders = savedInstanceState.getStringArray("selectedFolders");
+			mSelectedLists = savedInstanceState.getStringArray("selectedLists");
 		}
 	}
 
@@ -79,15 +79,15 @@ public abstract class DisplayImageListActivity extends Activity {
 	 */
 	protected final void setAdapter(final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
 			final ArrayList<String> fileNames) {
-		adapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames);
-		getGridView().setAdapter(adapter);
-		if (selectedFiles != null) {
-			adapter.setSelectedFiles(new ArrayList<String>(Arrays.asList(selectedFiles)));
-			adapter.setSelectedFolders(new ArrayList<String>(Arrays.asList(selectedFolders)));
-			adapter.setSelectedNestedLists(new ArrayList<String>(Arrays.asList(selectedLists)));
-			selectedFiles = null;
-			selectedFolders = null;
-			selectedLists = null;
+		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames);
+		getGridView().setAdapter(mAdapter);
+		if (mSelectedFiles != null) {
+			mAdapter.setSelectedFiles(new ArrayList<String>(Arrays.asList(mSelectedFiles)));
+			mAdapter.setSelectedFolders(new ArrayList<String>(Arrays.asList(mSelectedFolders)));
+			mAdapter.setSelectedNestedLists(new ArrayList<String>(Arrays.asList(mSelectedLists)));
+			mSelectedFiles = null;
+			mSelectedFolders = null;
+			mSelectedLists = null;
 		}
 	}
 
@@ -98,15 +98,15 @@ public abstract class DisplayImageListActivity extends Activity {
 	 *            The title displayed on top of the display.
 	 */
 	protected final void setTitle(final String title) {
-		textViewTitle.setText(title);
+		mTextViewTitle.setText(title);
 	}
 
 	// OVERRIDABLE
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (adapter != null) {
-			adapter.cleanupCache();
+		if (mAdapter != null) {
+			mAdapter.cleanupCache();
 		}
 	}
 

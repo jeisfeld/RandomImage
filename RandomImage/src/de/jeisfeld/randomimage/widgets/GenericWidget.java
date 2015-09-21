@@ -50,23 +50,23 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * The names of the image lists associated to any widget.
 	 */
-	private static SparseArray<String> listNames = new SparseArray<String>();
+	private static SparseArray<String> mListNames = new SparseArray<String>();
 
 	/**
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
 	 * complete the animation.
 	 */
-	private static Set<ButtonAnimator> buttonAnimators = new HashSet<ButtonAnimator>();
+	private static Set<ButtonAnimator> mButtonAnimators = new HashSet<ButtonAnimator>();
 
 	/**
 	 * A temporary storage listing appWidgetIds that should change the image with the next update.
 	 */
-	private static Set<Integer> dirtyWidgets = new HashSet<Integer>();
+	private static Set<Integer> mDirtyWidgets = new HashSet<Integer>();
 
 	/**
 	 * Id of an app widget triggered for update by user.
 	 */
-	private static Integer userUpdatedAppWidgetId = null;
+	private static Integer mUserUpdatedAppWidgetId = null;
 
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
@@ -77,14 +77,14 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				boolean updateFlag = intent.getBooleanExtra(EXTRA_NEW_IMAGE, false);
 				if (updateFlag) {
 					for (int i = 0; i < appWidgetIds.length; i++) {
-						dirtyWidgets.add(appWidgetIds[i]);
+						mDirtyWidgets.add(appWidgetIds[i]);
 					}
 				}
 			}
-			if (appWidgetIds != null && appWidgetIds.length == 1 && userUpdatedAppWidgetId == null) {
+			if (appWidgetIds != null && appWidgetIds.length == 1 && mUserUpdatedAppWidgetId == null) {
 				boolean updateFlag = intent.getBooleanExtra(EXTRA_USER_TRIGGERED, false);
 				if (updateFlag) {
-					userUpdatedAppWidgetId = appWidgetIds[0];
+					mUserUpdatedAppWidgetId = appWidgetIds[0];
 				}
 			}
 		}
@@ -100,12 +100,12 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			String listName = getListName(appWidgetId);
-			boolean userTriggered = userUpdatedAppWidgetId == null ? false : userUpdatedAppWidgetId == appWidgetId;
+			boolean userTriggered = mUserUpdatedAppWidgetId == null ? false : mUserUpdatedAppWidgetId == appWidgetId;
 
-			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, dirtyWidgets.contains(appWidgetId), userTriggered);
+			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, mDirtyWidgets.contains(appWidgetId), userTriggered);
 
-			dirtyWidgets.remove(appWidgetId);
-			userUpdatedAppWidgetId = null;
+			mDirtyWidgets.remove(appWidgetId);
+			mUserUpdatedAppWidgetId = null;
 		}
 	}
 
@@ -136,7 +136,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
-			listNames.remove(appWidgetId);
+			mListNames.remove(appWidgetId);
 
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
@@ -151,13 +151,13 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @return The list name.
 	 */
 	protected static final String getListName(final int appWidgetId) {
-		String listName = listNames.get(appWidgetId);
+		String listName = mListNames.get(appWidgetId);
 		if (listName == null) {
 			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
 			if (listName == null || listName.length() == 0) {
 				listName = ImageRegistry.getCurrentListName();
 			}
-			listNames.put(appWidgetId, listName);
+			mListNames.put(appWidgetId, listName);
 		}
 		return listName;
 	}
@@ -174,7 +174,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	public static final void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
-		listNames.put(appWidgetId, listName);
+		mListNames.put(appWidgetId, listName);
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
 		if (interval > 0) {
@@ -329,7 +329,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				if (oldName.equals(getListName(appWidgetId))) {
 					PreferenceUtil
 							.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, newName);
-					listNames.put(appWidgetId, newName);
+					mListNames.put(appWidgetId, newName);
 					updateInstances(widgetClass, appWidgetId);
 				}
 			}
@@ -343,27 +343,27 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		/**
 		 * The RemoteViews used for animating buttons.
 		 */
-		private RemoteViews remoteViews;
+		private RemoteViews mRemoteViews;
 
 		/**
 		 * A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 		 */
-		private AppWidgetManager appWidgetManager;
+		private AppWidgetManager mAppWidgetManager;
 
 		/**
 		 * The appWidgetId of the widget whose buttons should be animated.
 		 */
-		private int appWidgetId;
+		private int mAppWidgetId;
 
 		/**
 		 * The buttonIds to be animated.
 		 */
-		private int[] buttonIds;
+		private int[] mButtonIds;
 
 		/**
 		 * The AnimatorSet running the animation.
 		 */
-		private AnimatorSet animatorSet;
+		private AnimatorSet mAnimatorSet;
 
 		/**
 		 * Create and animate the ButtonAnimator.
@@ -381,12 +381,12 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 */
 		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager,
 				final int appWidgetId, final int widgetResource, final int... buttonIds) {
-			buttonAnimators.add(this);
+			mButtonAnimators.add(this);
 
-			this.appWidgetId = appWidgetId;
-			this.appWidgetManager = appWidgetManager;
-			this.buttonIds = buttonIds;
-			remoteViews = new RemoteViews(context.getPackageName(), widgetResource);
+			this.mAppWidgetId = appWidgetId;
+			this.mAppWidgetManager = appWidgetManager;
+			this.mButtonIds = buttonIds;
+			mRemoteViews = new RemoteViews(context.getPackageName(), widgetResource);
 
 			final ObjectAnimator fadeOut =
 					ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
@@ -395,7 +395,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				@Override
 				public void onAnimationStart(final Animator animation) {
 					for (int buttonId : buttonIds) {
-						remoteViews.setViewVisibility(buttonId, View.VISIBLE);
+						mRemoteViews.setViewVisibility(buttonId, View.VISIBLE);
 					}
 				}
 
@@ -407,9 +407,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				@Override
 				public void onAnimationEnd(final Animator animation) {
 					for (int buttonId : buttonIds) {
-						remoteViews.setViewVisibility(buttonId, View.INVISIBLE);
+						mRemoteViews.setViewVisibility(buttonId, View.INVISIBLE);
 					}
-					buttonAnimators.remove(this);
+					mButtonAnimators.remove(this);
 				}
 
 				@Override
@@ -418,8 +418,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				}
 			});
 
-			animatorSet = new AnimatorSet();
-			animatorSet.play(fadeOut);
+			mAnimatorSet = new AnimatorSet();
+			mAnimatorSet.play(fadeOut);
 		}
 
 		/**
@@ -430,18 +430,18 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 */
 		@SuppressWarnings("unused")
 		private void setAlpha(final int alpha) {
-			for (int buttonId : buttonIds) {
-				remoteViews.setInt(buttonId, "setAlpha", alpha);
-				remoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
+			for (int buttonId : mButtonIds) {
+				mRemoteViews.setInt(buttonId, "setAlpha", alpha);
+				mRemoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
 			}
-			appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
+			mAppWidgetManager.partiallyUpdateAppWidget(mAppWidgetId, mRemoteViews);
 		}
 
 		/**
 		 * Start the animation.
 		 */
 		public void start() {
-			animatorSet.start();
+			mAnimatorSet.start();
 		}
 	}
 

@@ -35,7 +35,7 @@ public class SelectDirectoryActivity extends Activity {
 	/**
 	 * Flag storing information if the image list was updated.
 	 */
-	private boolean updatedList = false;
+	private boolean mUpdatedList = false;
 
 	/**
 	 * Static helper method to start the activity.
@@ -53,7 +53,7 @@ public class SelectDirectoryActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		if (savedInstanceState != null) {
-			updatedList = getIntent().getBooleanExtra("updatedList", false);
+			mUpdatedList = getIntent().getBooleanExtra("updatedList", false);
 		}
 
 		DirectoryChooserDialogFragment.displayDirectoryChooserDialog(SelectDirectoryActivity.this,
@@ -74,7 +74,7 @@ public class SelectDirectoryActivity extends Activity {
 						boolean success = imageList.addFolder(chosenDir);
 						if (success) {
 							imageList.update(true);
-							updatedList = true;
+							mUpdatedList = true;
 						}
 						sendResult(null);
 					}
@@ -118,7 +118,7 @@ public class SelectDirectoryActivity extends Activity {
 										DialogUtil.displayToast(SelectDirectoryActivity.this,
 												R.string.toast_added_single, addedFoldersString);
 										imageList.update(true);
-										updatedList = true;
+										mUpdatedList = true;
 									}
 								}
 
@@ -139,7 +139,7 @@ public class SelectDirectoryActivity extends Activity {
 
 	@Override
 	public final void onSaveInstanceState(final Bundle outState) {
-		outState.putBoolean("updatedList", updatedList);
+		outState.putBoolean("updatedList", mUpdatedList);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -190,10 +190,10 @@ public class SelectDirectoryActivity extends Activity {
 		if (chosenDir != null) {
 			resultData.putString(STRING_RESULT_FOLDER, chosenDir);
 		}
-		resultData.putBoolean(STRING_RESULT_UPDATED_LIST, updatedList);
+		resultData.putBoolean(STRING_RESULT_UPDATED_LIST, mUpdatedList);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
-		setResult(chosenDir != null || updatedList ? RESULT_OK : RESULT_CANCELED, intent);
+		setResult(chosenDir != null || mUpdatedList ? RESULT_OK : RESULT_CANCELED, intent);
 		finish();
 	}
 

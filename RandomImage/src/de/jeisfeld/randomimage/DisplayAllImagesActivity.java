@@ -47,31 +47,31 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	/**
 	 * The names of the nested lists to be displayed.
 	 */
-	private ArrayList<String> nestedListNames;
+	private ArrayList<String> mNestedListNames;
 
 	/**
 	 * The names of the folders to be displayed.
 	 */
-	private ArrayList<String> folderNames;
+	private ArrayList<String> mFolderNames;
 
 	/**
 	 * The names of the files to be displayed.
 	 */
-	private ArrayList<String> fileNames;
+	private ArrayList<String> mFileNames;
 
 	/**
 	 * The name of the image list to be displayed.
 	 */
-	private String listName;
+	private String mListName;
 
 	protected final String getListName() {
-		return listName;
+		return mListName;
 	}
 
 	/**
 	 * The current action within this activity.
 	 */
-	private CurrentAction currentAction = CurrentAction.DISPLAY;
+	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
 
 	/**
 	 * Static helper method to start the activity.
@@ -95,25 +95,25 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		super.onCreate(savedInstanceState);
 
 		if (savedInstanceState != null) {
-			listName = savedInstanceState.getString("listName");
+			mListName = savedInstanceState.getString("listName");
 		}
 		else {
-			listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+			mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		}
 
-		if (listName == null) {
-			listName = ImageRegistry.getCurrentListName();
+		if (mListName == null) {
+			mListName = ImageRegistry.getCurrentListName();
 		}
 
 		// This step initializes the adapter.
-		switchToImageList(listName, CreationStyle.NONE);
+		switchToImageList(mListName, CreationStyle.NONE);
 
 		if (savedInstanceState != null) {
-			currentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
-			changeAction(currentAction);
+			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
+			changeAction(mCurrentAction);
 		}
 
-		if (isEmpty(fileNames) && isEmpty(folderNames) && isEmpty(nestedListNames)) {
+		if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
 		}
 
@@ -133,14 +133,14 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void fillListOfImages() {
 		ImageList imageList = ImageRegistry.getCurrentImageList(true);
-		fileNames = imageList.getFileNames();
-		folderNames = imageList.getFolderNames();
-		nestedListNames = imageList.getNestedListNames();
+		mFileNames = imageList.getFileNames();
+		mFolderNames = imageList.getFolderNames();
+		mNestedListNames = imageList.getNestedListNames();
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
-		setAdapter(nestedListNames, folderNames, fileNames);
-		setTitle(listName);
+		setAdapter(mNestedListNames, mFolderNames, mFileNames);
+		setTitle(mListName);
 		invalidateOptionsMenu();
 	}
 
@@ -157,7 +157,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
-		switch (currentAction) {
+		switch (mCurrentAction) {
 		case DISPLAY:
 			getMenuInflater().inflate(R.menu.display_image_list, menu);
 
@@ -165,7 +165,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				menu.findItem(R.id.action_switch_list).setEnabled(false);
 				menu.findItem(R.id.action_delete_list).setEnabled(false);
 			}
-			if (isEmpty(fileNames) && isEmpty(folderNames) && isEmpty(nestedListNames)) {
+			if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 				MenuItem menuItemRemove = menu.findItem(R.id.action_select_images_for_removal);
 				menuItemRemove.setEnabled(false);
 				Drawable icon =
@@ -205,7 +205,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	public final boolean onOptionsItemSelected(final MenuItem item) {
 		int id = item.getItemId();
 
-		switch (currentAction) {
+		switch (mCurrentAction) {
 		case DISPLAY:
 			return onOptionsItemSelectedDisplay(id);
 		case REMOVE:
@@ -359,7 +359,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					public void onDialogNegativeClick(final DialogFragment dialog) {
 						// do nothing.
 					}
-				}, R.string.button_remove, R.string.dialog_confirmation_remove, listName,
+				}, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
 						imageFolderString);
 
 			}
@@ -482,7 +482,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * @return true if successful.
 	 */
 	protected final boolean switchToImageList(final String name, final CreationStyle creationStyle) {
-		listName = name;
+		mListName = name;
 		boolean success = ImageRegistry.switchToImageList(name, creationStyle, true);
 		if (success) {
 			fillListOfImages();
@@ -495,7 +495,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void switchImageList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		listNames.remove(listName);
+		listNames.remove(mListName);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
@@ -522,7 +522,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void deleteImageList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		listNames.remove(listName);
+		listNames.remove(mListName);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
@@ -582,7 +582,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
 						String name = text == null ? null : text.trim();
 
-						if (listName.equals(name)) {
+						if (mListName.equals(name)) {
 							// If name unchanged, then do nothing.
 							return;
 						}
@@ -626,7 +626,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					public void onDialogNegativeClick(final DialogFragment dialog) {
 						// do nothing
 					}
-				}, R.string.title_dialog_enter_list_name, R.string.button_ok, listName,
+				}, R.string.title_dialog_enter_list_name, R.string.button_ok, mListName,
 						R.string.dialog_input_enter_list_name_changed);
 	}
 
@@ -769,8 +769,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void includeOtherList() {
 		ArrayList<String> listNames = ImageRegistry.getImageListNames();
-		listNames.remove(listName);
-		listNames.removeAll(nestedListNames);
+		listNames.remove(mListName);
+		listNames.removeAll(mNestedListNames);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
@@ -803,7 +803,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
-			currentAction = action;
+			mCurrentAction = action;
 			setSelectionMode(action == CurrentAction.REMOVE ? SelectionMode.MULTIPLE_REMOVE : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
@@ -812,8 +812,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putSerializable("currentAction", currentAction);
-		outState.putSerializable("listName", listName);
+		outState.putSerializable("currentAction", mCurrentAction);
+		outState.putSerializable("listName", mListName);
 	}
 
 	@Override

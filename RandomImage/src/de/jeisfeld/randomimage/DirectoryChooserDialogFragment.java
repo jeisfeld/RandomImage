@@ -64,52 +64,52 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * The text view showing the current folder.
 	 */
-	private TextView currentFolderView;
+	private TextView mCurrentFolderView;
 
 	/**
 	 * The list view showing the sub-elements.
 	 */
-	private ListView listView;
+	private ListView mListView;
 
 	/**
 	 * The list view showing the sub-elements.
 	 */
-	private GridView gridView;
+	private GridView mGridView;
 
 	/**
 	 * The current folder.
 	 */
-	private String currentFolder = "";
+	private String mCurrentFolder = "";
 
 	/**
 	 * The sub-elements of the current folder.
 	 */
-	private List<String> subdirs = null;
+	private List<String> mSubdirs = null;
 
 	/**
 	 * The list adapter handling the sub-elements of the current folder.
 	 */
-	private ArrayAdapter<String> listAdapter = null;
+	private ArrayAdapter<String> mListAdapter = null;
 
 	/**
 	 * The backstack of last browsed folders.
 	 */
-	private Stack<String> backStack = new Stack<String>();
+	private Stack<String> mBackStack = new Stack<String>();
 
 	/**
 	 * A reference to the shown dialog.
 	 */
-	private AlertDialog dirsDialog;
+	private AlertDialog mDirsDialog;
 
 	/**
 	 * The listener notified when finishing the dialog.
 	 */
-	private ChosenDirectoryListener listener = null;
+	private ChosenDirectoryListener mListener = null;
 
 	/**
 	 * An optional listener reacting on item long clicks.
 	 */
-	private OnFolderLongClickListener longClickListener = null;
+	private OnFolderLongClickListener mLongClickListener = null;
 
 	/**
 	 * Create a DirectoryChooserDialogFragment.
@@ -155,8 +155,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 
 		// retrieve arguments
 		String dir = getArguments().getString(STRING_EXTRA_FOLDER);
-		listener = (ChosenDirectoryListener) getArguments().getSerializable(STRING_EXTRA_LISTENER);
-		longClickListener = (OnFolderLongClickListener) getArguments()
+		mListener = (ChosenDirectoryListener) getArguments().getSerializable(STRING_EXTRA_LISTENER);
+		mLongClickListener = (OnFolderLongClickListener) getArguments()
 				.getSerializable(STRING_EXTRA_LONG_CLICK_LISTENER);
 
 		if (dir == null) {
@@ -180,8 +180,8 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			return null;
 		}
 
-		currentFolder = dir;
-		subdirs = getDirectories(dir);
+		mCurrentFolder = dir;
+		mSubdirs = getDirectories(dir);
 
 		Context context = getActivity();
 
@@ -196,80 +196,80 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		dialogBuilder.setView(layout);
 
 		((TextView) layout.findViewById(R.id.textViewMessage)).setText(R.string.dialog_select_image_folder_for_add);
-		currentFolderView = (TextView) layout.findViewById(R.id.textCurrentFolder);
-		currentFolderView.setText(dir);
+		mCurrentFolderView = (TextView) layout.findViewById(R.id.textCurrentFolder);
+		mCurrentFolderView.setText(dir);
 
-		listView = (ListView) layout.findViewById(R.id.listViewSubfolders);
-		listAdapter = createListAdapter(subdirs);
-		listView.setAdapter(listAdapter);
+		mListView = (ListView) layout.findViewById(R.id.listViewSubfolders);
+		mListAdapter = createListAdapter(mSubdirs);
+		mListView.setAdapter(mListAdapter);
 
-		listView.setOnItemClickListener(new OnItemClickListener() {
+		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				backStack.push(currentFolder);
-				currentFolder += File.separator + listAdapter.getItem(position);
+				mBackStack.push(mCurrentFolder);
+				mCurrentFolder += File.separator + mListAdapter.getItem(position);
 				updateDirectory();
 			}
 		});
 
-		if (longClickListener != null) {
-			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+		if (mLongClickListener != null) {
+			mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 				@Override
 				public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position,
 						final long id) {
-					final String selectedFolder = currentFolder + File.separator + listAdapter.getItem(position);
-					return longClickListener.onFolderLongClick(selectedFolder);
+					final String selectedFolder = mCurrentFolder + File.separator + mListAdapter.getItem(position);
+					return mLongClickListener.onFolderLongClick(selectedFolder);
 				}
 			});
 		}
 
-		gridView = (GridView) layout.findViewById(R.id.gridViewImages);
+		mGridView = (GridView) layout.findViewById(R.id.gridViewImages);
 
 		dialogBuilder.setCancelable(false);
 
 		dialogBuilder.setNeutralButton(R.string.button_add_images, new OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
-				if (listener != null) {
+				if (mListener != null) {
 					// Call registered listener supplied with the chosen directory
-					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, currentFolder);
-					listener.onAddImages(currentFolder);
+					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
+					mListener.onAddImages(mCurrentFolder);
 				}
 			}
 		}).setPositiveButton(R.string.button_add_folder, new OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
-				if (listener != null) {
+				if (mListener != null) {
 					// Call registered listener supplied with the chosen directory
-					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, currentFolder);
-					listener.onAddFolder(currentFolder);
+					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
+					mListener.onAddFolder(mCurrentFolder);
 				}
 			}
 		}).setNegativeButton(R.string.button_cancel, new OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
-				if (listener != null) {
-					listener.onCancelled();
+				if (mListener != null) {
+					mListener.onCancelled();
 				}
 			}
 		});
 
-		dirsDialog = dialogBuilder.create();
+		mDirsDialog = dialogBuilder.create();
 
-		dirsDialog.setOnKeyListener(new OnKeyListener() {
+		mDirsDialog.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
 					// Back button pressed - go to the last directory if
 					// existing - otherwise cancel the dialog.
-					if (backStack.size() == 0) {
-						dirsDialog.dismiss();
-						if (listener != null) {
-							listener.onCancelled();
+					if (mBackStack.size() == 0) {
+						mDirsDialog.dismiss();
+						if (mListener != null) {
+							mListener.onCancelled();
 						}
 					}
 					else {
-						currentFolder = backStack.pop();
+						mCurrentFolder = mBackStack.pop();
 						updateDirectory();
 					}
 
@@ -281,7 +281,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			}
 		});
 
-		return dirsDialog;
+		return mDirsDialog;
 	}
 
 	@Override
@@ -297,20 +297,20 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	 *            The new enablement status.
 	 */
 	private void enablePositiveButton(final boolean enabled) {
-		dirsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enabled);
-		dirsDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(enabled);
+		mDirsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enabled);
+		mDirsDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setEnabled(enabled);
 	}
 
 	/**
 	 * Fill the GridView to display the images.
 	 */
 	private void fillGridView() {
-		ArrayList<String> imageFiles = ImageUtil.getImagesInFolder(currentFolder);
+		ArrayList<String> imageFiles = ImageUtil.getImagesInFolder(mCurrentFolder);
 
 		enablePositiveButton(imageFiles.size() > 0);
 
-		gridView.setAdapter(new DisplayImagesAdapter(imageFiles));
-		gridView.setVisibility(imageFiles.size() > 0 ? View.VISIBLE : View.GONE);
+		mGridView.setAdapter(new DisplayImagesAdapter(imageFiles));
+		mGridView.setVisibility(imageFiles.size() > 0 ? View.VISIBLE : View.GONE);
 	}
 
 	/**
@@ -363,21 +363,21 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	 */
 	private void updateDirectory() {
 		try {
-			currentFolder = new File(currentFolder).getCanonicalPath();
+			mCurrentFolder = new File(mCurrentFolder).getCanonicalPath();
 		}
 		catch (IOException e) {
 			// i
 		}
-		if (currentFolder == null || "".equals(currentFolder)) {
-			currentFolder = File.separator;
+		if (mCurrentFolder == null || "".equals(mCurrentFolder)) {
+			mCurrentFolder = File.separator;
 		}
 
-		subdirs.clear();
-		subdirs.addAll(getDirectories(currentFolder));
-		currentFolderView.setText(currentFolder);
+		mSubdirs.clear();
+		mSubdirs.addAll(getDirectories(mCurrentFolder));
+		mCurrentFolderView.setText(mCurrentFolder);
 
-		listAdapter.notifyDataSetChanged();
-		listView.smoothScrollToPositionFromTop(0, 0, 100); // MAGIC_NUMBER
+		mListAdapter.notifyDataSetChanged();
+		mListView.smoothScrollToPositionFromTop(0, 0, 100); // MAGIC_NUMBER
 
 		fillGridView();
 	}
@@ -408,11 +408,11 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 
 	@Override
 	public final void onSaveInstanceState(final Bundle outState) {
-		if (listener != null || longClickListener != null) {
+		if (mListener != null || mLongClickListener != null) {
 			// Typically cannot serialize the listener due to its reference to
 			// the activity.
-			listener = null;
-			longClickListener = null;
+			mListener = null;
+			mLongClickListener = null;
 			outState.putBoolean("preventRecreation", true);
 		}
 		super.onSaveInstanceState(outState);
@@ -465,7 +465,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		/**
 		 * The names of the image files displayed.
 		 */
-		private ArrayList<String> fileNames;
+		private ArrayList<String> mFileNames;
 
 		/**
 		 * Constructor for the adapter.
@@ -475,7 +475,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 */
 		public DisplayImagesAdapter(final ArrayList<String> fileNames) {
 			super(getActivity(), R.layout.text_view_initializing, fileNames);
-			this.fileNames = fileNames;
+			this.mFileNames = fileNames;
 		}
 
 		/**
@@ -503,7 +503,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			new Thread() {
 				@Override
 				public void run() {
-					final Bitmap bitmap = ImageUtil.getImageBitmap(fileNames.get(position),
+					final Bitmap bitmap = ImageUtil.getImageBitmap(mFileNames.get(position),
 							MediaStoreUtil.MINI_THUMB_SIZE);
 
 					try {

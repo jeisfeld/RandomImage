@@ -18,30 +18,30 @@ public class ListMenuView extends ListView {
 	/**
 	 * The ids of resources defining the list entries.
 	 */
-	private final ArrayList<Integer> resourceIds = new ArrayList<Integer>();
+	private final ArrayList<Integer> mResourceIds = new ArrayList<Integer>();
 
 	/**
 	 * The listeners for the list entries.
 	 */
-	private final ArrayList<OnClickListener> listeners = new ArrayList<OnClickListener>();
+	private final ArrayList<OnClickListener> mListeners = new ArrayList<OnClickListener>();
 
 	/**
 	 * A map from resourceId to its position in the list.
 	 */
-	private final SparseIntArray resourcePositions = new SparseIntArray();
+	private final SparseIntArray mResourcePositions = new SparseIntArray();
 
 	/**
 	 * The entries in the list. Key is the list position!
 	 */
-	private final ArrayList<String> listValues = new ArrayList<String>();
+	private final ArrayList<String> mListValues = new ArrayList<String>();
 
 	/**
 	 * The listener reacting on clicks on the list items.
 	 */
-	private final OnItemClickListener onItemClickListener = new OnItemClickListener() {
+	private final OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-			OnClickListener listener = listeners.get((int) id);
+			OnClickListener listener = mListeners.get((int) id);
 			if (listener != null) {
 				listener.onClick(view);
 			}
@@ -86,7 +86,7 @@ public class ListMenuView extends ListView {
 	 */
 	public ListMenuView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setOnItemClickListener(onItemClickListener);
+		setOnItemClickListener(mOnItemClickListener);
 	}
 
 	/**
@@ -98,13 +98,13 @@ public class ListMenuView extends ListView {
 	 *            A listener to be called when the item is clicked.
 	 */
 	public final void addItem(final int resourceId, final OnClickListener listener) {
-		if (!resourceIds.contains(resourceId)) {
-			resourceIds.add(resourceId);
-			resourcePositions.put(resourceId, resourceIds.size() - 1);
-			listValues.add(getContext().getString(resourceId));
+		if (!mResourceIds.contains(resourceId)) {
+			mResourceIds.add(resourceId);
+			mResourcePositions.put(resourceId, mResourceIds.size() - 1);
+			mListValues.add(getContext().getString(resourceId));
 		}
 		// If resourceId is already there, just replace the listener.
-		listeners.add(listener);
+		mListeners.add(listener);
 	}
 
 	/**
@@ -114,12 +114,12 @@ public class ListMenuView extends ListView {
 	 *            The resourceId of the item to be removed.
 	 */
 	public final void removeItem(final int resourceId) {
-		if (resourceIds.contains(resourceId)) {
-			int position = resourcePositions.get(resourceId);
-			listeners.remove(position);
-			resourceIds.remove(position);
-			listValues.remove(position);
-			resourcePositions.delete(resourceId);
+		if (mResourceIds.contains(resourceId)) {
+			int position = mResourcePositions.get(resourceId);
+			mListeners.remove(position);
+			mResourceIds.remove(position);
+			mListValues.remove(position);
+			mResourcePositions.delete(resourceId);
 		}
 	}
 
@@ -128,7 +128,7 @@ public class ListMenuView extends ListView {
 	 */
 	public final void setAdapter() {
 		ArrayAdapter<String> directoryListAdapter =
-				new ArrayAdapter<String>(getContext(), R.layout.adapter_list_names, listValues);
+				new ArrayAdapter<String>(getContext(), R.layout.adapter_list_names, mListValues);
 		setAdapter(directoryListAdapter);
 	}
 

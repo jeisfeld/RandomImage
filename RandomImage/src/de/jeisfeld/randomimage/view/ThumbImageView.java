@@ -30,32 +30,32 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * The context in which this is used.
 	 */
-	private Context context;
+	private Context mContext;
 
 	/**
 	 * Flag indicating if the view is marked. (Similar to selection, but more stable)
 	 */
-	private boolean isMarked = false;
+	private boolean mIsMarked = false;
 
 	/**
 	 * Flag indicating if it is possible to mark the view.
 	 */
-	private MarkingType markingType = MarkingType.NONE;
+	private MarkingType mMarkingType = MarkingType.NONE;
 
 	/**
 	 * The style in which the thumb is displayed.
 	 */
-	private ThumbStyle thumbStyle = ThumbStyle.IMAGE;
+	private ThumbStyle mThumbStyle = ThumbStyle.IMAGE;
 
 	/**
 	 * The imageView displaying the thumb.
 	 */
-	private ImageView imageView;
+	private ImageView mImageView;
 
 	/**
 	 * The checkbox for marking.
 	 */
-	private CheckBox checkBoxMarked;
+	private CheckBox mCheckBoxMarked;
 
 	/**
 	 * Standard constructor to be implemented for all views.
@@ -95,7 +95,7 @@ public class ThumbImageView extends FrameLayout {
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		this.context = context;
+		this.mContext = context;
 	}
 
 	/**
@@ -107,10 +107,10 @@ public class ThumbImageView extends FrameLayout {
 	 *            The style of the view.
 	 */
 	public final void initWithStyle(final Activity activity, final ThumbStyle style) {
-		this.thumbStyle = style;
+		this.mThumbStyle = style;
 
 		int layoutId = 0;
-		switch (thumbStyle) {
+		switch (mThumbStyle) {
 		case IMAGE:
 			layoutId = R.layout.view_thumb_image;
 			break;
@@ -124,11 +124,11 @@ public class ThumbImageView extends FrameLayout {
 			break;
 		}
 
-		LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		layoutInflater.inflate(layoutId, this, true);
 
-		imageView = (ImageView) findViewById(R.id.imageViewThumb);
-		checkBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
+		mImageView = (ImageView) findViewById(R.id.imageViewThumb);
+		mCheckBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
 	}
 
 	/**
@@ -177,8 +177,8 @@ public class ThumbImageView extends FrameLayout {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				imageView.setImageBitmap(imageBitmap);
-				imageView.invalidate();
+				mImageView.setImageBitmap(imageBitmap);
+				mImageView.invalidate();
 				setMarked(false);
 			}
 		});
@@ -191,12 +191,12 @@ public class ThumbImageView extends FrameLayout {
 	 *            The type in which the view should be marked.
 	 */
 	public final void setMarkable(final MarkingType newMarkingType) {
-		markingType = newMarkingType;
-		if (markingType == MarkingType.NONE && isMarked) {
+		mMarkingType = newMarkingType;
+		if (mMarkingType == MarkingType.NONE && mIsMarked) {
 			setMarked(false);
 		}
-		checkBoxMarked.setVisibility(markingType == MarkingType.NONE ? View.INVISIBLE : View.VISIBLE);
-		checkBoxMarked.setButtonDrawable(markingType == MarkingType.CROSS ? R.drawable.checkbox_negative
+		mCheckBoxMarked.setVisibility(mMarkingType == MarkingType.NONE ? View.INVISIBLE : View.VISIBLE);
+		mCheckBoxMarked.setButtonDrawable(mMarkingType == MarkingType.CROSS ? R.drawable.checkbox_negative
 				: R.drawable.checkbox_positive);
 	}
 
@@ -207,12 +207,12 @@ public class ThumbImageView extends FrameLayout {
 	 *            if true, it is marked, otherwise unmarked.
 	 */
 	public final void setMarked(final boolean marked) {
-		isMarked = marked;
-		checkBoxMarked.setChecked(marked);
+		mIsMarked = marked;
+		mCheckBoxMarked.setChecked(marked);
 	}
 
 	public final boolean isMarked() {
-		return isMarked;
+		return mIsMarked;
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class ThumbImageView extends FrameLayout {
 	 *            the folderName to be displayed.
 	 */
 	public final void setFolderName(final String folderName) {
-		if (thumbStyle != ThumbStyle.IMAGE) {
+		if (mThumbStyle != ThumbStyle.IMAGE) {
 			TextView textViewName = (TextView) findViewById(R.id.textViewFolderName);
 			if (folderName.length() > 50) { // MAGIC_NUMBER
 				textViewName.setText(folderName.substring(0, 50)); // MAGIC_NUMBER
@@ -243,11 +243,11 @@ public class ThumbImageView extends FrameLayout {
 		/**
 		 * The fileName.
 		 */
-		private String fileName = null;
+		private String mFileName = null;
 		/**
 		 * An asynchronous provider of the file name.
 		 */
-		private FileNameProvider fileNameProvider = null;
+		private FileNameProvider mFileNameProvider = null;
 
 		/**
 		 * Constructor providing the file name.
@@ -256,7 +256,7 @@ public class ThumbImageView extends FrameLayout {
 		 *            The file name.
 		 */
 		public LoadableFileName(final String fileName) {
-			this.fileName = fileName;
+			this.mFileName = fileName;
 		}
 
 		/**
@@ -266,7 +266,7 @@ public class ThumbImageView extends FrameLayout {
 		 *            The provider for the file name.
 		 */
 		public LoadableFileName(final FileNameProvider fileNameProvider) {
-			this.fileNameProvider = fileNameProvider;
+			this.mFileNameProvider = fileNameProvider;
 		}
 
 		/**
@@ -275,10 +275,10 @@ public class ThumbImageView extends FrameLayout {
 		 * @return The file name.
 		 */
 		public final String getFileName() {
-			if (fileName == null && fileNameProvider != null) {
-				fileName = fileNameProvider.getFileName();
+			if (mFileName == null && mFileNameProvider != null) {
+				mFileName = mFileNameProvider.getFileName();
 			}
-			return fileName;
+			return mFileName;
 		}
 
 		/**

@@ -30,7 +30,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * A map storing instances of the factory.
 	 */
-	private static SparseArray<StackRemoteViewsFactory> factoryMap =
+	private static SparseArray<StackRemoteViewsFactory> mFactoryMap =
 			new SparseArray<StackedImageWidgetService.StackRemoteViewsFactory>();
 
 	@Override
@@ -56,27 +56,27 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		/**
 		 * The file names of the stacked images.
 		 */
-		private String[] fileNames = new String[0];
+		private String[] mFileNames = new String[0];
 
 		/**
 		 * The application context.
 		 */
-		private Context context;
+		private Context mContext;
 
 		/**
 		 * The app widget id.
 		 */
-		private int appWidgetId;
+		private int mAppWidgetId;
 
 		/**
 		 * The size to which the images are scaled.
 		 */
-		private int imageSize;
+		private int mImageSize;
 
 		/**
 		 * The name of the imageList to be displayed.
 		 */
-		private String listName;
+		private String mListName;
 
 		/**
 		 * Constructor.
@@ -87,48 +87,48 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		 *            The intent for the views
 		 */
 		public StackRemoteViewsFactory(final Context context, final Intent intent) {
-			this.context = context;
+			this.mContext = context;
 
-			appWidgetId =
+			mAppWidgetId =
 					intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
 			int viewWidth = intent.getIntExtra(StackedImageWidget.STRING_EXTRA_WIDTH, MediaStoreUtil.MINI_THUMB_SIZE);
-			imageSize = calculateImageSize(viewWidth);
-			listName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
+			mImageSize = calculateImageSize(viewWidth);
+			mListName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
 
-			factoryMap.put(appWidgetId, this);
+			mFactoryMap.put(mAppWidgetId, this);
 		}
 
 		@Override
 		public final void onCreate() {
-			StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, false);
+			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 
 			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list " + listName + " for StackedImageWidget creation");
-				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-				fileNames = new String[0];
+				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget creation");
+				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
+				mFileNames = new String[0];
 			}
 			else {
-				fileNames = imageList.getShuffledFileNames();
+				mFileNames = imageList.getShuffledFileNames();
 			}
 		}
 
 		@Override
 		public final void onDestroy() {
-			factoryMap.remove(appWidgetId);
+			mFactoryMap.remove(mAppWidgetId);
 		}
 
 		@Override
 		public final int getCount() {
-			return fileNames.length;
+			return mFileNames.length;
 		}
 
 		@Override
 		public final RemoteViews getViewAt(final int position) {
 
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_stacked_image_item);
+			RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_stacked_image_item);
 
-			String currentFileName = fileNames[position];
+			String currentFileName = mFileNames[position];
 
 			if (currentFileName == null) {
 				remoteViews.setImageViewResource(
@@ -140,7 +140,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				remoteViews.setImageViewBitmap(
 						R.id.imageViewWidget,
 						ImageUtil.getImageBitmap(currentFileName,
-								Math.min(ImageUtil.MAX_BITMAP_SIZE, imageSize)));
+								Math.min(ImageUtil.MAX_BITMAP_SIZE, mImageSize)));
 			}
 
 			// Next, we set a fill-intent which will be used to fill-in the pending intent template
@@ -179,18 +179,18 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		public void onDataSetChanged() {
 			// update image size
 			int viewWidth =
-					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, 0);
-			imageSize = calculateImageSize(viewWidth);
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
+			mImageSize = calculateImageSize(viewWidth);
 
 			// create new image list
-			StandardImageList imageList = ImageRegistry.getStandardImageListByName(listName, false);
+			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list " + listName + " for StackedImageWidget data change");
-				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-				fileNames = new String[0];
+				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget data change");
+				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
+				mFileNames = new String[0];
 			}
 			else {
-				fileNames = imageList.getShuffledFileNames();
+				mFileNames = imageList.getShuffledFileNames();
 			}
 		}
 	}

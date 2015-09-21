@@ -60,32 +60,32 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * The list of image files.
 	 */
-	private ArrayList<String> fileNames = new ArrayList<String>();
+	private ArrayList<String> mFileNames = new ArrayList<String>();
 
 	/**
 	 * The list of image folders.
 	 */
-	private ArrayList<String> folderNames = new ArrayList<String>();
+	private ArrayList<String> mFolderNames = new ArrayList<String>();
 
 	/**
 	 * The list of nested image lists.
 	 */
-	private ArrayList<String> nestedListNames = new ArrayList<String>();
+	private ArrayList<String> mNestedListNames = new ArrayList<String>();
 
 	/**
 	 * The config file where the list of files is stored.
 	 */
-	private File configFile = null;
+	private File mConfigFile = null;
 
 	/**
 	 * Configuration properties of the file list.
 	 */
-	private Properties properties = new Properties();
+	private Properties mProperties = new Properties();
 
 	/**
 	 * Configuration properties of nested lists.
 	 */
-	private HashMap<String, Properties> nestedListProperties = new HashMap<String, Properties>();
+	private HashMap<String, Properties> mNestedListProperties = new HashMap<String, Properties>();
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -98,7 +98,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	protected ImageList(final File configFile, final boolean toastIfFilesMissing) {
 		init(toastIfFilesMissing); // OVERRIDABLE
-		this.configFile = configFile;
+		this.mConfigFile = configFile;
 		load(toastIfFilesMissing); // OVERRIDABLE
 	}
 
@@ -117,11 +117,11 @@ public abstract class ImageList extends RandomFileProvider {
 		init(false); // OVERRIDABLE
 		if (configFile.exists()) {
 			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
-			this.configFile = configFile;
+			this.mConfigFile = configFile;
 			load(false); // OVERRIDABLE
 		}
 		else {
-			this.configFile = configFile;
+			this.mConfigFile = configFile;
 			if (cloneFile != null) {
 				load(false); // OVERRIDABLE
 			}
@@ -167,7 +167,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if contained in the list.
 	 */
 	public final boolean contains(final String fileName) {
-		return fileName != null && (fileNames.contains(fileName) || folderNames.contains(fileName));
+		return fileName != null && (mFileNames.contains(fileName) || mFolderNames.contains(fileName));
 	}
 
 	/**
@@ -178,11 +178,11 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if it is contained in some way.
 	 */
 	public final boolean containsNestedList(final String listName) {
-		if (nestedListNames.contains(listName)) {
+		if (mNestedListNames.contains(listName)) {
 			return true;
 		}
 
-		for (String nestedListName : nestedListNames) {
+		for (String nestedListName : mNestedListNames) {
 			ImageList nestedList = ImageRegistry.getImageListByName(nestedListName, true);
 			if (nestedList != null && nestedList.containsNestedList(listName)) {
 				return true;
@@ -268,22 +268,22 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	// OVERRIDABLE
 	public synchronized void load(final boolean toastIfFilesMissing) {
-		if (!configFile.exists()) {
+		if (!mConfigFile.exists()) {
 			return;
 		}
 
-		fileNames.clear();
-		folderNames.clear();
-		nestedListNames.clear();
-		nestedListProperties.clear();
-		properties.clear();
+		mFileNames.clear();
+		mFolderNames.clear();
+		mNestedListNames.clear();
+		mNestedListProperties.clear();
+		mProperties.clear();
 		int notFoundFiles = 0;
 
 		SparseArray<Properties> nestedPropertiesArray = new SparseArray<Properties>();
 		HashMap<String, Integer> nestedListIndices = new HashMap<String, Integer>();
 
 		try {
-			Scanner scanner = new Scanner(configFile);
+			Scanner scanner = new Scanner(mConfigFile);
 			scanner.useDelimiter("\n");
 			while (scanner.hasNext()) {
 				String line = scanner.next();
@@ -298,11 +298,11 @@ public abstract class ImageList extends RandomFileProvider {
 					File file = new File(line);
 					if (file.exists()) {
 						if (file.isDirectory()) {
-							folderNames.add(line);
+							mFolderNames.add(line);
 						}
 						else {
 							if (ImageUtil.isImage(file, false)) {
-								fileNames.add(line);
+								mFileNames.add(line);
 							}
 						}
 					}
@@ -324,7 +324,7 @@ public abstract class ImageList extends RandomFileProvider {
 						Matcher matcher = PROP_NESTED_LIST_PATTERN.matcher(name);
 						if (matcher.find()) {
 							int propertyIndex = Integer.parseInt(matcher.group(1));
-							nestedListNames.add(value);
+							mNestedListNames.add(value);
 							nestedListIndices.put(value, propertyIndex);
 						}
 					}
@@ -340,7 +340,7 @@ public abstract class ImageList extends RandomFileProvider {
 						}
 					}
 					else {
-						properties.setProperty(name, value);
+						mProperties.setProperty(name, value);
 					}
 				}
 			}
@@ -362,14 +362,14 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 
 		// Nested properties are filled now.
-		for (String nestedListName : nestedListNames) {
+		for (String nestedListName : mNestedListNames) {
 			int nestedListIndex = nestedListIndices.get(nestedListName);
 			Properties nestedProperties = nestedPropertiesArray.get(nestedListIndex);
 			if (nestedProperties == null) {
-				nestedListProperties.put(nestedListName, new Properties());
+				mNestedListProperties.put(nestedListName, new Properties());
 			}
 			else {
-				nestedListProperties.put(nestedListName, nestedProperties);
+				mNestedListProperties.put(nestedListName, nestedProperties);
 			}
 		}
 	}
@@ -380,10 +380,10 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if successful.
 	 */
 	protected final synchronized boolean save() {
-		File backupFile = new File(configFile.getParentFile(), configFile.getName() + ".bak");
+		File backupFile = new File(mConfigFile.getParentFile(), mConfigFile.getName() + ".bak");
 
-		if (configFile.exists()) {
-			boolean success = configFile.renameTo(backupFile);
+		if (mConfigFile.exists()) {
+			boolean success = mConfigFile.renameTo(backupFile);
 			if (!success) {
 				Log.e(Application.TAG, "Could not backup config file to " + backupFile.getAbsolutePath());
 				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
@@ -393,17 +393,17 @@ public abstract class ImageList extends RandomFileProvider {
 
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(configFile));
+			writer = new PrintWriter(new FileWriter(mConfigFile));
 			writer.println("# Properties");
-			for (String key : properties.stringPropertyNames()) {
-				writer.println(key + PROPERTY_SEPARATOR + properties.getProperty(key));
+			for (String key : mProperties.stringPropertyNames()) {
+				writer.println(key + PROPERTY_SEPARATOR + mProperties.getProperty(key));
 			}
 			writer.println();
 			writer.println("# Nested List names");
-			for (int i = 0; i < nestedListNames.size(); i++) {
-				String nestedListName = nestedListNames.get(i);
+			for (int i = 0; i < mNestedListNames.size(); i++) {
+				String nestedListName = mNestedListNames.get(i);
 				writer.println(PROP_NESTED_LIST_PREFIX + "[" + i + "]" + PROPERTY_SEPARATOR + nestedListName);
-				Properties nestedProperties = nestedListProperties.get(nestedListName);
+				Properties nestedProperties = mNestedListProperties.get(nestedListName);
 				if (nestedProperties != null) {
 					for (String nestedKey : nestedProperties.stringPropertyNames()) {
 						writer.println(PROP_NESTED_PROPERTY_PREFIX + "." + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
@@ -413,12 +413,12 @@ public abstract class ImageList extends RandomFileProvider {
 			}
 			writer.println();
 			writer.println("# Folder names");
-			for (String folderName : folderNames) {
+			for (String folderName : mFolderNames) {
 				writer.println(folderName);
 			}
 			writer.println();
 			writer.println("# File names");
-			for (String fileName : fileNames) {
+			for (String fileName : mFileNames) {
 				writer.println(fileName);
 			}
 
@@ -433,7 +433,7 @@ public abstract class ImageList extends RandomFileProvider {
 			}
 		}
 		catch (IOException e) {
-			Log.e(Application.TAG, "Could not store configuration to file " + configFile.getAbsolutePath(), e);
+			Log.e(Application.TAG, "Could not store configuration to file " + mConfigFile.getAbsolutePath(), e);
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
 			return false;
 		}
@@ -476,10 +476,10 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The name of the list.
 	 */
 	public final String getListName() {
-		String listName = properties.getProperty(PROP_LIST_NAME);
+		String listName = mProperties.getProperty(PROP_LIST_NAME);
 
 		if (listName == null) {
-			listName = ImageRegistry.getListNameFromFileName(configFile);
+			listName = ImageRegistry.getListNameFromFileName(mConfigFile);
 		}
 
 		if (listName == null) {
@@ -497,10 +497,10 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	private void setListName(final String listName) {
 		if (listName == null) {
-			properties.remove(PROP_LIST_NAME);
+			mProperties.remove(PROP_LIST_NAME);
 		}
 		else {
-			properties.setProperty(PROP_LIST_NAME, listName);
+			mProperties.setProperty(PROP_LIST_NAME, listName);
 		}
 		save();
 	}
@@ -515,9 +515,9 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if successful.
 	 */
 	public final boolean changeListName(final String listName, final File newConfigFile) {
-		File oldConfigFile = configFile;
+		File oldConfigFile = mConfigFile;
 		String oldListName = getListName();
-		configFile = newConfigFile;
+		mConfigFile = newConfigFile;
 		setListName(listName);
 		boolean success = save();
 
@@ -530,8 +530,8 @@ public abstract class ImageList extends RandomFileProvider {
 			return success;
 		}
 		else {
-			Log.e(Application.TAG, "Could not save to new config file " + configFile.getAbsolutePath());
-			configFile = oldConfigFile;
+			Log.e(Application.TAG, "Could not save to new config file " + mConfigFile.getAbsolutePath());
+			mConfigFile = oldConfigFile;
 			return false;
 		}
 	}
@@ -542,7 +542,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The list of file names.
 	 */
 	public final ArrayList<String> getFileNames() {
-		return new ArrayList<String>(fileNames);
+		return new ArrayList<String>(mFileNames);
 	}
 
 	/**
@@ -551,7 +551,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The list of file names.
 	 */
 	public final ArrayList<String> getFolderNames() {
-		return new ArrayList<String>(folderNames);
+		return new ArrayList<String>(mFolderNames);
 	}
 
 	/**
@@ -560,7 +560,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The list of nested list names.
 	 */
 	public final ArrayList<String> getNestedListNames() {
-		return new ArrayList<String>(nestedListNames);
+		return new ArrayList<String>(mNestedListNames);
 	}
 
 	/**
@@ -580,11 +580,11 @@ public abstract class ImageList extends RandomFileProvider {
 			return false;
 		}
 
-		if (fileNames.contains(fileName)) {
+		if (mFileNames.contains(fileName)) {
 			return false;
 		}
 		else {
-			fileNames.add(fileName);
+			mFileNames.add(fileName);
 			return true;
 		}
 	}
@@ -624,11 +624,11 @@ public abstract class ImageList extends RandomFileProvider {
 			return false;
 		}
 
-		if (folderNames.contains(folderName)) {
+		if (mFolderNames.contains(folderName)) {
 			return false;
 		}
 		else {
-			folderNames.add(folderName);
+			mFolderNames.add(folderName);
 			return true;
 		}
 	}
@@ -641,7 +641,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if the given list was not included in the current list before and hence has been added.
 	 */
 	public final boolean addNestedList(final String nestedListName) {
-		if (nestedListName == null || nestedListName.equals(getListName()) || nestedListNames.contains(nestedListName)) {
+		if (nestedListName == null || nestedListName.equals(getListName()) || mNestedListNames.contains(nestedListName)) {
 			return false;
 		}
 
@@ -655,8 +655,8 @@ public abstract class ImageList extends RandomFileProvider {
 			return false;
 		}
 
-		nestedListNames.add(nestedListName);
-		nestedListProperties.put(nestedListName, new Properties());
+		mNestedListNames.add(nestedListName);
+		mNestedListProperties.put(nestedListName, new Properties());
 		return true;
 	}
 
@@ -668,7 +668,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if the file was removed.
 	 */
 	public final boolean removeFile(final String fileName) {
-		return fileNames.remove(fileName);
+		return mFileNames.remove(fileName);
 	}
 
 	/**
@@ -679,7 +679,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return true if the folder was removed.
 	 */
 	public final boolean removeFolder(final String folderName) {
-		return folderNames.remove(folderName);
+		return mFolderNames.remove(folderName);
 	}
 
 	/**
@@ -691,8 +691,8 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	// OVERRIDABLE
 	public boolean removeNestedList(final String nestedListName) {
-		nestedListProperties.remove(nestedListName);
-		return nestedListNames.remove(nestedListName);
+		mNestedListProperties.remove(nestedListName);
+		return mNestedListNames.remove(nestedListName);
 	}
 
 	/**
@@ -703,7 +703,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The property value.
 	 */
 	protected final String getProperty(final String key) {
-		return properties.getProperty(key);
+		return mProperties.getProperty(key);
 	}
 
 	/**
@@ -716,10 +716,10 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	protected final void setProperty(final String key, final String value) {
 		if (value == null) {
-			properties.remove(key);
+			mProperties.remove(key);
 		}
 		else {
-			properties.setProperty(key, value);
+			mProperties.setProperty(key, value);
 		}
 		save();
 	}
@@ -734,7 +734,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The property value.
 	 */
 	public final String getNestedListProperty(final String nestedListName, final String key) {
-		Properties nestedProperties = nestedListProperties.get(nestedListName);
+		Properties nestedProperties = mNestedListProperties.get(nestedListName);
 		return nestedProperties == null ? null : nestedProperties.getProperty(key);
 	}
 
@@ -749,7 +749,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 *            The property value.
 	 */
 	public final void setNestedListProperty(final String nestedListName, final String key, final String value) {
-		Properties nestedProperties = nestedListProperties.get(nestedListName);
+		Properties nestedProperties = mNestedListProperties.get(nestedListName);
 		if (nestedProperties != null) {
 			if (value == null) {
 				nestedProperties.remove(key);
@@ -775,28 +775,28 @@ public abstract class ImageList extends RandomFileProvider {
 		/**
 		 * The name of the image list.
 		 */
-		private String name;
+		private String mName;
 
 		protected String getName() {
-			return name;
+			return mName;
 		}
 
 		/**
 		 * The image list configuration file.
 		 */
-		private File configFile;
+		private File mConfigFile;
 
 		protected File getConfigFile() {
-			return configFile;
+			return mConfigFile;
 		}
 
 		/**
 		 * The class handling the image list.
 		 */
-		private Class<?> listClass;
+		private Class<?> mListClass;
 
 		protected Class<?> getListClass() { // SUPPRESS_CHECKSTYLE
-			return listClass;
+			return mListClass;
 		}
 
 		/**
@@ -810,9 +810,9 @@ public abstract class ImageList extends RandomFileProvider {
 		 *            The class handling the image list.
 		 */
 		protected ImageListInfo(final String name, final File configFile, final Class<?> listClass) {
-			this.name = name;
-			this.configFile = configFile;
-			this.listClass = listClass;
+			this.mName = name;
+			this.mConfigFile = configFile;
+			this.mListClass = listClass;
 		}
 
 	}

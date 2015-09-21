@@ -36,17 +36,17 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Field holding the value of the language preference, in order to detect a real change.
 	 */
-	private String languageString;
+	private String mLanguageString;
 
 	/**
 	 * Field holding the value of the hidden lists pattern, in order to detect a real change.
 	 */
-	private String hiddenListsPattern;
+	private String mHiddenListsPattern;
 
 	/**
 	 * The preference screen handling donations.
 	 */
-	private PreferenceCategory prefCategoryPremium;
+	private PreferenceCategory mPrefCategoryPremium;
 
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
@@ -56,8 +56,8 @@ public class SettingsFragment extends PreferenceFragment {
 		addPreferencesFromResource(R.xml.pref_general);
 
 		// Fill variables in order to detect changed values.
-		languageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
-		hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
+		mLanguageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
+		mHiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
@@ -69,9 +69,9 @@ public class SettingsFragment extends PreferenceFragment {
 		addDonationListener();
 		addDeveloperContactListener();
 
-		prefCategoryPremium = (PreferenceCategory) findPreference(getString(R.string.key_pref_category_premium));
+		mPrefCategoryPremium = (PreferenceCategory) findPreference(getString(R.string.key_pref_category_premium));
 
-		GoogleBillingHelper.initialize(getActivity(), onInventoryFinishedListener);
+		GoogleBillingHelper.initialize(getActivity(), mOnInventoryFinishedListener);
 	}
 
 	/**
@@ -156,10 +156,10 @@ public class SettingsFragment extends PreferenceFragment {
 	 */
 	private void bindPreferenceSummaryToValue(final Preference preference) {
 		// Set the listener to watch for value changes.
-		preference.setOnPreferenceChangeListener(bindPreferenceSummaryToValueListener);
+		preference.setOnPreferenceChangeListener(mBindPreferenceSummaryToValueListener);
 
 		// Trigger the listener immediately with the preference's current value.
-		bindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
+		mBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
 				.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
 	}
 
@@ -176,7 +176,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	private OnPreferenceChangeListener bindPreferenceSummaryToValueListener =
+	private OnPreferenceChangeListener mBindPreferenceSummaryToValueListener =
 			new OnPreferenceChangeListener() {
 				@Override
 				public boolean onPreferenceChange(final Preference preference, final Object value) {
@@ -184,7 +184,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 					// Apply change of language
 					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_language))) {
-						if (!languageString.equals(value)) {
+						if (!mLanguageString.equals(value)) {
 							Application.setLanguage();
 							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, (String) value);
 
@@ -194,7 +194,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 					// In case of switch of hidden lists pattern, refresh
 					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
-						if (!hiddenListsPattern.equals(value)) {
+						if (!mHiddenListsPattern.equals(value)) {
 							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
 							ImageRegistry.parseConfigFiles();
 						}
@@ -223,7 +223,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * A listener handling the response after reading the in-add purchase inventory.
 	 */
-	private OnInventoryFinishedListener onInventoryFinishedListener = new OnInventoryFinishedListener() {
+	private OnInventoryFinishedListener mOnInventoryFinishedListener = new OnInventoryFinishedListener() {
 		@Override
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
 				final boolean isPremium) {
@@ -242,7 +242,7 @@ public class SettingsFragment extends PreferenceFragment {
 				purchasePreference.setTitle(title);
 				purchasePreference.setSummary(purchase.getSkuDetails().getDescription());
 				purchasePreference.setEnabled(false);
-				prefCategoryPremium.addPreference(purchasePreference);
+				mPrefCategoryPremium.addPreference(purchasePreference);
 			}
 			for (SkuDetails skuDetails : availableProducts) {
 				Preference skuPreference = new Preference(getActivity());
@@ -253,11 +253,11 @@ public class SettingsFragment extends PreferenceFragment {
 					@Override
 					public boolean onPreferenceClick(final Preference preference) {
 						String productId = preference.getKey().substring(SKU_KEY_PREFIX.length());
-						GoogleBillingHelper.launchPurchaseFlow(productId, onPurchaseSuccessListener);
+						GoogleBillingHelper.launchPurchaseFlow(productId, mOnPurchaseSuccessListener);
 						return false;
 					}
 				});
-				prefCategoryPremium.addPreference(skuPreference);
+				mPrefCategoryPremium.addPreference(skuPreference);
 			}
 		}
 	};
@@ -265,7 +265,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * A listener handling the response after purchasing a product.
 	 */
-	private OnPurchaseSuccessListener onPurchaseSuccessListener = new OnPurchaseSuccessListener() {
+	private OnPurchaseSuccessListener mOnPurchaseSuccessListener = new OnPurchaseSuccessListener() {
 		@Override
 		public void handlePurchase(final Purchase purchase, final boolean addedPremiumProduct) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, true);

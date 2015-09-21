@@ -19,7 +19,7 @@ public abstract class WidgetConfigurationActivity extends Activity {
 	/**
 	 * The Intent used as result.
 	 */
-	private Intent resultValue;
+	private Intent mResultValue;
 
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
@@ -53,8 +53,8 @@ public abstract class WidgetConfigurationActivity extends Activity {
 
 			@Override
 			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-				resultValue = new Intent();
-				resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+				mResultValue = new Intent();
+				mResultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
 				initialize(savedInstanceState, appWidgetId, text);
 			}
@@ -84,7 +84,7 @@ public abstract class WidgetConfigurationActivity extends Activity {
 	 *            true if widget successfully created.
 	 */
 	protected final void setResult(final boolean success) {
-		setResult(success ? RESULT_OK : RESULT_CANCELED, resultValue);
+		setResult(success ? RESULT_OK : RESULT_CANCELED, mResultValue);
 	}
 
 	/**

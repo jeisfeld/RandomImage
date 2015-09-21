@@ -26,12 +26,12 @@ public class ImageWidget extends GenericWidget {
 	/**
 	 * The file names of the currently displayed images - mapped from appWidgetId.
 	 */
-	private static SparseArray<String> currentFileNames = new SparseArray<String>();
+	private static SparseArray<String> mCurrentFileNames = new SparseArray<String>();
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
 			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
-		final boolean requireNewImage = changeImage || currentFileNames.get(appWidgetId) == null;
+		final boolean requireNewImage = changeImage || mCurrentFileNames.get(appWidgetId) == null;
 
 		if (requireNewImage) {
 			if (userTriggered) {
@@ -55,7 +55,7 @@ public class ImageWidget extends GenericWidget {
 			}
 		}
 		else {
-			String fileName = currentFileNames.get(appWidgetId);
+			String fileName = mCurrentFileNames.get(appWidgetId);
 
 			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 			configureButtons(context, appWidgetManager, appWidgetId);
@@ -76,7 +76,7 @@ public class ImageWidget extends GenericWidget {
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 		}
 
-		String fileName = currentFileNames.get(appWidgetId);
+		String fileName = mCurrentFileNames.get(appWidgetId);
 
 		if (fileName == null && imageList != null) {
 			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
@@ -148,7 +148,7 @@ public class ImageWidget extends GenericWidget {
 		super.onDeleted(context, appWidgetIds);
 
 		for (int i = 0; i < appWidgetIds.length; i++) {
-			currentFileNames.remove(appWidgetIds[i]);
+			mCurrentFileNames.remove(appWidgetIds[i]);
 		}
 	}
 
@@ -182,7 +182,7 @@ public class ImageWidget extends GenericWidget {
 			remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
 		}
 		else {
-			currentFileNames.put(appWidgetId, fileName);
+			mCurrentFileNames.put(appWidgetId, fileName);
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 
 			remoteViews.setImageViewBitmap(
