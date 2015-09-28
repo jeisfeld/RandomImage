@@ -28,7 +28,7 @@ public abstract class RandomFileProvider {
 	 *            Actions to be done if not yet ready to inform the user about the loading.
 	 * @param afterLoading
 	 *            Actions to be done when ready.
-	 * @param afterLoading
+	 * @param ifError
 	 *            Actions to be done in case of loading error.
 	 */
 	// OVERRIDABLE

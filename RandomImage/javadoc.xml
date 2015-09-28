@@ -14,7 +14,7 @@
             noindex="false"
             nonavbar="false"
             notree="false"
-            packagenames="de.jeisfeld.randomimage.util,de.jeisfeld.randomimage.widgets,de.jeisfeld.randomimage"
+            packagenames="de.jeisfeld.randomimage.util,de.jeisfeld.randomimage.widgets,de.jeisfeld.randomimage,de.jeisfeld.randomimage.view,com.android.vending.billing"
             source="1.7"
             sourcepath="src"
             splitindex="true"

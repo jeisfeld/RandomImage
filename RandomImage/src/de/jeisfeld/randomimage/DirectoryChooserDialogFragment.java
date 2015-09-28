@@ -42,8 +42,7 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
 /**
  * Class to present a dialog for selection of a directory.
  *
- * <p>
- * Inspired by
+ * <p>Inspired by
  * http://www.codeproject.com/Articles/547636/Android-Ready-to-use-simple-
  * directory-chooser-dial
  */

@@ -24,23 +24,19 @@ import android.util.Log;
  * use it to process in-app billing operations. It provides synchronous (blocking) and asynchronous (non-blocking)
  * methods for many common in-app billing operations, as well as automatic signature verification.
  *
- * <p>
- * After instantiating, you must perform setup in order to start using the object. To perform setup, call the
+ * <p>After instantiating, you must perform setup in order to start using the object. To perform setup, call the
  * {@link #startSetup} method and provide a listener; that listener will be notified when setup is complete, after which
  * (and not before) you may call other methods.
  *
- * <p>
- * After setup is complete, you will typically want to request an inventory of owned items and subscriptions. See
+ * <p>After setup is complete, you will typically want to request an inventory of owned items and subscriptions. See
  * {@link #queryInventory}, {@link #queryInventoryAsync} and related methods.
  *
- * <p>
- * When you are done with this object, don't forget to call {@link #dispose} to ensure proper cleanup. This object holds
+ * <p>When you are done with this object, don't forget to call {@link #dispose} to ensure proper cleanup. This object holds
  * a binding to the in-app billing service, which will leak unless you dispose of it correctly. If you created the
  * object on an Activity's onCreate method, then the recommended place to dispose of it is the Activity's onDestroy
  * method.
  *
- * <p>
- * A note about threading: When using this object from a background thread, you may call the blocking versions of
+ * <p>A note about threading: When using this object from a background thread, you may call the blocking versions of
  * methods; when using from a UI thread, call only the asynchronous versions and handle the results via callbacks. Also,
  * notice that you can only call one asynchronous operation at a time; attempting to start a second asynchronous
  * operation while the first one has not yet completed will result in an exception being thrown.
@@ -134,6 +130,8 @@ public class IabHelper {
 
 	public static final int API_VERSION = 3;
 
+	// JAVADOC:ON
+
 	/**
 	 * Creates an instance. After creation, it will not yet be ready to use. You must perform setup by calling
 	 * {@link #startSetup} and wait for setup to complete. This constructor does not block and is safe to call from a UI
@@ -154,6 +152,11 @@ public class IabHelper {
 
 	/**
 	 * Enables or disable debug logging through LogCat.
+	 *
+	 * @param enable
+	 *            Flag indicating if logging should be enabled.
+	 * @param tag
+	 *            The logging tag.
 	 */
 	public final void enableDebugLogging(final boolean enable, final String tag) {
 		checkNotDisposed();
@@ -161,6 +164,12 @@ public class IabHelper {
 		mDebugTag = tag;
 	}
 
+	/**
+	 * Enable or disable debug logging.
+	 *
+	 * @param enable
+	 *            Flag indicating if logging should be enabled.
+	 */
 	public final void enableDebugLogging(final boolean enable) {
 		checkNotDisposed();
 		mDebugLog = enable;
@@ -278,20 +287,28 @@ public class IabHelper {
 		mPurchaseListener = null;
 	}
 
+	/**
+	 * Throw exception if IabHelper was disposed.
+	 */
 	private void checkNotDisposed() {
 		if (mDisposed) {
 			throw new IllegalStateException("IabHelper was disposed of, so it cannot be used.");
 		}
 	}
 
-	/** Returns whether subscriptions are supported. */
+	/**
+	 * Returns whether subscriptions are supported.
+	 *
+	 * @return true if subscriptions are supported.
+	 */
 	public final boolean subscriptionsSupported() {
 		checkNotDisposed();
 		return mSubscriptionsSupported;
 	}
 
-	// The listener registered on launchPurchaseFlow, which we have to call back when
-	// the purchase finishes
+	/**
+	 * The listener registered on launchPurchaseFlow, which we have to call back when the purchase finishes.
+	 */
 	private OnIabPurchaseFinishedListener mPurchaseListener;
 
 	public final void launchPurchaseFlow(final Activity act, final String sku, final int requestCode,
@@ -524,7 +541,7 @@ public class IabHelper {
 	/**
 	 * Queries the inventory. This will query all owned items from the server, as well as information on additional
 	 * skus, if specified. This method may block or take long to execute. Do not call from a UI thread. For that, use
-	 * the non-blocking version {@link #refreshInventoryAsync}.
+	 * the non-blocking version refreshInventoryAsync.
 	 *
 	 * @param querySkuDetails
 	 *            if true, SKU details (price, description, etc) will be queried as well as purchase information.
@@ -534,6 +551,7 @@ public class IabHelper {
 	 * @param moreSubsSkus
 	 *            additional SUBSCRIPTIONS skus to query information on, regardless of ownership. Ignored if null or if
 	 *            querySkuDetails is false.
+	 * @return the inventory.
 	 * @throws IabException
 	 *             if a problem occurs while refreshing the inventory.
 	 */
@@ -755,7 +773,12 @@ public class IabHelper {
 		}
 	}
 
-	// Checks that setup was done; if not, throws an exception.
+	/**
+	 * Checks that setup was done; if not, throws an exception.
+	 *
+	 * @param operation
+	 *            The operation (passed to the exception).
+	 */
 	private void checkSetupDone(final String operation) {
 		if (!mSetupDone) {
 			logError("Illegal state for operation (" + operation + "): IAB helper is not set up.");
@@ -763,7 +786,13 @@ public class IabHelper {
 		}
 	}
 
-	// Workaround to bug where sometimes response codes come as Long instead of Integer
+	/**
+	 * Workaround to bug where sometimes response codes come as Long instead of Integer.
+	 *
+	 * @param b
+	 *            The bundle.
+	 * @return the response code.
+	 */
 	private int getResponseCodeFromBundle(final Bundle b) {
 		Object o = b.get(RESPONSE_CODE);
 		if (o == null) {
@@ -783,7 +812,13 @@ public class IabHelper {
 		}
 	}
 
-	// Workaround to bug where sometimes response codes come as Long instead of Integer
+	/**
+	 * Workaround to bug where sometimes response codes come as Long instead of Integer.
+	 *
+	 * @param i
+	 *            The intent
+	 * @return The response code as integer.
+	 */
 	private int getResponseCodeFromIntent(final Intent i) {
 		Object o = i.getExtras().get(RESPONSE_CODE);
 		if (o == null) {
@@ -802,6 +837,8 @@ public class IabHelper {
 			throw new RuntimeException("Unexpected type for intent response code: " + o.getClass().getName());
 		}
 	}
+
+	// JAVADOC:OFF
 
 	private void flagStartAsync(final String operation) {
 		if (mAsyncInProgress) {
@@ -975,6 +1012,8 @@ public class IabHelper {
 			Log.d(mDebugTag, msg);
 		}
 	}
+
+	// JAVADOC:ON
 
 	private void logError(final String msg) {
 		Log.e(mDebugTag, "In-app billing error: " + msg);
