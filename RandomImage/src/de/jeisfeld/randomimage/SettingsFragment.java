@@ -184,7 +184,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 					// Apply change of language
 					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_language))) {
-						if (!mLanguageString.equals(value)) {
+						if (mLanguageString == null || !mLanguageString.equals(value)) {
 							Application.setLanguage();
 							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, (String) value);
 
@@ -194,7 +194,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 					// In case of switch of hidden lists pattern, refresh
 					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
-						if (!mHiddenListsPattern.equals(value)) {
+						if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(value)) {
 							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
 							ImageRegistry.parseConfigFiles();
 						}

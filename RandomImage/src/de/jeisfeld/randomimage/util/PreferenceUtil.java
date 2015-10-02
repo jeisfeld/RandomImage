@@ -47,7 +47,7 @@ public final class PreferenceUtil {
 	 * @return the corresponding preference value.
 	 */
 	public static String getSharedPreferenceString(final int preferenceId) {
-		return getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), "");
+		return getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), null);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public final class PreferenceUtil {
 	 * @return the corresponding preference value.
 	 */
 	public static String getSharedPreferenceString(final int preferenceId, final int defaultId) {
-		String result = getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), null);
+		String result = getSharedPreferenceString(preferenceId);
 		if (result == null) {
 			result = Application.getAppContext().getString(defaultId);
 			setSharedPreferenceString(preferenceId, result);
