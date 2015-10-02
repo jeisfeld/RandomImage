@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="authorization_class" translatable="false">de.jeisfeld.randomimage.util.AuthorizationHelperPro</string>
+    
+</resources>
