@@ -52,7 +52,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * Factory class handling the image stack for the stacked image widget.
 	 */
-	private class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+	private final class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 		/**
 		 * The file names of the stacked images.
 		 */
@@ -86,7 +86,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		 * @param intent
 		 *            The intent for the views
 		 */
-		public StackRemoteViewsFactory(final Context context, final Intent intent) {
+		private StackRemoteViewsFactory(final Context context, final Intent intent) {
 			this.mContext = context;
 
 			mAppWidgetId =
@@ -100,7 +100,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		}
 
 		@Override
-		public final void onCreate() {
+		public void onCreate() {
 			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 
 			if (imageList == null) {
@@ -114,17 +114,17 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		}
 
 		@Override
-		public final void onDestroy() {
+		public void onDestroy() {
 			mFactoryMap.remove(mAppWidgetId);
 		}
 
 		@Override
-		public final int getCount() {
+		public int getCount() {
 			return mFileNames.length;
 		}
 
 		@Override
-		public final RemoteViews getViewAt(final int position) {
+		public RemoteViews getViewAt(final int position) {
 
 			RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_stacked_image_item);
 

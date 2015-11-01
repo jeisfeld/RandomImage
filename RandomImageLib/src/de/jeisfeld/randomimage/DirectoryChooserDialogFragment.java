@@ -28,17 +28,17 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import de.jeisfeld.randomimage.util.FileUtil;
-import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.MediaStoreUtil;
-import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimagelib.R;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import de.jeisfeld.randomimage.util.FileUtil;
+import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimagelib.R;
 
 /**
  * Class to present a dialog for selection of a directory.
@@ -461,7 +461,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * Adapter for the GridView displaying the image files.
 	 */
-	private class DisplayImagesAdapter extends ArrayAdapter<String> {
+	private final class DisplayImagesAdapter extends ArrayAdapter<String> {
 		/**
 		 * The names of the image files displayed.
 		 */
@@ -473,7 +473,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 * @param fileNames
 		 *            The names of the image files to be displayed.
 		 */
-		public DisplayImagesAdapter(final ArrayList<String> fileNames) {
+		private DisplayImagesAdapter(final ArrayList<String> fileNames) {
 			super(getActivity(), R.layout.text_view_initializing, fileNames);
 			this.mFileNames = fileNames;
 		}
@@ -484,12 +484,12 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		 * @param context
 		 *            The Context the view is running in.
 		 */
-		public DisplayImagesAdapter(final Context context) {
+		private DisplayImagesAdapter(final Context context) {
 			super(context, R.layout.text_view_initializing);
 		}
 
 		@Override
-		public final View getView(final int position, final View convertView, final ViewGroup parent) {
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final ImageView imageView;
 			if (convertView != null && convertView instanceof ImageView) {
 				imageView = (ImageView) convertView;
