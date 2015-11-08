@@ -1,0 +1,509 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Manifest Merging:
+-----------------
+Your project uses libraries that provide manifests, and your Eclipse
+project did not explicitly turn on manifest merging. In Android Gradle
+projects, manifests are always merged (meaning that contents from your
+libraries' manifests will be merged into the app manifest. If you had
+manually copied contents from library manifests into your app manifest
+you may need to remove these for the app to build correctly.
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+From RandomImage:
+* .checkstyle
+* .gitignore
+* RandomImage.apk
+* ic_launcher-web.png
+* proguard-project.txt
+From RandomImageLib:
+* .checkstyle
+* .gitignore
+* External Resources\
+* External Resources\Funktionsgrafik.Spp
+* External Resources\Funktionsgrafik.jpg
+* External Resources\Funktionsgrafik2.Spp
+* External Resources\Funktionsgrafik_de.jpg
+* External Resources\Samsung.Spp
+* External Resources\Screenshot_2015-08-10-16-48-20.png
+* External Resources\Screenshot_2015-08-14-21-06-00.jpg
+* External Resources\Screenshot_2015-09-01-16-47-37.png
+* External Resources\Screenshot_2015-09-01-16-48-29.png
+* External Resources\Screenshot_2015-09-01-16-49-36.png
+* External Resources\Screenshot_2015-09-01-16-50-13.png
+* External Resources\Screenshot_2015-09-01-16-58-19.png
+* External Resources\Screenshot_2015-09-01-16-58-38.png
+* External Resources\Screenshot_2015-09-01-17-01-07.png
+* External Resources\Screenshot_2015-09-01-17-01-58.png
+* External Resources\checkboxes.Spp
+* External Resources\folder.Spp
+* External Resources\folder1.Spp
+* External Resources\ic_image_widget.Spp
+* External Resources\ic_launcher.Spp
+* External Resources\ic_launcher1.Spp
+* External Resources\ic_stack_widget.Spp
+* External Resources\icons.Spp
+* External Resources\icons_widget.Spp
+* External Resources\smiley_sonne.Spp
+* doc\
+* doc\allclasses-frame.html
+* doc\allclasses-noframe.html
+* doc\com\
+* doc\com\android\
+* doc\com\android\vending\
+* doc\com\android\vending\billing\
+* doc\com\android\vending\billing\Base64.html
+* doc\com\android\vending\billing\Base64DecoderException.html
+* doc\com\android\vending\billing\IabException.html
+* doc\com\android\vending\billing\IabHelper.OnConsumeFinishedListener.html
+* doc\com\android\vending\billing\IabHelper.OnConsumeMultiFinishedListener.html
+* doc\com\android\vending\billing\IabHelper.OnIabPurchaseFinishedListener.html
+* doc\com\android\vending\billing\IabHelper.OnIabSetupFinishedListener.html
+* doc\com\android\vending\billing\IabHelper.QueryInventoryFinishedListener.html
+* doc\com\android\vending\billing\IabHelper.html
+* doc\com\android\vending\billing\IabResult.html
+* doc\com\android\vending\billing\Inventory.html
+* doc\com\android\vending\billing\Purchase.html
+* doc\com\android\vending\billing\PurchasedSku.html
+* doc\com\android\vending\billing\Security.html
+* doc\com\android\vending\billing\SkuDetails.html
+* doc\com\android\vending\billing\class-use\
+* doc\com\android\vending\billing\class-use\Base64.html
+* doc\com\android\vending\billing\class-use\Base64DecoderException.html
+* doc\com\android\vending\billing\class-use\IabException.html
+* doc\com\android\vending\billing\class-use\IabHelper.OnConsumeFinishedListener.html
+* doc\com\android\vending\billing\class-use\IabHelper.OnConsumeMultiFinishedListener.html
+* doc\com\android\vending\billing\class-use\IabHelper.OnIabPurchaseFinishedListener.html
+* doc\com\android\vending\billing\class-use\IabHelper.OnIabSetupFinishedListener.html
+* doc\com\android\vending\billing\class-use\IabHelper.QueryInventoryFinishedListener.html
+* doc\com\android\vending\billing\class-use\IabHelper.html
+* doc\com\android\vending\billing\class-use\IabResult.html
+* doc\com\android\vending\billing\class-use\Inventory.html
+* doc\com\android\vending\billing\class-use\Purchase.html
+* doc\com\android\vending\billing\class-use\PurchasedSku.html
+* doc\com\android\vending\billing\class-use\Security.html
+* doc\com\android\vending\billing\class-use\SkuDetails.html
+* doc\com\android\vending\billing\package-frame.html
+* doc\com\android\vending\billing\package-summary.html
+* doc\com\android\vending\billing\package-tree.html
+* doc\com\android\vending\billing\package-use.html
+* doc\constant-values.html
+* doc\de\
+* doc\de\jeisfeld\
+* doc\de\jeisfeld\randomimage\
+* doc\de\jeisfeld\randomimage\AddImagesFromGalleryActivity.html
+* doc\de\jeisfeld\randomimage\AddSentImagesActivity.html
+* doc\de\jeisfeld\randomimage\Application.html
+* doc\de\jeisfeld\randomimage\BuildConfig.html
+* doc\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.ChosenDirectoryListener.html
+* doc\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.DisplayImagesAdapter.html
+* doc\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.OnFolderLongClickListener.html
+* doc\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.html
+* doc\de\jeisfeld\randomimage\DisplayAllImagesActivity.CurrentAction.html
+* doc\de\jeisfeld\randomimage\DisplayAllImagesActivity.html
+* doc\de\jeisfeld\randomimage\DisplayAllImagesArrayAdapter.SelectionMode.html
+* doc\de\jeisfeld\randomimage\DisplayAllImagesArrayAdapter.ViewCache.html
+* doc\de\jeisfeld\randomimage\DisplayAllImagesArrayAdapter.html
+* doc\de\jeisfeld\randomimage\DisplayImageDetailsActivity.html
+* doc\de\jeisfeld\randomimage\DisplayImageListActivity.html
+* doc\de\jeisfeld\randomimage\DisplayImageListArrayAdapter.SelectionMode.html
+* doc\de\jeisfeld\randomimage\DisplayImageListArrayAdapter.ViewCache.html
+* doc\de\jeisfeld\randomimage\DisplayImageListArrayAdapter.html
+* doc\de\jeisfeld\randomimage\DisplayImagesFromFolderActivity.CurrentAction.html
+* doc\de\jeisfeld\randomimage\DisplayImagesFromFolderActivity.html
+* doc\de\jeisfeld\randomimage\DisplayNestedListDetailsActivity.html
+* doc\de\jeisfeld\randomimage\DisplayRandomImageActivity.FlingDirection.html
+* doc\de\jeisfeld\randomimage\DisplayRandomImageActivity.FolderRandomFileProvider.html
+* doc\de\jeisfeld\randomimage\DisplayRandomImageActivity.html
+* doc\de\jeisfeld\randomimage\PinchImageView.RetainFragment.html
+* doc\de\jeisfeld\randomimage\PinchImageView.ScaleListener.html
+* doc\de\jeisfeld\randomimage\PinchImageView.html
+* doc\de\jeisfeld\randomimage\R.attr.html
+* doc\de\jeisfeld\randomimage\R.dimen.html
+* doc\de\jeisfeld\randomimage\R.drawable.html
+* doc\de\jeisfeld\randomimage\R.html
+* doc\de\jeisfeld\randomimage\R.id.html
+* doc\de\jeisfeld\randomimage\R.layout.html
+* doc\de\jeisfeld\randomimage\R.menu.html
+* doc\de\jeisfeld\randomimage\R.string.html
+* doc\de\jeisfeld\randomimage\R.style.html
+* doc\de\jeisfeld\randomimage\R.xml.html
+* doc\de\jeisfeld\randomimage\SdMountReceiver.html
+* doc\de\jeisfeld\randomimage\SelectDirectoryActivity.html
+* doc\de\jeisfeld\randomimage\SelectImageFolderActivity.html
+* doc\de\jeisfeld\randomimage\SettingsActivity.html
+* doc\de\jeisfeld\randomimage\SettingsFragment.html
+* doc\de\jeisfeld\randomimage\ThumbImageView.html
+* doc\de\jeisfeld\randomimage\class-use\
+* doc\de\jeisfeld\randomimage\class-use\AddImagesFromGalleryActivity.html
+* doc\de\jeisfeld\randomimage\class-use\AddSentImagesActivity.html
+* doc\de\jeisfeld\randomimage\class-use\Application.html
+* doc\de\jeisfeld\randomimage\class-use\BuildConfig.html
+* doc\de\jeisfeld\randomimage\class-use\DirectoryChooserDialogFragment.ChosenDirectoryListener.html
+* doc\de\jeisfeld\randomimage\class-use\DirectoryChooserDialogFragment.DisplayImagesAdapter.html
+* doc\de\jeisfeld\randomimage\class-use\DirectoryChooserDialogFragment.OnFolderLongClickListener.html
+* doc\de\jeisfeld\randomimage\class-use\DirectoryChooserDialogFragment.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayAllImagesActivity.CurrentAction.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayAllImagesActivity.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayAllImagesArrayAdapter.SelectionMode.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayAllImagesArrayAdapter.ViewCache.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayAllImagesArrayAdapter.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImageDetailsActivity.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImageListActivity.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImageListArrayAdapter.SelectionMode.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImageListArrayAdapter.ViewCache.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImageListArrayAdapter.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImagesFromFolderActivity.CurrentAction.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayImagesFromFolderActivity.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayNestedListDetailsActivity.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayRandomImageActivity.FlingDirection.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayRandomImageActivity.FolderRandomFileProvider.html
+* doc\de\jeisfeld\randomimage\class-use\DisplayRandomImageActivity.html
+* doc\de\jeisfeld\randomimage\class-use\PinchImageView.RetainFragment.html
+* doc\de\jeisfeld\randomimage\class-use\PinchImageView.ScaleListener.html
+* doc\de\jeisfeld\randomimage\class-use\PinchImageView.html
+* doc\de\jeisfeld\randomimage\class-use\R.attr.html
+* doc\de\jeisfeld\randomimage\class-use\R.dimen.html
+* doc\de\jeisfeld\randomimage\class-use\R.drawable.html
+* doc\de\jeisfeld\randomimage\class-use\R.html
+* doc\de\jeisfeld\randomimage\class-use\R.id.html
+* doc\de\jeisfeld\randomimage\class-use\R.layout.html
+* doc\de\jeisfeld\randomimage\class-use\R.menu.html
+* doc\de\jeisfeld\randomimage\class-use\R.string.html
+* doc\de\jeisfeld\randomimage\class-use\R.style.html
+* doc\de\jeisfeld\randomimage\class-use\R.xml.html
+* doc\de\jeisfeld\randomimage\class-use\SdMountReceiver.html
+* doc\de\jeisfeld\randomimage\class-use\SelectDirectoryActivity.html
+* doc\de\jeisfeld\randomimage\class-use\SelectImageFolderActivity.html
+* doc\de\jeisfeld\randomimage\class-use\SettingsActivity.html
+* doc\de\jeisfeld\randomimage\class-use\SettingsFragment.html
+* doc\de\jeisfeld\randomimage\class-use\ThumbImageView.html
+* doc\de\jeisfeld\randomimage\package-frame.html
+* doc\de\jeisfeld\randomimage\package-summary.html
+* doc\de\jeisfeld\randomimage\package-tree.html
+* doc\de\jeisfeld\randomimage\package-use.html
+* doc\de\jeisfeld\randomimage\util\
+* doc\de\jeisfeld\randomimage\util\AsyncLoader.html
+* doc\de\jeisfeld\randomimage\util\AuthorizationHelper.html
+* doc\de\jeisfeld\randomimage\util\AuthorizationHelperGoogleBilling.html
+* doc\de\jeisfeld\randomimage\util\AuthorizationHelperPro.html
+* doc\de\jeisfeld\randomimage\util\DateUtil.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.ConfirmDialogFragment.ConfirmDialogListener.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.ConfirmDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.DisplayMessageDialogFragment.MessageDialogListener.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.DisplayMessageDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.RequestInputDialogFragment.RequestInputDialogListener.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.RequestInputDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.SelectFromListDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\DialogUtil.html
+* doc\de\jeisfeld\randomimage\util\FileUtil.html
+* doc\de\jeisfeld\randomimage\util\GoogleBillingHelper.OnInventoryFinishedListener.html
+* doc\de\jeisfeld\randomimage\util\GoogleBillingHelper.OnPurchaseSuccessListener.html
+* doc\de\jeisfeld\randomimage\util\GoogleBillingHelper.html
+* doc\de\jeisfeld\randomimage\util\ImageList.ImageListInfo.html
+* doc\de\jeisfeld\randomimage\util\ImageList.html
+* doc\de\jeisfeld\randomimage\util\ImageRegistry.CreationStyle.html
+* doc\de\jeisfeld\randomimage\util\ImageRegistry.html
+* doc\de\jeisfeld\randomimage\util\ImageUtil.ImageFileFilter.html
+* doc\de\jeisfeld\randomimage\util\ImageUtil.OnImageFoldersFoundListener.html
+* doc\de\jeisfeld\randomimage\util\ImageUtil.html
+* doc\de\jeisfeld\randomimage\util\Logger.html
+* doc\de\jeisfeld\randomimage\util\MediaStoreUtil.ImageNotFoundException.html
+* doc\de\jeisfeld\randomimage\util\MediaStoreUtil.html
+* doc\de\jeisfeld\randomimage\util\PreferenceUtil.html
+* doc\de\jeisfeld\randomimage\util\PrivateConstants.html
+* doc\de\jeisfeld\randomimage\util\RandomFileProvider.html
+* doc\de\jeisfeld\randomimage\util\StandardImageList.html
+* doc\de\jeisfeld\randomimage\util\SystemUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\
+* doc\de\jeisfeld\randomimage\util\class-use\AsyncLoader.html
+* doc\de\jeisfeld\randomimage\util\class-use\AuthorizationHelper.html
+* doc\de\jeisfeld\randomimage\util\class-use\AuthorizationHelperGoogleBilling.html
+* doc\de\jeisfeld\randomimage\util\class-use\AuthorizationHelperPro.html
+* doc\de\jeisfeld\randomimage\util\class-use\DateUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.ConfirmDialogFragment.ConfirmDialogListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.ConfirmDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.DisplayMessageDialogFragment.MessageDialogListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.DisplayMessageDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.RequestInputDialogFragment.RequestInputDialogListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.RequestInputDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.SelectFromListDialogFragment.html
+* doc\de\jeisfeld\randomimage\util\class-use\DialogUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\FileUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\GoogleBillingHelper.OnInventoryFinishedListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\GoogleBillingHelper.OnPurchaseSuccessListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\GoogleBillingHelper.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageList.ImageListInfo.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageList.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageRegistry.CreationStyle.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageRegistry.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageUtil.ImageFileFilter.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageUtil.OnImageFoldersFoundListener.html
+* doc\de\jeisfeld\randomimage\util\class-use\ImageUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\Logger.html
+* doc\de\jeisfeld\randomimage\util\class-use\MediaStoreUtil.ImageNotFoundException.html
+* doc\de\jeisfeld\randomimage\util\class-use\MediaStoreUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\PreferenceUtil.html
+* doc\de\jeisfeld\randomimage\util\class-use\PrivateConstants.html
+* doc\de\jeisfeld\randomimage\util\class-use\RandomFileProvider.html
+* doc\de\jeisfeld\randomimage\util\class-use\StandardImageList.html
+* doc\de\jeisfeld\randomimage\util\class-use\SystemUtil.html
+* doc\de\jeisfeld\randomimage\util\package-frame.html
+* doc\de\jeisfeld\randomimage\util\package-summary.html
+* doc\de\jeisfeld\randomimage\util\package-tree.html
+* doc\de\jeisfeld\randomimage\util\package-use.html
+* doc\de\jeisfeld\randomimage\view\
+* doc\de\jeisfeld\randomimage\view\ListMenuView.html
+* doc\de\jeisfeld\randomimage\view\PinchImageView.RetainFragment.html
+* doc\de\jeisfeld\randomimage\view\PinchImageView.ScaleListener.html
+* doc\de\jeisfeld\randomimage\view\PinchImageView.html
+* doc\de\jeisfeld\randomimage\view\ThumbImageView.LoadableFileName.FileNameProvider.html
+* doc\de\jeisfeld\randomimage\view\ThumbImageView.LoadableFileName.html
+* doc\de\jeisfeld\randomimage\view\ThumbImageView.MarkingType.html
+* doc\de\jeisfeld\randomimage\view\ThumbImageView.ThumbStyle.html
+* doc\de\jeisfeld\randomimage\view\ThumbImageView.html
+* doc\de\jeisfeld\randomimage\view\class-use\
+* doc\de\jeisfeld\randomimage\view\class-use\ListMenuView.html
+* doc\de\jeisfeld\randomimage\view\class-use\PinchImageView.RetainFragment.html
+* doc\de\jeisfeld\randomimage\view\class-use\PinchImageView.ScaleListener.html
+* doc\de\jeisfeld\randomimage\view\class-use\PinchImageView.html
+* doc\de\jeisfeld\randomimage\view\class-use\ThumbImageView.LoadableFileName.FileNameProvider.html
+* doc\de\jeisfeld\randomimage\view\class-use\ThumbImageView.LoadableFileName.html
+* doc\de\jeisfeld\randomimage\view\class-use\ThumbImageView.MarkingType.html
+* doc\de\jeisfeld\randomimage\view\class-use\ThumbImageView.ThumbStyle.html
+* doc\de\jeisfeld\randomimage\view\class-use\ThumbImageView.html
+* doc\de\jeisfeld\randomimage\view\package-frame.html
+* doc\de\jeisfeld\randomimage\view\package-summary.html
+* doc\de\jeisfeld\randomimage\view\package-tree.html
+* doc\de\jeisfeld\randomimage\view\package-use.html
+* doc\de\jeisfeld\randomimage\widgets\
+* doc\de\jeisfeld\randomimage\widgets\GenericWidget.ButtonAnimator.html
+* doc\de\jeisfeld\randomimage\widgets\GenericWidget.html
+* doc\de\jeisfeld\randomimage\widgets\ImageWidget.html
+* doc\de\jeisfeld\randomimage\widgets\ImageWidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\MiniWidget.html
+* doc\de\jeisfeld\randomimage\widgets\MiniWidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\StackedImageWidget.html
+* doc\de\jeisfeld\randomimage\widgets\StackedImageWidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\StackedImageWidgetService.StackRemoteViewsFactory.html
+* doc\de\jeisfeld\randomimage\widgets\StackedImageWidgetService.html
+* doc\de\jeisfeld\randomimage\widgets\WidgetAlarmReceiver.html
+* doc\de\jeisfeld\randomimage\widgets\WidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\
+* doc\de\jeisfeld\randomimage\widgets\class-use\GenericWidget.ButtonAnimator.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\GenericWidget.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\ImageWidget.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\ImageWidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\MiniWidget.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\MiniWidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\StackedImageWidget.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\StackedImageWidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\StackedImageWidgetService.StackRemoteViewsFactory.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\StackedImageWidgetService.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\WidgetAlarmReceiver.html
+* doc\de\jeisfeld\randomimage\widgets\class-use\WidgetConfigurationActivity.html
+* doc\de\jeisfeld\randomimage\widgets\package-frame.html
+* doc\de\jeisfeld\randomimage\widgets\package-summary.html
+* doc\de\jeisfeld\randomimage\widgets\package-tree.html
+* doc\de\jeisfeld\randomimage\widgets\package-use.html
+* doc\deprecated-list.html
+* doc\help-doc.html
+* doc\index-files\
+* doc\index-files\index-1.html
+* doc\index-files\index-10.html
+* doc\index-files\index-11.html
+* doc\index-files\index-12.html
+* doc\index-files\index-13.html
+* doc\index-files\index-14.html
+* doc\index-files\index-15.html
+* doc\index-files\index-16.html
+* doc\index-files\index-17.html
+* doc\index-files\index-18.html
+* doc\index-files\index-19.html
+* doc\index-files\index-2.html
+* doc\index-files\index-20.html
+* doc\index-files\index-21.html
+* doc\index-files\index-22.html
+* doc\index-files\index-3.html
+* doc\index-files\index-4.html
+* doc\index-files\index-5.html
+* doc\index-files\index-6.html
+* doc\index-files\index-7.html
+* doc\index-files\index-8.html
+* doc\index-files\index-9.html
+* doc\index.html
+* doc\overview-frame.html
+* doc\overview-summary.html
+* doc\overview-tree.html
+* doc\package-list
+* doc\script.js
+* doc\serialized-form.html
+* doc\src-html\
+* doc\src-html\com\
+* doc\src-html\com\android\
+* doc\src-html\com\android\vending\
+* doc\src-html\com\android\vending\billing\
+* doc\src-html\com\android\vending\billing\Base64.html
+* doc\src-html\com\android\vending\billing\Base64DecoderException.html
+* doc\src-html\com\android\vending\billing\IabException.html
+* doc\src-html\com\android\vending\billing\IabHelper.OnConsumeFinishedListener.html
+* doc\src-html\com\android\vending\billing\IabHelper.OnConsumeMultiFinishedListener.html
+* doc\src-html\com\android\vending\billing\IabHelper.OnIabPurchaseFinishedListener.html
+* doc\src-html\com\android\vending\billing\IabHelper.OnIabSetupFinishedListener.html
+* doc\src-html\com\android\vending\billing\IabHelper.QueryInventoryFinishedListener.html
+* doc\src-html\com\android\vending\billing\IabHelper.html
+* doc\src-html\com\android\vending\billing\IabResult.html
+* doc\src-html\com\android\vending\billing\Inventory.html
+* doc\src-html\com\android\vending\billing\Purchase.html
+* doc\src-html\com\android\vending\billing\PurchasedSku.html
+* doc\src-html\com\android\vending\billing\Security.html
+* doc\src-html\com\android\vending\billing\SkuDetails.html
+* doc\src-html\de\
+* doc\src-html\de\jeisfeld\
+* doc\src-html\de\jeisfeld\randomimage\
+* doc\src-html\de\jeisfeld\randomimage\AddImagesFromGalleryActivity.html
+* doc\src-html\de\jeisfeld\randomimage\AddSentImagesActivity.html
+* doc\src-html\de\jeisfeld\randomimage\Application.html
+* doc\src-html\de\jeisfeld\randomimage\BuildConfig.html
+* doc\src-html\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.ChosenDirectoryListener.html
+* doc\src-html\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.DisplayImagesAdapter.html
+* doc\src-html\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.OnFolderLongClickListener.html
+* doc\src-html\de\jeisfeld\randomimage\DirectoryChooserDialogFragment.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayAllImagesActivity.CurrentAction.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayAllImagesActivity.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayAllImagesArrayAdapter.SelectionMode.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayAllImagesArrayAdapter.ViewCache.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayAllImagesArrayAdapter.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImageDetailsActivity.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImageListActivity.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImageListArrayAdapter.SelectionMode.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImageListArrayAdapter.ViewCache.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImageListArrayAdapter.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImagesFromFolderActivity.CurrentAction.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayImagesFromFolderActivity.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayNestedListDetailsActivity.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayRandomImageActivity.FlingDirection.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayRandomImageActivity.FolderRandomFileProvider.html
+* doc\src-html\de\jeisfeld\randomimage\DisplayRandomImageActivity.html
+* doc\src-html\de\jeisfeld\randomimage\PinchImageView.RetainFragment.html
+* doc\src-html\de\jeisfeld\randomimage\PinchImageView.ScaleListener.html
+* doc\src-html\de\jeisfeld\randomimage\PinchImageView.html
+* doc\src-html\de\jeisfeld\randomimage\R.attr.html
+* doc\src-html\de\jeisfeld\randomimage\R.dimen.html
+* doc\src-html\de\jeisfeld\randomimage\R.drawable.html
+* doc\src-html\de\jeisfeld\randomimage\R.html
+* doc\src-html\de\jeisfeld\randomimage\R.id.html
+* doc\src-html\de\jeisfeld\randomimage\R.layout.html
+* doc\src-html\de\jeisfeld\randomimage\R.menu.html
+* doc\src-html\de\jeisfeld\randomimage\R.string.html
+* doc\src-html\de\jeisfeld\randomimage\R.style.html
+* doc\src-html\de\jeisfeld\randomimage\R.xml.html
+* doc\src-html\de\jeisfeld\randomimage\SdMountReceiver.html
+* doc\src-html\de\jeisfeld\randomimage\SelectDirectoryActivity.html
+* doc\src-html\de\jeisfeld\randomimage\SelectImageFolderActivity.html
+* doc\src-html\de\jeisfeld\randomimage\SettingsActivity.html
+* doc\src-html\de\jeisfeld\randomimage\SettingsFragment.html
+* doc\src-html\de\jeisfeld\randomimage\ThumbImageView.html
+* doc\src-html\de\jeisfeld\randomimage\util\
+* doc\src-html\de\jeisfeld\randomimage\util\AsyncLoader.html
+* doc\src-html\de\jeisfeld\randomimage\util\AuthorizationHelper.html
+* doc\src-html\de\jeisfeld\randomimage\util\AuthorizationHelperGoogleBilling.html
+* doc\src-html\de\jeisfeld\randomimage\util\AuthorizationHelperPro.html
+* doc\src-html\de\jeisfeld\randomimage\util\DateUtil.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.ConfirmDialogFragment.ConfirmDialogListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.ConfirmDialogFragment.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.DisplayMessageDialogFragment.MessageDialogListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.DisplayMessageDialogFragment.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.RequestInputDialogFragment.RequestInputDialogListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.RequestInputDialogFragment.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.SelectFromListDialogFragment.html
+* doc\src-html\de\jeisfeld\randomimage\util\DialogUtil.html
+* doc\src-html\de\jeisfeld\randomimage\util\FileUtil.html
+* doc\src-html\de\jeisfeld\randomimage\util\GoogleBillingHelper.OnInventoryFinishedListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\GoogleBillingHelper.OnPurchaseSuccessListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\GoogleBillingHelper.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageList.ImageListInfo.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageList.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageRegistry.CreationStyle.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageRegistry.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageUtil.ImageFileFilter.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageUtil.OnImageFoldersFoundListener.html
+* doc\src-html\de\jeisfeld\randomimage\util\ImageUtil.html
+* doc\src-html\de\jeisfeld\randomimage\util\Logger.html
+* doc\src-html\de\jeisfeld\randomimage\util\MediaStoreUtil.ImageNotFoundException.html
+* doc\src-html\de\jeisfeld\randomimage\util\MediaStoreUtil.html
+* doc\src-html\de\jeisfeld\randomimage\util\PreferenceUtil.html
+* doc\src-html\de\jeisfeld\randomimage\util\PrivateConstants.html
+* doc\src-html\de\jeisfeld\randomimage\util\RandomFileProvider.html
+* doc\src-html\de\jeisfeld\randomimage\util\StandardImageList.html
+* doc\src-html\de\jeisfeld\randomimage\util\SystemUtil.html
+* doc\src-html\de\jeisfeld\randomimage\view\
+* doc\src-html\de\jeisfeld\randomimage\view\ListMenuView.html
+* doc\src-html\de\jeisfeld\randomimage\view\PinchImageView.RetainFragment.html
+* doc\src-html\de\jeisfeld\randomimage\view\PinchImageView.ScaleListener.html
+* doc\src-html\de\jeisfeld\randomimage\view\PinchImageView.html
+* doc\src-html\de\jeisfeld\randomimage\view\ThumbImageView.LoadableFileName.FileNameProvider.html
+* doc\src-html\de\jeisfeld\randomimage\view\ThumbImageView.LoadableFileName.html
+* doc\src-html\de\jeisfeld\randomimage\view\ThumbImageView.MarkingType.html
+* doc\src-html\de\jeisfeld\randomimage\view\ThumbImageView.ThumbStyle.html
+* doc\src-html\de\jeisfeld\randomimage\view\ThumbImageView.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\
+* doc\src-html\de\jeisfeld\randomimage\widgets\GenericWidget.ButtonAnimator.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\GenericWidget.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\ImageWidget.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\ImageWidgetConfigurationActivity.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\MiniWidget.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\MiniWidgetConfigurationActivity.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\StackedImageWidget.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\StackedImageWidgetConfigurationActivity.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\StackedImageWidgetService.StackRemoteViewsFactory.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\StackedImageWidgetService.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\WidgetAlarmReceiver.html
+* doc\src-html\de\jeisfeld\randomimage\widgets\WidgetConfigurationActivity.html
+* doc\stylesheet.css
+* javadoc.xml
+* libsExtra\
+* libsExtra\annotations.jar
+* proguard-project.txt
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+In RandomImageLib:
+* AndroidManifest.xml => randomImageLib\src\main\AndroidManifest.xml
+* libs\android-support-v13.jar => randomImageLib\libs\android-support-v13.jar
+* lint.xml => randomImageLib\lint.xml
+* res\ => randomImageLib\src\main\res\
+* src\ => randomImageLib\src\main\java\
+* src\com\android\vending\billing\IInAppBillingService.aidl => randomImageLib\src\main\aidl\com\android\vending\billing\IInAppBillingService.aidl
+In RandomImage:
+* AndroidManifest.xml => randomImage\src\main\AndroidManifest.xml
+* lint.xml => randomImage\lint.xml
+* res\ => randomImage\src\main\res\
+* src\ => randomImage\src\main\java
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
