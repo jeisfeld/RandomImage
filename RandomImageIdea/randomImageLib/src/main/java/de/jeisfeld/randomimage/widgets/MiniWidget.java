@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -15,7 +16,7 @@ import de.jeisfeld.randomimagelib.R;
 public class MiniWidget extends GenericWidget {
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-			final String listName, final boolean changeImage, final boolean userTriggered) {
+									 final String listName, final boolean changeImage, final boolean userTriggered) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
 
 		remoteViews.setTextViewText(R.id.textViewWidget, listName);
@@ -31,10 +32,8 @@ public class MiniWidget extends GenericWidget {
 	/**
 	 * Configure an instance of the widget.
 	 *
-	 * @param appWidgetId
-	 *            The widget id.
-	 * @param listName
-	 *            The list name to be used by the widget.
+	 * @param appWidgetId The widget id.
+	 * @param listName    The list name to be used by the widget.
 	 */
 	public static final void configure(final int appWidgetId, final String listName) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateminiwidget);
@@ -45,8 +44,7 @@ public class MiniWidget extends GenericWidget {
 	/**
 	 * Update instances of the widget.
 	 *
-	 * @param appWidgetId
-	 *            the list of instances to be updated. If empty, then all instances will be updated.
+	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	public static final void updateInstances(final int... appWidgetId) {
 		updateInstances(MiniWidget.class, appWidgetId);

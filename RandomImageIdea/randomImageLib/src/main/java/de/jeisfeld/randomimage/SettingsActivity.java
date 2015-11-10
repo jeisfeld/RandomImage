@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -30,8 +31,7 @@ public class SettingsActivity extends Activity {
 	/**
 	 * Utility method to start the activity.
 	 *
-	 * @param activity
-	 *            The activity from which the activity is started.
+	 * @param activity The activity from which the activity is started.
 	 */
 	public static final void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, SettingsActivity.class);
@@ -60,8 +60,7 @@ public class SettingsActivity extends Activity {
 	/**
 	 * Set the default shared preferences (after first installation).
 	 *
-	 * @param context
-	 *            The Context in which the preferences should be set.
+	 * @param context The Context in which the preferences should be set.
 	 */
 	public static final void setDefaultSharedPreferences(final Context context) {
 		PreferenceManager.setDefaultValues(Application.getAppContext(), R.xml.pref_general, false);
@@ -86,10 +85,8 @@ public class SettingsActivity extends Activity {
 	/**
 	 * Static helper method to extract the result flag.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag if a premium pack has been bought.
 	 */
 	public static final boolean getResultBoughtPremium(final int resultCode, final Intent data) {
@@ -105,8 +102,7 @@ public class SettingsActivity extends Activity {
 	/**
 	 * Helper method: Return the flag if a premium pack has been bought.
 	 *
-	 * @param boughtPremium
-	 *            The flag if a premium pack has been bought.
+	 * @param boughtPremium The flag if a premium pack has been bought.
 	 */
 	protected final void returnResult(final boolean boughtPremium) {
 		Bundle resultData = new Bundle();

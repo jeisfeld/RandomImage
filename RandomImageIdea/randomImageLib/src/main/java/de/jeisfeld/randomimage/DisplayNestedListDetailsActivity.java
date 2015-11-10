@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
@@ -41,19 +42,11 @@ public class DisplayNestedListDetailsActivity extends Activity {
 	private String mNestedListName;
 
 	/**
-	 * The name of the parent list from which the nested list is taken.
-	 */
-	private String mParentListName;
-
-	/**
 	 * Static helper method to start the activity.
 	 *
-	 * @param activity
-	 *            The activity starting this activity.
-	 * @param nestedListName
-	 *            The name of the nested list whose details should be displayed.
-	 * @param parentListName
-	 *            The name of the parent list from which the nested list is taken.
+	 * @param activity       The activity starting this activity.
+	 * @param nestedListName The name of the nested list whose details should be displayed.
+	 * @param parentListName The name of the parent list from which the nested list is taken.
 	 */
 	public static final void startActivity(final Activity activity, final String nestedListName, final String parentListName) {
 		Intent intent = new Intent(activity, DisplayNestedListDetailsActivity.class);
@@ -78,9 +71,9 @@ public class DisplayNestedListDetailsActivity extends Activity {
 		}
 
 		mNestedListName = getIntent().getStringExtra(STRING_EXTRA_NESTED_LISTNAME);
-		mParentListName = getIntent().getStringExtra(STRING_EXTRA_PARENT_LISTNAME);
+		String parentListName = getIntent().getStringExtra(STRING_EXTRA_PARENT_LISTNAME);
 
-		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mParentListName, true);
+		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(parentListName, true);
 		if (imageList == null) {
 			finish();
 			return;
@@ -115,7 +108,7 @@ public class DisplayNestedListDetailsActivity extends Activity {
 				String percentageString = editTextViewFrequency.getText().toString();
 
 				Double weight = null;
-				if (percentageString != null && percentageString.length() > 0) {
+				if (percentageString.length() > 0) {
 					weight = Double.parseDouble(percentageString) / HUNDRED;
 					if (weight > 1) {
 						weight = 1.0;

@@ -26,10 +26,8 @@ public class PurchasedSku {
 	/**
 	 * Constructor, passing the SKU details and the purchase.
 	 *
-	 * @param skuDetails
-	 *            The SKU details
-	 * @param purchase
-	 *            The purchase.
+	 * @param skuDetails The SKU details
+	 * @param purchase   The purchase.
 	 */
 	public PurchasedSku(final SkuDetails skuDetails, final Purchase purchase) {
 		this.mSkuDetails = skuDetails;

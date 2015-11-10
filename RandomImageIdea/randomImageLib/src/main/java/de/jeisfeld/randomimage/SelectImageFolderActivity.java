@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimagelib.R;
@@ -33,8 +34,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
-	 * @param activity
-	 *            The activity starting this activity.
+	 * @param activity The activity starting this activity.
 	 */
 	public static final void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, SelectImageFolderActivity.class);
@@ -75,7 +75,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			@Override
 			public void handleImageFolder(final String imageFolder) {
 				if (getAdapter() == null) {
-					ArrayList<String> folderNames = new ArrayList<String>();
+					ArrayList<String> folderNames = new ArrayList<>();
 					folderNames.add(imageFolder);
 
 					if (getAdapter() != null) {
@@ -113,10 +113,8 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to extract the selected folder.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the selected folder
 	 */
 	public static final String getSelectedFolder(final int resultCode, final Intent data) {
@@ -132,10 +130,8 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to extract the flag indicating if SelectDirectoryActivity was triggered.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag indicating if SelectDirectoryActivity was triggered.
 	 */
 	public static final boolean triggeredSelectDirectoryActivity(final int resultCode, final Intent data) {
@@ -151,8 +147,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Helper method: Return the selected folder.
 	 *
-	 * @param selectedFolder
-	 *            The selected folder.
+	 * @param selectedFolder The selected folder.
 	 */
 	protected final void returnResult(final String selectedFolder) {
 		Bundle resultData = new Bundle();

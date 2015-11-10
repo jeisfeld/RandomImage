@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.RemoteViews;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -30,7 +31,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * The list of all widget types.
 	 */
-	private static final Class<?>[] WIDGET_TYPES = { MiniWidget.class, ImageWidget.class, StackedImageWidget.class };
+	private static final Class<?>[] WIDGET_TYPES = {MiniWidget.class, ImageWidget.class, StackedImageWidget.class};
 
 	/**
 	 * Number of pixels per dip.
@@ -50,18 +51,18 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * The names of the image lists associated to any widget.
 	 */
-	private static SparseArray<String> mListNames = new SparseArray<String>();
+	private static SparseArray<String> mListNames = new SparseArray<>();
 
 	/**
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
 	 * complete the animation.
 	 */
-	private static Set<ButtonAnimator> mButtonAnimators = new HashSet<ButtonAnimator>();
+	private static Set<ButtonAnimator> mButtonAnimators = new HashSet<>();
 
 	/**
 	 * A temporary storage listing appWidgetIds that should change the image with the next update.
 	 */
-	private static Set<Integer> mDirtyWidgets = new HashSet<Integer>();
+	private static Set<Integer> mDirtyWidgets = new HashSet<>();
 
 	/**
 	 * Id of an app widget triggered for update by user.
@@ -100,7 +101,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			String listName = getListName(appWidgetId);
-			boolean userTriggered = mUserUpdatedAppWidgetId == null ? false : mUserUpdatedAppWidgetId == appWidgetId;
+			boolean userTriggered = mUserUpdatedAppWidgetId != null && mUserUpdatedAppWidgetId == appWidgetId;
 
 			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, mDirtyWidgets.contains(appWidgetId), userTriggered);
 
@@ -112,21 +113,15 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Called whenever a widget is updated.
 	 *
-	 * @param context
-	 *            The {@link android.content.Context Context} in which this receiver is running.
-	 * @param appWidgetManager
-	 *            A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId
-	 *            The appWidgetId for which an update is needed.
-	 * @param listName
-	 *            the list name of the widget.
-	 * @param changeImage
-	 *            flag indicating if the image should be changed.
-	 * @param userTriggered
-	 *            flag indicating if the call was triggered by the user.
+	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
+	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+	 * @param appWidgetId      The appWidgetId for which an update is needed.
+	 * @param listName         the list name of the widget.
+	 * @param changeImage      flag indicating if the image should be changed.
+	 * @param userTriggered    flag indicating if the call was triggered by the user.
 	 */
 	protected abstract void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered);
+										   final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered);
 
 	// OVERRIDABLE
 	@Override
@@ -146,8 +141,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Get the list name associated to an instance of the widget.
 	 *
-	 * @param appWidgetId
-	 *            The app widget id.
+	 * @param appWidgetId The app widget id.
 	 * @return The list name.
 	 */
 	protected static final String getListName(final int appWidgetId) {
@@ -165,12 +159,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Configure an instance of the widget.
 	 *
-	 * @param appWidgetId
-	 *            The widget id.
-	 * @param listName
-	 *            The list name to be used by the widget.
-	 * @param interval
-	 *            The update interval.
+	 * @param appWidgetId The widget id.
+	 * @param listName    The list name to be used by the widget.
+	 * @param interval    The update interval.
 	 */
 	public static final void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
@@ -188,10 +179,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Update instances of the widgets of a specific class.
 	 *
-	 * @param widgetClass
-	 *            the widget class (required if no appWidgetIds are given)
-	 * @param appWidgetId
-	 *            the list of instances to be updated. If empty, then all instances will be updated.
+	 * @param widgetClass the widget class (required if no appWidgetIds are given)
+	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	protected static final void updateInstances(final Class<?> widgetClass, final int... appWidgetId) {
 		if (widgetClass == null) {
@@ -217,10 +206,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Update timers for instances of the widgets of a specific class.
 	 *
-	 * @param widgetClass
-	 *            the widget class
-	 * @param appWidgetIds
-	 *            the list of instances to be updated. If empty, then all instances will be updated.
+	 * @param widgetClass  the widget class
+	 * @param appWidgetIds the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	protected static final void updateTimers(final Class<?> widgetClass, final int... appWidgetIds) {
 		Context context = Application.getAppContext();
@@ -245,8 +232,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Get the ids of all widgets of this class.
 	 *
-	 * @param widgetClass
-	 *            the widget class
+	 * @param widgetClass the widget class
 	 * @return The ids of all widgets of this class.
 	 */
 	protected static int[] getAllWidgetIds(final Class<?> widgetClass) {
@@ -261,7 +247,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @return The list of widgetIds of widgets of this app.
 	 */
 	public static ArrayList<Integer> getAllWidgetIds() {
-		ArrayList<Integer> allWidgetIds = new ArrayList<Integer>();
+		ArrayList<Integer> allWidgetIds = new ArrayList<>();
 
 		for (Class<?> widgetClass : WIDGET_TYPES) {
 			int[] widgetIds = getAllWidgetIds(widgetClass);
@@ -278,10 +264,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Check if there is a widget of the given class of this id.
 	 *
-	 * @param widgetClass
-	 *            the widget class
-	 * @param appWidgetId
-	 *            The widget id.
+	 * @param widgetClass the widget class
+	 * @param appWidgetId The widget id.
 	 * @return true if there is a widget of the given class of this id.
 	 */
 	public static boolean hasWidgetOfId(final Class<?> widgetClass, final int appWidgetId) {
@@ -298,12 +282,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Retrieve all widgetIds for widgets related to a specific list name.
 	 *
-	 * @param listName
-	 *            The list name.
+	 * @param listName The list name.
 	 * @return The ids of widgets configured for this list name.
 	 */
 	public static ArrayList<Integer> getWidgetIdsForName(final String listName) {
-		ArrayList<Integer> widgetIdsForName = new ArrayList<Integer>();
+		ArrayList<Integer> widgetIdsForName = new ArrayList<>();
 
 		for (int appWidgetId : getAllWidgetIds()) {
 			if (listName.equals(getListName(appWidgetId))) {
@@ -317,10 +300,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Update the list name in all widgets.
 	 *
-	 * @param oldName
-	 *            The old name.
-	 * @param newName
-	 *            The new name.
+	 * @param oldName The old name.
+	 * @param newName The new name.
 	 */
 	public static void updateListName(final String oldName, final String newName) {
 		for (Class<?> widgetClass : WIDGET_TYPES) {
@@ -368,19 +349,14 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		/**
 		 * Create and animate the ButtonAnimator.
 		 *
-		 * @param context
-		 *            The {@link android.content.Context Context} in which this receiver is running.
-		 * @param appWidgetManager
-		 *            A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-		 * @param appWidgetId
-		 *            The appWidgetId of the widget whose buttons should be animated.
-		 * @param widgetResource
-		 *            The resourceId of the widget layout.
-		 * @param buttonIds
-		 *            The buttonIds to be animated.
+		 * @param context          The {@link android.content.Context Context} in which this receiver is running.
+		 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+		 * @param appWidgetId      The appWidgetId of the widget whose buttons should be animated.
+		 * @param widgetResource   The resourceId of the widget layout.
+		 * @param buttonIds        The buttonIds to be animated.
 		 */
 		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager,
-				final int appWidgetId, final int widgetResource, final int... buttonIds) {
+								 final int appWidgetId, final int widgetResource, final int... buttonIds) {
 			mButtonAnimators.add(this);
 
 			this.mAppWidgetId = appWidgetId;
@@ -425,8 +401,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		/**
 		 * Set the opacity of the widget buttons.
 		 *
-		 * @param alpha
-		 *            The opacity.
+		 * @param alpha The opacity.
 		 */
 		@SuppressWarnings("unused")
 		private void setAlpha(final int alpha) {

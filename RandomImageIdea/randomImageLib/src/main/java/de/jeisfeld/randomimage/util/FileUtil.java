@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+
 import de.jeisfeld.randomimage.Application;
 
 /**
@@ -32,10 +33,8 @@ public final class FileUtil {
 	/**
 	 * Copy a file. The target file may even be on external SD card for Kitkat.
 	 *
-	 * @param source
-	 *            The source file
-	 * @param target
-	 *            The target file
+	 * @param source The source file
+	 * @param target The target file
 	 * @return true if the copying was successful.
 	 */
 	@SuppressWarnings("null")
@@ -117,8 +116,7 @@ public final class FileUtil {
 	/**
 	 * Delete a file. May be even on external SD card.
 	 *
-	 * @param file
-	 *            the file to be deleted.
+	 * @param file the file to be deleted.
 	 * @return True if successfully deleted.
 	 */
 	public static boolean deleteFile(final File file) {
@@ -154,10 +152,8 @@ public final class FileUtil {
 	/**
 	 * Move a file. The target file may even be on external SD card.
 	 *
-	 * @param source
-	 *            The source file
-	 * @param target
-	 *            The target file
+	 * @param source The source file
+	 * @param target The target file
 	 * @return true if the copying was successful.
 	 */
 	public static boolean moveFile(final File source, final File target) {
@@ -176,8 +172,7 @@ public final class FileUtil {
 	/**
 	 * Check is a file is writable. Detects write issues on external SD card.
 	 *
-	 * @param file
-	 *            The file
+	 * @param file The file
 	 * @return true if the file is writable.
 	 */
 	public static boolean isWritable(final File file) {
@@ -212,7 +207,7 @@ public final class FileUtil {
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
 	protected static String[] getExtSdCardPaths() {
-		List<String> paths = new ArrayList<String>();
+		List<String> paths = new ArrayList<>();
 		for (File file : Application.getAppContext().getExternalFilesDirs("external")) {
 			if (file != null && !file.equals(Application.getAppContext().getExternalFilesDir("external"))) {
 				int index = file.getAbsolutePath().lastIndexOf("/Android/data");
@@ -237,10 +232,9 @@ public final class FileUtil {
 	/**
 	 * Determine the main folder of the external SD card containing the given file.
 	 *
-	 * @param file
-	 *            the file.
+	 * @param file the file.
 	 * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
-	 *         null is returned.
+	 * null is returned.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
 	public static String getExtSdCardFolder(final File file) {
@@ -261,8 +255,7 @@ public final class FileUtil {
 	/**
 	 * Determine if a file is on external sd card. (Kitkat or higher.)
 	 *
-	 * @param file
-	 *            The file.
+	 * @param file The file.
 	 * @return true if on external sd card.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
@@ -305,14 +298,12 @@ public final class FileUtil {
 					path = test2;
 				}
 				else {
-					File test3 = new File(path, "100MEDIA/");
-					path = test3;
+					path = new File(path, "100MEDIA/");
 				}
 			}
 		}
 		else {
-			File test3 = new File(path, "Camera/");
-			path = test3;
+			path = new File(path, "Camera/");
 		}
 		return path.getAbsolutePath();
 	}

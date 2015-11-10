@@ -7,13 +7,14 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+
 import de.jeisfeld.randomimage.DirectoryChooserDialogFragment.ChosenDirectoryListener;
 import de.jeisfeld.randomimage.DirectoryChooserDialogFragment.OnFolderLongClickListener;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -41,8 +42,7 @@ public class SelectDirectoryActivity extends Activity {
 	/**
 	 * Static helper method to start the activity.
 	 *
-	 * @param activity
-	 *            The activity starting this activity.
+	 * @param activity The activity starting this activity.
 	 */
 	public static void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, SelectDirectoryActivity.class);
@@ -101,33 +101,33 @@ public class SelectDirectoryActivity extends Activity {
 								&& !imageList.contains(folderName)) {
 							DialogUtil.displayConfirmationMessage(SelectDirectoryActivity.this,
 									new ConfirmDialogListener() {
-								/**
-								 * The serial version id.
-								 */
-								private static final long serialVersionUID = 1L;
+										/**
+										 * The serial version id.
+										 */
+										private static final long serialVersionUID = 1L;
 
-								@Override
-								public void onDialogPositiveClick(final DialogFragment dialog) {
-									boolean success = imageList.addFolder(folderName);
+										@Override
+										public void onDialogPositiveClick(final DialogFragment dialog) {
+											boolean success = imageList.addFolder(folderName);
 
-									if (success) {
-										ArrayList<String> addedFolderList = new ArrayList<String>();
-										addedFolderList.add(folderName);
-										String addedFoldersString =
-												DialogUtil.createFileFolderMessageString(
-														null, addedFolderList, null);
-										DialogUtil.displayToast(SelectDirectoryActivity.this,
-												R.string.toast_added_single, addedFoldersString);
-										imageList.update(true);
-										mUpdatedList = true;
-									}
-								}
+											if (success) {
+												ArrayList<String> addedFolderList = new ArrayList<>();
+												addedFolderList.add(folderName);
+												String addedFoldersString =
+														DialogUtil.createFileFolderMessageString(
+																null, addedFolderList, null);
+												DialogUtil.displayToast(SelectDirectoryActivity.this,
+														R.string.toast_added_single, addedFoldersString);
+												imageList.update(true);
+												mUpdatedList = true;
+											}
+										}
 
-								@Override
-								public void onDialogNegativeClick(final DialogFragment dialog) {
-									// do nothing
-								}
-							}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder,
+										@Override
+										public void onDialogNegativeClick(final DialogFragment dialog) {
+											// do nothing
+										}
+									}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder,
 									folderShortName);
 
 						}
@@ -147,10 +147,8 @@ public class SelectDirectoryActivity extends Activity {
 	/**
 	 * Static helper method to extract the result folder.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the result folder.
 	 */
 	public static final String getResultFolder(final int resultCode, final Intent data) {
@@ -165,26 +163,18 @@ public class SelectDirectoryActivity extends Activity {
 	/**
 	 * Static helper method to extract the flag indicating if the image list was updated.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag indicating if the image list was updated.
 	 */
 	public static final boolean getResultUpdatedList(final int resultCode, final Intent data) {
-		if (resultCode == RESULT_OK) {
-			return data.getBooleanExtra(STRING_RESULT_UPDATED_LIST, false);
-		}
-		else {
-			return false;
-		}
+		return resultCode == RESULT_OK && data.getBooleanExtra(STRING_RESULT_UPDATED_LIST, false);
 	}
 
 	/**
 	 * Send the result to the calling activity.
 	 *
-	 * @param chosenDir
-	 *            The selected directory.
+	 * @param chosenDir The selected directory.
 	 */
 	private void sendResult(final String chosenDir) {
 		Bundle resultData = new Bundle();

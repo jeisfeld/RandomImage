@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
+
 import de.jeisfeld.randomimage.SdMountReceiver;
 
 /**
@@ -49,12 +50,9 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 * Sets a repeating alarm that runs once a day at the given interval. When the alarm fires, the app broadcasts an
 	 * Intent to this WakefulBroadcastReceiver.
 	 *
-	 * @param context
-	 *            The context in which the alarm is set.
-	 * @param appWidgetId
-	 *            the widget id.
-	 * @param interval
-	 *            the interval in which the alarm triggers.
+	 * @param context     The context in which the alarm is set.
+	 * @param appWidgetId the widget id.
+	 * @param interval    the interval in which the alarm triggers.
 	 */
 	public static final void setAlarm(final Context context, final int appWidgetId, final long interval) {
 		if (interval <= 0) {
@@ -105,10 +103,8 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Cancels the alarm.
 	 *
-	 * @param context
-	 *            The context in which the alarm is set.
-	 * @param appWidgetId
-	 *            the widget id.
+	 * @param context     The context in which the alarm is set.
+	 * @param appWidgetId the widget id.
 	 */
 	public static final void cancelAlarm(final Context context, final int appWidgetId) {
 		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId);
@@ -131,10 +127,8 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Create a PendingIntent which can be used for creating or cancelling an alarm for a widget.
 	 *
-	 * @param context
-	 *            The context in which the alarm is set.
-	 * @param appWidgetId
-	 *            the widget id.
+	 * @param context     The context in which the alarm is set.
+	 * @param appWidgetId the widget id.
 	 * @return The PendingIntent.
 	 */
 	private static PendingIntent createAlarmIntent(final Context context, final int appWidgetId) {

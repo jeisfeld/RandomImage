@@ -15,15 +15,16 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
-import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName;
+import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName.FileNameProvider;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 import de.jeisfeld.randomimage.view.ThumbImageView.ThumbStyle;
-import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName.FileNameProvider;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -63,17 +64,17 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * The set of nested list names selected for deletion.
 	 */
-	private Set<String> mSelectedNestedListNames = new HashSet<String>();
+	private Set<String> mSelectedNestedListNames = new HashSet<>();
 
 	/**
-	 * The set of foldernames selected for deletion.
+	 * The set of folder names selected for deletion.
 	 */
-	private Set<String> mSelectedFolderNames = new HashSet<String>();
+	private Set<String> mSelectedFolderNames = new HashSet<>();
 
 	/**
 	 * The set of filenames selected for deletion.
 	 */
-	private Set<String> mSelectedFileNames = new HashSet<String>();
+	private Set<String> mSelectedFileNames = new HashSet<>();
 
 	/**
 	 * Flag indicating how selection is handled.
@@ -103,8 +104,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Set the selection mode.
 	 *
-	 * @param selectionMode
-	 *            The selection mode.
+	 * @param selectionMode The selection mode.
 	 */
 	public final void setSelectionMode(final SelectionMode selectionMode) {
 		this.mSelectionMode = selectionMode;
@@ -121,8 +121,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Map the selectionMode of the adapter to the markingType of the thumb.
 	 *
-	 * @param selectionMode
-	 *            The selectionMode
+	 * @param selectionMode The selectionMode
 	 * @return the markingType
 	 */
 	public static MarkingType getMarkingTypeFromSelectionMode(final SelectionMode selectionMode) {
@@ -141,37 +140,33 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Constructor for the adapter.
 	 *
-	 * @param activity
-	 *            The activity using the adapter.
-	 * @param nestedListNames
-	 *            The names of nested lists to be displayed.
-	 * @param folderNames
-	 *            The names of folders to be displayed.
-	 * @param fileNames
-	 *            The names of files to be displayed.
+	 * @param activity        The activity using the adapter.
+	 * @param nestedListNames The names of nested lists to be displayed.
+	 * @param folderNames     The names of folders to be displayed.
+	 * @param fileNames       The names of files to be displayed.
 	 */
 	public DisplayImageListArrayAdapter(final DisplayImageListActivity activity,
-			final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
-			final ArrayList<String> fileNames) {
+										final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
+										final ArrayList<String> fileNames) {
 		super(activity, R.layout.text_view_initializing);
 		this.mActivity = activity;
 
 		if (nestedListNames == null) {
-			this.mNestedListNames = new ArrayList<String>();
+			this.mNestedListNames = new ArrayList<>();
 		}
 		else {
 			this.mNestedListNames = nestedListNames;
 			addAll(nestedListNames);
 		}
 		if (folderNames == null) {
-			this.mFolderNames = new ArrayList<String>();
+			this.mFolderNames = new ArrayList<>();
 		}
 		else {
 			this.mFolderNames = folderNames;
 			addAll(folderNames);
 		}
 		if (fileNames == null) {
-			this.mFileNames = new ArrayList<String>();
+			this.mFileNames = new ArrayList<>();
 		}
 		else {
 			this.mFileNames = fileNames;
@@ -186,8 +181,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Default adapter to be used by the framework.
 	 *
-	 * @param context
-	 *            The Context the view is running in.
+	 * @param context The Context the view is running in.
 	 */
 	public DisplayImageListArrayAdapter(final Context context) {
 		super(context, R.layout.text_view_initializing);
@@ -195,10 +189,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	}
 
 	/**
-	 * Add a folder to the list. Only allowed for lists containint no files.
+	 * Add a folder to the list. Only allowed for lists containing no files.
 	 *
-	 * @param folderName
-	 *            The folder added.
+	 * @param folderName The folder added.
 	 */
 	public final void addFolder(final String folderName) {
 		if (mFileNames.size() > 0) {
@@ -223,12 +216,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * Create a new ThumbImageView for the file on a certain position.
 	 *
-	 * @param position
-	 *            The position.
-	 * @param parent
-	 *            The parent view.
-	 * @param sameThread
-	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
+	 * @param position   The position.
+	 * @param parent     The parent view.
+	 * @param sameThread if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 * @return The ThumbImageView.
 	 */
 	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent, final boolean sameThread) {
@@ -272,7 +262,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
 				public String getFileName() {
-					ArrayList<String> imageFiles = new ArrayList<String>(ImageList.getImageFilesInFolder(entryName));
+					ArrayList<String> imageFiles = new ArrayList<>(ImageList.getImageFilesInFolder(entryName));
 					if (imageFiles.size() > 0) {
 						return imageFiles.get(new Random().nextInt(imageFiles.size()));
 					}
@@ -343,7 +333,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 						}
 						else {
 							mActivity.startActivityForResult(DisplayRandomImageActivity
-									.createIntent(mActivity, null, displayFileName.getFileName(), true),
+											.createIntent(mActivity, null, displayFileName.getFileName(), true),
 									DisplayRandomImageActivity.REQUEST_CODE);
 						}
 					}
@@ -387,21 +377,20 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The selected files.
 	 */
 	public final ArrayList<String> getSelectedFiles() {
-		return new ArrayList<String>(mSelectedFileNames);
+		return new ArrayList<>(mSelectedFileNames);
 	}
 
 	/**
 	 * Set the list of selected files.
 	 *
-	 * @param selectedFiles
-	 *            The names of the files.
+	 * @param selectedFiles The names of the files.
 	 */
 	public final void setSelectedFiles(final ArrayList<String> selectedFiles) {
 		if (selectedFiles == null) {
 			mSelectedFileNames.clear();
 		}
 		else {
-			mSelectedFileNames = new HashSet<String>(selectedFiles);
+			mSelectedFileNames = new HashSet<>(selectedFiles);
 		}
 	}
 
@@ -411,21 +400,20 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The selected folders.
 	 */
 	public final ArrayList<String> getSelectedFolders() {
-		return new ArrayList<String>(mSelectedFolderNames);
+		return new ArrayList<>(mSelectedFolderNames);
 	}
 
 	/**
 	 * Set the list of selected folders.
 	 *
-	 * @param selectedFolders
-	 *            The names of the folders.
+	 * @param selectedFolders The names of the folders.
 	 */
 	public final void setSelectedFolders(final ArrayList<String> selectedFolders) {
 		if (selectedFolders == null) {
 			mSelectedFolderNames.clear();
 		}
 		else {
-			mSelectedFolderNames = new HashSet<String>(selectedFolders);
+			mSelectedFolderNames = new HashSet<>(selectedFolders);
 		}
 	}
 
@@ -435,29 +423,27 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @return The selected nested lists.
 	 */
 	public final ArrayList<String> getSelectedNestedLists() {
-		return new ArrayList<String>(mSelectedNestedListNames);
+		return new ArrayList<>(mSelectedNestedListNames);
 	}
 
 	/**
 	 * Set the list of selected nested lists.
 	 *
-	 * @param selectedNestedLists
-	 *            The names of the nested lists.
+	 * @param selectedNestedLists The names of the nested lists.
 	 */
 	public final void setSelectedNestedLists(final ArrayList<String> selectedNestedLists) {
 		if (selectedNestedLists == null) {
 			mSelectedNestedListNames.clear();
 		}
 		else {
-			mSelectedNestedListNames = new HashSet<String>(selectedNestedLists);
+			mSelectedNestedListNames = new HashSet<>(selectedNestedLists);
 		}
 	}
 
 	/**
 	 * Set the markability status for all images in the cache.
 	 *
-	 * @param newMarkingType
-	 *            the new marking type.
+	 * @param newMarkingType the new marking type.
 	 */
 	private void setMarkabilityStatus(final MarkingType newMarkingType) {
 		for (ThumbImageView view : mViewCache.getCachedImages()) {
@@ -526,7 +512,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		/**
 		 * The map from positions to views.
 		 */
-		private SparseArray<ThumbImageView> mCache;
+		private final SparseArray<ThumbImageView> mCache;
 
 		/**
 		 * The preload size.
@@ -559,7 +545,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		private boolean mIsPreloadRunning = false;
 
 		/**
-		 * The parentView view h olding the cached views.
+		 * The parentView view holding the cached views.
 		 */
 		private ViewGroup mParentView = null;
 
@@ -567,26 +553,24 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 * Waiting preload thread. Always contains one element - this is done so that the array can be used as
 		 * synchronization object.
 		 */
-		private Thread[] mWaitingThreads = new Thread[1];
+		private final Thread[] mWaitingThreads = new Thread[1];
 
 		/**
-		 * Flad indicating if the preload thread is interrupted and the thread is in the process of deletion.
+		 * Flag indicating if the preload thread is interrupted and the thread is in the process of deletion.
 		 */
 		private boolean mIsInterrupted = false;
 
 		/**
 		 * Constructor of the cache.
 		 *
-		 * @param maxPosition
-		 *            The maximum position that can be stored.
-		 * @param preloadSize
-		 *            The number of views to be preloaded.
+		 * @param maxPosition The maximum position that can be stored.
+		 * @param preloadSize The number of views to be preloaded.
 		 */
 		private ViewCache(final int maxPosition, final int preloadSize) {
 			this.mPreloadSize = preloadSize;
 			this.mMaxPosition = maxPosition;
 			mPlannedSize = 2 * preloadSize;
-			mCache = new SparseArray<ThumbImageView>(mPlannedSize);
+			mCache = new SparseArray<>(mPlannedSize);
 		}
 
 		/**
@@ -599,10 +583,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		/**
 		 * Preload a range of views and clean the cache.
 		 *
-		 * @param position
-		 *            The position from where to do the preload
-		 * @param atEnd
-		 *            Flag indicating if we are at the end of the view or of the start.
+		 * @param position The position from where to do the preload
+		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void doPreload(final int position, final boolean atEnd) {
 			synchronized (mCache) {
@@ -663,10 +645,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		/**
 		 * Trigger a preload thread, ensuring that only one such thread is running at a time.
 		 *
-		 * @param position
-		 *            The position from where to do the preload
-		 * @param atEnd
-		 *            Flag indicating if we are at the end of the view or of the start.
+		 * @param position The position from where to do the preload
+		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void triggerPreload(final int position, final boolean atEnd) {
 			if (position == 0 || mIsInterrupted) {
@@ -719,10 +699,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		/**
 		 * Get a view from the cache.
 		 *
-		 * @param position
-		 *            The position of the view.
-		 * @param parent
-		 *            the parentView view.
+		 * @param position The position of the view.
+		 * @param parent   the parentView view.
 		 * @return The view from cache, if existing. Otherwise a new view.
 		 */
 		private ThumbImageView get(final int position, final ViewGroup parent) {

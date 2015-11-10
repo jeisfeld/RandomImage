@@ -20,6 +20,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
+
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
@@ -140,8 +141,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
 	 * @see android.view.View#View(Context)
 	 */
 	public PinchImageView(final Context context) {
@@ -151,10 +151,8 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs
-	 *            The attributes of the XML tag that is inflating the view.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs   The attributes of the XML tag that is inflating the view.
 	 * @see android.view.View#View(Context, AttributeSet)
 	 */
 	public PinchImageView(final Context context, final AttributeSet attrs) {
@@ -164,13 +162,10 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs
-	 *            The attributes of the XML tag that is inflating the view.
-	 * @param defStyle
-	 *            An attribute in the current theme that contains a reference to a style resource that supplies default
-	 *            values for the view. Can be 0 to not look for defaults.
+	 * @param context  The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs    The attributes of the XML tag that is inflating the view.
+	 * @param defStyle An attribute in the current theme that contains a reference to a style resource that supplies default
+	 *                 values for the view. Can be 0 to not look for defaults.
 	 * @see android.view.View#View(Context, AttributeSet, int)
 	 */
 	public PinchImageView(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -183,12 +178,9 @@ public class PinchImageView extends ImageView {
 	 * Fill with an image, making the image fit into the view. If the pathName is unchanged (restored), then it is not
 	 * refilled. The sizing (for fit) happens only once at first initialization of the view.
 	 *
-	 * @param pathName
-	 *            The pathname of the image
-	 * @param activity
-	 *            The triggering activity (required for bitmap caching)
-	 * @param cacheIndex
-	 *            A unique index of the view in the activity
+	 * @param pathName   The pathname of the image
+	 * @param activity   The triggering activity (required for bitmap caching)
+	 * @param cacheIndex A unique index of the view in the activity
 	 */
 	// OVERRIDABLE
 	public void setImage(final String pathName, final Activity activity, final int cacheIndex) {
@@ -240,8 +232,7 @@ public class PinchImageView extends ImageView {
 	protected final float getNaturalScaleFactor() {
 		float heightFactor = 1f * getHeight() / mBitmap.getHeight();
 		float widthFactor = 1f * getWidth() / mBitmap.getWidth();
-		float result = Math.min(widthFactor, heightFactor);
-		return result;
+		return Math.min(widthFactor, heightFactor);
 	}
 
 	/**
@@ -283,12 +274,9 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Animate the image out of the view.
 	 *
-	 * @param velocityX
-	 *            The x velocity specifying the direction of animation.
-	 * @param velocityY
-	 *            The y velocity specifying the direction of animation.
-	 * @param postActivities
-	 *            Activities to be done after the animation is finished.
+	 * @param velocityX      The x velocity specifying the direction of animation.
+	 * @param velocityY      The y velocity specifying the direction of animation.
+	 * @param postActivities Activities to be done after the animation is finished.
 	 */
 	public final void animateOut(final float velocityX, final float velocityY, final Runnable postActivities) {
 		float velocity = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY);
@@ -337,8 +325,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Set the X position. Required for animation. Should not be used otherwise.
 	 *
-	 * @param posX
-	 *            The new x position.
+	 * @param posX The new x position.
 	 */
 	@SuppressWarnings("unused")
 	private void setMPosX(final float posX) {
@@ -349,8 +336,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Set the X position. Required for animation. Should not be used otherwise.
 	 *
-	 * @param posY
-	 *            The new y position.
+	 * @param posY The new y position.
 	 */
 	@SuppressWarnings("unused")
 	private void setMPosY(final float posY) {
@@ -361,8 +347,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Set the maximum size in which a bitmap is held in memory.
 	 *
-	 * @param size
-	 *            the maximum size (pixels)
+	 * @param size the maximum size (pixels)
 	 */
 	public static void setMaxBitmapSize(final int size) {
 		mMaxBitmapSize = size;
@@ -474,12 +459,7 @@ public class PinchImageView extends ImageView {
 
 		}
 
-		if (isLongClickable()) {
-			return super.onTouchEvent(ev);
-		}
-		else {
-			return true;
-		}
+		return !isLongClickable() || super.onTouchEvent(ev);
 	}
 
 	/*
@@ -487,19 +467,13 @@ public class PinchImageView extends ImageView {
 	 */
 	@Override
 	public final boolean performLongClick() {
-		if (mHasMoved) {
-			return true;
-		}
-		else {
-			return super.performLongClick();
-		}
+		return mHasMoved || super.performLongClick();
 	}
 
 	/**
 	 * Utility method to allow actions after starting the pointer move.
 	 *
-	 * @param ev
-	 *            The motion event.
+	 * @param ev The motion event.
 	 */
 	// OVERRIDABLE
 	protected void startPointerMove(final MotionEvent ev) {
@@ -509,8 +483,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Utility method to do the refresh after finishing the pointer move.
 	 *
-	 * @param ev
-	 *            The motion event.
+	 * @param ev The motion event.
 	 */
 	// OVERRIDABLE
 	protected void finishPointerMove(final MotionEvent ev) {
@@ -520,8 +493,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Utility method to make the calculations in case of a pointer move.
 	 *
-	 * @param ev
-	 *            The motion event.
+	 * @param ev The motion event.
 	 * @return true if a move has been made (i.e. the position of the image changed).
 	 */
 	// OVERRIDABLE
@@ -667,10 +639,8 @@ public class PinchImageView extends ImageView {
 		/**
 		 * Get the retainFragment - search it by the index. If not found, create a new one.
 		 *
-		 * @param fm
-		 *            The fragment manager handling this fragment.
-		 * @param index
-		 *            The index of the view (required in case of multiple PinchImageViews to be retained).
+		 * @param fm    The fragment manager handling this fragment.
+		 * @param index The index of the view (required in case of multiple PinchImageViews to be retained).
 		 * @return the retainFragment.
 		 */
 		public static RetainFragment findOrCreateRetainFragment(final FragmentManager fm, final int index) {

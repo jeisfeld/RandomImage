@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 import android.util.Log;
+
 import de.jeisfeld.randomimage.Application;
 
 /**
@@ -35,12 +36,12 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * The current weights of the nested lists, indicating how frequently the images of this list are selected.
 	 */
-	private volatile Map<String, Double> mNestedListWeights = new HashMap<String, Double>();
+	private volatile Map<String, Double> mNestedListWeights = new HashMap<>();
 
 	/**
 	 * The nested weights that have been set customly.
 	 */
-	private volatile Map<String, Double> mCustomNestedListWeights = new HashMap<String, Double>();
+	private volatile Map<String, Double> mCustomNestedListWeights = new HashMap<>();
 
 	/**
 	 * The random number generator.
@@ -55,11 +56,8 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Create an image list and load it from its file, if existing.
 	 *
-	 * @param configFile
-	 *            the configuration file of this list.
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
-	 *
+	 * @param configFile          the configuration file of this list.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	protected StandardImageList(final File configFile, final boolean toastIfFilesMissing) {
 		super(configFile, toastIfFilesMissing);
@@ -68,13 +66,9 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Create a new image list.
 	 *
-	 * @param configFile
-	 *            the configuration file of this list.
-	 * @param listName
-	 *            the name of the list.
-	 * @param cloneFile
-	 *            If existing, then the new list will be cloned from this file.
-	 *
+	 * @param configFile the configuration file of this list.
+	 * @param listName   the name of the list.
+	 * @param cloneFile  If existing, then the new list will be cloned from this file.
 	 */
 	protected StandardImageList(final File configFile, final String listName, final File cloneFile) {
 		super(configFile, listName, cloneFile);
@@ -92,8 +86,8 @@ public final class StandardImageList extends ImageList {
 		// This needs to be null, as it is taken as criterion for successful loading.
 		mImageFilesByNestedList = null;
 
-		mNestedListWeights = new HashMap<String, Double>();
-		mCustomNestedListWeights = new HashMap<String, Double>();
+		mNestedListWeights = new HashMap<>();
+		mCustomNestedListWeights = new HashMap<>();
 		mRandom = new Random();
 
 		mAsyncLoader = new AsyncLoader(getAsyncRunnable(toastIfFilesMissing));
@@ -180,11 +174,11 @@ public final class StandardImageList extends ImageList {
 	@Override
 	public ArrayList<String> getAllImageFiles() {
 		mAsyncLoader.waitUntilReady();
-		Set<String> allImageFiles = new HashSet<String>();
+		Set<String> allImageFiles = new HashSet<>();
 		for (ArrayList<String> nestedListImages : mImageFilesByNestedList.values()) {
 			allImageFiles.addAll(nestedListImages);
 		}
-		return new ArrayList<String>(allImageFiles);
+		return new ArrayList<>(allImageFiles);
 	}
 
 	@Override
@@ -209,8 +203,7 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Get the number of images of a nested list.
 	 *
-	 * @param nestedListName
-	 *            The name of the nested list.
+	 * @param nestedListName The name of the nested list.
 	 * @return The number of images of the nested list.
 	 */
 	public int getNestedListImageCount(final String nestedListName) {
@@ -224,8 +217,7 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Get the weight of a nested list.
 	 *
-	 * @param nestedListName
-	 *            The name of the nested list.
+	 * @param nestedListName The name of the nested list.
 	 * @return The weight of the nested list.
 	 */
 	public double getNestedListWeight(final String nestedListName) {
@@ -239,23 +231,20 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Get the custom weight of a nested list.
 	 *
-	 * @param nestedListName
-	 *            The name of the nested list.
+	 * @param nestedListName The name of the nested list.
 	 * @return The custom weight of the nested list, if existing. Otherwise null.
 	 */
 	public Double getCustomNestedListWeight(final String nestedListName) {
 		if (mNestedListWeights == null) {
 			return null;
 		}
-		Double weight = mCustomNestedListWeights.get(nestedListName);
-		return weight;
+		return mCustomNestedListWeights.get(nestedListName);
 	}
 
 	/**
 	 * Get the percentage of all images contained in a nested list.
 	 *
-	 * @param nestedListName
-	 *            The name of the nested list.
+	 * @param nestedListName The name of the nested list.
 	 * @return The percentage of all images contained in this list.
 	 */
 	public Double getImagePercentage(final String nestedListName) {
@@ -277,10 +266,8 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Set the weight of a nested list.
 	 *
-	 * @param nestedListName
-	 *            The name of the nested list.
-	 * @param weight
-	 *            The custom weight that should be set.
+	 * @param nestedListName The name of the nested list.
+	 * @param weight         The custom weight that should be set.
 	 * @return True if the custom weight could be set.
 	 */
 	public boolean setCustomNestedListWeight(final String nestedListName, final Double weight) {
@@ -366,9 +353,7 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * Instantiate the runnable loading the image lists.
 	 *
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
-	 *
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The runnable loading the image lists.
 	 */
 	private Runnable getAsyncRunnable(final boolean toastIfFilesMissing) {
@@ -379,9 +364,9 @@ public final class StandardImageList extends ImageList {
 				final ArrayList<String> fileNames = getFileNames();
 				final ArrayList<String> nestedListNames = getNestedListNames();
 
-				Map<String, ArrayList<String>> imageFilesByNestedListNew = new HashMap<String, ArrayList<String>>();
+				Map<String, ArrayList<String>> imageFilesByNestedListNew = new HashMap<>();
 
-				Set<String> allImageFileSet = new HashSet<String>();
+				Set<String> allImageFileSet = new HashSet<>();
 
 				for (String folderName : folderNames) {
 					allImageFileSet.addAll(getImageFilesInFolder(folderName));
@@ -390,7 +375,7 @@ public final class StandardImageList extends ImageList {
 					allImageFileSet.add(fileName);
 				}
 
-				imageFilesByNestedListNew.put(DEFAULT_NESTED_LIST, new ArrayList<String>(allImageFileSet));
+				imageFilesByNestedListNew.put(DEFAULT_NESTED_LIST, new ArrayList<>(allImageFileSet));
 
 				for (String nestedListName : nestedListNames) {
 					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName, toastIfFilesMissing);

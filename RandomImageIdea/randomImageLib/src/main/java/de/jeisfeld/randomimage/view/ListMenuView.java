@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -18,12 +19,12 @@ public class ListMenuView extends ListView {
 	/**
 	 * The ids of resources defining the list entries.
 	 */
-	private final ArrayList<Integer> mResourceIds = new ArrayList<Integer>();
+	private final ArrayList<Integer> mResourceIds = new ArrayList<>();
 
 	/**
 	 * The listeners for the list entries.
 	 */
-	private final ArrayList<OnClickListener> mListeners = new ArrayList<OnClickListener>();
+	private final ArrayList<OnClickListener> mListeners = new ArrayList<>();
 
 	/**
 	 * A map from resourceId to its position in the list.
@@ -33,26 +34,12 @@ public class ListMenuView extends ListView {
 	/**
 	 * The entries in the list. Key is the list position!
 	 */
-	private final ArrayList<String> mListValues = new ArrayList<String>();
-
-	/**
-	 * The listener reacting on clicks on the list items.
-	 */
-	private final OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
-		@Override
-		public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-			OnClickListener listener = mListeners.get((int) id);
-			if (listener != null) {
-				listener.onClick(view);
-			}
-		}
-	};
+	private final ArrayList<String> mListValues = new ArrayList<>();
 
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
 	 * @see android.view.View#View(Context)
 	 */
 	public ListMenuView(final Context context) {
@@ -62,10 +49,8 @@ public class ListMenuView extends ListView {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs
-	 *            The attributes of the XML tag that is inflating the view.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs   The attributes of the XML tag that is inflating the view.
 	 * @see android.view.View#View(Context, AttributeSet)
 	 */
 	public ListMenuView(final Context context, final AttributeSet attrs) {
@@ -75,27 +60,30 @@ public class ListMenuView extends ListView {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs
-	 *            The attributes of the XML tag that is inflating the view.
-	 * @param defStyle
-	 *            An attribute in the current theme that contains a reference to a style resource that supplies default
-	 *            values for the view. Can be 0 to not look for defaults.
+	 * @param context  The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs    The attributes of the XML tag that is inflating the view.
+	 * @param defStyle An attribute in the current theme that contains a reference to a style resource that supplies default
+	 *                 values for the view. Can be 0 to not look for defaults.
 	 * @see android.view.View#View(Context, AttributeSet, int)
 	 */
 	public ListMenuView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setOnItemClickListener(mOnItemClickListener);
+		setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				OnClickListener listener = mListeners.get((int) id);
+				if (listener != null) {
+					listener.onClick(view);
+				}
+			}
+		});
 	}
 
 	/**
 	 * Add an item to the list.
 	 *
-	 * @param resourceId
-	 *            The resourceId of the added item.
-	 * @param listener
-	 *            A listener to be called when the item is clicked.
+	 * @param resourceId The resourceId of the added item.
+	 * @param listener   A listener to be called when the item is clicked.
 	 */
 	public final void addItem(final int resourceId, final OnClickListener listener) {
 		if (!mResourceIds.contains(resourceId)) {
@@ -110,8 +98,7 @@ public class ListMenuView extends ListView {
 	/**
 	 * Remove the item of a given id.
 	 *
-	 * @param resourceId
-	 *            The resourceId of the item to be removed.
+	 * @param resourceId The resourceId of the item to be removed.
 	 */
 	public final void removeItem(final int resourceId) {
 		if (mResourceIds.contains(resourceId)) {
@@ -128,7 +115,7 @@ public class ListMenuView extends ListView {
 	 */
 	public final void setAdapter() {
 		ArrayAdapter<String> directoryListAdapter =
-				new ArrayAdapter<String>(getContext(), R.layout.adapter_list_names, mListValues);
+				new ArrayAdapter<>(getContext(), R.layout.adapter_list_names, mListValues);
 		setAdapter(directoryListAdapter);
 	}
 

@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -38,11 +39,6 @@ public class ThumbImageView extends FrameLayout {
 	private boolean mIsMarked = false;
 
 	/**
-	 * Flag indicating if it is possible to mark the view.
-	 */
-	private MarkingType mMarkingType = MarkingType.NONE;
-
-	/**
 	 * The style in which the thumb is displayed.
 	 */
 	private ThumbStyle mThumbStyle = ThumbStyle.IMAGE;
@@ -60,8 +56,7 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
 	 * @see android.view.View#View(Context)
 	 */
 	public ThumbImageView(final Context context) {
@@ -71,10 +66,8 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs
-	 *            The attributes of the XML tag that is inflating the view.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs   The attributes of the XML tag that is inflating the view.
 	 * @see android.view.View#View(Context, AttributeSet)
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs) {
@@ -84,13 +77,10 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context
-	 *            The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs
-	 *            The attributes of the XML tag that is inflating the view.
-	 * @param defStyle
-	 *            An attribute in the current theme that contains a reference to a style resource that supplies default
-	 *            values for the view. Can be 0 to not look for defaults.
+	 * @param context  The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs    The attributes of the XML tag that is inflating the view.
+	 * @param defStyle An attribute in the current theme that contains a reference to a style resource that supplies default
+	 *                 values for the view. Can be 0 to not look for defaults.
 	 * @see android.view.View#View(Context, AttributeSet, int)
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -101,10 +91,8 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Initialize the View, depending on the style.
 	 *
-	 * @param activity
-	 *            The activity displaying the view.
-	 * @param style
-	 *            The style of the view.
+	 * @param activity The activity displaying the view.
+	 * @param style    The style of the view.
 	 */
 	public final void initWithStyle(final Activity activity, final ThumbStyle style) {
 		this.mThumbStyle = style;
@@ -134,15 +122,12 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Set the image and create the bitmap.
 	 *
-	 * @param activity
-	 *            The activity holding the view.
-	 * @param loadableFileName
-	 *            A provider for the name of the image to be displayed.
-	 * @param sameThread
-	 *            if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
+	 * @param activity         The activity holding the view.
+	 * @param loadableFileName A provider for the name of the image to be displayed.
+	 * @param sameThread       if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 */
 	public final void setImage(final Activity activity, final LoadableFileName loadableFileName,
-			final boolean sameThread) {
+							   final boolean sameThread) {
 		if (sameThread) {
 			loadImage(activity, loadableFileName);
 		}
@@ -161,10 +146,8 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Inner helper method of set Image, handling the loading of the image.
 	 *
-	 * @param activity
-	 *            The activity triggering the load.
-	 * @param loadableFileName
-	 *            a provider of the name of the file to be loaded.
+	 * @param activity         The activity triggering the load.
+	 * @param loadableFileName a provider of the name of the file to be loaded.
 	 */
 	private void loadImage(final Activity activity, final LoadableFileName loadableFileName) {
 		final Bitmap imageBitmap;
@@ -187,24 +170,21 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Set the marking type of the view.
 	 *
-	 * @param newMarkingType
-	 *            The type in which the view should be marked.
+	 * @param markingType The type in which the view should be marked.
 	 */
-	public final void setMarkable(final MarkingType newMarkingType) {
-		mMarkingType = newMarkingType;
-		if (mMarkingType == MarkingType.NONE && mIsMarked) {
+	public final void setMarkable(final MarkingType markingType) {
+		if (markingType == MarkingType.NONE && mIsMarked) {
 			setMarked(false);
 		}
-		mCheckBoxMarked.setVisibility(mMarkingType == MarkingType.NONE ? View.INVISIBLE : View.VISIBLE);
-		mCheckBoxMarked.setButtonDrawable(mMarkingType == MarkingType.CROSS ? R.drawable.checkbox_negative
+		mCheckBoxMarked.setVisibility(markingType == MarkingType.NONE ? View.INVISIBLE : View.VISIBLE);
+		mCheckBoxMarked.setButtonDrawable(markingType == MarkingType.CROSS ? R.drawable.checkbox_negative
 				: R.drawable.checkbox_positive);
 	}
 
 	/**
 	 * Set the marking status of the view.
 	 *
-	 * @param marked
-	 *            if true, it is marked, otherwise unmarked.
+	 * @param marked if true, it is marked, otherwise unmarked.
 	 */
 	public final void setMarked(final boolean marked) {
 		mIsMarked = marked;
@@ -218,8 +198,7 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Set the folderName for display.
 	 *
-	 * @param folderName
-	 *            the folderName to be displayed.
+	 * @param folderName the folderName to be displayed.
 	 */
 	public final void setFolderName(final String folderName) {
 		if (mThumbStyle != ThumbStyle.IMAGE) {
@@ -252,8 +231,7 @@ public class ThumbImageView extends FrameLayout {
 		/**
 		 * Constructor providing the file name.
 		 *
-		 * @param fileName
-		 *            The file name.
+		 * @param fileName The file name.
 		 */
 		public LoadableFileName(final String fileName) {
 			this.mFileName = fileName;
@@ -262,8 +240,7 @@ public class ThumbImageView extends FrameLayout {
 		/**
 		 * Constructor providing a method to retrieve the file name.
 		 *
-		 * @param fileNameProvider
-		 *            The provider for the file name.
+		 * @param fileNameProvider The provider for the file name.
 		 */
 		public LoadableFileName(final FileNameProvider fileNameProvider) {
 			this.mFileNameProvider = fileNameProvider;

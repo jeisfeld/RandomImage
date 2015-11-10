@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
+
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -32,7 +33,7 @@ public class StackedImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
+									 final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
 
 		Intent intent = new Intent(context, StackedImageWidgetService.class);
 		// Add the app widget ID to the intent extras.
@@ -69,17 +70,17 @@ public class StackedImageWidget extends GenericWidget {
 
 		// trigger also onDataStackChanged, as the intent will not update the service once created.
 		if (changeImage) {
-			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
+			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 		}
 	}
 
 	@Override
 	public final void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId,
-			final Bundle newOptions) {
+												final int appWidgetId,
+												final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
-		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] { appWidgetId }, R.id.stackViewWidget);
+		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 	}
 
 	@Override
@@ -94,12 +95,9 @@ public class StackedImageWidget extends GenericWidget {
 	/**
 	 * Configure an instance of the widget.
 	 *
-	 * @param appWidgetId
-	 *            The widget id.
-	 * @param listName
-	 *            The list name to be used by the widget.
-	 * @param interval
-	 *            The shuffle interval.
+	 * @param appWidgetId The widget id.
+	 * @param listName    The list name to be used by the widget.
+	 * @param interval    The shuffle interval.
 	 */
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatestackedimagewidget);
@@ -110,8 +108,7 @@ public class StackedImageWidget extends GenericWidget {
 	/**
 	 * Update instances of the widget.
 	 *
-	 * @param appWidgetId
-	 *            the list of instances to be updated. If empty, then all instances will be updated.
+	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	public static final void updateInstances(final int... appWidgetId) {
 		updateInstances(StackedImageWidget.class, appWidgetId);
@@ -120,8 +117,7 @@ public class StackedImageWidget extends GenericWidget {
 	/**
 	 * Check if there is an StackedImageWidget of this id.
 	 *
-	 * @param appWidgetId
-	 *            The widget id.
+	 * @param appWidgetId The widget id.
 	 * @return true if there is an StackedImageWidget of this id.
 	 */
 	public static boolean hasWidgetOfId(final int appWidgetId) {

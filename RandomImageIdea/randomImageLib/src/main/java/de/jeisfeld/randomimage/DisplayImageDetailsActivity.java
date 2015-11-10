@@ -16,14 +16,15 @@ import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
-import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.view.ListMenuView;
 import de.jeisfeld.randomimagelib.R;
 
@@ -74,17 +75,13 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * Static helper method to start the activity.
 	 *
-	 * @param activity
-	 *            The activity starting this activity.
-	 * @param fileName
-	 *            The name of the file whose details should be displayed.
-	 * @param listName
-	 *            The name of the list from which this file is taken.
-	 * @param preventDisplayAll
-	 *            flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * @param activity          The activity starting this activity.
+	 * @param fileName          The name of the file whose details should be displayed.
+	 * @param listName          The name of the list from which this file is taken.
+	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
 	 */
 	public static final void startActivity(final Activity activity, final String fileName, final String listName,
-			final boolean preventDisplayAll) {
+										   final boolean preventDisplayAll) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -168,8 +165,8 @@ public class DisplayImageDetailsActivity extends Activity {
 					new OnClickListener() {
 						@Override
 						public void onClick(final View v) {
-							ArrayList<String> filesToBeRemoved = new ArrayList<String>();
-							ArrayList<String> foldersToBeRemoved = new ArrayList<String>();
+							ArrayList<String> filesToBeRemoved = new ArrayList<>();
+							ArrayList<String> foldersToBeRemoved = new ArrayList<>();
 							if (isDirectory) {
 								foldersToBeRemoved.add(mFileName);
 							}
@@ -182,24 +179,24 @@ public class DisplayImageDetailsActivity extends Activity {
 
 							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
 									new ConfirmDialogListener() {
-								/**
-								 * The serial version id.
-								 */
-								private static final long serialVersionUID = 1L;
+										/**
+										 * The serial version id.
+										 */
+										private static final long serialVersionUID = 1L;
 
-								@Override
-								public void onDialogPositiveClick(final DialogFragment dialog) {
-									imageList.removeFile(mFileName);
-									imageList.removeFolder(mFileName);
-									imageList.update(true);
-									returnResult(mPreventDisplayAll, true);
-								}
+										@Override
+										public void onDialogPositiveClick(final DialogFragment dialog) {
+											imageList.removeFile(mFileName);
+											imageList.removeFolder(mFileName);
+											imageList.update(true);
+											returnResult(mPreventDisplayAll, true);
+										}
 
-								@Override
-								public void onDialogNegativeClick(final DialogFragment dialog) {
-									returnResult(false, false);
-								}
-							}, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
+										@Override
+										public void onDialogNegativeClick(final DialogFragment dialog) {
+											returnResult(false, false);
+										}
+									}, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
 									filesString);
 						}
 					});
@@ -227,10 +224,8 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * Static helper method to extract the finishParent flag.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag if the parent activity should be finished.
 	 */
 	public static final boolean getResultFinishParent(final int resultCode, final Intent data) {
@@ -246,10 +241,8 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * Static helper method to extract the fileRemoved flag.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag if the file was removed.
 	 */
 	public static final boolean getResultFileRemoved(final int resultCode, final Intent data) {
@@ -265,10 +258,8 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * Helper method: Return the flag if the parent activity should be finished.
 	 *
-	 * @param finishParent
-	 *            The flag if the parent activity should be finished.
-	 * @param fileRemoved
-	 *            The flag if the file has been removed from the list.
+	 * @param finishParent The flag if the parent activity should be finished.
+	 * @param fileRemoved  The flag if the file has been removed from the list.
 	 */
 	private void returnResult(final boolean finishParent, final boolean fileRemoved) {
 		Bundle resultData = new Bundle();
@@ -306,12 +297,9 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * Format one line of the image display.
 	 *
-	 * @param activity
-	 *            the triggering activity.
-	 * @param resource
-	 *            The resource containing the label of the line.
-	 * @param value
-	 *            The value of the parameter.
+	 * @param activity the triggering activity.
+	 * @param resource The resource containing the label of the line.
+	 * @param value    The value of the parameter.
 	 * @return The formatted line.
 	 */
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)

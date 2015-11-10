@@ -7,9 +7,10 @@ import android.app.DialogFragment;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
+
 import de.jeisfeld.randomimage.util.DialogUtil;
-import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -80,8 +81,7 @@ public abstract class WidgetConfigurationActivity extends Activity {
 	/**
 	 * Set the result of the activity.
 	 *
-	 * @param success
-	 *            true if widget successfully created.
+	 * @param success true if widget successfully created.
 	 */
 	protected final void setResult(final boolean success) {
 		setResult(success ? RESULT_OK : RESULT_CANCELED, mResultValue);
@@ -91,13 +91,10 @@ public abstract class WidgetConfigurationActivity extends Activity {
 	 * Initialize the configuration view after retrieving the name of the image list associated to the widget. Does the
 	 * same things as the usual onCrate() method.
 	 *
-	 * @param savedInstanceState
-	 *            If the activity is being re-initialized after previously being shut down then this Bundle contains the
-	 *            data it most recently supplied in onSaveInstanceState
-	 * @param appWidgetId
-	 *            the widgetId of the widget to be configured.
-	 * @param listName
-	 *            The selected image list name.
+	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the
+	 *                           data it most recently supplied in onSaveInstanceState
+	 * @param appWidgetId        the widgetId of the widget to be configured.
+	 * @param listName           The selected image list name.
 	 */
 	protected abstract void initialize(Bundle savedInstanceState, int appWidgetId, String listName);
 

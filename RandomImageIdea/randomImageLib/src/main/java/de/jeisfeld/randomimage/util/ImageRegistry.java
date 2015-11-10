@@ -9,6 +9,7 @@ import java.util.Map;
 
 import android.os.Environment;
 import android.util.Log;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageList.ImageListInfo;
 import de.jeisfeld.randomimagelib.R;
@@ -50,7 +51,7 @@ public final class ImageRegistry {
 	/**
 	 * A map from image list name to corresponding config file.
 	 */
-	private static Map<String, ImageListInfo> mImageListInfoMap = new HashMap<String, ImageListInfo>();
+	private static Map<String, ImageListInfo> mImageListInfoMap = new HashMap<>();
 
 	static {
 		parseConfigFiles();
@@ -65,9 +66,7 @@ public final class ImageRegistry {
 	/**
 	 * Get the currentImageList.
 	 *
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
-	 *
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The currentImageList.
 	 */
 	public static ImageList getCurrentImageList(final boolean toastIfFilesMissing) {
@@ -92,8 +91,7 @@ public final class ImageRegistry {
 	/**
 	 * Get the currentImageList, ensuring that it is freshly loaded.
 	 *
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The currentImageList.
 	 */
 	public static ImageList getCurrentImageListRefreshed(final boolean toastIfFilesMissing) {
@@ -121,7 +119,7 @@ public final class ImageRegistry {
 	 * @return The names of all available image lists.
 	 */
 	public static ArrayList<String> getImageListNames() {
-		ArrayList<String> nameList = new ArrayList<String>(mImageListInfoMap.keySet());
+		ArrayList<String> nameList = new ArrayList<>(mImageListInfoMap.keySet());
 		Collections.sort(nameList);
 		return nameList;
 	}
@@ -132,7 +130,7 @@ public final class ImageRegistry {
 	 * @return The names of all available standard image lists.
 	 */
 	public static ArrayList<String> getStandardImageListNames() {
-		ArrayList<String> nameList = new ArrayList<String>();
+		ArrayList<String> nameList = new ArrayList<>();
 
 		for (String name : mImageListInfoMap.keySet()) {
 			if (mImageListInfoMap.get(name).getListClass().equals(StandardImageList.class)) {
@@ -151,7 +149,7 @@ public final class ImageRegistry {
 	 */
 	public static ArrayList<String> getBackupImageListNames() {
 		Map<String, ImageListInfo> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
-		ArrayList<String> nameList = new ArrayList<String>(backupConfigFileMap.keySet());
+		ArrayList<String> nameList = new ArrayList<>(backupConfigFileMap.keySet());
 		Collections.sort(nameList);
 		return nameList;
 	}
@@ -159,13 +157,9 @@ public final class ImageRegistry {
 	/**
 	 * Switch to the image list with the given name.
 	 *
-	 * @param name
-	 *            The name of the target image list.
-	 * @param creationStyle
-	 *            Flag indicating if the list should be created if non-existing.
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
-	 *
+	 * @param name                The name of the target image list.
+	 * @param creationStyle       Flag indicating if the list should be created if non-existing.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return true if successful.
 	 */
 	public static boolean switchToImageList(final String name, final CreationStyle creationStyle, final boolean toastIfFilesMissing) {
@@ -204,8 +198,7 @@ public final class ImageRegistry {
 	/**
 	 * Delete the image list of the given name.
 	 *
-	 * @param name
-	 *            The name of the list to be deleted.
+	 * @param name The name of the list to be deleted.
 	 * @return true if successfully deleted.
 	 */
 	public static boolean deleteImageList(final String name) {
@@ -224,8 +217,7 @@ public final class ImageRegistry {
 	/**
 	 * Backup the image list of the given name.
 	 *
-	 * @param name
-	 *            The name of the list
+	 * @param name The name of the list
 	 * @return the backup file path if successful.
 	 */
 	public static String backupImageList(final String name) {
@@ -258,8 +250,7 @@ public final class ImageRegistry {
 	/**
 	 * Restore the image list of the given name.
 	 *
-	 * @param name
-	 *            The name of the list
+	 * @param name The name of the list
 	 * @return true if successful.
 	 */
 	public static boolean restoreImageList(final String name) {
@@ -293,8 +284,7 @@ public final class ImageRegistry {
 	/**
 	 * Rename the current list.
 	 *
-	 * @param newName
-	 *            The new name.
+	 * @param newName The new name.
 	 * @return true if successful.
 	 */
 	public static boolean renameCurrentList(final String newName) {
@@ -319,10 +309,8 @@ public final class ImageRegistry {
 	/**
 	 * Get the StandardImageList for a certain name.
 	 *
-	 * @param name
-	 *            The name.
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
+	 * @param name                The name.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list for this name, if existing. Otherwise null.
 	 */
 	public static ImageList getImageListByName(final String name, final boolean toastIfFilesMissing) {
@@ -345,10 +333,8 @@ public final class ImageRegistry {
 	/**
 	 * Get the StandardImageList for a certain name.
 	 *
-	 * @param name
-	 *            The name.
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
+	 * @param name                The name.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list for this name, if existing. Otherwise null.
 	 */
 	public static StandardImageList getStandardImageListByName(final String name, final boolean toastIfFilesMissing) {
@@ -365,8 +351,7 @@ public final class ImageRegistry {
 	/**
 	 * Get the config file for a certain list name.
 	 *
-	 * @param name
-	 *            The list name.
+	 * @param name The list name.
 	 * @return The config file, if existing, otherwise null.
 	 */
 	private static File getConfigFile(final String name) {
@@ -393,8 +378,7 @@ public final class ImageRegistry {
 	/**
 	 * Get the image lists from the config file folder.
 	 *
-	 * @param configFileFolder
-	 *            The config file folder.
+	 * @param configFileFolder The config file folder.
 	 * @return The map from list names to image list files.
 	 */
 	private static Map<String, ImageListInfo> parseConfigFiles(final File configFileFolder) {
@@ -411,7 +395,7 @@ public final class ImageRegistry {
 			configFiles = new File[0];
 		}
 
-		Map<String, ImageListInfo> fileMap = new HashMap<String, ImageListInfo>();
+		Map<String, ImageListInfo> fileMap = new HashMap<>();
 
 		for (File configFile : configFiles) {
 			ImageListInfo imageListInfo = ImageList.getInfoFromConfigFile(configFile);
@@ -458,18 +442,17 @@ public final class ImageRegistry {
 	/**
 	 * Generate a file for a new list name.
 	 *
-	 * @param name
-	 *            The list name.
+	 * @param name The list name.
 	 * @return A file for this name.
 	 */
 	private static File getFileForListName(final String name) {
 		String baseName =
 				CONFIG_FILE_PREFIX
 						+ name.replaceAll("[\\.]", ",")
-								.replaceAll("[\\s]", " ")
-								.replaceAll(
-										"[^A-Za-z0-9äöüßÄÖÜáàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ\\ \\-\\_\\%\\&\\?\\!\\$\\(\\)\\,\\;\\:]",
-										"");
+						.replaceAll("[\\s]", " ")
+						.replaceAll(
+								"[^A-Za-z0-9äöüßÄÖÜáàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ\\ \\-\\_\\%\\&\\?\\!\\$\\(\\)\\,\\;\\:]",
+								"");
 		if (baseName.length() > MAX_NAME_LENGTH) {
 			baseName = baseName.substring(0, MAX_NAME_LENGTH);
 		}
@@ -490,8 +473,7 @@ public final class ImageRegistry {
 	/**
 	 * Get the list name out of the file name (for the case that the list name is not stored there).
 	 *
-	 * @param file
-	 *            the config file.
+	 * @param file the config file.
 	 * @return the list name generated from the file name.
 	 */
 	protected static String getListNameFromFileName(final File file) {

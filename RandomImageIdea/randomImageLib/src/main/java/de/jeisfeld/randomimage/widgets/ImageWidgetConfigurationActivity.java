@@ -1,9 +1,11 @@
 package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
+
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimagelib.R;
@@ -21,30 +23,28 @@ public class ImageWidgetConfigurationActivity extends WidgetConfigurationActivit
 		for (int i = 0; i < durationValueStrings.length; i++) {
 			durationValues[i] = Long.parseLong(durationValueStrings[i]);
 		}
-		final ArrayList<String> durationNameList = new ArrayList<String>();
-		for (int i = 0; i < durationNames.length; i++) {
-			durationNameList.add(durationNames[i]);
-		}
+		final ArrayList<String> durationNameList = new ArrayList<>();
+		Collections.addAll(durationNameList, durationNames);
 
 		DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-			/**
-			 * The serial version id.
-			 */
-			private static final long serialVersionUID = 1L;
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
 
-			@Override
-			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-				ImageWidget.configure(appWidgetId, listName, durationValues[position]);
-				setResult(true);
-				finish();
-			}
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+						ImageWidget.configure(appWidgetId, listName, durationValues[position]);
+						setResult(true);
+						finish();
+					}
 
-			@Override
-			public void onDialogNegativeClick(final DialogFragment dialog) {
-				setResult(false);
-				finish();
-			}
-		}, R.string.title_dialog_select_change_frequency, durationNameList,
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						setResult(false);
+						finish();
+					}
+				}, R.string.title_dialog_select_change_frequency, durationNameList,
 				R.string.dialog_select_image_change_frequency);
 
 	}

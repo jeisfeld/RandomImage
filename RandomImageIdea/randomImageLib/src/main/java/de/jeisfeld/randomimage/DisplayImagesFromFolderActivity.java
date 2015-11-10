@@ -10,14 +10,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimagelib.R;
 
@@ -45,11 +46,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private static final String STRING_RESULT_FILES_ADDED = "de.jeisfeld.randomimage.FILES_ADDED";
 
 	/**
-	 * The names of the files to be displayed.
-	 */
-	private ArrayList<String> mFileNames;
-
-	/**
 	 * The folder whose images should be displayed.
 	 */
 	private String mFolderName;
@@ -62,12 +58,9 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
-	 * @param activity
-	 *            The activity starting this activity.
-	 * @param folderName
-	 *            the name of the folder which should be displayed.
-	 * @param forAddition
-	 *            Flag indicating if the activity is opened in order to add images to the current list.
+	 * @param activity    The activity starting this activity.
+	 * @param folderName  the name of the folder which should be displayed.
+	 * @param forAddition Flag indicating if the activity is opened in order to add images to the current list.
 	 */
 	public static final void startActivity(final Activity activity, final String folderName, final boolean forAddition) {
 		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
@@ -146,8 +139,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Handler for options selected while in add mode.
 	 *
-	 * @param menuId
-	 *            The selected menu item.
+	 * @param menuId The selected menu item.
 	 * @return true if menu item was consumed.
 	 */
 	private boolean onOptionsItemSelectedAdd(final int menuId) {
@@ -156,7 +148,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			final ArrayList<String> imagesToBeAdded = getAdapter().getSelectedFiles();
 			if (imagesToBeAdded.size() > 0) {
 
-				ArrayList<String> addedImages = new ArrayList<String>();
+				ArrayList<String> addedImages = new ArrayList<>();
 				for (String fileName : imagesToBeAdded) {
 					boolean isAdded = imageList.addFile(fileName);
 					if (isAdded) {
@@ -188,21 +180,21 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			}
 			else {
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
-					/**
-					 * The serial version id.
-					 */
-					private static final long serialVersionUID = 1L;
+							/**
+							 * The serial version id.
+							 */
+							private static final long serialVersionUID = 1L;
 
-					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog) {
-						addFolderToImageList();
-					}
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog) {
+								addFolderToImageList();
+							}
 
-					@Override
-					public void onDialogNegativeClick(final DialogFragment dialog) {
-						returnResult(false);
-					}
-				}, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								returnResult(false);
+							}
+						}, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
 						new File(mFolderName).getName());
 			}
 			return true;
@@ -214,22 +206,21 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			}
 			else {
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
-					/**
-					 * The serial version id.
-					 */
-					private static final long serialVersionUID = 1L;
+							/**
+							 * The serial version id.
+							 */
+							private static final long serialVersionUID = 1L;
 
-					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog) {
-						addFolderToImageList();
-					}
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog) {
+								addFolderToImageList();
+							}
 
-					@Override
-					public void onDialogNegativeClick(final DialogFragment dialog) {
-						// stay in the activity.
-						return;
-					}
-				}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								// stay in the activity.
+							}
+						}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
 						new File(mFolderName).getName());
 			}
 			return true;
@@ -260,7 +251,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		final ImageList imageList2 = ImageRegistry.getCurrentImageList(true);
 		boolean success = imageList2.addFolder(mFolderName);
 		if (success) {
-			ArrayList<String> addedFolderList = new ArrayList<String>();
+			ArrayList<String> addedFolderList = new ArrayList<>();
 			addedFolderList.add(mFolderName);
 			String addedFoldersString =
 					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
@@ -283,9 +274,9 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * Fill the view with the images of a folder.
 	 */
 	private void fillListOfImagesFromFolder() {
-		mFileNames = ImageUtil.getImagesInFolder(mFolderName);
+		ArrayList<String> fileNames = ImageUtil.getImagesInFolder(mFolderName);
 
-		if (mFileNames.size() == 0) {
+		if (fileNames.size() == 0) {
 			DialogUtil.displayInfo(this, new MessageDialogListener() {
 				/**
 				 * The serial version id.
@@ -305,15 +296,14 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			getAdapter().cleanupCache();
 		}
 
-		setAdapter(null, null, mFileNames);
+		setAdapter(null, null, fileNames);
 		setTitle(mFolderName);
 	}
 
 	/**
 	 * Change the action within this activity (display or add).
 	 *
-	 * @param action
-	 *            the new action.
+	 * @param action the new action.
 	 */
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
@@ -326,10 +316,8 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Static helper method to extract the filesAdded flag.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag if the files were added.
 	 */
 	public static final boolean getResultFilesAdded(final int resultCode, final Intent data) {
@@ -345,8 +333,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
 	 * Helper method: Return the flag if files have been added.
 	 *
-	 * @param filesAdded
-	 *            The flag if files have been added to the list.
+	 * @param filesAdded The flag if files have been added to the list.
 	 */
 	private void returnResult(final boolean filesAdded) {
 		Bundle resultData = new Bundle();

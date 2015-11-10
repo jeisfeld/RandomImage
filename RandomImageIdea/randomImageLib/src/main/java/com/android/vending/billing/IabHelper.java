@@ -3,8 +3,6 @@ package com.android.vending.billing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -18,6 +16,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+
+import org.json.JSONException;
 
 /**
  * Provides convenience methods for in-app billing. You can create one instance of this class for your application and
@@ -42,7 +42,6 @@ import android.util.Log;
  * operation while the first one has not yet completed will result in an exception being thrown.
  *
  * @author Bruno Oliveira (Google)
- *
  */
 public class IabHelper {
 	// JAVADOC:OFF
@@ -137,12 +136,10 @@ public class IabHelper {
 	 * {@link #startSetup} and wait for setup to complete. This constructor does not block and is safe to call from a UI
 	 * thread.
 	 *
-	 * @param ctx
-	 *            Your application or Activity context. Needed to bind to the in-app billing service.
-	 * @param base64PublicKey
-	 *            Your application's public key, encoded in base64. This is used for verification of purchase
-	 *            signatures. You can find your app's base64-encoded public key in your application's page on Google
-	 *            Play Developer Console. Note that this is NOT your "developer public key".
+	 * @param ctx             Your application or Activity context. Needed to bind to the in-app billing service.
+	 * @param base64PublicKey Your application's public key, encoded in base64. This is used for verification of purchase
+	 *                        signatures. You can find your app's base64-encoded public key in your application's page on Google
+	 *                        Play Developer Console. Note that this is NOT your "developer public key".
 	 */
 	public IabHelper(final Context ctx, final String base64PublicKey) {
 		mContext = ctx.getApplicationContext();
@@ -153,10 +150,8 @@ public class IabHelper {
 	/**
 	 * Enables or disable debug logging through LogCat.
 	 *
-	 * @param enable
-	 *            Flag indicating if logging should be enabled.
-	 * @param tag
-	 *            The logging tag.
+	 * @param enable Flag indicating if logging should be enabled.
+	 * @param tag    The logging tag.
 	 */
 	public final void enableDebugLogging(final boolean enable, final String tag) {
 		checkNotDisposed();
@@ -167,8 +162,7 @@ public class IabHelper {
 	/**
 	 * Enable or disable debug logging.
 	 *
-	 * @param enable
-	 *            Flag indicating if logging should be enabled.
+	 * @param enable Flag indicating if logging should be enabled.
 	 */
 	public final void enableDebugLogging(final boolean enable) {
 		checkNotDisposed();
@@ -179,8 +173,7 @@ public class IabHelper {
 	 * Starts the setup process. This will start up the setup process asynchronously. You will be notified through the
 	 * listener when the setup process is complete. This method is safe to call from a UI thread.
 	 *
-	 * @param listener
-	 *            The listener to notify when the setup process is complete.
+	 * @param listener The listener to notify when the setup process is complete.
 	 */
 	public final void startSetup(final OnIabSetupFinishedListener listener) {
 		// If already set up, can't do it again.
@@ -312,22 +305,22 @@ public class IabHelper {
 	private OnIabPurchaseFinishedListener mPurchaseListener;
 
 	public final void launchPurchaseFlow(final Activity act, final String sku, final int requestCode,
-			final OnIabPurchaseFinishedListener listener) {
+										 final OnIabPurchaseFinishedListener listener) {
 		launchPurchaseFlow(act, sku, requestCode, listener, "");
 	}
 
 	public final void launchPurchaseFlow(final Activity act, final String sku, final int requestCode,
-			final OnIabPurchaseFinishedListener listener, final String extraData) {
+										 final OnIabPurchaseFinishedListener listener, final String extraData) {
 		launchPurchaseFlow(act, sku, ITEM_TYPE_INAPP, requestCode, listener, extraData);
 	}
 
 	public final void launchSubscriptionPurchaseFlow(final Activity act, final String sku, final int requestCode,
-			final OnIabPurchaseFinishedListener listener) {
+													 final OnIabPurchaseFinishedListener listener) {
 		launchSubscriptionPurchaseFlow(act, sku, requestCode, listener, "");
 	}
 
 	public final void launchSubscriptionPurchaseFlow(final Activity act, final String sku, final int requestCode,
-			final OnIabPurchaseFinishedListener listener, final String extraData) {
+													 final OnIabPurchaseFinishedListener listener, final String extraData) {
 		launchPurchaseFlow(act, sku, ITEM_TYPE_SUBS, requestCode, listener, extraData);
 	}
 
@@ -338,25 +331,19 @@ public class IabHelper {
 	 * at which point you must call this object's {@link #handleActivityResult} method to continue the purchase flow.
 	 * This method MUST be called from the UI thread of the Activity.
 	 *
-	 * @param act
-	 *            The calling activity.
-	 * @param sku
-	 *            The sku of the item to purchase.
-	 * @param itemType
-	 *            indicates if it's a product or a subscription (ITEM_TYPE_INAPP or ITEM_TYPE_SUBS)
-	 * @param requestCode
-	 *            A request code (to differentiate from other responses -- as in
-	 *            {@link android.app.Activity#startActivityForResult}).
-	 * @param listener
-	 *            The listener to notify when the purchase process finishes
-	 * @param extraData
-	 *            Extra data (developer payload), which will be returned with the purchase data when the purchase
-	 *            completes. This extra data will be permanently bound to that purchase and will always be returned when
-	 *            the purchase is queried.
+	 * @param act         The calling activity.
+	 * @param sku         The sku of the item to purchase.
+	 * @param itemType    indicates if it's a product or a subscription (ITEM_TYPE_INAPP or ITEM_TYPE_SUBS)
+	 * @param requestCode A request code (to differentiate from other responses -- as in
+	 *                    {@link android.app.Activity#startActivityForResult}).
+	 * @param listener    The listener to notify when the purchase process finishes
+	 * @param extraData   Extra data (developer payload), which will be returned with the purchase data when the purchase
+	 *                    completes. This extra data will be permanently bound to that purchase and will always be returned when
+	 *                    the purchase is queried.
 	 */
 	public final void launchPurchaseFlow(final Activity act, final String sku, final String itemType,
-			final int requestCode,
-			final OnIabPurchaseFinishedListener listener, final String extraData) {
+										 final int requestCode,
+										 final OnIabPurchaseFinishedListener listener, final String extraData) {
 		checkNotDisposed();
 		checkSetupDone("launchPurchaseFlow");
 		flagStartAsync("launchPurchaseFlow");
@@ -392,10 +379,9 @@ public class IabHelper {
 			mPurchaseListener = listener;
 			mPurchasingItemType = itemType;
 			PendingIntent pendingIntent = buyIntentBundle.getParcelable(RESPONSE_BUY_INTENT);
-			act.startIntentSenderForResult(pendingIntent.getIntentSender(),
-					requestCode, new Intent(),
-					Integer.valueOf(0), Integer.valueOf(0),
-					Integer.valueOf(0));
+			if (pendingIntent != null) {
+				act.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0);
+			}
 		}
 		catch (SendIntentException e) {
 			logError("SendIntentException while launching purchase flow for sku " + sku);
@@ -425,14 +411,11 @@ public class IabHelper {
 	 * {@link android.app.Activity#onActivityResult} method. This method MUST be called from the UI thread of the
 	 * Activity.
 	 *
-	 * @param requestCode
-	 *            The requestCode as you received it.
-	 * @param resultCode
-	 *            The resultCode as you received it.
-	 * @param data
-	 *            The data (Intent) as you received it.
+	 * @param requestCode The requestCode as you received it.
+	 * @param resultCode  The resultCode as you received it.
+	 * @param data        The data (Intent) as you received it.
 	 * @return Returns true if the result was related to a purchase flow and was handled; false if the result was not
-	 *         related to a purchase, in which case you should handle it normally.
+	 * related to a purchase, in which case you should handle it normally.
 	 */
 	public final boolean handleActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		IabResult result;
@@ -476,7 +459,7 @@ public class IabHelper {
 				return true;
 			}
 
-			Purchase purchase = null;
+			Purchase purchase;
 			try {
 				purchase = new Purchase(mPurchasingItemType, purchaseData, dataSignature);
 				String sku = purchase.getSku();
@@ -543,20 +526,16 @@ public class IabHelper {
 	 * skus, if specified. This method may block or take long to execute. Do not call from a UI thread. For that, use
 	 * the non-blocking version refreshInventoryAsync.
 	 *
-	 * @param querySkuDetails
-	 *            if true, SKU details (price, description, etc) will be queried as well as purchase information.
-	 * @param moreItemSkus
-	 *            additional PRODUCT skus to query information on, regardless of ownership. Ignored if null or if
-	 *            querySkuDetails is false.
-	 * @param moreSubsSkus
-	 *            additional SUBSCRIPTIONS skus to query information on, regardless of ownership. Ignored if null or if
-	 *            querySkuDetails is false.
+	 * @param querySkuDetails if true, SKU details (price, description, etc) will be queried as well as purchase information.
+	 * @param moreItemSkus    additional PRODUCT skus to query information on, regardless of ownership. Ignored if null or if
+	 *                        querySkuDetails is false.
+	 * @param moreSubsSkus    additional SUBSCRIPTIONS skus to query information on, regardless of ownership. Ignored if null or if
+	 *                        querySkuDetails is false.
 	 * @return the inventory.
-	 * @throws IabException
-	 *             if a problem occurs while refreshing the inventory.
+	 * @throws IabException if a problem occurs while refreshing the inventory.
 	 */
 	public final Inventory queryInventory(final boolean querySkuDetails, final List<String> moreItemSkus,
-			final List<String> moreSubsSkus) throws IabException {
+										  final List<String> moreSubsSkus) throws IabException {
 		checkNotDisposed();
 		checkSetupDone("queryInventory");
 		try {
@@ -603,16 +582,13 @@ public class IabHelper {
 	 * {@link #queryInventory}, but will do so asynchronously and call back the specified listener upon completion. This
 	 * method is safe to call from a UI thread.
 	 *
-	 * @param querySkuDetails
-	 *            as in {@link #queryInventory}
-	 * @param moreSkus
-	 *            as in {@link #queryInventory}
-	 * @param listener
-	 *            The listener to notify when the refresh operation completes.
+	 * @param querySkuDetails as in {@link #queryInventory}
+	 * @param moreSkus        as in {@link #queryInventory}
+	 * @param listener        The listener to notify when the refresh operation completes.
 	 */
 	public final void queryInventoryAsync(final boolean querySkuDetails,
-			final List<String> moreSkus,
-			final QueryInventoryFinishedListener listener) {
+										  final List<String> moreSkus,
+										  final QueryInventoryFinishedListener listener) {
 		final Handler handler = new Handler();
 		checkNotDisposed();
 		checkSetupDone("queryInventory");
@@ -663,10 +639,8 @@ public class IabHelper {
 	 * consumption, the user will no longer own it. This method may block or take long to return. Do not call from the
 	 * UI thread. For that, see {@link #consumeAsync}.
 	 *
-	 * @param itemInfo
-	 *            The PurchaseInfo that represents the item to consume.
-	 * @throws IabException
-	 *             if there is a problem during consumption.
+	 * @param itemInfo The PurchaseInfo that represents the item to consume.
+	 * @throws IabException if there is a problem during consumption.
 	 */
 	private void consume(final Purchase itemInfo) throws IabException {
 		checkNotDisposed();
@@ -706,26 +680,22 @@ public class IabHelper {
 	 * Asynchronous wrapper to item consumption. Works like {@link #consume}, but performs the consumption in the
 	 * background and notifies completion through the provided listener. This method is safe to call from a UI thread.
 	 *
-	 * @param purchase
-	 *            The purchase to be consumed.
-	 * @param listener
-	 *            The listener to notify when the consumption operation finishes.
+	 * @param purchase The purchase to be consumed.
+	 * @param listener The listener to notify when the consumption operation finishes.
 	 */
 	public final void consumeAsync(final Purchase purchase, final OnConsumeFinishedListener listener) {
 		checkNotDisposed();
 		checkSetupDone(OPERATION_CONSUME);
-		List<Purchase> purchases = new ArrayList<Purchase>();
+		List<Purchase> purchases = new ArrayList<>();
 		purchases.add(purchase);
 		consumeAsyncInternal(purchases, listener, null);
 	}
 
 	/**
-	 * Same as {@link consumeAsync}, but for multiple items at once.
+	 * Same as consumeAsync, but for multiple items at once.
 	 *
-	 * @param purchases
-	 *            The list of PurchaseInfo objects representing the purchases to consume.
-	 * @param listener
-	 *            The listener to notify when the consumption operation finishes.
+	 * @param purchases The list of PurchaseInfo objects representing the purchases to consume.
+	 * @param listener  The listener to notify when the consumption operation finishes.
 	 */
 	public final void consumeAsync(final List<Purchase> purchases, final OnConsumeMultiFinishedListener listener) {
 		checkNotDisposed();
@@ -736,8 +706,7 @@ public class IabHelper {
 	/**
 	 * Returns a human-readable description for the given response code.
 	 *
-	 * @param code
-	 *            The response code
+	 * @param code The response code
 	 * @return A human-readable string explaining the result code. It also includes the result code numerically.
 	 */
 	public static final String getResponseDesc(final int code) {
@@ -776,8 +745,7 @@ public class IabHelper {
 	/**
 	 * Checks that setup was done; if not, throws an exception.
 	 *
-	 * @param operation
-	 *            The operation (passed to the exception).
+	 * @param operation The operation (passed to the exception).
 	 */
 	private void checkSetupDone(final String operation) {
 		if (!mSetupDone) {
@@ -789,8 +757,7 @@ public class IabHelper {
 	/**
 	 * Workaround to bug where sometimes response codes come as Long instead of Integer.
 	 *
-	 * @param b
-	 *            The bundle.
+	 * @param b The bundle.
 	 * @return the response code.
 	 */
 	private int getResponseCodeFromBundle(final Bundle b) {
@@ -800,7 +767,7 @@ public class IabHelper {
 			return BILLING_RESPONSE_RESULT_OK;
 		}
 		else if (o instanceof Integer) {
-			return ((Integer) o).intValue();
+			return (Integer) o;
 		}
 		else if (o instanceof Long) {
 			return (int) ((Long) o).longValue();
@@ -815,8 +782,7 @@ public class IabHelper {
 	/**
 	 * Workaround to bug where sometimes response codes come as Long instead of Integer.
 	 *
-	 * @param i
-	 *            The intent
+	 * @param i The intent
 	 * @return The response code as integer.
 	 */
 	private int getResponseCodeFromIntent(final Intent i) {
@@ -826,7 +792,7 @@ public class IabHelper {
 			return BILLING_RESPONSE_RESULT_OK;
 		}
 		else if (o instanceof Integer) {
-			return ((Integer) o).intValue();
+			return (Integer) o;
 		}
 		else if (o instanceof Long) {
 			return (int) ((Long) o).longValue();
@@ -881,12 +847,18 @@ public class IabHelper {
 				return IABHELPER_BAD_RESPONSE;
 			}
 
-			ArrayList<String> ownedSkus = ownedItems.getStringArrayList(
-					RESPONSE_INAPP_ITEM_LIST);
-			ArrayList<String> purchaseDataList = ownedItems.getStringArrayList(
-					RESPONSE_INAPP_PURCHASE_DATA_LIST);
-			ArrayList<String> signatureList = ownedItems.getStringArrayList(
-					RESPONSE_INAPP_SIGNATURE_LIST);
+			ArrayList<String> ownedSkus = ownedItems.getStringArrayList(RESPONSE_INAPP_ITEM_LIST);
+			if (ownedSkus == null) {
+				ownedSkus = new ArrayList<>();
+			}
+			ArrayList<String> purchaseDataList = ownedItems.getStringArrayList(RESPONSE_INAPP_PURCHASE_DATA_LIST);
+			if (purchaseDataList == null) {
+				purchaseDataList = new ArrayList<>();
+			}
+			ArrayList<String> signatureList = ownedItems.getStringArrayList(RESPONSE_INAPP_SIGNATURE_LIST);
+			if (signatureList == null) {
+				signatureList = new ArrayList<>();
+			}
 
 			for (int i = 0; i < purchaseDataList.size(); ++i) {
 				String purchaseData = purchaseDataList.get(i);
@@ -923,7 +895,7 @@ public class IabHelper {
 	private int querySkuDetails(final String itemType, final Inventory inv, final List<String> moreSkus)
 			throws RemoteException, JSONException {
 		logDebug("Querying SKU details.");
-		ArrayList<String> skuList = new ArrayList<String>();
+		ArrayList<String> skuList = new ArrayList<>();
 		skuList.addAll(inv.getAllOwnedSkus(itemType));
 		if (moreSkus != null) {
 			for (String sku : moreSkus) {
@@ -955,8 +927,10 @@ public class IabHelper {
 			}
 		}
 
-		ArrayList<String> responseList = skuDetails.getStringArrayList(
-				RESPONSE_GET_SKU_DETAILS_LIST);
+		ArrayList<String> responseList = skuDetails.getStringArrayList(RESPONSE_GET_SKU_DETAILS_LIST);
+		if (responseList == null) {
+			responseList = new ArrayList<>();
+		}
 
 		for (String thisResponse : responseList) {
 			SkuDetails d = new SkuDetails(itemType, thisResponse);
@@ -967,14 +941,14 @@ public class IabHelper {
 	}
 
 	private void consumeAsyncInternal(final List<Purchase> purchases,
-			final OnConsumeFinishedListener singleListener,
-			final OnConsumeMultiFinishedListener multiListener) {
+									  final OnConsumeFinishedListener singleListener,
+									  final OnConsumeMultiFinishedListener multiListener) {
 		final Handler handler = new Handler();
 		flagStartAsync(OPERATION_CONSUME);
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				final List<IabResult> results = new ArrayList<IabResult>();
+				final List<IabResult> results = new ArrayList<>();
 				for (Purchase purchase : purchases) {
 					try {
 						consume(purchase);
@@ -1030,10 +1004,8 @@ public class IabHelper {
 		/**
 		 * Called to notify that a consumption has finished.
 		 *
-		 * @param purchase
-		 *            The purchase that was (or was to be) consumed.
-		 * @param result
-		 *            The result of the consumption operation.
+		 * @param purchase The purchase that was (or was to be) consumed.
+		 * @param result   The result of the consumption operation.
 		 */
 		void onConsumeFinished(Purchase purchase, IabResult result);
 	}
@@ -1045,10 +1017,8 @@ public class IabHelper {
 		/**
 		 * Called to notify that a consumption of multiple items has finished.
 		 *
-		 * @param purchases
-		 *            The purchases that were (or were to be) consumed.
-		 * @param results
-		 *            The results of each consumption operation, corresponding to each sku.
+		 * @param purchases The purchases that were (or were to be) consumed.
+		 * @param results   The results of each consumption operation, corresponding to each sku.
 		 */
 		void onConsumeMultiFinished(List<Purchase> purchases, List<IabResult> results);
 	}
@@ -1062,10 +1032,8 @@ public class IabHelper {
 		 * specifies which item was purchased. If the purchase failed, the sku and extraData parameters may or may not
 		 * be null, depending on how far the purchase process went.
 		 *
-		 * @param result
-		 *            The result of the purchase.
-		 * @param info
-		 *            The purchase information (null if purchase failed)
+		 * @param result The result of the purchase.
+		 * @param info   The purchase information (null if purchase failed)
 		 */
 		void onIabPurchaseFinished(IabResult result, Purchase info);
 	}
@@ -1078,8 +1046,7 @@ public class IabHelper {
 		/**
 		 * Called to notify that setup is complete.
 		 *
-		 * @param result
-		 *            The result of the setup process.
+		 * @param result The result of the setup process.
 		 */
 		void onIabSetupFinished(IabResult result);
 	}
@@ -1091,10 +1058,8 @@ public class IabHelper {
 		/**
 		 * Called to notify that an inventory query operation completed.
 		 *
-		 * @param result
-		 *            The result of the operation.
-		 * @param inv
-		 *            The inventory.
+		 * @param result The result of the operation.
+		 * @param inv    The inventory.
 		 */
 		void onQueryInventoryFinished(IabResult result, Inventory inv);
 	}

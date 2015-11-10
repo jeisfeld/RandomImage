@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -30,8 +31,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * A map storing instances of the factory.
 	 */
-	private static SparseArray<StackRemoteViewsFactory> mFactoryMap =
-			new SparseArray<StackedImageWidgetService.StackRemoteViewsFactory>();
+	private static SparseArray<StackRemoteViewsFactory> mFactoryMap = new SparseArray<>();
 
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
@@ -41,8 +41,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * Calculate the planned image size out of the view width.
 	 *
-	 * @param viewWidth
-	 *            The view width.
+	 * @param viewWidth The view width.
 	 * @return The planned image size.
 	 */
 	private static int calculateImageSize(final int viewWidth) {
@@ -81,10 +80,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		/**
 		 * Constructor.
 		 *
-		 * @param context
-		 *            The context in which the factory is called.
-		 * @param intent
-		 *            The intent for the views
+		 * @param context The context in which the factory is called.
+		 * @param intent  The intent for the views
 		 */
 		private StackRemoteViewsFactory(final Context context, final Intent intent) {
 			this.mContext = context;

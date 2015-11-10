@@ -29,8 +29,7 @@ public final class AsyncLoader {
 	/**
 	 * Initialize the loader with a runnable.
 	 *
-	 * @param runnable
-	 *            The runnable to be executed by the loader.
+	 * @param runnable The runnable to be executed by the loader.
 	 */
 	protected AsyncLoader(final Runnable runnable) {
 		this.mRunnable = runnable;
@@ -99,12 +98,9 @@ public final class AsyncLoader {
 	/**
 	 * Execute actions when loading is done.
 	 *
-	 * @param whileLoading
-	 *            Actions to be done while loading to inform the user about the loading.
-	 * @param afterLoading
-	 *            Actions to be done after loading.
-	 * @param ifError
-	 *            Actions to be done in case of error.
+	 * @param whileLoading Actions to be done while loading to inform the user about the loading.
+	 * @param afterLoading Actions to be done after loading.
+	 * @param ifError      Actions to be done in case of error.
 	 */
 	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
 		// Put the loading thread into a safe environment, as activity may have been closed when loading is finished.

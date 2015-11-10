@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimagelib.R;
 
@@ -49,8 +50,7 @@ public final class SystemUtil {
 	/**
 	 * Check if Android version is at least the given version.
 	 *
-	 * @param version
-	 *            The version
+	 * @param version The version
 	 * @return true if Android version is at least the given version
 	 */
 	public static boolean isAtLeastVersion(final int version) {
@@ -70,8 +70,7 @@ public final class SystemUtil {
 	/**
 	 * Determine if an app is installed.
 	 *
-	 * @param appPackage
-	 *            the app package name.
+	 * @param appPackage the app package name.
 	 * @return true if the app is installed.
 	 */
 	public static boolean isAppInstalled(final String appPackage) {

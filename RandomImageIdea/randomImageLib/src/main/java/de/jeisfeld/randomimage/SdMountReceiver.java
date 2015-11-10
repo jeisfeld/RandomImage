@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
 import de.jeisfeld.randomimage.widgets.StackedImageWidget;

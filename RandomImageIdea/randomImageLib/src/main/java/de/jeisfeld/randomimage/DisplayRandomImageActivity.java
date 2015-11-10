@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
+
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -128,18 +129,14 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * Static helper method to create an intent for this activity.
 	 *
-	 * @param context
-	 *            The context in which this activity is started.
-	 * @param listName
-	 *            the image list which should be taken.
-	 * @param fileName
-	 *            the image file name which should be displayed first.
-	 * @param preventDisplayAll
-	 *            flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * @param context           The context in which this activity is started.
+	 * @param listName          the image list which should be taken.
+	 * @param fileName          the image file name which should be displayed first.
+	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName,
-			final boolean preventDisplayAll) {
+											final boolean preventDisplayAll) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -161,16 +158,12 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * Static helper method to start the activity for the contents of an image folder.
 	 *
-	 * @param context
-	 *            The context starting this activity.
-	 * @param folderName
-	 *            the name of the folder whose images should be displayed.
-	 * @param fileName
-	 *            the name of the file that should be displayed first
-	 *
+	 * @param context    The context starting this activity.
+	 * @param folderName the name of the folder whose images should be displayed.
+	 * @param fileName   the name of the file that should be displayed first
 	 */
 	public static final void startActivityForFolder(final Context context, final String folderName,
-			final String fileName) {
+													final String fileName) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
@@ -259,10 +252,8 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * Create a PinchImageView displaying a given file.
 	 *
-	 * @param fileName
-	 *            The name of the file.
-	 * @param cacheIndex
-	 *            an index helping for caching the image for orientation change.
+	 * @param fileName   The name of the file.
+	 * @param cacheIndex an index helping for caching the image for orientation change.
 	 * @return The PinchImageView.
 	 */
 	private PinchImageView createImageView(final String fileName, final int cacheIndex) {
@@ -353,7 +344,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 			@Override
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
-					final float velocityY) {
+								   final float velocityY) {
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
 					Runnable runnable = new Runnable() {
 						@Override
@@ -456,10 +447,8 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * Static helper method to extract the result flag.
 	 *
-	 * @param resultCode
-	 *            The result code indicating if the response was successful.
-	 * @param data
-	 *            The activity response data.
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
 	 * @return the flag if the parent activity should be refreshed.
 	 */
 	public static final boolean getResult(final int resultCode, final Intent data) {
@@ -475,8 +464,7 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * Helper method: Return the flag if the parent activity should be finished.
 	 *
-	 * @param refreshParent
-	 *            The flag if the parent activity should be refreshed.
+	 * @param refreshParent The flag if the parent activity should be refreshed.
 	 */
 	private void returnResult(final boolean refreshParent) {
 		Bundle resultData = new Bundle();
@@ -510,10 +498,8 @@ public class DisplayRandomImageActivity extends Activity {
 		/**
 		 * Constructor initializing with the folder name.
 		 *
-		 * @param folderName
-		 *            The folder name.
-		 * @param defaultFileName
-		 *            The file name returned if there is no image file in the folder.
+		 * @param folderName      The folder name.
+		 * @param defaultFileName The file name returned if there is no image file in the folder.
 		 */
 		private FolderRandomFileProvider(final String folderName, final String defaultFileName) {
 			mFileNames = ImageUtil.getImagesInFolder(folderName);
@@ -547,10 +533,8 @@ public class DisplayRandomImageActivity extends Activity {
 		/**
 		 * Constructor.
 		 *
-		 * @param velocityX
-		 *            The x velocity of the movement.
-		 * @param velocityY
-		 *            The y velocity of the movement.
+		 * @param velocityX The x velocity of the movement.
+		 * @param velocityY The y velocity of the movement.
 		 */
 		private FlingDirection(final float velocityX, final float velocityY) {
 			this.mVelocityX = velocityX;
@@ -585,8 +569,7 @@ public class DisplayRandomImageActivity extends Activity {
 		/**
 		 * Find out if two flings go into opposite direction.
 		 *
-		 * @param otherDirection
-		 *            The fling to be compared with.
+		 * @param otherDirection The fling to be compared with.
 		 * @return true if both go into opposite direction.
 		 */
 		private boolean isOpposite(final FlingDirection otherDirection) {

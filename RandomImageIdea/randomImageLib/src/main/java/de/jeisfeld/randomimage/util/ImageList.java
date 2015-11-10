@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
@@ -60,17 +61,17 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * The list of image files.
 	 */
-	private ArrayList<String> mFileNames = new ArrayList<String>();
+	private ArrayList<String> mFileNames = new ArrayList<>();
 
 	/**
 	 * The list of image folders.
 	 */
-	private ArrayList<String> mFolderNames = new ArrayList<String>();
+	private ArrayList<String> mFolderNames = new ArrayList<>();
 
 	/**
 	 * The list of nested image lists.
 	 */
-	private ArrayList<String> mNestedListNames = new ArrayList<String>();
+	private ArrayList<String> mNestedListNames = new ArrayList<>();
 
 	/**
 	 * The config file where the list of files is stored.
@@ -85,16 +86,13 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Configuration properties of nested lists.
 	 */
-	private HashMap<String, Properties> mNestedListProperties = new HashMap<String, Properties>();
+	private HashMap<String, Properties> mNestedListProperties = new HashMap<>();
 
 	/**
 	 * Create an image list and load it from its file, if existing.
 	 *
-	 * @param configFile
-	 *            the configuration file of this list.
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
-	 *
+	 * @param configFile          the configuration file of this list.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	protected ImageList(final File configFile, final boolean toastIfFilesMissing) {
 		init(toastIfFilesMissing); // OVERRIDABLE
@@ -105,13 +103,9 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Create a new image list.
 	 *
-	 * @param configFile
-	 *            the configuration file of this list.
-	 * @param listName
-	 *            the name of the list.
-	 * @param cloneFile
-	 *            If existing, then the new list will be cloned from this file.
-	 *
+	 * @param configFile the configuration file of this list.
+	 * @param listName   the name of the list.
+	 * @param cloneFile  If existing, then the new list will be cloned from this file.
 	 */
 	protected ImageList(final File configFile, final String listName, final File cloneFile) {
 		init(false); // OVERRIDABLE
@@ -133,17 +127,14 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Do initialization steps of the subclass of ImageList.
 	 *
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	protected abstract void init(final boolean toastIfFilesMissing);
 
 	/**
 	 * Save and reload the list.
 	 *
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
-	 *
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return true if both actions were successful.
 	 */
 	// OVERRIDABLE
@@ -162,8 +153,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Check if the file or folder is contained in the list.
 	 *
-	 * @param fileName
-	 *            The file name to be checked.
+	 * @param fileName The file name to be checked.
 	 * @return true if contained in the list.
 	 */
 	public final boolean contains(final String fileName) {
@@ -173,8 +163,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Check if the list contains the other list either directly or in some deeper nesting.
 	 *
-	 * @param listName
-	 *            The list to be checked.
+	 * @param listName The list to be checked.
 	 * @return true if it is contained in some way.
 	 */
 	public final boolean containsNestedList(final String listName) {
@@ -195,10 +184,8 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Get an ImageList out of a config file.
 	 *
-	 * @param configFile
-	 *            the config file.
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
+	 * @param configFile          the config file.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list.
 	 */
 	protected static ImageList getListFromConfigFile(final File configFile, final boolean toastIfFilesMissing) {
@@ -209,8 +196,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Retrieve the info for an ImageList from the config file.
 	 *
-	 * @param configFile
-	 *            the config file.
+	 * @param configFile the config file.
 	 * @return The name of the image list.
 	 */
 	protected static ImageListInfo getInfoFromConfigFile(final File configFile) {
@@ -263,8 +249,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Load the list if image file names from the config file.
 	 *
-	 * @param toastIfFilesMissing
-	 *            Flag indicating if a toast should be shown if files are missing.
+	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	// OVERRIDABLE
 	public synchronized void load(final boolean toastIfFilesMissing) {
@@ -279,8 +264,8 @@ public abstract class ImageList extends RandomFileProvider {
 		mProperties.clear();
 		int notFoundFiles = 0;
 
-		SparseArray<Properties> nestedPropertiesArray = new SparseArray<Properties>();
-		HashMap<String, Integer> nestedListIndices = new HashMap<String, Integer>();
+		SparseArray<Properties> nestedPropertiesArray = new SparseArray<>();
+		HashMap<String, Integer> nestedListIndices = new HashMap<>();
 
 		try {
 			Scanner scanner = new Scanner(mConfigFile);
@@ -448,13 +433,12 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Get all image files in the given folder.
 	 *
-	 * @param folderName
-	 *            The image folder name
+	 * @param folderName The image folder name
 	 * @return The list of image files in this folder.
 	 */
 	public static Set<String> getImageFilesInFolder(final String folderName) {
 		File folder = new File(folderName);
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		if (!folder.exists() || !folder.isDirectory()) {
 			return result;
 		}
@@ -492,8 +476,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Set the name of the list without changing the file name.
 	 *
-	 * @param listName
-	 *            The new name of the list.
+	 * @param listName The new name of the list.
 	 */
 	private void setListName(final String listName) {
 		if (listName == null) {
@@ -508,10 +491,8 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Change the list name, also renaming the config file accordingly.
 	 *
-	 * @param listName
-	 *            The new name of the list.
-	 * @param newConfigFile
-	 *            The new config file.
+	 * @param listName      The new name of the list.
+	 * @param newConfigFile The new config file.
 	 * @return true if successful.
 	 */
 	public final boolean changeListName(final String listName, final File newConfigFile) {
@@ -542,7 +523,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The list of file names.
 	 */
 	public final ArrayList<String> getFileNames() {
-		return new ArrayList<String>(mFileNames);
+		return new ArrayList<>(mFileNames);
 	}
 
 	/**
@@ -551,7 +532,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The list of file names.
 	 */
 	public final ArrayList<String> getFolderNames() {
-		return new ArrayList<String>(mFolderNames);
+		return new ArrayList<>(mFolderNames);
 	}
 
 	/**
@@ -560,14 +541,13 @@ public abstract class ImageList extends RandomFileProvider {
 	 * @return The list of nested list names.
 	 */
 	public final ArrayList<String> getNestedListNames() {
-		return new ArrayList<String>(mNestedListNames);
+		return new ArrayList<>(mNestedListNames);
 	}
 
 	/**
 	 * Add a file name. This does not yet update the list of all images!
 	 *
-	 * @param fileName
-	 *            The file name to be added.
+	 * @param fileName The file name to be added.
 	 * @return true if the file was not in the list before and hence has been added.
 	 */
 	public final boolean addFile(final String fileName) {
@@ -592,8 +572,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Add a file from an Uri. The lists are kept up to date, but are not saved!
 	 *
-	 * @param imageUri
-	 *            The uri of the file to be added.
+	 * @param imageUri The uri of the file to be added.
 	 * @return the file name, if it was added.
 	 */
 	public final String add(final Uri imageUri) {
@@ -610,8 +589,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Add a folder name. This does not yet update the list of all images!
 	 *
-	 * @param folderName
-	 *            The folder name to be added.
+	 * @param folderName The folder name to be added.
 	 * @return true if the folder was not in the list before and hence has been added.
 	 */
 	public final boolean addFolder(final String folderName) {
@@ -636,8 +614,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Add a list name. This does not yet update the list of all images!
 	 *
-	 * @param nestedListName
-	 *            The list name to be added.
+	 * @param nestedListName The list name to be added.
 	 * @return true if the given list was not included in the current list before and hence has been added.
 	 */
 	public final boolean addNestedList(final String nestedListName) {
@@ -663,8 +640,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Remove a single file name. This does not yet update the list of all images!
 	 *
-	 * @param fileName
-	 *            The file name to be removed.
+	 * @param fileName The file name to be removed.
 	 * @return true if the file was removed.
 	 */
 	public final boolean removeFile(final String fileName) {
@@ -674,8 +650,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Remove a single folder name. This does not yet update the list of all images!
 	 *
-	 * @param folderName
-	 *            The folder name to be removed.
+	 * @param folderName The folder name to be removed.
 	 * @return true if the folder was removed.
 	 */
 	public final boolean removeFolder(final String folderName) {
@@ -685,8 +660,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Remove a nested list name. This does not yet update the list of all images!
 	 *
-	 * @param nestedListName
-	 *            The nested list name to be removed.
+	 * @param nestedListName The nested list name to be removed.
 	 * @return true if the nested list was removed.
 	 */
 	// OVERRIDABLE
@@ -698,8 +672,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Get a list property.
 	 *
-	 * @param key
-	 *            The property key.
+	 * @param key The property key.
 	 * @return The property value.
 	 */
 	protected final String getProperty(final String key) {
@@ -709,10 +682,8 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Set a list property.
 	 *
-	 * @param key
-	 *            The property key.
-	 * @param value
-	 *            The property value.
+	 * @param key   The property key.
+	 * @param value The property value.
 	 */
 	protected final void setProperty(final String key, final String value) {
 		if (value == null) {
@@ -727,10 +698,8 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Get a list property of a nested list.
 	 *
-	 * @param nestedListName
-	 *            the name of the nested list.
-	 * @param key
-	 *            The property key.
+	 * @param nestedListName the name of the nested list.
+	 * @param key            The property key.
 	 * @return The property value.
 	 */
 	public final String getNestedListProperty(final String nestedListName, final String key) {
@@ -741,12 +710,9 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * Set a list property of a nested list.
 	 *
-	 * @param nestedListName
-	 *            the name of the nested list.
-	 * @param key
-	 *            The property key.
-	 * @param value
-	 *            The property value.
+	 * @param nestedListName the name of the nested list.
+	 * @param key            The property key.
+	 * @param value          The property value.
 	 */
 	public final void setNestedListProperty(final String nestedListName, final String key, final String value) {
 		Properties nestedProperties = mNestedListProperties.get(nestedListName);
@@ -802,12 +768,9 @@ public abstract class ImageList extends RandomFileProvider {
 		/**
 		 * Constructor for the class.
 		 *
-		 * @param name
-		 *            The name of the image list.
-		 * @param configFile
-		 *            The image list configuration file.
-		 * @param listClass
-		 *            The class handling the image list.
+		 * @param name       The name of the image list.
+		 * @param configFile The image list configuration file.
+		 * @param listClass  The class handling the image list.
 		 */
 		protected ImageListInfo(final String name, final File configFile, final Class<?> listClass) {
 			this.mName = name;

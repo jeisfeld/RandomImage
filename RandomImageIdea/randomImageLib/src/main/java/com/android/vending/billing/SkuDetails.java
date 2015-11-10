@@ -1,10 +1,11 @@
 package com.android.vending.billing;
 
+import android.content.Context;
+
+import de.jeisfeld.randomimagelib.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Context;
-import de.jeisfeld.randomimagelib.R;
 
 /**
  * Represents an in-app product's listing details.

@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -94,7 +95,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * The backstack of last browsed folders.
 	 */
-	private Stack<String> mBackStack = new Stack<String>();
+	private Stack<String> mBackStack = new Stack<>();
 
 	/**
 	 * A reference to the shown dialog.
@@ -114,17 +115,13 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * Create a DirectoryChooserDialogFragment.
 	 *
-	 * @param activity
-	 *            The activity calling the dialog.
-	 * @param listener
-	 *            The callback listener reacting on the dialog response.
-	 * @param longClickListener
-	 *            An optional listener waiting for long clicks.
-	 * @param dir
-	 *            The start folder.
+	 * @param activity          The activity calling the dialog.
+	 * @param listener          The callback listener reacting on the dialog response.
+	 * @param longClickListener An optional listener waiting for long clicks.
+	 * @param dir               The start folder.
 	 */
 	public static void displayDirectoryChooserDialog(final Activity activity, final ChosenDirectoryListener listener,
-			final OnFolderLongClickListener longClickListener, final String dir) {
+													 final OnFolderLongClickListener longClickListener, final String dir) {
 		Bundle bundle = new Bundle();
 		bundle.putString(STRING_EXTRA_FOLDER, dir);
 		bundle.putSerializable(STRING_EXTRA_LISTENER, listener);
@@ -166,9 +163,9 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		File dirFile = dir == null ? null : new File(dir);
 		if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
 			dir = FileUtil.getDefaultCameraFolder();
-			dirFile = dir == null ? null : new File(dir);
+			dirFile = new File(dir);
 
-			if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
+			if (!dirFile.exists() || !dirFile.isDirectory()) {
 				dir = FileUtil.getSdCardPath();
 			}
 		}
@@ -216,7 +213,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 			mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 				@Override
 				public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position,
-						final long id) {
+											   final long id) {
 					final String selectedFolder = mCurrentFolder + File.separator + mListAdapter.getItem(position);
 					return mLongClickListener.onFolderLongClick(selectedFolder);
 				}
@@ -293,8 +290,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * Update the enablement status of the positive button.
 	 *
-	 * @param enabled
-	 *            The new enablement status.
+	 * @param enabled The new enablement status.
 	 */
 	private void enablePositiveButton(final boolean enabled) {
 		mDirsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enabled);
@@ -317,18 +313,20 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	 * Get the list of subdirectories of the current directory. Returns ".." as
 	 * first value if appropriate.
 	 *
-	 * @param dir
-	 *            The current directory.
+	 * @param dir The current directory.
 	 * @return The list of subdirectories.
 	 */
 	private List<String> getDirectories(final String dir) {
-		List<String> dirs = new ArrayList<String>();
+		List<String> dirs = new ArrayList<>();
 
 		if (dir != null && dir.startsWith(File.separator) && !dir.equals(File.separator)) {
 			dirs.add("..");
 		}
 
 		try {
+			if (dir == null) {
+				return dirs;
+			}
 			File dirFile = new File(dir);
 			if (!dirFile.exists() || !dirFile.isDirectory()) {
 				return dirs;
@@ -385,8 +383,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 	/**
 	 * Create the list adapter for the list of folders.
 	 *
-	 * @param items
-	 *            The list of folders.
+	 * @param items The list of folders.
 	 * @return The list adapter.
 	 */
 	private ArrayAdapter<String> createListAdapter(final List<String> items) {
@@ -425,16 +422,14 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		/**
 		 * Called when a folder is selected.
 		 *
-		 * @param chosenDir
-		 *            The selected folder.
+		 * @param chosenDir The selected folder.
 		 */
 		void onAddImages(final String chosenDir);
 
 		/**
 		 * Called when a folder is selected.
 		 *
-		 * @param chosenDir
-		 *            The selected folder.
+		 * @param chosenDir The selected folder.
 		 */
 		void onAddFolder(final String chosenDir);
 
@@ -451,8 +446,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		/**
 		 * Method called after long click on a folder.
 		 *
-		 * @param folderName
-		 *            The folder name.
+		 * @param folderName The folder name.
 		 * @return true if the long click was consumed.
 		 */
 		boolean onFolderLongClick(final String folderName);
@@ -470,8 +464,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		/**
 		 * Constructor for the adapter.
 		 *
-		 * @param fileNames
-		 *            The names of the image files to be displayed.
+		 * @param fileNames The names of the image files to be displayed.
 		 */
 		private DisplayImagesAdapter(final ArrayList<String> fileNames) {
 			super(getActivity(), R.layout.text_view_initializing, fileNames);
@@ -481,8 +474,7 @@ public class DirectoryChooserDialogFragment extends DialogFragment {
 		/**
 		 * Default adapter to be used by the framework.
 		 *
-		 * @param context
-		 *            The Context the view is running in.
+		 * @param context The Context the view is running in.
 		 */
 		private DisplayImagesAdapter(final Context context) {
 			super(context, R.layout.text_view_initializing);

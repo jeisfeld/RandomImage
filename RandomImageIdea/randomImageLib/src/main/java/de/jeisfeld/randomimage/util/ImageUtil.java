@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimagelib.R;
 
@@ -50,7 +51,7 @@ public final class ImageUtil {
 	 * The file endings considered as image files.
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
-			new String[] { "JPG", "JPEG", "PNG", "BMP", "TIF", "TIFF", "GIF" });
+			"JPG", "JPEG", "PNG", "BMP", "TIF", "TIFF", "GIF");
 
 	/**
 	 * Hide default constructor.
@@ -62,8 +63,7 @@ public final class ImageUtil {
 	/**
 	 * Get the date field with the EXIF date from the file If not existing, use the last modified date.
 	 *
-	 * @param path
-	 *            The file path of the image
+	 * @param path The file path of the image
 	 * @return the date stored in the EXIF data.
 	 */
 	public static Date getExifDate(final String path) {
@@ -87,8 +87,7 @@ public final class ImageUtil {
 	/**
 	 * Retrieve the rotation angle from the Exif data of an image.
 	 *
-	 * @param path
-	 *            The file path of the image
+	 * @param path The file path of the image
 	 * @return the rotation stored in the exif data, mapped into degrees.
 	 */
 	public static int getExifRotation(final String path) {
@@ -125,10 +124,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path
-	 *            The file path of the image.
-	 * @param maxSize
-	 *            The maximum size of this bitmap. If bigger, it will be resized.
+	 * @param path    The file path of the image.
+	 * @param maxSize The maximum size of this bitmap. If bigger, it will be resized.
 	 * @return the bitmap.
 	 */
 	public static Bitmap getImageBitmap(final String path, final int maxSize) {
@@ -197,37 +194,27 @@ public final class ImageUtil {
 	/**
 	 * Retrieve a part of a bitmap in full resolution.
 	 *
-	 * @param fullBitmap
-	 *            The bitmap from which to get the part.
-	 * @param minX
-	 *            The minimum X position to retrieve.
-	 * @param maxX
-	 *            The maximum X position to retrieve.
-	 * @param minY
-	 *            The minimum Y position to retrieve.
-	 * @param maxY
-	 *            The maximum Y position to retrieve.
+	 * @param fullBitmap The bitmap from which to get the part.
+	 * @param minX       The minimum X position to retrieve.
+	 * @param maxX       The maximum X position to retrieve.
+	 * @param minY       The minimum Y position to retrieve.
+	 * @param maxY       The maximum Y position to retrieve.
 	 * @return The bitmap.
 	 */
 	public static Bitmap getPartialBitmap(final Bitmap fullBitmap, final float minX, final float maxX,
-			final float minY,
-			final float maxY) {
-		Bitmap partialBitmap =
-				Bitmap.createBitmap(fullBitmap, Math.round(minX * fullBitmap.getWidth()),
-						Math.round(minY * fullBitmap.getHeight()),
-						Math.round((maxX - minX) * fullBitmap.getWidth()),
-						Math.round((maxY - minY) * fullBitmap.getHeight()));
-
-		return partialBitmap;
+										  final float minY,
+										  final float maxY) {
+		return Bitmap.createBitmap(fullBitmap, Math.round(minX * fullBitmap.getWidth()),
+				Math.round(minY * fullBitmap.getHeight()),
+				Math.round((maxX - minX) * fullBitmap.getWidth()),
+				Math.round((maxY - minY) * fullBitmap.getHeight()));
 	}
 
 	/**
 	 * Utility to retrieve the sample size for BitmapFactory.decodeFile.
 	 *
-	 * @param filepath
-	 *            the path of the bitmap.
-	 * @param targetSize
-	 *            the target size of the bitmap
+	 * @param filepath   the path of the bitmap.
+	 * @param targetSize the target size of the bitmap
 	 * @return the sample size to be used.
 	 */
 	private static int getBitmapFactor(final String filepath, final int targetSize) {
@@ -241,10 +228,8 @@ public final class ImageUtil {
 	/**
 	 * Rotate a bitmap.
 	 *
-	 * @param source
-	 *            The original bitmap
-	 * @param angle
-	 *            The rotation angle
+	 * @param source The original bitmap
+	 * @param angle  The rotation angle
 	 * @return the rotated bitmap.
 	 */
 	public static Bitmap rotateBitmap(final Bitmap source, final float angle) {
@@ -256,8 +241,7 @@ public final class ImageUtil {
 	/**
 	 * Get Mime type from URI.
 	 *
-	 * @param uri
-	 *            The URI
+	 * @param uri The URI
 	 * @return the mime type.
 	 */
 	public static String getMimeType(final Uri uri) {
@@ -279,10 +263,8 @@ public final class ImageUtil {
 	/**
 	 * Check if a file is an image file.
 	 *
-	 * @param file
-	 *            The file
-	 * @param strict
-	 *            if true, then the file content will be checked, otherwise the suffix is sufficient.
+	 * @param file   The file
+	 * @param strict if true, then the file content will be checked, otherwise the suffix is sufficient.
 	 * @return true if it is an image file.
 	 */
 	public static boolean isImage(final File file, final boolean strict) {
@@ -313,12 +295,11 @@ public final class ImageUtil {
 	/**
 	 * Get the list of image files in a folder.
 	 *
-	 * @param folderName
-	 *            The folder name.
+	 * @param folderName The folder name.
 	 * @return The list of image files in this folder.
 	 */
 	public static ArrayList<String> getImagesInFolder(final String folderName) {
-		ArrayList<String> fileNames = new ArrayList<String>();
+		ArrayList<String> fileNames = new ArrayList<>();
 		if (folderName == null) {
 			return fileNames;
 		}
@@ -346,8 +327,7 @@ public final class ImageUtil {
 	/**
 	 * Get information if a path represents an image folder.
 	 *
-	 * @param folderName
-	 *            The path.
+	 * @param folderName The path.
 	 * @return True if this is an image folder.
 	 */
 	public static boolean isImageFolder(final String folderName) {
@@ -357,8 +337,7 @@ public final class ImageUtil {
 	/**
 	 * Get all image folders on the device in a separate thread.
 	 *
-	 * @param listener
-	 *            A listener handling the response via callback.
+	 * @param listener A listener handling the response via callback.
 	 */
 	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
 		final Handler handler = new Handler();
@@ -366,7 +345,7 @@ public final class ImageUtil {
 		new Thread() {
 			@Override
 			public void run() {
-				final ArrayList<String> imageFolders = new ArrayList<String>();
+				final ArrayList<String> imageFolders = new ArrayList<>();
 
 				if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.KITKAT)) {
 					imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
@@ -397,17 +376,14 @@ public final class ImageUtil {
 	/**
 	 * Get all image folders below one parent folder.
 	 *
-	 * @param parentFolder
-	 *            the folder where to look for image sub folders
-	 * @param handler
-	 *            A handler running on the GUI thread.
-	 * @param listener
-	 *            A listener handling the response via callback.
+	 * @param parentFolder the folder where to look for image sub folders
+	 * @param handler      A handler running on the GUI thread.
+	 * @param listener     A listener handling the response via callback.
 	 * @return The array of image folders.
 	 */
 	private static ArrayList<String> getAllImageSubfolders(final File parentFolder, final Handler handler,
-			final OnImageFoldersFoundListener listener) {
-		ArrayList<String> result = new ArrayList<String>();
+														   final OnImageFoldersFoundListener listener) {
+		ArrayList<String> result = new ArrayList<>();
 		if (parentFolder == null) {
 			return result;
 		}
@@ -455,8 +431,7 @@ public final class ImageUtil {
 	/**
 	 * Save the list of image folders in a shared preference.
 	 *
-	 * @param imageFolders
-	 *            The list of image folders.
+	 * @param imageFolders The list of image folders.
 	 */
 	private static void saveAllImageFolders(final ArrayList<String> imageFolders) {
 		if (imageFolders == null || imageFolders.size() == 0) {
@@ -484,11 +459,11 @@ public final class ImageUtil {
 	public static ArrayList<String> getAllImageFoldersFromStorage() {
 		String restoreString = PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders);
 		if (restoreString == null || restoreString.length() == 0) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 
 		String[] folderArray = restoreString.split("\\r?\\n");
-		return new ArrayList<String>(Arrays.asList(folderArray));
+		return new ArrayList<>(Arrays.asList(folderArray));
 	}
 
 	/**
@@ -503,10 +478,8 @@ public final class ImageUtil {
 	/**
 	 * Show a file in the phone gallery.
 	 *
-	 * @param context
-	 *            the context from which the gallery is opened.
-	 * @param fileName
-	 *            The file name.
+	 * @param context  the context from which the gallery is opened.
+	 * @param fileName The file name.
 	 * @return true if successful
 	 */
 	public static boolean showFileInGallery(final Context context, final String fileName) {
@@ -541,16 +514,14 @@ public final class ImageUtil {
 		/**
 		 * Handler for actions done after retrieving the complete list of image folders.
 		 *
-		 * @param imageFolders
-		 *            The list of image folders.
+		 * @param imageFolders The list of image folders.
 		 */
 		void handleImageFolders(ArrayList<String> imageFolders);
 
 		/**
 		 * Handler for actions done after finding one image folder.
 		 *
-		 * @param imageFolder
-		 *            The image folder found.
+		 * @param imageFolder The image folder found.
 		 */
 		void handleImageFolder(String imageFolder);
 	}

@@ -9,8 +9,10 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -26,7 +28,7 @@ public class Application extends android.app.Application {
 	/**
 	 * The default tag for logging.
 	 */
-	public static final String TAG = "Randomimage.Application.JE";
+	public static final String TAG = "Randomimage.JE";
 
 	@Override
 	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
@@ -62,8 +64,7 @@ public class Application extends android.app.Application {
 	/**
 	 * Get a resource string.
 	 *
-	 * @param resourceId
-	 *            the id of the resource.
+	 * @param resourceId the id of the resource.
 	 * @return the value of the String resource.
 	 */
 	public static String getResourceString(final int resourceId) {
@@ -135,8 +136,7 @@ public class Application extends android.app.Application {
 	/**
 	 * Set the locale.
 	 *
-	 * @param locale
-	 *            The locale to be set.
+	 * @param locale The locale to be set.
 	 */
 	private static void setLocale(final Locale locale) {
 		Resources res = getAppContext().getResources();

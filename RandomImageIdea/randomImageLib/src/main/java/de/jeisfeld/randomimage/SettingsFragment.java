@@ -2,10 +2,6 @@ package de.jeisfeld.randomimage;
 
 import java.util.List;
 
-import com.android.vending.billing.Purchase;
-import com.android.vending.billing.PurchasedSku;
-import com.android.vending.billing.SkuDetails;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +12,11 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
+import com.android.vending.billing.Purchase;
+import com.android.vending.billing.PurchasedSku;
+import com.android.vending.billing.SkuDetails;
+
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
@@ -86,10 +87,8 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Add the listener for a "hints" button.
 	 *
-	 * @param preferenceId
-	 *            The id of the button.
-	 * @param hintPreferenceValue
-	 *            The value to be set to all the hints preferences.
+	 * @param preferenceId        The id of the button.
+	 * @param hintPreferenceValue The value to be set to all the hints preferences.
 	 */
 	private void addHintButtonListener(final int preferenceId, final boolean hintPreferenceValue) {
 		Preference showPreference = findPreference(getString(preferenceId));
@@ -182,8 +181,7 @@ public class SettingsFragment extends PreferenceFragment {
 	 * (line of text below the preference title) is updated to reflect the value. The summary is also immediately
 	 * updated upon calling this method. The exact display format is dependent on the type of preference.
 	 *
-	 * @param preference
-	 *            The preference to be bound.
+	 * @param preference The preference to be bound.
 	 */
 	private void bindPreferenceSummaryToValue(final Preference preference) {
 		// Set the listener to watch for value changes.
@@ -197,8 +195,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Helper method for easier call of {@link #bindPreferenceSummaryToValue(android.preference.Preference)}.
 	 *
-	 * @param preferenceKey
-	 *            The key of the preference.
+	 * @param preferenceKey The key of the preference.
 	 */
 	private void bindPreferenceSummaryToValue(final int preferenceKey) {
 		bindPreferenceSummaryToValue(findPreference(getString(preferenceKey)));
@@ -257,7 +254,7 @@ public class SettingsFragment extends PreferenceFragment {
 	private OnInventoryFinishedListener mOnInventoryFinishedListener = new OnInventoryFinishedListener() {
 		@Override
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
-				final boolean isPremium) {
+								   final boolean isPremium) {
 			if (isPremium != PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium)) {
 				// Update premium status, also in DisplayAllImagesActivity.
 				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.TextView;
+
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
@@ -71,21 +72,18 @@ public abstract class DisplayImageListActivity extends Activity {
 	/**
 	 * Initialize the adapter.
 	 *
-	 * @param nestedListNames
-	 *            The nested list names.
-	 * @param folderNames
-	 *            The list of folders.
-	 * @param fileNames
-	 *            The list of image files.
+	 * @param nestedListNames The nested list names.
+	 * @param folderNames     The list of folders.
+	 * @param fileNames       The list of image files.
 	 */
 	protected final void setAdapter(final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
-			final ArrayList<String> fileNames) {
+									final ArrayList<String> fileNames) {
 		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames);
 		getGridView().setAdapter(mAdapter);
 		if (mSelectedFiles != null) {
-			mAdapter.setSelectedFiles(new ArrayList<String>(Arrays.asList(mSelectedFiles)));
-			mAdapter.setSelectedFolders(new ArrayList<String>(Arrays.asList(mSelectedFolders)));
-			mAdapter.setSelectedNestedLists(new ArrayList<String>(Arrays.asList(mSelectedLists)));
+			mAdapter.setSelectedFiles(new ArrayList<>(Arrays.asList(mSelectedFiles)));
+			mAdapter.setSelectedFolders(new ArrayList<>(Arrays.asList(mSelectedFolders)));
+			mAdapter.setSelectedNestedLists(new ArrayList<>(Arrays.asList(mSelectedLists)));
 			mSelectedFiles = null;
 			mSelectedFolders = null;
 			mSelectedLists = null;
@@ -95,8 +93,7 @@ public abstract class DisplayImageListActivity extends Activity {
 	/**
 	 * Initialize the adapter.
 	 *
-	 * @param title
-	 *            The title displayed on top of the display.
+	 * @param title The title displayed on top of the display.
 	 */
 	protected final void setTitle(final String title) {
 		mTextViewTitle.setText(title);
@@ -114,8 +111,7 @@ public abstract class DisplayImageListActivity extends Activity {
 	/**
 	 * Set the markability status of all views in the grid.
 	 *
-	 * @param selectionMode
-	 *            The markability status.
+	 * @param selectionMode The markability status.
 	 */
 	protected final void setSelectionMode(final SelectionMode selectionMode) {
 		getAdapter().setSelectionMode(selectionMode);

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutWidget"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/layoutWidget"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp" >
@@ -25,7 +26,8 @@
         android:shadowRadius="2"
         android:text="@string/app_name"
         android:textAlignment="center"
-        android:textColor="@android:color/white" >
+        android:textColor="@android:color/white"
+        tools:ignore="UnusedAttribute">
     </TextView>
 
     <ImageView

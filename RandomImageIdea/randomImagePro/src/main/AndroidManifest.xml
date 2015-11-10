@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="de.jeisfeld.randomimagepro"
-    android:versionCode="16"
-    android:versionName="0.2.7" >
+          package="de.jeisfeld.randomimagepro"
+          android:versionCode="16"
+          android:versionName="0.2.7">
 
     <uses-sdk
         android:minSdkVersion="16"
