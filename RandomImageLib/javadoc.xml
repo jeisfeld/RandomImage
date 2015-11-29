@@ -3,11 +3,15 @@
 
     <target name="javadoc" >
 
+        <property name="project.dir" value="../RandomImageIdea/randomImageLib"/>
+        <property name="sdk.dir" value="C:/Transferrable/android-sdk"/>
+        
         <javadoc
             access="private"
             author="false"
-            classpath="bin/classes;C:/Program Files (x86)/Android/android-sdk/platforms/android-21/android.jar;libsExtra/annotations.jar;libs/android-support-v13.jar"
+            classpath="bin/classes;${sdk.dir}/platforms/android-23/android.jar;${project.dir}/libs/annotations.jar;${project.dir}/libs/android-support-v13.jar"
             destdir="doc"
+            encoding="UTF-8"
             linksource="true"
             nodeprecated="false"
             nodeprecatedlist="false"
@@ -16,7 +20,7 @@
             notree="false"
             packagenames="de.jeisfeld.randomimage.util,de.jeisfeld.randomimage.widgets,de.jeisfeld.randomimage,de.jeisfeld.randomimage.view,com.android.vending.billing"
             source="1.7"
-            sourcepath="src"
+            sourcepath="${project.dir}/src/main/java"
             splitindex="true"
             use="true"
             version="true" >
@@ -24,7 +28,7 @@
             <link
                 href="http://android-javadoc.localhost/reference/"
                 offline="true"
-                packagelistLoc="C:\Program Files (x86)\Android\android-sdk\docs\reference" />
+                packagelistLoc="${sdk.dir}/docs/reference" />
 
             <link href="file:///D:/Git/RandomImage/RandomImageLib/doc/" />
         </javadoc>
