@@ -3,13 +3,22 @@
 
     <target name="javadoc" >
 
-        <property name="project.dir" value="../RandomImageIdea/randomImageLib"/>
-        <property name="sdk.dir" value="C:/Transferrable/android-sdk"/>
-        
+        <property
+            name="project.dir"
+            value="../RandomImageIdea/randomImageLib" />
+
+        <property
+            name="sdk.dir"
+            value="C:/Transferrable/android-sdk" />
+
+        <property
+            name="lib.dir"
+            value="${project.dir}/libs" />
+
         <javadoc
             access="private"
             author="false"
-            classpath="bin/classes;${sdk.dir}/platforms/android-23/android.jar;${project.dir}/libs/annotations.jar;${project.dir}/libs/android-support-v13.jar"
+            classpath="bin/classes;${sdk.dir}/platforms/android-23/android.jar;${lib.dir}/annotations.jar;${lib.dir}/android-support-v13.jar"
             destdir="doc"
             encoding="UTF-8"
             linksource="true"
