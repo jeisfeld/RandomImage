@@ -759,9 +759,9 @@ public abstract class ImageList extends RandomFileProvider {
 		/**
 		 * The class handling the image list.
 		 */
-		private Class<?> mListClass;
+		private Class<? extends ImageList> mListClass;
 
-		protected Class<?> getListClass() { // SUPPRESS_CHECKSTYLE
+		protected Class<? extends ImageList> getListClass() { // SUPPRESS_CHECKSTYLE
 			return mListClass;
 		}
 
@@ -772,7 +772,7 @@ public abstract class ImageList extends RandomFileProvider {
 		 * @param configFile The image list configuration file.
 		 * @param listClass  The class handling the image list.
 		 */
-		protected ImageListInfo(final String name, final File configFile, final Class<?> listClass) {
+		protected ImageListInfo(final String name, final File configFile, final Class<? extends ImageList> listClass) {
 			this.mName = name;
 			this.mConfigFile = configFile;
 			this.mListClass = listClass;

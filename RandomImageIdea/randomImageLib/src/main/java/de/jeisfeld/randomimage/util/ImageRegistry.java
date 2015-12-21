@@ -299,7 +299,7 @@ public final class ImageRegistry {
 		boolean success = mCurrentImageList.changeListName(newName, newConfigFile);
 		if (success) {
 			mImageListInfoMap.put(newName, new ImageListInfo(newName, newConfigFile,
-					mImageListInfoMap.get(currentName).getClass()));
+					mImageListInfoMap.get(currentName).getListClass()));
 			mImageListInfoMap.remove(currentName);
 			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
 		}
