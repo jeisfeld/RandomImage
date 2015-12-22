@@ -2,7 +2,9 @@ package de.jeisfeld.randomimage;
 
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
@@ -145,4 +147,16 @@ public class Application extends android.app.Application {
 		conf.locale = locale;
 		res.updateConfiguration(conf, dm);
 	}
+
+	/**
+	 * Start the app programmatically.
+	 *
+	 * @param triggeringActivity triggeringActivity the triggering activity.
+	 */
+	public static final void startApplication(final Activity triggeringActivity) {
+		Intent intent = new Intent(triggeringActivity, DisplayAllImagesActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		triggeringActivity.startActivity(intent);
+	}
+
 }

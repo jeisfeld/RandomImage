@@ -52,6 +52,11 @@ public class SettingsFragment extends PreferenceFragment {
 	 */
 	private PreferenceCategory mPrefCategoryPremium;
 
+	/**
+	 * A preference value change listener that updates the preference's summary to reflect its new value.
+	 */
+	private CustomOnPreferenceChangeListener mOnPreferenceChangeListener = new CustomOnPreferenceChangeListener();
+
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,7 +92,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Add the listener for a "hints" button.
 	 *
-	 * @param preferenceId        The id of the button.
+	 * @param preferenceId The id of the button.
 	 * @param hintPreferenceValue The value to be set to all the hints preferences.
 	 */
 	private void addHintButtonListener(final int preferenceId, final boolean hintPreferenceValue) {
@@ -185,10 +190,10 @@ public class SettingsFragment extends PreferenceFragment {
 	 */
 	private void bindPreferenceSummaryToValue(final Preference preference) {
 		// Set the listener to watch for value changes.
-		preference.setOnPreferenceChangeListener(mBindPreferenceSummaryToValueListener);
+		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		// Trigger the listener immediately with the preference's current value.
-		mBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
+		mOnPreferenceChangeListener.onPreferenceChange(preference, PreferenceManager
 				.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
 	}
 
@@ -202,59 +207,12 @@ public class SettingsFragment extends PreferenceFragment {
 	}
 
 	/**
-	 * A preference value change listener that updates the preference's summary to reflect its new value.
-	 */
-	private OnPreferenceChangeListener mBindPreferenceSummaryToValueListener =
-			new OnPreferenceChangeListener() {
-				@Override
-				public boolean onPreferenceChange(final Preference preference, final Object value) {
-					String stringValue = value.toString();
-
-					// Apply change of language
-					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_language))) {
-						if (mLanguageString == null || !mLanguageString.equals(value)) {
-							Application.setLanguage();
-							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, (String) value);
-
-							System.exit(0);
-						}
-					}
-
-					// In case of switch of hidden lists pattern, refresh
-					if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
-						if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(value)) {
-							PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
-							ImageRegistry.parseConfigFiles();
-						}
-					}
-
-					// set summary
-					if (preference.getClass().equals(ListPreference.class)) {
-						// For list preferences (except customized ones), look up the correct display value in
-						// the preference's 'entries' list.
-						ListPreference listPreference = (ListPreference) preference;
-						int index = listPreference.findIndexOfValue(stringValue);
-
-						preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-					}
-					else {
-						// For all other preferences, set the summary to the value's
-						// simple string representation.
-						preference.setSummary(stringValue);
-					}
-
-					return true;
-				}
-
-			};
-
-	/**
 	 * A listener handling the response after reading the in-add purchase inventory.
 	 */
 	private OnInventoryFinishedListener mOnInventoryFinishedListener = new OnInventoryFinishedListener() {
 		@Override
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
-								   final boolean isPremium) {
+				final boolean isPremium) {
 			if (isPremium != PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium)) {
 				// Update premium status, also in DisplayAllImagesActivity.
 				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
@@ -310,5 +268,62 @@ public class SettingsFragment extends PreferenceFragment {
 			DialogUtil.displayInfo(getActivity(), listener, 0, R.string.dialog_info_premium_thanks);
 		}
 	};
+
+	/**
+	 * A preference value change listener that updates the preference's summary to reflect its new value.
+	 */
+	private class CustomOnPreferenceChangeListener implements OnPreferenceChangeListener {
+		@Override
+		public boolean onPreferenceChange(final Preference preference, final Object value) {
+			String stringValue = value.toString();
+
+			// Apply change of language
+			if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_language))) {
+
+				if (mLanguageString == null || !mLanguageString.equals(value)) {
+					Application.setLanguage();
+					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, stringValue);
+
+					Application.startApplication(getActivity());
+					System.exit(0);
+				}
+			}
+
+			// In case of switch of hidden lists pattern, refresh
+			if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
+				if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(value)) {
+					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
+					ImageRegistry.parseConfigFiles();
+				}
+			}
+
+			setSummary(preference, stringValue);
+
+			return true;
+		}
+
+		/**
+		 * Set the summary of the preference.
+		 *
+		 * @param preference The preference.
+		 * @param value The value of the preference.
+		 */
+		public void setSummary(final Preference preference, final String value) {
+			// set summary
+			if (preference.getClass().equals(ListPreference.class)) {
+				// For list preferences (except customized ones), look up the correct display value in
+				// the preference's 'entries' list.
+				ListPreference listPreference = (ListPreference) preference;
+				int index = listPreference.findIndexOfValue(value);
+
+				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+			}
+			else {
+				// For all other preferences, set the summary to the value's
+				// simple string representation.
+				preference.setSummary(value);
+			}
+		}
+	}
 
 }
