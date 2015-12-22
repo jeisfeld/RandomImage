@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageViewWidget"
@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/border"
         android:contentDescription="@layout/text_view_initializing"
-        android:visibility="gone" >
+        android:visibility="gone">
     </ImageView>
 
     <ImageView
@@ -19,7 +19,7 @@
         android:background="@drawable/border"
         android:contentDescription="@layout/text_view_initializing"
         android:scaleType="centerCrop"
-        android:visibility="gone" >
+        android:visibility="gone">
     </ImageView>
 
     <TextView
@@ -33,7 +33,7 @@
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/buttonNextImage"
@@ -43,7 +43,7 @@
         android:contentDescription="@layout/text_view_initializing"
         android:padding="2dp"
         android:src="@drawable/ic_widget_next"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/buttonSettings"
@@ -53,6 +53,6 @@
         android:contentDescription="@layout/text_view_initializing"
         android:padding="2dp"
         android:src="@drawable/ic_widget_settings"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
 </FrameLayout>

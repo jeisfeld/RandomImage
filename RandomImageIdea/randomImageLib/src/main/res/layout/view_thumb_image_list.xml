@@ -1,28 +1,28 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutThumbImageView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+             android:id="@+id/layoutThumbImageView"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/text_initializing"
         android:padding="3dp"
-        android:src="@drawable/image_list_background" />
+        android:src="@drawable/image_list_background"/>
 
     <ImageView
         android:id="@+id/imageViewThumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/text_initializing"
-        android:padding="10dp" />
+        android:padding="10dp"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/text_initializing"
         android:padding="3dp"
-        android:src="@drawable/image_list_foreground" />
+        android:src="@drawable/image_list_foreground"/>
 
     <TextView
         android:id="@+id/textViewFolderName"
@@ -38,7 +38,7 @@
         android:paddingRight="8dp"
         android:paddingTop="0dp"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/grid_text_size" >
+        android:textSize="@dimen/grid_text_size">
     </TextView>
 
     <CheckBox
@@ -49,6 +49,6 @@
         android:button="@drawable/checkbox_negative"
         android:checked="false"
         android:clickable="false"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
 </FrameLayout>

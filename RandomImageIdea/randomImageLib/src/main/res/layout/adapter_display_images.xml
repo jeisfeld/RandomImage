@@ -1,6 +1,6 @@
 <de.jeisfeld.randomimage.view.ThumbImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageViewDeleteImages"
-    android:contentDescription="@string/text_initializing"
-    android:padding="3dp"
-    android:layout_width="@dimen/grid_pictures_size"
-    android:layout_height="@dimen/grid_pictures_size" />
+                                             android:id="@+id/imageViewDeleteImages"
+                                             android:contentDescription="@string/text_initializing"
+                                             android:padding="3dp"
+                                             android:layout_width="@dimen/grid_pictures_size"
+                                             android:layout_height="@dimen/grid_pictures_size"/>

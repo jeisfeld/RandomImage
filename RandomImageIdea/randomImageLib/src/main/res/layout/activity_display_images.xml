@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <GridView
         android:id="@+id/gridViewDisplayImages"
@@ -19,6 +19,6 @@
         android:horizontalSpacing="0dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="0dp" />
+        android:verticalSpacing="0dp"/>
 
 </LinearLayout>

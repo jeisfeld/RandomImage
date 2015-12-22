@@ -9,7 +9,7 @@
     <string name="pref_title_language">Sprache</string>
     <string name="pref_title_folder_selection_mechanism">Verzeichnisauswahl über &#8230;</string>
     <string name="pref_title_hidden_lists_pattern">Listen verstecken (Regexp)</string>
-    
+
     <!-- Strings related to Setting arrays -->
 
     <string-array name="pref_list_titles_language">

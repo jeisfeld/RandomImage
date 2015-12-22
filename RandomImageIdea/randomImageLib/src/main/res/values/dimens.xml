@@ -8,5 +8,5 @@
     <dimen name="grid_folder_bottom_size">40sp</dimen>
     <dimen name="mini_grid_pictures_size">60dp</dimen>
     <dimen name="text_padding">6dp</dimen>
-    
+
 </resources>

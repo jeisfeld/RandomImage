@@ -5,7 +5,7 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textViewNestedListName"
@@ -14,12 +14,12 @@
             android:layout_span="4"
             android:layout_weight="1"
             android:padding="@dimen/text_padding"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textViewNumberOfImages"
@@ -28,12 +28,12 @@
             android:layout_span="4"
             android:layout_weight="1"
             android:padding="@dimen/text_padding"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textViewWeight"
@@ -42,12 +42,12 @@
             android:layout_span="4"
             android:layout_weight="1"
             android:padding="@dimen/text_padding"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_weight="0"
             android:padding="@dimen/text_padding"
             android:text="@string/info_nested_list_view_frequency"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <EditText
             android:id="@+id/editTextViewFrequency"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:inputType="number|none"
-            android:maxLength="3" />
+            android:maxLength="3"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
             android:layout_weight="1"
             android:padding="0px"
             android:text="@string/percent"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <ImageButton
             android:id="@+id/button_save"
@@ -81,7 +81,7 @@
             android:contentDescription="@layout/text_view_initializing"
             android:padding="0px"
             style="@style/ActionBarButton"
-            android:src="@drawable/ic_button_save" />
+            android:src="@drawable/ic_button_save"/>
     </TableRow>
 
 </TableLayout>

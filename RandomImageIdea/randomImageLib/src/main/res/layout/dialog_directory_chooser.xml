@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:minHeight="1000dp" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:minHeight="1000dp">
 
     <TextView
         android:id="@+id/textViewMessage"
@@ -14,7 +14,7 @@
         android:layout_marginTop="6dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <TextView
         android:id="@+id/textCurrentFolder"
@@ -26,14 +26,14 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/holo_orange_light" />
+        android:textColor="@android:color/holo_orange_light"/>
 
     <ListView
         android:id="@+id/listViewSubfolders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textCurrentFolder"
-        android:layout_marginTop="6dp" />
+        android:layout_marginTop="6dp"/>
 
     <GridView
         android:id="@+id/gridViewImages"
@@ -48,6 +48,6 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:verticalSpacing="4dp"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </RelativeLayout>

@@ -31,7 +31,7 @@ public class ImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
+									 final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
 		final boolean requireNewImage = changeImage || mCurrentFileNames.get(appWidgetId) == null;
 
 		if (requireNewImage) {
@@ -65,7 +65,7 @@ public class ImageWidget extends GenericWidget {
 
 	@Override
 	public final void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final Bundle newOptions) {
+												final int appWidgetId, final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
 		final String listName = getListName(appWidgetId);
@@ -93,15 +93,15 @@ public class ImageWidget extends GenericWidget {
 	/**
 	 * Put a random image onto the view in an asynchronous way (after ensuring that the list is loaded).
 	 *
-	 * @param context The {@link android.content.Context Context} in which this receiver is running.
+	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param imageList the list from which to get a random image.
-	 * @param appWidgetId The appWidgetId of the widget whose size changed.
-	 * @param listName The name of the image list from which the file is taken.
-	 * @param userTriggered flag indicating if the call was triggered by the user.
+	 * @param imageList        the list from which to get a random image.
+	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
+	 * @param listName         The name of the image list from which the file is taken.
+	 * @param userTriggered    flag indicating if the call was triggered by the user.
 	 */
 	private void setImageAsynchronously(final Context context, final AppWidgetManager appWidgetManager, final ImageList imageList,
-			final int appWidgetId, final String listName, final boolean userTriggered) {
+										final int appWidgetId, final String listName, final boolean userTriggered) {
 		imageList.executeWhenReady(new Runnable() {
 			@Override
 			public void run() {
@@ -141,22 +141,22 @@ public class ImageWidget extends GenericWidget {
 	public final void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			mCurrentFileNames.remove(appWidgetIds[i]);
+		for (int appWidgetId : appWidgetIds) {
+			mCurrentFileNames.remove(appWidgetId);
 		}
 	}
 
 	/**
 	 * Set the image in an instance of the widget.
 	 *
-	 * @param context The {@link android.content.Context Context} in which this receiver is running.
+	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId The appWidgetId of the widget whose size changed.
-	 * @param listName The name of the image list from which the file is taken.
-	 * @param fileName The filename of the image to be displayed.
+	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
+	 * @param listName         The name of the image list from which the file is taken.
+	 * @param fileName         The filename of the image to be displayed.
 	 */
 	private void setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-			final String listName, final String fileName) {
+						  final String listName, final String fileName) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
 
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
@@ -202,12 +202,12 @@ public class ImageWidget extends GenericWidget {
 	/**
 	 * Set the intents for the action buttons on the widget.
 	 *
-	 * @param context The {@link android.content.Context Context} in which this receiver is running.
+	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId The appWidgetId of the widget whose size changed.
+	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 */
 	private void configureButtons(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId) {
+								  final int appWidgetId) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image); // STORE_PROPERTY
 
 		// Set the onClick intent for the "next" button
@@ -235,7 +235,7 @@ public class ImageWidget extends GenericWidget {
 	 * Configure an instance of the widget.
 	 *
 	 * @param appWidgetId The widget id.
-	 * @param listName The list name to be used by the widget.
+	 * @param listName    The list name to be used by the widget.
 	 */
 	public static final void configure(final int appWidgetId, final String listName) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateimagewidget);

@@ -51,15 +51,17 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 	public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		LinearLayout preferenceLayout = (LinearLayout) super.onCreateView(inflater, container, savedInstanceState);
 
-		Button btn = new Button(getActivity());
-		btn.setText(R.string.button_widget_configuration);
-		btn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				getActivity().finish();
-			}
-		});
-		preferenceLayout.addView(btn);
+		if (preferenceLayout != null) {
+			Button btn = new Button(getActivity());
+			btn.setText(R.string.button_widget_configuration);
+			btn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					getActivity().finish();
+				}
+			});
+			preferenceLayout.addView(btn);
+		}
 
 		return preferenceLayout;
 	}
@@ -164,7 +166,7 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 		 * Set the summary of the preference.
 		 *
 		 * @param preference The preference.
-		 * @param value The value of the preference.
+		 * @param value      The value of the preference.
 		 */
 		public void setSummary(final Preference preference, final String value) {
 			// set summary

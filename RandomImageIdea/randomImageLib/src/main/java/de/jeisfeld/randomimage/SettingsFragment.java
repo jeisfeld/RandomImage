@@ -92,7 +92,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Add the listener for a "hints" button.
 	 *
-	 * @param preferenceId The id of the button.
+	 * @param preferenceId        The id of the button.
 	 * @param hintPreferenceValue The value to be set to all the hints preferences.
 	 */
 	private void addHintButtonListener(final int preferenceId, final boolean hintPreferenceValue) {
@@ -212,7 +212,7 @@ public class SettingsFragment extends PreferenceFragment {
 	private OnInventoryFinishedListener mOnInventoryFinishedListener = new OnInventoryFinishedListener() {
 		@Override
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
-				final boolean isPremium) {
+								   final boolean isPremium) {
 			if (isPremium != PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium)) {
 				// Update premium status, also in DisplayAllImagesActivity.
 				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
@@ -306,7 +306,7 @@ public class SettingsFragment extends PreferenceFragment {
 		 * Set the summary of the preference.
 		 *
 		 * @param preference The preference.
-		 * @param value The value of the preference.
+		 * @param value      The value of the preference.
 		 */
 		public void setSummary(final Preference preference, final String value) {
 			// set summary

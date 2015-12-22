@@ -84,8 +84,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			if (appWidgetIds != null && appWidgetIds.length > 0) {
 				boolean updateFlag = intent.getBooleanExtra(EXTRA_NEW_IMAGE, false);
 				if (updateFlag) {
-					for (int i = 0; i < appWidgetIds.length; i++) {
-						mDirtyWidgets.add(appWidgetIds[i]);
+					for (int appWidgetId : appWidgetIds) {
+						mDirtyWidgets.add(appWidgetId);
 					}
 				}
 			}
@@ -104,9 +104,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	public final void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			int appWidgetId = appWidgetIds[i];
-
+		for (int appWidgetId : appWidgetIds) {
 			String listName = getListName(appWidgetId);
 			boolean userTriggered = mUserUpdatedAppWidgetId != null && mUserUpdatedAppWidgetId == appWidgetId;
 
@@ -120,23 +118,21 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Called whenever a widget is updated.
 	 *
-	 * @param context The {@link android.content.Context Context} in which this receiver is running.
+	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId The appWidgetId for which an update is needed.
-	 * @param listName the list name of the widget.
-	 * @param changeImage flag indicating if the image should be changed.
-	 * @param userTriggered flag indicating if the call was triggered by the user.
+	 * @param appWidgetId      The appWidgetId for which an update is needed.
+	 * @param listName         the list name of the widget.
+	 * @param changeImage      flag indicating if the image should be changed.
+	 * @param userTriggered    flag indicating if the call was triggered by the user.
 	 */
 	protected abstract void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-			final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered);
+										   final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered);
 
 	// OVERRIDABLE
 	@Override
 	public void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			int appWidgetId = appWidgetIds[i];
-
+		for (int appWidgetId : appWidgetIds) {
 			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
 			mListNames.remove(appWidgetId);
 
@@ -167,8 +163,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * Configure an instance of the widget.
 	 *
 	 * @param appWidgetId The widget id.
-	 * @param listName The list name to be used by the widget.
-	 * @param interval The update interval.
+	 * @param listName    The list name to be used by the widget.
+	 * @param interval    The update interval.
 	 */
 	public static final void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
@@ -213,7 +209,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Update timers for instances of the widgets of a specific class.
 	 *
-	 * @param widgetClass the widget class
+	 * @param widgetClass  the widget class
 	 * @param appWidgetIds the list of instances to be updated. If empty, then all instances will be updated.
 	 */
 	protected static final void updateTimers(final Class<? extends GenericWidget> widgetClass, final int... appWidgetIds) {
@@ -278,8 +274,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	public static boolean hasWidgetOfId(final Class<? extends GenericWidget> widgetClass, final int appWidgetId) {
 		int[] allAppWidgetIds = getAllWidgetIds(widgetClass);
 
-		for (int i = 0; i < allAppWidgetIds.length; i++) {
-			if (allAppWidgetIds[i] == appWidgetId) {
+		for (int allAppWidgetId : allAppWidgetIds) {
+			if (allAppWidgetId == appWidgetId) {
 				return true;
 			}
 		}
@@ -356,14 +352,14 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		/**
 		 * Create and animate the ButtonAnimator.
 		 *
-		 * @param context The {@link android.content.Context Context} in which this receiver is running.
+		 * @param context          The {@link android.content.Context Context} in which this receiver is running.
 		 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-		 * @param appWidgetId The appWidgetId of the widget whose buttons should be animated.
-		 * @param widgetResource The resourceId of the widget layout.
-		 * @param buttonIds The buttonIds to be animated.
+		 * @param appWidgetId      The appWidgetId of the widget whose buttons should be animated.
+		 * @param widgetResource   The resourceId of the widget layout.
+		 * @param buttonIds        The buttonIds to be animated.
 		 */
 		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager,
-				final int appWidgetId, final int widgetResource, final int... buttonIds) {
+								 final int appWidgetId, final int widgetResource, final int... buttonIds) {
 			mButtonAnimators.add(this);
 
 			this.mAppWidgetId = appWidgetId;

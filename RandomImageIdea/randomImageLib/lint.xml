@@ -3,6 +3,6 @@
 
     <issue
         id="IconColors"
-        severity="informational" />
+        severity="informational"/>
 
 </lint>

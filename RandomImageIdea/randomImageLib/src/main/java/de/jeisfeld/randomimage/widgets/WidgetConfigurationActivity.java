@@ -104,9 +104,9 @@ public abstract class WidgetConfigurationActivity extends Activity {
 	 * same things as the usual onCreate() method.
 	 *
 	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the
-	 *            data it most recently supplied in onSaveInstanceState
-	 * @param appWidgetId the widgetId of the widget to be configured.
-	 * @param listName The selected image list name.
+	 *                           data it most recently supplied in onSaveInstanceState
+	 * @param appWidgetId        the widgetId of the widget to be configured.
+	 * @param listName           The selected image list name.
 	 */
 	protected abstract void initialize(Bundle savedInstanceState, int appWidgetId, String listName);
 
@@ -114,8 +114,8 @@ public abstract class WidgetConfigurationActivity extends Activity {
 	 * Start the configuration view in case of update. Does the same things as the usual onCreate() method.
 	 *
 	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the
-	 *            data it most recently supplied in onSaveInstanceState
-	 * @param appWidgetId the widgetId of the widget to be configured.
+	 *                           data it most recently supplied in onSaveInstanceState
+	 * @param appWidgetId        the widgetId of the widget to be configured.
 	 */
 	protected void update(final Bundle savedInstanceState, final int appWidgetId) {
 		// do nothing - to be implemented in subclass if required.

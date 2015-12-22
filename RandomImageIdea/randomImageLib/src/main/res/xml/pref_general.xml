@@ -1,29 +1,29 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:key="@string/key_pref_category_premium"
-        android:title="@string/pref_category_premium" >
+        android:title="@string/pref_category_premium">
         <Preference
             android:key="@string/key_pref_pro_app"
             android:order="101"
             android:summary="@string/menu_detail_pro_app"
-            android:title="@string/menu_title_pro_app" />
+            android:title="@string/menu_title_pro_app"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_support" >
+    <PreferenceCategory android:title="@string/pref_category_support">
         <Preference
             android:key="@string/key_pref_help_page"
             android:summary="@string/menu_detail_help_page"
-            android:title="@string/menu_title_help_page" />
+            android:title="@string/menu_title_help_page"/>
         <Preference
             android:key="@string/key_pref_donation"
             android:summary="@string/menu_detail_donation"
-            android:title="@string/menu_title_donation" />
+            android:title="@string/menu_title_donation"/>
         <Preference
             android:key="@string/key_pref_contact_developer"
             android:summary="@string/menu_detail_contact_developer"
-            android:title="@string/menu_title_contact_developer" />
+            android:title="@string/menu_title_contact_developer"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_other" >
+    <PreferenceCategory android:title="@string/pref_category_other">
         <ListPreference
             android:defaultValue="@string/pref_default_folder_selection_mechanism"
             android:entries="@array/pref_list_titles_folder_selection_mechanism"
@@ -31,7 +31,7 @@
             android:key="@string/key_pref_folder_selection_mechanism"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_folder_selection_mechanism" />
+            android:title="@string/pref_title_folder_selection_mechanism"/>
         <ListPreference
             android:defaultValue="@string/pref_default_language"
             android:entries="@array/pref_list_titles_language"
@@ -39,20 +39,20 @@
             android:key="@string/key_pref_language"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_language" />
+            android:title="@string/pref_title_language"/>
 
         <EditTextPreference
             android:defaultValue=""
             android:inputType="text"
             android:key="@string/key_pref_hidden_lists_pattern"
-            android:title="@string/pref_title_hidden_lists_pattern" />
+            android:title="@string/pref_title_hidden_lists_pattern"/>
 
         <Preference
             android:key="@string/key_pref_show_info"
-            android:title="@string/menu_show_all_info" />
+            android:title="@string/menu_show_all_info"/>
         <Preference
             android:key="@string/key_pref_hide_info"
-            android:title="@string/menu_hide_all_info" />
+            android:title="@string/menu_hide_all_info"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
