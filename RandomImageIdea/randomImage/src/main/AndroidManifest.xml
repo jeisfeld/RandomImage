@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="de.jeisfeld.randomimage"
-          android:versionCode="16"
-          android:versionName="0.2.7">
+    package="de.jeisfeld.randomimage"
+    android:versionCode="16"
+    android:versionName="0.2.7" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -97,7 +97,7 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationActivity"
-            android:theme="@android:style/Theme.Holo.Dialog" >
+            android:label="@string/title_activity_image_widget_configuration" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

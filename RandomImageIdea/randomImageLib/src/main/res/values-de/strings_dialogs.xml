@@ -79,16 +79,4 @@
     <string name="partial_folder_two">die Verzeichnisse „%1$s“ und „%2$s“</string>
     <string name="partial_folder_multiple">%1$d Verzeichnisse</string>
 
-    <!-- String arrays -->
-    <string-array name="timer_duration_names">
-        <item>1 Minute</item>
-        <item>5 Minuten</item>
-        <item>15 Minuten</item>
-        <item>1 Stunde</item>
-        <item>4 Stunden</item>
-        <item>1 Tag</item>
-        <item>1 Woche</item>
-        <item>Nur bei Neustart</item>
-    </string-array>
-
 </resources>

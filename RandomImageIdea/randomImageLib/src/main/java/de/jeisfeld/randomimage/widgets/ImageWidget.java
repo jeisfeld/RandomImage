@@ -213,6 +213,7 @@ public class ImageWidget extends GenericWidget {
 		// Set the onClick intent for the "settings" button
 		Intent settingsIntent = new Intent(context, ImageWidgetConfigurationActivity.class);
 		settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		settingsIntent.putExtra(WidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
 		PendingIntent pendingSettingsIntent =
 				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);

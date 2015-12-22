@@ -79,28 +79,6 @@
     <string name="partial_folder_two">the folders „%1$s“ and „%2$s“</string>
     <string name="partial_folder_multiple">%1$d folders</string>
 
-    <!-- String arrays -->
-    <string-array name="timer_duration_names">
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>15 minutes</item>
-        <item>1 hour</item>
-        <item>4 hours</item>
-        <item>1 day</item>
-        <item>1 week</item>
-        <item>only on restart</item>
-    </string-array>
-    <string-array name="timer_durations" translatable="false">
-        <item>60000</item>
-        <item>300000</item>
-        <item>900000</item>
-        <item>3600000</item>
-        <item>14400000</item>
-        <item>86400000</item>
-        <item>604800000</item>
-        <item>0</item>
-    </string-array>
-
     <!-- Shared preference keys -->
     <string name="key_info_new_list" translatable="false">info_new_list</string>
     <string name="key_info_add_images" translatable="false">info_add_images</string>

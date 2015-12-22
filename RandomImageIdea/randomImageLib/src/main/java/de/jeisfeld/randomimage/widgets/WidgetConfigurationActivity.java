@@ -18,6 +18,11 @@ import de.jeisfeld.randomimagelib.R;
  */
 public abstract class WidgetConfigurationActivity extends Activity {
 	/**
+	 * Resource name for the flag to indicate if the widget should just be reconfigured.
+	 */
+	public static final String EXTRA_RECONFIGURE_WIDGET = "de.jeisfeld.randomimagelib.RECONFIGURE_WIDGET";
+
+	/**
 	 * The Intent used as result.
 	 */
 	private Intent mResultValue;
@@ -44,27 +49,34 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			return;
 		}
 
+		final boolean reconfigureWidget = extras.getBoolean(EXTRA_RECONFIGURE_WIDGET, false);
+
 		ArrayList<String> listNames = getImageListNames();
 
-		DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-			/**
-			 * The serial version id.
-			 */
-			private static final long serialVersionUID = 1L;
+		if (reconfigureWidget) {
+			update(savedInstanceState, appWidgetId);
+		}
+		else {
+			DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+				/**
+				 * The serial version id.
+				 */
+				private static final long serialVersionUID = 1L;
 
-			@Override
-			public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-				mResultValue = new Intent();
-				mResultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+				@Override
+				public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+					mResultValue = new Intent();
+					mResultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
-				initialize(savedInstanceState, appWidgetId, text);
-			}
+					initialize(savedInstanceState, appWidgetId, text);
+				}
 
-			@Override
-			public void onDialogNegativeClick(final DialogFragment dialog) {
-				finish();
-			}
-		}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
+				@Override
+				public void onDialogNegativeClick(final DialogFragment dialog) {
+					finish();
+				}
+			}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
+		}
 
 	}
 
@@ -89,13 +101,24 @@ public abstract class WidgetConfigurationActivity extends Activity {
 
 	/**
 	 * Initialize the configuration view after retrieving the name of the image list associated to the widget. Does the
-	 * same things as the usual onCrate() method.
+	 * same things as the usual onCreate() method.
 	 *
 	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the
-	 *                           data it most recently supplied in onSaveInstanceState
-	 * @param appWidgetId        the widgetId of the widget to be configured.
-	 * @param listName           The selected image list name.
+	 *            data it most recently supplied in onSaveInstanceState
+	 * @param appWidgetId the widgetId of the widget to be configured.
+	 * @param listName The selected image list name.
 	 */
 	protected abstract void initialize(Bundle savedInstanceState, int appWidgetId, String listName);
+
+	/**
+	 * Start the configuration view in case of update. Does the same things as the usual onCreate() method.
+	 *
+	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the
+	 *            data it most recently supplied in onSaveInstanceState
+	 * @param appWidgetId the widgetId of the widget to be configured.
+	 */
+	protected void update(final Bundle savedInstanceState, final int appWidgetId) {
+		// do nothing - to be implemented in subclass if required.
+	}
 
 }
