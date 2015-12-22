@@ -44,6 +44,7 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_alarm_interval);
+		bindPreferenceSummaryToValue(R.string.key_widget_scale_type);
 	}
 
 	@Override
@@ -72,6 +73,11 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId,
 					Long.parseLong(getString(R.string.pref_default_widget_alarm_interval)));
 		}
+		int scaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId, -1);
+		if (scaleType == -1) {
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId,
+					Integer.parseInt(getString(R.string.pref_default_widget_scale_type)));
+		}
 	}
 
 	/**
@@ -82,6 +88,8 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_alarm_interval,
 				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_scale_type,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId, -1)));
 	}
 
 	/**
@@ -114,8 +122,10 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 
 		String value;
 		if (preferenceKey == R.string.key_widget_alarm_interval) {
-			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId,
-					Long.parseLong(getString(R.string.pref_default_widget_alarm_interval))));
+			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
+		}
+		else if (preferenceKey == R.string.key_widget_scale_type) {
+			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mAppWidgetId);
@@ -140,10 +150,12 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_alarm_interval))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, Long.parseLong(stringValue));
 			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_scale_type))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId, Integer.parseInt(stringValue));
+			}
 
 			ImageWidget.configure(mAppWidgetId,
-					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId),
-					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1));
+					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 
 			return true;
 		}

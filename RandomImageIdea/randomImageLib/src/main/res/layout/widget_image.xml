@@ -8,7 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/border"
-        android:contentDescription="@layout/text_view_initializing" >
+        android:contentDescription="@layout/text_view_initializing"
+        android:visibility="gone" >
+    </ImageView>
+
+    <ImageView
+        android:id="@+id/imageViewWidgetCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:contentDescription="@layout/text_view_initializing"
+        android:scaleType="centerCrop"
+        android:visibility="gone" >
     </ImageView>
 
     <TextView

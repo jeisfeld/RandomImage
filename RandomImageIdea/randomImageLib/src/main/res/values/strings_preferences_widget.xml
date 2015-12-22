@@ -6,12 +6,15 @@
     <string name="key_widget_list_name" translatable="false">widget_list_name</string>
     <string name="key_widget_view_width" translatable="false">widget_view_width</string>
     <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
+    <string name="key_widget_scale_type" translatable="false">widget_scale_type</string>
 
     <!-- Strings related to Settings -->
 
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_alarm_interval">Change Frequency</string>
+    <string name="pref_title_widget_scale_type">Scale Type</string>
     <string name="pref_default_widget_alarm_interval" translatable="false">3600000</string>
+    <string name="pref_default_widget_scale_type" translatable="false">0</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -33,6 +36,14 @@
         <item>86400000</item>
         <item>604800000</item>
         <item>0</item>
+    </string-array>
+    <string-array name="scale_type_names">
+        <item>Display whole image</item>
+        <item>Fill frame and crop image</item>
+    </string-array>
+    <string-array name="scale_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
     </string-array>
 
 </resources>

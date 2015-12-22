@@ -3,8 +3,6 @@ package de.jeisfeld.randomimage.widgets;
 import android.appwidget.AppWidgetManager;
 import android.os.Bundle;
 
-import de.jeisfeld.randomimagelib.R;
-
 /**
  * Activity for the configuration of the MiniWidget.
  */
@@ -16,7 +14,7 @@ public class ImageWidgetConfigurationActivity extends WidgetConfigurationActivit
 
 	@Override
 	protected final void initialize(final Bundle savedInstanceState, final int appWidgetId, final String listName) {
-		ImageWidget.configure(appWidgetId, listName, Long.parseLong(getString(R.string.pref_default_widget_alarm_interval)));
+		ImageWidget.configure(appWidgetId, listName);
 		setResult(true);
 
 		update(savedInstanceState, appWidgetId);

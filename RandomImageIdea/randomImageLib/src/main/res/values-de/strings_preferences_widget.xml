@@ -5,6 +5,7 @@
 
     <string name="pref_title_widget_list_name">Listenname</string>
     <string name="pref_title_widget_alarm_interval">Wechselhäufigkeit</string>
+    <string name="pref_title_widget_scale_type">Skalierung</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -16,6 +17,10 @@
         <item>1 Tag</item>
         <item>1 Woche</item>
         <item>Nur bei Neustart</item>
+    </string-array>
+    <string-array name="scale_type_names">
+        <item>Ganzes Bild anzeigen</item>
+        <item>Rahmen füllen und Bild abschneiden</item>
     </string-array>
 
 </resources>
