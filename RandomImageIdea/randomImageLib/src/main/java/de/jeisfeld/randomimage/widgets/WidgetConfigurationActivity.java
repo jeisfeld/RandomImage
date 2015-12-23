@@ -48,6 +48,9 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			finish();
 			return;
 		}
+		mResultValue = new Intent();
+		mResultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		setResult(false);
 
 		final boolean reconfigureWidget = extras.getBoolean(EXTRA_RECONFIGURE_WIDGET, false);
 
@@ -65,9 +68,6 @@ public abstract class WidgetConfigurationActivity extends Activity {
 
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-					mResultValue = new Intent();
-					mResultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-
 					initialize(savedInstanceState, appWidgetId, text);
 				}
 

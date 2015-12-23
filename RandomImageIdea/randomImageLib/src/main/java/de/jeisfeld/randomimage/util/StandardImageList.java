@@ -39,7 +39,7 @@ public final class StandardImageList extends ImageList {
 	private volatile Map<String, Double> mNestedListWeights = new HashMap<>();
 
 	/**
-	 * The nested weights that have been set customly.
+	 * The nested weights that have been set customly. This map is also used for synchronization of updates.
 	 */
 	private final Map<String, Double> mCustomNestedListWeights = new HashMap<>();
 
@@ -86,11 +86,7 @@ public final class StandardImageList extends ImageList {
 		mImageFilesByNestedList = null;
 
 		mNestedListWeights = new HashMap<>();
-		if (mCustomNestedListWeights != null) {
-			synchronized (mCustomNestedListWeights) {
-				mCustomNestedListWeights.clear();
-			}
-		}
+
 		mRandom = new Random();
 
 		mAsyncLoader = new AsyncLoader(getAsyncRunnable(toastIfFilesMissing));

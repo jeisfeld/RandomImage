@@ -87,11 +87,15 @@ public class ImageWidget extends GenericWidget {
 		String fileName = mCurrentFileNames.get(appWidgetId);
 
 		if (fileName == null && imageList != null) {
-			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
+			if (mCurrentFileNames.get(appWidgetId) == null) {
+				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
+			}
 		}
 		else {
-			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-			configureButtons(context, appWidgetManager, appWidgetId);
+			if (mCurrentFileNames.get(appWidgetId) == null) {
+				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+				configureButtons(context, appWidgetManager, appWidgetId);
+			}
 			new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
 					R.id.buttonNextImage, R.id.buttonSettings).start();
 		}
@@ -137,7 +141,7 @@ public class ImageWidget extends GenericWidget {
 				if (userTriggered) {
 					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
 					remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
-					remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_loading));
+					remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
 					appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 				}
 			}
