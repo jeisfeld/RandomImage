@@ -2,10 +2,8 @@ package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -55,7 +53,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
 	 * complete the animation.
 	 */
-	private static Set<ButtonAnimator> mButtonAnimators = new HashSet<>();
+	private static Map<Integer, ButtonAnimator> mButtonAnimators = new HashMap<>();
 
 	/**
 	 * A temporary storage for the update types of the widgets.
@@ -314,7 +312,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * A class handling the animation of the widget buttons.
 	 */
-	protected final class ButtonAnimator {
+	protected static final class ButtonAnimator {
 		/**
 		 * The RemoteViews used for animating buttons.
 		 */
@@ -338,7 +336,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		/**
 		 * The AnimatorSet running the animation.
 		 */
-		private AnimatorSet mAnimatorSet;
+		private AnimatorSet mAnimatorSet = null;
 
 		/**
 		 * Create and animate the ButtonAnimator.
@@ -351,7 +349,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 */
 		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager,
 								 final int appWidgetId, final int widgetResource, final int... buttonIds) {
-			mButtonAnimators.add(this);
+			if (mButtonAnimators.containsKey(appWidgetId)) {
+				return;
+			}
+			mButtonAnimators.put(appWidgetId, this);
+			int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId, 1);
 
 			this.mAppWidgetId = appWidgetId;
 			this.mAppWidgetManager = appWidgetManager;
@@ -360,7 +362,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 			final ObjectAnimator fadeOut =
 					ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
-			fadeOut.setDuration(1000); // MAGIC_NUMBER
+			fadeOut.setDuration(buttonStyle == 1 ? 1000 : 2000); // MAGIC_NUMBER
 			fadeOut.addListener(new AnimatorListener() {
 				@Override
 				public void onAnimationStart(final Animator animation) {
@@ -379,7 +381,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 					for (int buttonId : buttonIds) {
 						mRemoteViews.setViewVisibility(buttonId, View.INVISIBLE);
 					}
-					mButtonAnimators.remove(ButtonAnimator.this);
+					mButtonAnimators.remove(appWidgetId);
 				}
 
 				@Override
@@ -410,7 +412,31 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 * Start the animation.
 		 */
 		public void start() {
-			mAnimatorSet.start();
+			if (mAnimatorSet != null) {
+				mAnimatorSet.start();
+			}
+		}
+
+		/**
+		 * Interrupt the animation.
+		 */
+		public void interrupt() {
+			if (mAnimatorSet != null) {
+				mAnimatorSet.end();
+			}
+		}
+
+		/**
+		 * Interrupt an animator instance.
+		 *
+		 * @param appWidgetId The app widget id of the widget to be interrupted.
+		 */
+		public static void interrupt(final int appWidgetId) {
+			ButtonAnimator instance = mButtonAnimators.get(appWidgetId);
+			if (instance != null) {
+				instance.interrupt();
+				mButtonAnimators.remove(appWidgetId);
+			}
 		}
 	}
 
@@ -433,6 +459,14 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		/**
 		 * Update of the scaling of the image.
 		 */
-		SCALING
+		SCALING,
+		/**
+		 * Update the widget buttons.
+		 */
+		BUTTONS,
+		/**
+		 * Update the widget background.
+		 */
+		BACKGROUND
 	}
 }

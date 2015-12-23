@@ -7,14 +7,20 @@
     <string name="key_widget_view_width" translatable="false">widget_view_width</string>
     <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
     <string name="key_widget_scale_type" translatable="false">widget_scale_type</string>
+    <string name="key_widget_button_style" translatable="false">widget_button_style</string>
+    <string name="key_widget_background_style" translatable="false">widget_background_style</string>
 
     <!-- Strings related to Settings -->
 
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_alarm_interval">Change Frequency</string>
     <string name="pref_title_widget_scale_type">Scale Type</string>
+    <string name="pref_title_widget_button_style">Button Style</string>
+    <string name="pref_title_widget_background_style">Background Style</string>
     <string name="pref_default_widget_alarm_interval" translatable="false">3600000</string>
     <string name="pref_default_widget_scale_type" translatable="false">0</string>
+    <string name="pref_default_widget_button_style" translatable="false">2</string>
+    <string name="pref_default_widget_background_style" translatable="false">1</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -44,6 +50,38 @@
     <string-array name="scale_type_values" translatable="false">
         <item>0</item>
         <item>1</item>
+    </string-array>
+    <string-array name="button_style_names">
+        <item>Always visible</item>
+        <item>Hidden, narrow</item>
+        <item>Hidden, wide</item>
+    </string-array>
+    <string-array name="button_style_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="background_style_names">
+        <item>No background</item>
+        <item>Transparent white</item>
+        <item>Transparent black</item>
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Blue</item>
+        <item>Red</item>
+        <item>Green</item>
+        <item>Yellow</item>
+    </string-array>
+    <string-array name="background_style_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
     </string-array>
 
 </resources>

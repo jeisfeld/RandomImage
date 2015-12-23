@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -29,6 +30,17 @@ public class ImageWidget extends GenericWidget {
 	 */
 	private static SparseArray<String> mCurrentFileNames = new SparseArray<>();
 
+	/**
+	 * Method name to set the background color.
+	 */
+	private static final String SET_BACKGROUND_COLOR = "setBackgroundColor";
+
+	/**
+	 * Method name to set the background resource.
+	 */
+	private static final String SET_BACKGROUND_RESOURCE = "setBackgroundResource";
+
+
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
 									 final int appWidgetId, final UpdateType updateType) {
@@ -46,6 +58,9 @@ public class ImageWidget extends GenericWidget {
 			if (isVisibleToUser) {
 				ImageRegistry.switchToImageList(listName, CreationStyle.NONE, false);
 			}
+			if (updateType == UpdateType.NEW_IMAGE_BY_USER) {
+				ButtonAnimator.interrupt(appWidgetId);
+			}
 
 			final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 
@@ -54,7 +69,7 @@ public class ImageWidget extends GenericWidget {
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 
 				// Put view in good state again.
-				RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+				RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 				remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 			}
@@ -67,6 +82,7 @@ public class ImageWidget extends GenericWidget {
 
 			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 			configureButtons(context, appWidgetManager, appWidgetId);
+			configureBackground(context, appWidgetManager, appWidgetId);
 		}
 
 	}
@@ -94,10 +110,10 @@ public class ImageWidget extends GenericWidget {
 		else {
 			if (mCurrentFileNames.get(appWidgetId) == null) {
 				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-				configureButtons(context, appWidgetManager, appWidgetId);
+				configureBackground(context, appWidgetManager, appWidgetId);
 			}
-			new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
-					R.id.buttonNextImage, R.id.buttonSettings).start();
+			configureButtons(context, appWidgetManager, appWidgetId);
+			configureBackground(context, appWidgetManager, appWidgetId);
 		}
 
 	}
@@ -118,7 +134,7 @@ public class ImageWidget extends GenericWidget {
 			@Override
 			public void run() {
 				if (userTriggered) {
-					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 					remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
 					remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_loading));
 					appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
@@ -131,15 +147,18 @@ public class ImageWidget extends GenericWidget {
 
 				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 				configureButtons(context, appWidgetManager, appWidgetId);
+				configureBackground(context, appWidgetManager, appWidgetId);
 
-				new ButtonAnimator(context, appWidgetManager, appWidgetId, R.layout.widget_image,
-						R.id.buttonNextImage, R.id.buttonSettings).start();
+				if (getWidgetLayoutId(appWidgetId) == R.layout.widget_image_inside_temp_buttons) {
+					new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
+							R.id.buttonNextImage, R.id.buttonSettings).start();
+				}
 			}
 		}, new Runnable() {
 			@Override
 			public void run() {
 				if (userTriggered) {
-					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 					remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 					remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
 					appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
@@ -169,7 +188,7 @@ public class ImageWidget extends GenericWidget {
 	 */
 	private void setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
 						  final String listName, final String fileName) {
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
@@ -178,37 +197,26 @@ public class ImageWidget extends GenericWidget {
 			return;
 		}
 
-		int scaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_scale_type, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_scale_type)));
-
-		int imageViewKey;
 		if (fileName == null) {
 			Log.e(Application.TAG, "Did not find any file to display");
-			imageViewKey = R.id.textViewWidgetEmpty;
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
 			remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
 		}
 		else {
 			mCurrentFileNames.put(appWidgetId, fileName);
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
-			remoteViews.setViewVisibility(R.id.imageViewWidget, View.GONE);
-			remoteViews.setViewVisibility(R.id.imageViewWidgetCrop, View.GONE);
-
-			// The image view is selected in dependence of the scaleType
-			imageViewKey = scaleType == 0 ? R.id.imageViewWidget : R.id.imageViewWidgetCrop;
 
 			remoteViews.setImageViewBitmap(
-					imageViewKey,
+					R.id.imageViewWidget,
 					ImageUtil.getImageBitmap(fileName,
 							Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height))));
-			remoteViews.setViewVisibility(imageViewKey, View.VISIBLE);
 		}
 
 		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-		remoteViews.setOnClickPendingIntent(imageViewKey, pendingIntent);
+		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 
@@ -221,7 +229,7 @@ public class ImageWidget extends GenericWidget {
 	 */
 	private void configureButtons(final Context context, final AppWidgetManager appWidgetManager,
 								  final int appWidgetId) {
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_image); // STORE_PROPERTY
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId)); // STORE_PROPERTY
 
 		// Set the onClick intent for the "next" button
 		Intent nextIntent = new Intent(context, ImageWidget.class);
@@ -239,6 +247,68 @@ public class ImageWidget extends GenericWidget {
 		PendingIntent pendingSettingsIntent =
 				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
+
+		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
+				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
+		if (buttonStyle > 0) {
+			int padding = context.getResources().getDimensionPixelSize(
+					buttonStyle == 1 ? R.dimen.widget_button_padding_narrow : R.dimen.widget_button_padding_wide);
+			remoteViews.setViewPadding(R.id.buttonNextImage, padding, 0, padding, 0);
+			remoteViews.setViewPadding(R.id.buttonSettings, padding, 0, padding, 0);
+		}
+
+		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
+
+		if (buttonStyle > 0) {
+			new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
+					R.id.buttonNextImage, R.id.buttonSettings).start();
+		}
+	}
+
+	/**
+	 * Configure the background of the widget.
+	 *
+	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
+	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
+	 */
+	private void configureBackground(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
+
+		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
+				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
+
+		switch (backgroundStyle) {
+		case 0:
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.TRANSPARENT);
+			break;
+		case 1:
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_white);
+			break;
+		case 2:
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
+			break;
+		case 3: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.LTGRAY);
+			break;
+		case 4: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.DKGRAY);
+			break;
+		case 5: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(0, 51, 141)); // MAGIC_NUMBER
+			break;
+		case 6: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(211, 0, 69)); // MAGIC_NUMBER
+			break;
+		case 7: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(64, 163, 0)); // MAGIC_NUMBER
+			break;
+		case 8: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(253, 240, 146)); // MAGIC_NUMBER
+			break;
+		default:
+			break;
+		}
 
 		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 	}
@@ -290,4 +360,38 @@ public class ImageWidget extends GenericWidget {
 		return hasWidgetOfId(ImageWidget.class, appWidgetId);
 	}
 
+	/**
+	 * Get the layout resource id for the widget.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @return The layout resource id.
+	 */
+	private static int getWidgetLayoutId(final int appWidgetId) {
+		Context context = Application.getAppContext();
+		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
+				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
+		int scaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_scale_type, appWidgetId,
+				Integer.parseInt(context.getString(R.string.pref_default_widget_scale_type)));
+
+		if (scaleType == 0) {
+			return buttonStyle == 0 ? R.layout.widget_image_inside_fixed_buttons : R.layout.widget_image_inside_temp_buttons;
+		}
+		else {
+			return buttonStyle == 0 ? R.layout.widget_image_crop_fixed_buttons : R.layout.widget_image_crop_temp_buttons;
+		}
+	}
+
+	/**
+	 * The style of the widget - defines the layout XML.
+	 */
+	protected enum WidgetStyle {
+		/**
+		 * Buttons are displayed temporarily on full height.
+		 */
+		BUTTONS_FULL_HEIGHT,
+		/**
+		 * Buttons are displayed permanently on the lower corners.
+		 */
+		BUTTONS_LOWER_CORNERS
+	}
 }

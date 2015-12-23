@@ -19,5 +19,19 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_scale_type"/>
+    <ListPreference
+        android:entries="@array/button_style_names"
+        android:entryValues="@array/button_style_values"
+        android:key="@string/key_widget_button_style"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_widget_button_style"/>
+    <ListPreference
+        android:entries="@array/background_style_names"
+        android:entryValues="@array/background_style_values"
+        android:key="@string/key_widget_background_style"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_widget_background_style"/>
 
 </PreferenceScreen>
