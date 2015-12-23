@@ -208,24 +208,28 @@ public class DisplayRandomImageActivity extends Activity {
 		else {
 			// Otherwise, use the imageList.
 			ImageList imageList;
+
 			if (mListName == null) {
-				if (mCurrentFileName == null) {
-					// Reload the file when starting the activity.
-					imageList = ImageRegistry.getCurrentImageListRefreshed(false);
-				}
-				else {
-					imageList = ImageRegistry.getCurrentImageList(false);
-				}
-				mListName = imageList.getListName();
+				mListName = ImageRegistry.getCurrentListName();
 			}
 			else {
-				imageList = ImageRegistry.getImageListByName(mListName, false);
-				if (imageList == null) {
+				boolean foundList = ImageRegistry.switchToImageList(mListName, ImageRegistry.CreationStyle.NONE, false);
+				if (!foundList) {
 					Log.e(Application.TAG, "Could not load image list");
 					DialogUtil.displayToast(this, R.string.toast_error_while_loading, mListName);
 					return;
 				}
 			}
+
+			if (mCurrentFileName == null) {
+				// Reload the file when starting the activity.
+				imageList = ImageRegistry.getCurrentImageListRefreshed(false);
+			}
+			else {
+				imageList = ImageRegistry.getCurrentImageList(false);
+			}
+			mListName = imageList.getListName();
+
 			mRandomFileProvider = imageList;
 		}
 

@@ -13,7 +13,7 @@ import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimagelib.R;
 
 /**
- * Activity to display the list of images of a folder.
+ * Activity to add images to the list via display of all image folders on the device.
  */
 public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**

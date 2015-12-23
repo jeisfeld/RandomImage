@@ -70,7 +70,7 @@ public final class ImageRegistry {
 	 * @return The currentImageList.
 	 */
 	public static ImageList getCurrentImageList(final boolean toastIfFilesMissing) {
-		String currentListName = PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
+		String currentListName = getCurrentListName();
 
 		if (mCurrentImageList == null && currentListName != null) {
 			switchToImageList(currentListName, CreationStyle.NONE, toastIfFilesMissing);
@@ -110,7 +110,7 @@ public final class ImageRegistry {
 	 * @return The name of the current list.
 	 */
 	public static String getCurrentListName() {
-		return getCurrentImageList(false).getListName();
+		return PreferenceUtil.getSharedPreferenceString(R.string.key_current_list_name);
 	}
 
 	/**
@@ -241,6 +241,7 @@ public final class ImageRegistry {
 
 		File backupFile = new File(BACKUP_FILE_FOLDER, configFile.getName());
 		if (oldBackupFile != null && !oldBackupFile.equals(backupFile)) {
+			//noinspection ResultOfMethodCallIgnored
 			oldBackupFile.delete();
 		}
 
@@ -266,6 +267,7 @@ public final class ImageRegistry {
 		File tempBackupFile = null;
 		if (oldConfigFile != null) {
 			tempBackupFile = new File(CONFIG_FILE_FOLDER, oldConfigFile.getName() + ".bak");
+			//noinspection ResultOfMethodCallIgnored
 			oldConfigFile.renameTo(tempBackupFile);
 		}
 
@@ -273,6 +275,7 @@ public final class ImageRegistry {
 		boolean success = FileUtil.copyFile(backupFile, newConfigFile);
 		if (success) {
 			if (tempBackupFile != null) {
+				//noinspection ResultOfMethodCallIgnored
 				tempBackupFile.delete();
 			}
 			parseConfigFiles();
