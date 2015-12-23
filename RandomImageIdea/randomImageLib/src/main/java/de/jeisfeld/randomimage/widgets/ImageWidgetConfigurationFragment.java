@@ -26,6 +26,10 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 	 * The app widget id.
 	 */
 	private int mAppWidgetId;
+	/**
+	 * A flag indicating if the widget is already configured.
+	 */
+	private boolean mReconfigureWidget;
 
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
@@ -36,6 +40,7 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
+		mReconfigureWidget = getArguments().getBoolean(WidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, false);
 
 		setDefaultValues();
 		setNonIndexedValues();
@@ -53,7 +58,7 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 
 		if (preferenceLayout != null) {
 			Button btn = new Button(getActivity());
-			btn.setText(R.string.button_widget_configuration);
+			btn.setText(mReconfigureWidget ? R.string.button_cancel : R.string.button_widget_configuration);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
@@ -145,19 +150,24 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 		public boolean onPreferenceChange(final Preference preference, final Object value) {
 			String stringValue = value.toString();
 			setSummary(preference, stringValue);
+			String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
 
 			if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId, stringValue);
+				ImageWidget.configure(mAppWidgetId, stringValue, GenericWidget.UpdateType.NEW_LIST);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_alarm_interval))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, Long.parseLong(stringValue));
+				ImageWidget.updateTimers(mAppWidgetId);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId, Integer.parseInt(stringValue));
+				ImageWidget.configure(mAppWidgetId, listName, GenericWidget.UpdateType.SCALING);
 			}
 
-			ImageWidget.configure(mAppWidgetId,
-					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
+			if (mReconfigureWidget) {
+				getActivity().finish();
+			}
 
 			return true;
 		}

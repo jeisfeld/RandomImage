@@ -41,7 +41,7 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * The nested weights that have been set customly.
 	 */
-	private volatile Map<String, Double> mCustomNestedListWeights = new HashMap<>();
+	private final Map<String, Double> mCustomNestedListWeights = new HashMap<>();
 
 	/**
 	 * The random number generator.
@@ -77,7 +77,6 @@ public final class StandardImageList extends ImageList {
 	@Override
 	public synchronized void load(final boolean toastIfFilesMissing) {
 		super.load(toastIfFilesMissing);
-
 		mAsyncLoader.load();
 	}
 
@@ -87,7 +86,11 @@ public final class StandardImageList extends ImageList {
 		mImageFilesByNestedList = null;
 
 		mNestedListWeights = new HashMap<>();
-		mCustomNestedListWeights = new HashMap<>();
+		if (mCustomNestedListWeights != null) {
+			synchronized (mCustomNestedListWeights) {
+				mCustomNestedListWeights.clear();
+			}
+		}
 		mRandom = new Random();
 
 		mAsyncLoader = new AsyncLoader(getAsyncRunnable(toastIfFilesMissing));
@@ -101,7 +104,7 @@ public final class StandardImageList extends ImageList {
 	public String[] getShuffledFileNames() {
 		ArrayList<String> clonedList = getAllImageFiles();
 		Collections.shuffle(clonedList);
-		return clonedList.toArray(new String[0]);
+		return clonedList.toArray(new String[clonedList.size()]);
 	}
 
 	/**
@@ -149,16 +152,17 @@ public final class StandardImageList extends ImageList {
 	 * @return A random nested list.
 	 */
 	private String getRandomNestedList() {
-		double randomNumber = mRandom.nextDouble();
-
-		double accumulatedWeights = 0;
-		for (String nestedListName : mNestedListWeights.keySet()) {
-			accumulatedWeights += mNestedListWeights.get(nestedListName);
-			if (randomNumber < accumulatedWeights) {
-				return nestedListName;
+		synchronized (mCustomNestedListWeights) {
+			double randomNumber = mRandom.nextDouble();
+			double accumulatedWeights = 0;
+			for (String nestedListName : mNestedListWeights.keySet()) {
+				accumulatedWeights += mNestedListWeights.get(nestedListName);
+				if (randomNumber < accumulatedWeights) {
+					return nestedListName;
+				}
 			}
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -210,8 +214,10 @@ public final class StandardImageList extends ImageList {
 		if (mImageFilesByNestedList == null) {
 			return 0;
 		}
-		ArrayList<String> images = mImageFilesByNestedList.get(nestedListName);
-		return images == null ? 0 : images.size();
+		synchronized (mCustomNestedListWeights) {
+			ArrayList<String> images = mImageFilesByNestedList.get(nestedListName);
+			return images == null ? 0 : images.size();
+		}
 	}
 
 	/**
@@ -318,33 +324,35 @@ public final class StandardImageList extends ImageList {
 	 * Calculate the weights of all nested lists.
 	 */
 	private void calculateWeights() {
-		if (mImageFilesByNestedList == null || mImageFilesByNestedList.keySet().size() == 0) {
+		if (mImageFilesByNestedList == null || mCustomNestedListWeights == null || mImageFilesByNestedList.keySet().size() == 0) {
 			return;
 		}
 
-		Set<String> listsWithCustomWeight = mCustomNestedListWeights.keySet();
+		synchronized (mCustomNestedListWeights) {
+			Set<String> listsWithCustomWeight = mCustomNestedListWeights.keySet();
 
-		// next calculate the weights of all components
-		double remainingWeight = 1;
-		for (String otherNestedList : mCustomNestedListWeights.keySet()) {
-			remainingWeight -= mCustomNestedListWeights.get(otherNestedList);
-		}
-
-		int remainingPictures = 0;
-		for (String otherNestedList : mImageFilesByNestedList.keySet()) {
-			if (!listsWithCustomWeight.contains(otherNestedList)) {
-				remainingPictures += mImageFilesByNestedList.get(otherNestedList).size();
+			// next calculate the weights of all components
+			double remainingWeight = 1;
+			for (String otherNestedList : mCustomNestedListWeights.keySet()) {
+				remainingWeight -= mCustomNestedListWeights.get(otherNestedList);
 			}
-		}
 
-		for (String otherNestedList : mImageFilesByNestedList.keySet()) {
-			if (listsWithCustomWeight.contains(otherNestedList)) {
-				mNestedListWeights.put(otherNestedList, mCustomNestedListWeights.get(otherNestedList));
+			int remainingPictures = 0;
+			for (String otherNestedList : mImageFilesByNestedList.keySet()) {
+				if (!listsWithCustomWeight.contains(otherNestedList)) {
+					remainingPictures += mImageFilesByNestedList.get(otherNestedList).size();
+				}
 			}
-			else {
-				if (remainingPictures > 0) {
-					mNestedListWeights.put(otherNestedList,
-							remainingWeight * mImageFilesByNestedList.get(otherNestedList).size() / remainingPictures);
+
+			for (String otherNestedList : mImageFilesByNestedList.keySet()) {
+				if (listsWithCustomWeight.contains(otherNestedList)) {
+					mNestedListWeights.put(otherNestedList, mCustomNestedListWeights.get(otherNestedList));
+				}
+				else {
+					if (remainingPictures > 0) {
+						mNestedListWeights.put(otherNestedList,
+								remainingWeight * mImageFilesByNestedList.get(otherNestedList).size() / remainingPictures);
+					}
 				}
 			}
 		}

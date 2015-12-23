@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
-import de.jeisfeld.randomimage.widgets.StackedImageWidget;
 
 /**
  * A broadcast receiver being informed about SD card mounts.
@@ -25,8 +25,7 @@ public class SdMountReceiver extends BroadcastReceiver {
 				|| action.equals(Intent.ACTION_MEDIA_UNMOUNTED)
 				|| action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 			ImageRegistry.getCurrentImageList(false).load(false);
-			ImageWidget.updateInstances();
-			StackedImageWidget.updateInstances();
+			GenericWidget.updateAllInstances();
 		}
 
 	}

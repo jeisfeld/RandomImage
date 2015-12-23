@@ -14,7 +14,7 @@
     <string name="title_activity_image_widget_configuration">Widget-Einstellungen</string>
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="text_loading">Bildliste wird geladen&#8230;</string>
-    <string name="text_no_image">Kein Bild</string>
+    <string name="text_no_image">Kein Bild verfügbar</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Abbrechen</string>
     <string name="button_delete">Löschen</string>

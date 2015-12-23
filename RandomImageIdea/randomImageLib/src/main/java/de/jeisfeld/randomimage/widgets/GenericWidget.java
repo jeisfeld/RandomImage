@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import android.animation.Animator;
@@ -40,14 +42,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	protected static final float DENSITY = Application.getAppContext().getResources().getDisplayMetrics().density;
 
 	/**
-	 * Intent flag to indicate that a new image should be displayed.
+	 * Intent flag to indicate the type of widget update.
 	 */
-	protected static final String EXTRA_NEW_IMAGE = "de.jeisfeld.randomimage.NEW_IMAGE";
-
-	/**
-	 * Intent flag to indicate that this intent was triggered by the user.
-	 */
-	protected static final String EXTRA_USER_TRIGGERED = "de.jeisfeld.randomimage.USER_TRIGGERED";
+	protected static final String EXTRA_UPDATE_TYPE = "de.jeisfeld.randomimage.UPDATE_TYPE";
 
 	/**
 	 * The names of the image lists associated to any widget.
@@ -61,14 +58,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	private static Set<ButtonAnimator> mButtonAnimators = new HashSet<>();
 
 	/**
-	 * A temporary storage listing appWidgetIds that should change the image with the next update.
+	 * A temporary storage for the update types of the widgets.
 	 */
-	private static Set<Integer> mDirtyWidgets = new HashSet<>();
-
-	/**
-	 * Id of an app widget triggered for update by user.
-	 */
-	private static Integer mUserUpdatedAppWidgetId = null;
+	private static Map<Integer, UpdateType> mWidgetUpdateTypes = new HashMap<>();
 
 	static {
 		WIDGET_TYPES.add(MiniWidget.class);
@@ -82,17 +74,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
 			int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 			if (appWidgetIds != null && appWidgetIds.length > 0) {
-				boolean updateFlag = intent.getBooleanExtra(EXTRA_NEW_IMAGE, false);
-				if (updateFlag) {
-					for (int appWidgetId : appWidgetIds) {
-						mDirtyWidgets.add(appWidgetId);
-					}
-				}
-			}
-			if (appWidgetIds != null && appWidgetIds.length == 1 && mUserUpdatedAppWidgetId == null) {
-				boolean updateFlag = intent.getBooleanExtra(EXTRA_USER_TRIGGERED, false);
-				if (updateFlag) {
-					mUserUpdatedAppWidgetId = appWidgetIds[0];
+				UpdateType updateType = (UpdateType) intent.getSerializableExtra(EXTRA_UPDATE_TYPE);
+				for (int appWidgetId : appWidgetIds) {
+					mWidgetUpdateTypes.put(appWidgetId, updateType);
 				}
 			}
 		}
@@ -105,13 +89,10 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
 		for (int appWidgetId : appWidgetIds) {
-			String listName = getListName(appWidgetId);
-			boolean userTriggered = mUserUpdatedAppWidgetId != null && mUserUpdatedAppWidgetId == appWidgetId;
+			UpdateType updateType = mWidgetUpdateTypes.get(appWidgetId);
+			mWidgetUpdateTypes.remove(appWidgetId);
 
-			onUpdateWidget(context, appWidgetManager, appWidgetId, listName, mDirtyWidgets.contains(appWidgetId), userTriggered);
-
-			mDirtyWidgets.remove(appWidgetId);
-			mUserUpdatedAppWidgetId = null;
+			onUpdateWidget(context, appWidgetManager, appWidgetId, updateType);
 		}
 	}
 
@@ -121,12 +102,10 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId      The appWidgetId for which an update is needed.
-	 * @param listName         the list name of the widget.
-	 * @param changeImage      flag indicating if the image should be changed.
-	 * @param userTriggered    flag indicating if the call was triggered by the user.
+	 * @param updateType       flag indicating what should be updated.
 	 */
 	protected abstract void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-										   final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered);
+										   final int appWidgetId, final UpdateType updateType);
 
 	// OVERRIDABLE
 	@Override
@@ -183,9 +162,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * Update instances of the widgets of a specific class.
 	 *
 	 * @param widgetClass the widget class (required if no appWidgetIds are given)
+	 * @param updateType  flag indicating what should be updated.
 	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	protected static final void updateInstances(final Class<? extends GenericWidget> widgetClass, final int... appWidgetId) {
+	protected static final void updateInstances(final Class<? extends GenericWidget> widgetClass, final UpdateType updateType,
+												final int... appWidgetId) {
 		if (widgetClass == null) {
 			return;
 		}
@@ -201,9 +182,19 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		else {
 			ids = appWidgetId;
 		}
+
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-		intent.putExtra(EXTRA_NEW_IMAGE, true);
+		intent.putExtra(EXTRA_UPDATE_TYPE, updateType);
 		context.sendBroadcast(intent);
+	}
+
+	/**
+	 * Update all instances of all widgets.
+	 */
+	public static final void updateAllInstances() {
+		for (Class<? extends GenericWidget> widgetType : WIDGET_TYPES) {
+			updateInstances(widgetType, UpdateType.NEW_LIST);
+		}
 	}
 
 	/**
@@ -314,7 +305,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 					PreferenceUtil
 							.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, newName);
 					mListNames.put(appWidgetId, newName);
-					updateInstances(widgetClass, appWidgetId);
+					updateInstances(widgetClass, UpdateType.NEW_LIST, appWidgetId);
 				}
 			}
 		}
@@ -388,7 +379,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 					for (int buttonId : buttonIds) {
 						mRemoteViews.setViewVisibility(buttonId, View.INVISIBLE);
 					}
-					mButtonAnimators.remove(this);
+					mButtonAnimators.remove(ButtonAnimator.this);
 				}
 
 				@Override
@@ -423,4 +414,25 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		}
 	}
 
+	/**
+	 * Types in which the widget can be updated.
+	 */
+	protected enum UpdateType {
+		/**
+		 * Update the image automatically.
+		 */
+		NEW_IMAGE_AUTOMATIC,
+		/**
+		 * Update of the image triggered by the user.
+		 */
+		NEW_IMAGE_BY_USER,
+		/**
+		 * Update of the image list.
+		 */
+		NEW_LIST,
+		/**
+		 * Update of the scaling of the image.
+		 */
+		SCALING
+	}
 }

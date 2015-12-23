@@ -31,11 +31,19 @@ public class ImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-									 final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
-		final boolean requireNewImage = changeImage || mCurrentFileNames.get(appWidgetId) == null;
+									 final int appWidgetId, final UpdateType updateType) {
+		final String listName = getListName(appWidgetId);
+		Log.i(Application.TAG, "Updating ImageWidget " + appWidgetId + " for list \"" + listName + "\" with type " + updateType);
+
+		final boolean requireNewImage = mCurrentFileNames.get(appWidgetId) == null
+				|| updateType == UpdateType.NEW_LIST
+				|| updateType == UpdateType.NEW_IMAGE_AUTOMATIC
+				|| updateType == UpdateType.NEW_IMAGE_BY_USER;
+
+		boolean isVisibleToUser = updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_LIST;
 
 		if (requireNewImage) {
-			if (userTriggered) {
+			if (isVisibleToUser) {
 				ImageRegistry.switchToImageList(listName, CreationStyle.NONE, false);
 			}
 
@@ -51,7 +59,7 @@ public class ImageWidget extends GenericWidget {
 				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 			}
 			else {
-				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, userTriggered);
+				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, isVisibleToUser);
 			}
 		}
 		else {
@@ -171,6 +179,7 @@ public class ImageWidget extends GenericWidget {
 
 		int imageViewKey;
 		if (fileName == null) {
+			Log.e(Application.TAG, "Did not find any file to display");
 			imageViewKey = R.id.textViewWidgetEmpty;
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.VISIBLE);
 			remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
@@ -214,8 +223,7 @@ public class ImageWidget extends GenericWidget {
 		Intent nextIntent = new Intent(context, ImageWidget.class);
 		nextIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {appWidgetId});
-		nextIntent.putExtra(EXTRA_NEW_IMAGE, true);
-		nextIntent.putExtra(EXTRA_USER_TRIGGERED, true);
+		nextIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.NEW_IMAGE_BY_USER);
 		PendingIntent pendingNextIntent =
 				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);
@@ -236,8 +244,9 @@ public class ImageWidget extends GenericWidget {
 	 *
 	 * @param appWidgetId The widget id.
 	 * @param listName    The list name to be used by the widget.
+	 * @param updateType  flag indicating what should be updated.
 	 */
-	public static final void configure(final int appWidgetId, final String listName) {
+	public static final void configure(final int appWidgetId, final String listName, final UpdateType updateType) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateimagewidget);
 
 		long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId,
@@ -245,16 +254,17 @@ public class ImageWidget extends GenericWidget {
 
 		doBaseConfiguration(appWidgetId, listName, interval);
 
-		updateInstances(appWidgetId);
+		updateInstances(updateType, appWidgetId);
 	}
 
 	/**
 	 * Update instances of the widget.
 	 *
+	 * @param updateType  flag indicating what should be updated.
 	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateInstances(final int... appWidgetId) {
-		updateInstances(ImageWidget.class, appWidgetId);
+	public static final void updateInstances(final UpdateType updateType, final int... appWidgetId) {
+		updateInstances(ImageWidget.class, updateType, appWidgetId);
 	}
 
 	/**

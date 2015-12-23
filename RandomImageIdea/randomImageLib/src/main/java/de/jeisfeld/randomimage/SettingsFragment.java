@@ -193,7 +193,7 @@ public class SettingsFragment extends PreferenceFragment {
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		// Trigger the listener immediately with the preference's current value.
-		mOnPreferenceChangeListener.onPreferenceChange(preference, PreferenceManager
+		mOnPreferenceChangeListener.setSummary(preference, PreferenceManager
 				.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
 	}
 

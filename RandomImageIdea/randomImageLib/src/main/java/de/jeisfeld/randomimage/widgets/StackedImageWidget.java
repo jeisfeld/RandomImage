@@ -33,7 +33,7 @@ public class StackedImageWidget extends GenericWidget {
 
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-									 final int appWidgetId, final String listName, final boolean changeImage, final boolean userTriggered) {
+									 final int appWidgetId, final UpdateType updateType) {
 
 		Intent intent = new Intent(context, StackedImageWidgetService.class);
 		// Add the app widget ID to the intent extras.
@@ -69,7 +69,7 @@ public class StackedImageWidget extends GenericWidget {
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
 		// trigger also onDataStackChanged, as the intent will not update the service once created.
-		if (changeImage) {
+		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
 			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 		}
 	}
@@ -87,8 +87,8 @@ public class StackedImageWidget extends GenericWidget {
 	public final void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetIds[i]);
+		for (int appWidgetId : appWidgetIds) {
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetId);
 		}
 	}
 
@@ -102,16 +102,17 @@ public class StackedImageWidget extends GenericWidget {
 	public static final void configure(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatestackedimagewidget);
 		doBaseConfiguration(appWidgetId, listName, interval);
-		updateInstances(appWidgetId);
+		updateInstances(UpdateType.NEW_LIST, appWidgetId);
 	}
 
 	/**
 	 * Update instances of the widget.
 	 *
+	 * @param updateType  flag indicating what should be updated.
 	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateInstances(final int... appWidgetId) {
-		updateInstances(StackedImageWidget.class, appWidgetId);
+	public static final void updateInstances(final UpdateType updateType, final int... appWidgetId) {
+		updateInstances(StackedImageWidget.class, updateType, appWidgetId);
 	}
 
 	/**

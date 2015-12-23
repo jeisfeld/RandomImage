@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
 import de.jeisfeld.randomimage.SdMountReceiver;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 
 /**
  * Receiver for the alarm triggering the update of the image widget.
@@ -38,11 +39,11 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 		}
 
 		if (ImageWidget.hasWidgetOfId(appWidgetId)) {
-			ImageWidget.updateInstances(appWidgetId);
+			ImageWidget.updateInstances(UpdateType.NEW_IMAGE_AUTOMATIC, appWidgetId);
 		}
 
 		if (StackedImageWidget.hasWidgetOfId(appWidgetId)) {
-			StackedImageWidget.updateInstances(appWidgetId);
+			StackedImageWidget.updateInstances(UpdateType.NEW_IMAGE_AUTOMATIC, appWidgetId);
 		}
 	}
 
