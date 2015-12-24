@@ -85,17 +85,17 @@ public class ImageWidgetConfigurationFragment extends PreferenceFragment {
 		int scaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId, -1);
 		if (scaleType == -1) {
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_scale_type, mAppWidgetId,
-					Integer.parseInt(getString(R.string.pref_default_widget_scale_type)));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_scale_type, R.string.pref_default_widget_scale_type));
 		}
 		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1);
 		if (buttonStyle == -1) {
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId,
-					Integer.parseInt(getString(R.string.pref_default_widget_button_style)));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_style, R.string.pref_default_widget_button_style));
 		}
 		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1);
 		if (backgroundStyle == -1) {
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId,
-					Integer.parseInt(getString(R.string.pref_default_widget_background_style)));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_background_style, R.string.pref_default_widget_background_style));
 		}
 	}
 

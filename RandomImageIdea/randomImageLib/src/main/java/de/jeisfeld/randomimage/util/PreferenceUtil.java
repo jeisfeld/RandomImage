@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimagelib.R;
@@ -167,6 +168,43 @@ public final class PreferenceUtil {
 		int newValue = getSharedPreferenceInt(preferenceId, 0) + 1;
 		setSharedPreferenceInt(preferenceId, newValue);
 		return newValue;
+	}
+
+	/**
+	 * Retrieve an integer from a shared preference string.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param defaultId    the String key of the default value. If not existing, value -1 is returned.
+	 * @return the corresponding preference value.
+	 */
+	public static int getSharedPreferenceIntString(final int preferenceId, @Nullable final Integer defaultId) {
+		String resultString;
+
+		if (defaultId == null) {
+			resultString = getSharedPreferenceString(preferenceId);
+		}
+		else {
+			resultString = getSharedPreferenceString(preferenceId, defaultId);
+		}
+		if (resultString == null || resultString.length() == 0) {
+			return -1;
+		}
+		try {
+			return Integer.parseInt(resultString);
+		}
+		catch (NumberFormatException e) {
+			return -1;
+		}
+	}
+
+	/**
+	 * Set a string shared preference from an integer.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param i            the target value of the preference.
+	 */
+	public static void setSharedPreferenceIntString(final int preferenceId, final int i) {
+		setSharedPreferenceString(preferenceId, Integer.toString(i));
 	}
 
 	/**
