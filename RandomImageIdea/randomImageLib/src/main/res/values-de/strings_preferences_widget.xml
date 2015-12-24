@@ -5,7 +5,6 @@
 
     <string name="pref_title_widget_list_name">Listenname</string>
     <string name="pref_title_widget_alarm_interval">Wechselhäufigkeit</string>
-    <string name="pref_title_widget_scale_type">Skalierung</string>
     <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_background_style">Hintergrund</string>
 
@@ -20,25 +19,23 @@
         <item>1 Woche</item>
         <item>Nur bei Neustart</item>
     </string-array>
-    <string-array name="scale_type_names">
-        <item>Ganzes Bild anzeigen</item>
-        <item>Rahmen füllen und Bild abschneiden</item>
-    </string-array>
     <string-array name="button_style_names">
         <item>Immer sichtbar</item>
         <item>Versteckt, schmal</item>
         <item>Versteckt, breit</item>
     </string-array>
     <string-array name="background_style_names">
-        <item>Kein Hintergrund</item>
-        <item>Transparent weiß</item>
-        <item>Transparent schwarz</item>
-        <item>Hell</item>
-        <item>Dunkel</item>
+        <item>Rahmen mit Bild füllen</item>
+        <item>Transparenter Hintergrund</item>
+        <item>Heller Schatten</item>
+        <item>Dunkler Schatten</item>
+        <item>Hellgrau</item>
+        <item>Dunkelgrau</item>
         <item>Blau</item>
         <item>Rot</item>
         <item>Grün</item>
         <item>Gelb</item>
+        <item>Braun</item>
     </string-array>
 
 </resources>

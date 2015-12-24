@@ -280,31 +280,35 @@ public class ImageWidget extends GenericWidget {
 
 		switch (backgroundStyle) {
 		case 0:
+		case 1:
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.TRANSPARENT);
 			break;
-		case 1:
+		case 2:
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_white);
 			break;
-		case 2:
+		case 3: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
 			break;
-		case 3: // MAGIC_NUMBER
+		case 4: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.LTGRAY);
 			break;
-		case 4: // MAGIC_NUMBER
+		case 5: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.DKGRAY);
 			break;
-		case 5: // MAGIC_NUMBER
+		case 6: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(0, 51, 141)); // MAGIC_NUMBER
 			break;
-		case 6: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(211, 0, 69)); // MAGIC_NUMBER
-			break;
 		case 7: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(64, 163, 0)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(141, 0, 26)); // MAGIC_NUMBER
 			break;
 		case 8: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(173, 210, 149)); // MAGIC_NUMBER
+			break;
+		case 9: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(253, 240, 146)); // MAGIC_NUMBER
+			break;
+		case 10: // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(91, 60, 26)); // MAGIC_NUMBER
 			break;
 		default:
 			break;
@@ -370,14 +374,14 @@ public class ImageWidget extends GenericWidget {
 		Context context = Application.getAppContext();
 		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
 				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
-		int scaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_scale_type, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_scale_type)));
+		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
+				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
 
-		if (scaleType == 0) {
-			return buttonStyle == 0 ? R.layout.widget_image_inside_fixed_buttons : R.layout.widget_image_inside_temp_buttons;
+		if (backgroundStyle == 0) {
+			return buttonStyle == 0 ? R.layout.widget_image_crop_fixed_buttons : R.layout.widget_image_crop_temp_buttons;
 		}
 		else {
-			return buttonStyle == 0 ? R.layout.widget_image_crop_fixed_buttons : R.layout.widget_image_crop_temp_buttons;
+			return buttonStyle == 0 ? R.layout.widget_image_inside_fixed_buttons : R.layout.widget_image_inside_temp_buttons;
 		}
 	}
 
