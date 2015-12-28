@@ -353,7 +353,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				return;
 			}
 			mButtonAnimators.put(appWidgetId, this);
-			int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId, 1);
 
 			this.mAppWidgetId = appWidgetId;
 			this.mAppWidgetManager = appWidgetManager;
@@ -362,7 +361,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 			final ObjectAnimator fadeOut =
 					ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
-			fadeOut.setDuration(buttonStyle == 1 ? 1000 : 2000); // MAGIC_NUMBER
+			fadeOut.setDuration(1500); // MAGIC_NUMBER
 			fadeOut.addListener(new AnimatorListener() {
 				@Override
 				public void onAnimationStart(final Animator animation) {

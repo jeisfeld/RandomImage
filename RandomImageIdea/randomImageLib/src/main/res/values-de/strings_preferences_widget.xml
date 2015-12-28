@@ -20,7 +20,8 @@
         <item>Nur bei Neustart</item>
     </string-array>
     <string-array name="button_style_names">
-        <item>Immer sichtbar</item>
+        <item>Immer sichtbar, unten</item>
+        <item>Immer sichtbar, mittig</item>
         <item>Versteckt, schmal</item>
         <item>Versteckt, breit</item>
     </string-array>

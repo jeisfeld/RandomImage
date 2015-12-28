@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.io.File;
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -7,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -26,11 +27,6 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class ImageWidget extends GenericWidget {
 	/**
-	 * The file names of the currently displayed images - mapped from appWidgetId.
-	 */
-	private static SparseArray<String> mCurrentFileNames = new SparseArray<>();
-
-	/**
 	 * Method name to set the background color.
 	 */
 	private static final String SET_BACKGROUND_COLOR = "setBackgroundColor";
@@ -47,10 +43,12 @@ public class ImageWidget extends GenericWidget {
 		final String listName = getListName(appWidgetId);
 		Log.i(Application.TAG, "Updating ImageWidget " + appWidgetId + " for list \"" + listName + "\" with type " + updateType);
 
-		final boolean requireNewImage = mCurrentFileNames.get(appWidgetId) == null
-				|| updateType == UpdateType.NEW_LIST
+		String currentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId);
+		final boolean requireNewImage = updateType == UpdateType.NEW_LIST // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| updateType == UpdateType.NEW_IMAGE_AUTOMATIC
-				|| updateType == UpdateType.NEW_IMAGE_BY_USER;
+				|| updateType == UpdateType.NEW_IMAGE_BY_USER
+				|| currentFileName == null
+				|| !new File(currentFileName).exists();
 
 		boolean isVisibleToUser = updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_LIST;
 
@@ -78,9 +76,7 @@ public class ImageWidget extends GenericWidget {
 			}
 		}
 		else {
-			String fileName = mCurrentFileNames.get(appWidgetId);
-
-			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			setImage(context, appWidgetManager, appWidgetId, listName, currentFileName);
 			configureButtons(context, appWidgetManager, appWidgetId);
 			configureBackground(context, appWidgetManager, appWidgetId);
 		}
@@ -100,18 +96,12 @@ public class ImageWidget extends GenericWidget {
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 		}
 
-		String fileName = mCurrentFileNames.get(appWidgetId);
+		String fileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId);
 
 		if (fileName == null && imageList != null) {
-			if (mCurrentFileNames.get(appWidgetId) == null) {
-				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
-			}
+			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
 		}
 		else {
-			if (mCurrentFileNames.get(appWidgetId) == null) {
-				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-				configureBackground(context, appWidgetManager, appWidgetId);
-			}
 			configureButtons(context, appWidgetManager, appWidgetId);
 			configureBackground(context, appWidgetManager, appWidgetId);
 		}
@@ -173,7 +163,12 @@ public class ImageWidget extends GenericWidget {
 		super.onDeleted(context, appWidgetIds);
 
 		for (int appWidgetId : appWidgetIds) {
-			mCurrentFileNames.remove(appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_background_style, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_button_style, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetId);
 		}
 	}
 
@@ -203,7 +198,7 @@ public class ImageWidget extends GenericWidget {
 			remoteViews.setTextViewText(R.id.textViewWidgetEmpty, context.getString(R.string.text_no_image));
 		}
 		else {
-			mCurrentFileNames.put(appWidgetId, fileName);
+			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId, fileName);
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 
 			remoteViews.setImageViewBitmap(

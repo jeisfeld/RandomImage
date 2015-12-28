@@ -8,6 +8,7 @@
     <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
     <string name="key_widget_button_style" translatable="false">widget_button_style</string>
     <string name="key_widget_background_style" translatable="false">widget_background_style</string>
+    <string name="key_widget_current_file_name" translatable="false">current_file_name</string>
 
     <!-- Strings related to Settings -->
 
@@ -41,7 +42,8 @@
         <item>0</item>
     </string-array>
     <string-array name="button_style_names">
-        <item>Always visible</item>
+        <item>Always visible, bottom</item>
+        <item>Always visible, centered</item>
         <item>Hidden, narrow</item>
         <item>Hidden, wide</item>
     </string-array>
@@ -49,6 +51,7 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
     <string-array name="background_style_names">
         <item>Fill frame with image</item>
