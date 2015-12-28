@@ -108,6 +108,12 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			mListName = ImageRegistry.getCurrentListName();
 		}
 
+		if (mListName == null) {
+			// On first startup need to create default list.
+			ImageRegistry.getCurrentImageListRefreshed(true);
+			mListName = ImageRegistry.getCurrentListName();
+		}
+
 		// This step initializes the adapter.
 		switchToImageList(mListName, CreationStyle.NONE);
 

@@ -82,6 +82,7 @@ public final class ImageRegistry {
 		}
 
 		if (mCurrentImageList == null) {
+			// Create default list
 			String newName = getNewListName();
 			switchToImageList(newName, CreationStyle.CREATE_EMPTY, toastIfFilesMissing);
 		}

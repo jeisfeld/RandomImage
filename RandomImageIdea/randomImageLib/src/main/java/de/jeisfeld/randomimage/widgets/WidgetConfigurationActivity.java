@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -8,6 +9,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 
+import de.jeisfeld.randomimage.DisplayAllImagesActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -60,22 +62,37 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			update(savedInstanceState, appWidgetId);
 		}
 		else {
-			DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-				/**
-				 * The serial version id.
-				 */
-				private static final long serialVersionUID = 1L;
+			List<String> imageListNames = ImageRegistry.getImageListNames();
 
-				@Override
-				public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-					initialize(savedInstanceState, appWidgetId, text);
-				}
+			if (imageListNames.size() == 0) {
+				// On first startup need to create default list.
+				ImageRegistry.getCurrentImageListRefreshed(true);
+				String listName = ImageRegistry.getCurrentListName();
 
-				@Override
-				public void onDialogNegativeClick(final DialogFragment dialog) {
-					finish();
-				}
-			}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
+				initialize(savedInstanceState, appWidgetId, listName);
+				DisplayAllImagesActivity.startActivity(this, listName);
+			}
+			else if (imageListNames.size() == 1) {
+				initialize(savedInstanceState, appWidgetId, imageListNames.get(0));
+			}
+			else {
+				DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+						initialize(savedInstanceState, appWidgetId, text);
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						finish();
+					}
+				}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
+			}
 		}
 
 	}
