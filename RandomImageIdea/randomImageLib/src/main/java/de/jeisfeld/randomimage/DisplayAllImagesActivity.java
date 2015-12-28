@@ -32,7 +32,7 @@ import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
 /**
- * Activity to display the list of images configured for this app.
+ * Activity to display and configure the list of images in an image list.
  */
 public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	/**
@@ -44,6 +44,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Request code for getting images from gallery.
 	 */
 	private static final int REQUEST_CODE_GALLERY = 100;
+
+	/**
+	 * The number of lists that may be created without premium status.
+	 */
+	private static final int ALLOWED_LISTS_NON_PREMIUM = 3;
 
 	/**
 	 * The names of the nested lists to be displayed.
@@ -173,12 +178,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				menuItemRemove.setIcon(icon);
 			}
 
-			if (AuthorizationHelper.hasPremium()) {
-				menu.findItem(R.id.action_need_premium).setVisible(false);
-			}
-			else {
-				menu.findItem(R.id.action_manage_lists).setVisible(false);
-			}
 			return true;
 		case REMOVE:
 			getMenuInflater().inflate(R.menu.delete_from_list, menu);
@@ -219,21 +218,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * @return true if menu item was consumed.
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
-		if (menuId == R.id.action_need_premium) {
-			DialogUtil.displayInfo(this, new MessageDialogListener() {
-				/**
-				 * The serial version id.
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void onDialogFinished() {
-					SettingsActivity.startActivity(DisplayAllImagesActivity.this);
-				}
-			}, 0, R.string.dialog_info_need_premium);
-			return true;
-		}
-		else if (menuId == R.id.action_select_images_for_removal) {
+		if (menuId == R.id.action_select_images_for_removal) {
 			changeAction(CurrentAction.REMOVE);
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
@@ -257,13 +242,17 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_clone_list) {
-			PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
-			createNewImageList(CreationStyle.CLONE_CURRENT);
+			if (checkIfMoreListsAllowed()) {
+				PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
+				createNewImageList(CreationStyle.CLONE_CURRENT);
+			}
 			return true;
 		}
 		else if (menuId == R.id.action_create_list) {
-			PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
-			createNewImageList(CreationStyle.CREATE_EMPTY);
+			if (checkIfMoreListsAllowed()) {
+				PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
+				createNewImageList(CreationStyle.CREATE_EMPTY);
+			}
 			return true;
 		}
 		else if (menuId == R.id.action_switch_list) {
@@ -285,6 +274,37 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		else {
 			return false;
 		}
+	}
+
+	/**
+	 * Check if premium status and number of lists allows to add another image list.
+	 *
+	 * @return true if it is allowed to add another list.
+	 */
+	private boolean checkIfMoreListsAllowed() {
+		boolean hasPremium = AuthorizationHelper.hasPremium();
+		if (!hasPremium) {
+			boolean moreListsAllowed = ImageRegistry.getImageListNames().size() < ALLOWED_LISTS_NON_PREMIUM;
+
+			if (moreListsAllowed) {
+				return true;
+			}
+			else {
+				DialogUtil.displayInfo(this, new MessageDialogListener() {
+					/**
+					 * The serial version id.
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onDialogFinished() {
+						SettingsActivity.startActivity(DisplayAllImagesActivity.this);
+					}
+				}, 0, R.string.dialog_info_need_premium);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -585,6 +605,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 								if (mListName.equals(name)) {
 									// If name unchanged, then do nothing.
+									//noinspection UnnecessaryReturnStatement
 									return;
 								}
 								else if (name == null || name.length() == 0) {
