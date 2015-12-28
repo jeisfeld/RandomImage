@@ -57,7 +57,7 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectDirectoryActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth">
+            android:label="@string/title_activity_select_image_folder">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayAllImagesActivity"

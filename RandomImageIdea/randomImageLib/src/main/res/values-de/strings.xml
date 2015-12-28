@@ -21,7 +21,7 @@
     <string name="button_remove">Entfernen</string>
     <string name="button_overwrite">Überschreiben</string>
     <string name="button_dont_show">Nicht mehr zeigen</string>
-    <string name="button_add_folder">Hinzufügen</string>
+    <string name="button_add_folder">Ordner Hinzufügen</string>
     <string name="button_add_images">Bilder auswählen</string>
     <string name="button_purchased_item">%1$s (gekauft)</string>
     <string name="button_widget_configuration">Widget-Konfiguration beenden</string>

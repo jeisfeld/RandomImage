@@ -113,7 +113,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.DKGRAY);
 			break;
 		case 6: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(0, 51, 141)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(142, 196, 250)); // MAGIC_NUMBER
 			break;
 		case 7: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(141, 0, 26)); // MAGIC_NUMBER
