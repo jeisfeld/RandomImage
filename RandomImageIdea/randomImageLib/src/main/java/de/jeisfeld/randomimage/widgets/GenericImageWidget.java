@@ -4,9 +4,12 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.widget.RemoteViews;
 
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -23,6 +26,12 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * Method name to set the background resource.
 	 */
 	private static final String SET_BACKGROUND_RESOURCE = "setBackgroundResource";
+
+	/**
+	 * Method name to set the image bitmap.
+	 */
+	private static final String SET_IMAGE_BITMAP = "setImageBitmap";
+
 
 	@Override
 	public final void onDeleted(final Context context, final int[] appWidgetIds) {
@@ -73,12 +82,43 @@ public abstract class GenericImageWidget extends GenericWidget {
 			remoteViews.setViewPadding(R.id.buttonNextImage, padding, 0, padding, 0);
 			remoteViews.setViewPadding(R.id.buttonSettings, padding, 0, padding, 0);
 		}
+		remoteViews.setBitmap(R.id.buttonNextImage, "setImageBitmap", getColoredBitmap(context, appWidgetId, R.drawable.ic_widget_next));
+		remoteViews.setBitmap(R.id.buttonSettings, "setImageBitmap", getColoredBitmap(context, appWidgetId, R.drawable.ic_widget_settings));
 
 		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 
 		if (buttonStyle > 1) {
 			new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
 					R.id.buttonNextImage, R.id.buttonSettings).start();
+		}
+	}
+
+	private static Bitmap getColoredBitmap(final Context context, final int appWidgetId, final int bitmapResource) {
+		Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapResource);
+
+		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId, -1);
+
+		switch (buttonColor) {
+		case 0:
+			return sourceBitmap;
+		case 1:
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.WHITE, Color.BLACK);
+		case 2:
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.BLUE, Color.WHITE);
+		case 3: // MAGIC_NUMBER
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(191, 0, 0), Color.WHITE); // MAGIC_NUMBER
+		case 4: // MAGIC_NUMBER
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(0, 191, 0), Color.WHITE); // MAGIC_NUMBER
+		case 5: // MAGIC_NUMBER
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.YELLOW, Color.BLACK);
+		case 6: // MAGIC_NUMBER
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(63, 255, 255), Color.BLACK); // MAGIC_NUMBER
+		case 7: // MAGIC_NUMBER
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(255, 127, 255), Color.BLACK); // MAGIC_NUMBER
+		case 8: // MAGIC_NUMBER
+			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(101, 70, 46), Color.rgb(254, 237, 160)); // MAGIC_NUMBER
+		default:
+			return null;
 		}
 	}
 

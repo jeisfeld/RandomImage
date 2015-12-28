@@ -5,8 +5,9 @@
 
     <string name="pref_title_widget_list_name">Listenname</string>
     <string name="pref_title_widget_alarm_interval">Wechselhäufigkeit</string>
-    <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_background_style">Hintergrund</string>
+    <string name="pref_title_widget_button_style">Button-Stil</string>
+    <string name="pref_title_widget_button_color">Button-Farbe</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -19,12 +20,6 @@
         <item>1 Woche</item>
         <item>Nur bei Neustart</item>
     </string-array>
-    <string-array name="button_style_names">
-        <item>Immer sichtbar, unten</item>
-        <item>Immer sichtbar, oben</item>
-        <item>Versteckt, schmal</item>
-        <item>Versteckt, breit</item>
-    </string-array>
     <string-array name="background_style_names">
         <item>Rahmen mit Bild füllen</item>
         <item>Transparenter Hintergrund</item>
@@ -36,6 +31,23 @@
         <item>Rot</item>
         <item>Grün</item>
         <item>Gelb</item>
+        <item>Braun</item>
+    </string-array>
+    <string-array name="button_style_names">
+        <item>Immer sichtbar, unten</item>
+        <item>Immer sichtbar, oben</item>
+        <item>Versteckt, schmal</item>
+        <item>Versteckt, breit</item>
+    </string-array>
+    <string-array name="button_color_names">
+        <item>Schwarz</item>
+        <item>Weiß</item>
+        <item>Blau</item>
+        <item>Rot</item>
+        <item>Grün</item>
+        <item>Gelb</item>
+        <item>Türkis</item>
+        <item>Pink</item>
         <item>Braun</item>
     </string-array>
 

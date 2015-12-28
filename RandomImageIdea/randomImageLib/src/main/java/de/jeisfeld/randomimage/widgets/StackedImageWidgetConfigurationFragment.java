@@ -4,6 +4,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -26,14 +27,18 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
 					StackedImageWidget.updateTimers(getAppWidgetId());
 				}
-				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_style))) {
-					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, getAppWidgetId(), Integer.parseInt(stringValue));
-					StackedImageWidget.updateInstances(GenericWidget.UpdateType.BUTTONS, getAppWidgetId());
-				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, getAppWidgetId(),
 							Integer.parseInt(stringValue));
-					StackedImageWidget.updateInstances(GenericWidget.UpdateType.BACKGROUND, getAppWidgetId());
+					StackedImageWidget.updateInstances(UpdateType.BACKGROUND, getAppWidgetId());
+				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_style))) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, getAppWidgetId(), Integer.parseInt(stringValue));
+					StackedImageWidget.updateInstances(UpdateType.BUTTONS, getAppWidgetId());
+				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_color))) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, getAppWidgetId(), Integer.parseInt(stringValue));
+					StackedImageWidget.updateInstances(UpdateType.BUTTONS, getAppWidgetId());
 				}
 
 				if (isReconfigureWidget()) {

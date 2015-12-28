@@ -7,7 +7,6 @@
         android:id="@+id/imageViewWidget"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_transparent_white"
         android:contentDescription="@layout/text_view_initializing"/>
 
     <TextView

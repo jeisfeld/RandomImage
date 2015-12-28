@@ -14,7 +14,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -421,8 +427,8 @@ public final class ImageUtil {
 			return result;
 		}
 
-		for (int i = 0; i < children.length; i++) {
-			result.addAll(getAllImageSubfolders(children[i], handler, listener));
+		for (File aChildren : children) {
+			result.addAll(getAllImageSubfolders(aChildren, handler, listener));
 		}
 
 		return result;
@@ -439,7 +445,7 @@ public final class ImageUtil {
 			return;
 		}
 
-		StringBuffer saveStringBuffer = new StringBuffer();
+		StringBuilder saveStringBuffer = new StringBuilder();
 
 		for (String imageFolder : imageFolders) {
 			saveStringBuffer.append("\n");
@@ -494,6 +500,36 @@ public final class ImageUtil {
 			Log.e(Application.TAG, "Could not open file " + fileName + " in gallery.", e);
 			return false;
 		}
+	}
+
+	/**
+	 * Utility method to change the colours of a black/white bitmap.
+	 *
+	 * @param sourceBitmap The original bitmap
+	 * @param colorBlack   The target color of the black parts
+	 * @param colorWhite   The target color of the white parts
+	 * @return the bitmap with the target color.
+	 */
+	public static Bitmap changeBitmapColor(final Bitmap sourceBitmap, final int colorBlack, final int colorWhite) {
+		Bitmap colouredBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(), sourceBitmap.getConfig());
+		float red = Color.red(colorBlack);
+		float green = Color.green(colorBlack);
+		float blue = Color.blue(colorBlack);
+		float red2 = Color.red(colorWhite);
+		float green2 = Color.green(colorWhite);
+		float blue2 = Color.blue(colorWhite);
+		ColorMatrix colorMatrix = new ColorMatrix(new float[] { //
+				(red2 - red) / 255, 0, 0, 0, red, // MAGIC_NUMBER
+				0, (green2 - green) / 255, 0, 0, green, // MAGIC_NUMBER
+				0, 0, (blue2 - blue) / 255, 0, blue, // MAGIC_NUMBER
+				0, 0, 0, 1, 0});
+		ColorFilter filter = new ColorMatrixColorFilter(colorMatrix);
+
+		Paint paint = new Paint();
+		paint.setColorFilter(filter);
+		Canvas canvas = new Canvas(colouredBitmap);
+		canvas.drawBitmap(sourceBitmap, 0, 0, paint);
+		return colouredBitmap;
 	}
 
 	/**

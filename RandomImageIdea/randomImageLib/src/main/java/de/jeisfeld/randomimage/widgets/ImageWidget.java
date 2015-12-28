@@ -64,9 +64,9 @@ public class ImageWidget extends GenericImageWidget {
 			}
 		}
 		else {
-			setImage(context, appWidgetManager, appWidgetId, listName, currentFileName);
 			configureButtons(context, appWidgetManager, appWidgetId);
 			configureBackground(context, appWidgetManager, appWidgetId);
+			setImage(context, appWidgetManager, appWidgetId, listName, currentFileName);
 		}
 
 	}
