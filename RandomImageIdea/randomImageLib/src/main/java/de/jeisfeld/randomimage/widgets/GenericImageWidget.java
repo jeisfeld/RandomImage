@@ -50,7 +50,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 	/**
 	 * Set the intents for the action buttons on the widget.
 	 *
-	 * @param context          The {@link Context Context} in which this receiver is running.
+	 * @param context          The {@link Context Context} in which this method is called.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 */
@@ -82,8 +82,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 			remoteViews.setViewPadding(R.id.buttonNextImage, padding, 0, padding, 0);
 			remoteViews.setViewPadding(R.id.buttonSettings, padding, 0, padding, 0);
 		}
-		remoteViews.setBitmap(R.id.buttonNextImage, "setImageBitmap", getColoredBitmap(context, appWidgetId, R.drawable.ic_widget_next));
-		remoteViews.setBitmap(R.id.buttonSettings, "setImageBitmap", getColoredBitmap(context, appWidgetId, R.drawable.ic_widget_settings));
+		remoteViews.setBitmap(R.id.buttonNextImage, SET_IMAGE_BITMAP, getColoredButtonBitmap(context, appWidgetId, R.drawable.ic_widget_next));
+		remoteViews.setBitmap(R.id.buttonSettings, SET_IMAGE_BITMAP, getColoredButtonBitmap(context, appWidgetId, R.drawable.ic_widget_settings));
 
 		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 
@@ -93,7 +93,15 @@ public abstract class GenericImageWidget extends GenericWidget {
 		}
 	}
 
-	private static Bitmap getColoredBitmap(final Context context, final int appWidgetId, final int bitmapResource) {
+	/**
+	 * Get the coloured version of a button bitmap.
+	 *
+	 * @param context        The {@link Context Context} in which this method is called.
+	 * @param appWidgetId    The appWidgetId of the widget whose size changed.
+	 * @param bitmapResource The resourceId of the button bitmap.
+	 * @return The coloured button bitmap.
+	 */
+	private static Bitmap getColoredButtonBitmap(final Context context, final int appWidgetId, final int bitmapResource) {
 		Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapResource);
 
 		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId, -1);

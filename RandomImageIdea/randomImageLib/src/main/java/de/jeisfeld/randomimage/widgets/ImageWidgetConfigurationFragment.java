@@ -65,6 +65,11 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					preference.setSummary(value);
 				}
 			}
+
+			@Override
+			public void updateWidget(final UpdateType updateType) {
+				ImageWidget.updateInstances(UpdateType.BUTTONS, getAppWidgetId());
+			}
 		};
 	}
 }

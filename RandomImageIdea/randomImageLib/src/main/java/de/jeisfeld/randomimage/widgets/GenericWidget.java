@@ -196,6 +196,24 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	}
 
 	/**
+	 * Set the default values of parameters for all instances. (Required for version migration.)
+	 */
+	// TODO: Remove this method when not required any more.
+	@SuppressWarnings("unchecked")
+	public static final void setDefaultValuesForAllInstances() {
+		for (Class<? extends GenericWidget> widgetType : new Class[] {ImageWidget.class, StackedImageWidget.class}) {
+			int[] ids = getAllWidgetIds(widgetType);
+			for (int appWidgetId : ids) {
+				boolean isUpdated = GenericImageWidgetConfigurationFragment.setDefaultValues(Application.getAppContext(), appWidgetId);
+				if (isUpdated) {
+					updateInstances(widgetType, null, appWidgetId);
+				}
+			}
+		}
+	}
+
+
+	/**
 	 * Update timers for instances of the widgets of a specific class.
 	 *
 	 * @param widgetClass  the widget class
@@ -229,8 +247,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	protected static int[] getAllWidgetIds(final Class<? extends GenericWidget> widgetClass) {
 		Context context = Application.getAppContext();
-		return AppWidgetManager.getInstance(context).getAppWidgetIds(
-				new ComponentName(context, widgetClass));
+		return AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, widgetClass));
 	}
 
 	/**

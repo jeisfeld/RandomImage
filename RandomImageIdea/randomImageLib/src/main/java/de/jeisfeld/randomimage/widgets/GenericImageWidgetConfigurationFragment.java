@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage.widgets;
 import java.util.ArrayList;
 
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import de.jeisfeld.randomimage.DisplayAllImagesActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -53,7 +55,10 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
 		mReconfigureWidget = getArguments().getBoolean(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, false);
 
-		setDefaultValues();
+		boolean isUpdated = setDefaultValues(getActivity(), mAppWidgetId);
+		if (isUpdated) {
+			mOnPreferenceChangeListener.updateWidget(null);
+		}
 		setNonIndexedValues();
 
 		addPreferencesFromResource(R.xml.pref_widget_image);
@@ -105,28 +110,38 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 
 	/**
 	 * Set the default values of preferences if not yet given.
+	 *
+	 * @param context     The context in which this method is called.
+	 * @param appWidgetId The app widget id.
+	 * @return true if some value needed to be set.
 	 */
-	private void setDefaultValues() {
-		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1);
+	protected static boolean setDefaultValues(final Context context, final int appWidgetId) {
+		boolean isUpdated = false;
+		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, -1);
 		if (alarmInterval == -1) {
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId,
-					Long.parseLong(getString(R.string.pref_default_widget_alarm_interval)));
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId,
+					Long.parseLong(context.getString(R.string.pref_default_widget_alarm_interval)));
 		}
-		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1);
+		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId, -1);
 		if (backgroundStyle == -1) {
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId,
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_background_style, R.string.pref_default_widget_background_style));
 		}
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1);
+		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId, -1);
 		if (buttonStyle == -1) {
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId,
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_style, R.string.pref_default_widget_button_style));
 		}
-		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1);
+		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId, -1);
 		if (buttonColor == -1) {
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId,
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_color, R.string.pref_default_widget_button_color));
 		}
+		return isUpdated;
 	}
 
 	/**
@@ -206,6 +221,13 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		 * @param value      The value of the preference.
 		 */
 		void setSummary(final Preference preference, final String value);
+
+		/**
+		 * Update the widget.
+		 *
+		 * @param updateType The update type.
+		 */
+		void updateWidget(final UpdateType updateType);
 	}
 
 }

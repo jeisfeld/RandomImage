@@ -14,7 +14,7 @@ public abstract class GenericImageWidgetConfigurationActivity extends GenericWid
 
 	@Override
 	protected final void initialize(final Bundle savedInstanceState, final int appWidgetId, final String listName) {
-		ImageWidget.configure(appWidgetId, listName, GenericWidget.UpdateType.NEW_LIST);
+		configure(appWidgetId, listName);
 		setResult(true);
 
 		startConfigurationPage(appWidgetId, false);
