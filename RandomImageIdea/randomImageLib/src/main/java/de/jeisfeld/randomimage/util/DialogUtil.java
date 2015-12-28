@@ -1,7 +1,6 @@
 package de.jeisfeld.randomimage.util;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -54,10 +53,6 @@ public final class DialogUtil {
 	 * Parameter to pass the icon to the DialogFragment.
 	 */
 	private static final String PARAM_ICON = "icon";
-	/**
-	 * Parameter to pass the callback listener to the ConfirmDialogFragment.
-	 */
-	private static final String PARAM_LISTENER = "listener";
 	/**
 	 * Parameter to pass the text resource for the confirmation button to the ConfirmDialogFragment.
 	 */
@@ -116,10 +111,8 @@ public final class DialogUtil {
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putString(PARAM_TITLE, activity.getString(R.string.title_dialog_info));
 		bundle.putInt(PARAM_ICON, R.drawable.ic_title_info);
-		if (listener != null) {
-			bundle.putSerializable(PARAM_LISTENER, listener);
-		}
-		DialogFragment fragment = new DisplayMessageDialogFragment();
+		DisplayMessageDialogFragment fragment = new DisplayMessageDialogFragment();
+		fragment.setListener(listener);
 		fragment.setArguments(bundle);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
 	}
@@ -157,8 +150,8 @@ public final class DialogUtil {
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_BUTTON_RESOURCE, buttonResource);
-		bundle.putSerializable(PARAM_LISTENER, listener);
 		ConfirmDialogFragment fragment = new ConfirmDialogFragment();
+		fragment.setListener(listener);
 		fragment.setArguments(bundle);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
 	}
@@ -183,8 +176,8 @@ public final class DialogUtil {
 		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
 		bundle.putInt(PARAM_BUTTON_RESOURCE, buttonResource);
 		bundle.putString(PARAM_TEXT_VALUE, textValue);
-		bundle.putSerializable(PARAM_LISTENER, listener);
 		RequestInputDialogFragment fragment = new RequestInputDialogFragment();
+		fragment.setListener(listener);
 		fragment.setArguments(bundle);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
 	}
@@ -212,8 +205,8 @@ public final class DialogUtil {
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
 		bundle.putStringArrayList(PARAM_LIST_ITEMS, listValues);
-		bundle.putSerializable(PARAM_LISTENER, listener);
 		SelectFromListDialogFragment fragment = new SelectFromListDialogFragment();
+		fragment.setListener(listener);
 		fragment.setArguments(bundle);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
 	}
@@ -343,16 +336,16 @@ public final class DialogUtil {
 		 */
 		private MessageDialogListener mListener = null;
 
+		public final void setListener(final MessageDialogListener listener) {
+			mListener = listener;
+		}
+
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			final String title = getArguments().getString(PARAM_TITLE);
 			final int iconResource = getArguments().getInt(PARAM_ICON);
 			final int skipPreference = getArguments().getInt(PARAM_SKIPPREFERENCE); // STORE_PROPERTY
-
-			mListener = (MessageDialogListener) getArguments().getSerializable(
-					PARAM_LISTENER);
-			getArguments().putSerializable(PARAM_LISTENER, null);
 
 			// Listeners cannot retain functionality when automatically recreated.
 			// Therefore, dialogs with listeners must be re-created by the activity on orientation change.
@@ -416,7 +409,7 @@ public final class DialogUtil {
 		 * The activity that creates an instance of this dialog must implement this interface in order to receive event
 		 * callbacks.
 		 */
-		public interface MessageDialogListener extends Serializable {
+		public interface MessageDialogListener {
 			/**
 			 * Callback method called after finishing the dialog.
 			 */
@@ -433,11 +426,14 @@ public final class DialogUtil {
 		 */
 		private ConfirmDialogListener mListener = null;
 
+		public final void setListener(final ConfirmDialogListener listener) {
+			mListener = listener;
+		}
+
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int confirmButtonResource = getArguments().getInt(PARAM_BUTTON_RESOURCE);
-			mListener = (ConfirmDialogListener) getArguments().getSerializable(PARAM_LISTENER);
 
 			// Listeners cannot retain functionality when automatically recreated.
 			// Therefore, dialogs with listeners must be re-created by the activity on orientation change.
@@ -492,7 +488,7 @@ public final class DialogUtil {
 		 * The activity that creates an instance of this dialog listFoldersFragment must implement this interface in
 		 * order to receive event callbacks. Each method passes the DialogFragment in case the host needs to query it.
 		 */
-		public interface ConfirmDialogListener extends Serializable {
+		public interface ConfirmDialogListener {
 			/**
 			 * Callback method for positive click from the confirmation dialog.
 			 *
@@ -518,12 +514,15 @@ public final class DialogUtil {
 		 */
 		private RequestInputDialogListener mListener = null;
 
+		public final void setListener(final RequestInputDialogListener listener) {
+			mListener = listener;
+		}
+
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int confirmButtonResource = getArguments().getInt(PARAM_BUTTON_RESOURCE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
-			mListener = (RequestInputDialogListener) getArguments().getSerializable(PARAM_LISTENER);
 
 			final EditText input = new EditText(getActivity());
 			input.setText(getArguments().getString(PARAM_TEXT_VALUE));
@@ -581,7 +580,7 @@ public final class DialogUtil {
 		 * The activity that creates an instance of this dialog listFoldersFragment must implement this interface in
 		 * order to receive event callbacks. Each method passes the DialogFragment in case the host needs to query it.
 		 */
-		public interface RequestInputDialogListener extends Serializable {
+		public interface RequestInputDialogListener {
 			/**
 			 * Callback method for positive click from the confirmation dialog.
 			 *
@@ -608,13 +607,17 @@ public final class DialogUtil {
 		 */
 		private SelectFromListDialogListener mListener = null;
 
+		public final void setListener(final SelectFromListDialogListener listener) {
+			mListener = listener;
+		}
+
 		@SuppressLint("InflateParams")
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
-			mListener = (SelectFromListDialogListener) getArguments().getSerializable(PARAM_LISTENER);
-			final String[] items = getArguments().getStringArrayList(PARAM_LIST_ITEMS).toArray(new String[0]);
+			ArrayList<String> itemList = getArguments().getStringArrayList(PARAM_LIST_ITEMS);
+			final String[] items = itemList == null ? new String[0] : itemList.toArray(new String[itemList.size()]);
 			final int iconId = getArguments().getInt(PARAM_ICON);
 
 			// setMessage is not combinable with setItems, therefore using setView for the list of names.
@@ -684,7 +687,7 @@ public final class DialogUtil {
 		 * The activity that creates an instance of this dialog listFoldersFragment must implement this interface in
 		 * order to receive event callbacks. Each method passes the DialogFragment in case the host needs to query it.
 		 */
-		public interface SelectFromListDialogListener extends Serializable {
+		public interface SelectFromListDialogListener {
 			/**
 			 * Callback method for positive click from the confirmation dialog.
 			 *

@@ -43,7 +43,7 @@
     </string-array>
     <string-array name="button_style_names">
         <item>Always visible, bottom</item>
-        <item>Always visible, centered</item>
+        <item>Always visible, top</item>
         <item>Hidden, narrow</item>
         <item>Hidden, wide</item>
     </string-array>

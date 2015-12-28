@@ -180,11 +180,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			}
 			else {
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog) {
 								addFolderToImageList();
@@ -206,11 +201,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			}
 			else {
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog) {
 								addFolderToImageList();
@@ -278,11 +268,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 
 		if (fileNames.size() == 0) {
 			DialogUtil.displayInfo(this, new MessageDialogListener() {
-				/**
-				 * The serial version id.
-				 */
-				private static final long serialVersionUID = 1L;
-
 				@Override
 				public void onDialogFinished() {
 					// Nothing to display.

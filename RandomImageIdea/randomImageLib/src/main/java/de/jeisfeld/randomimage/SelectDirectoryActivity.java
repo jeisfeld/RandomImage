@@ -101,11 +101,6 @@ public class SelectDirectoryActivity extends Activity {
 								&& !imageList.contains(folderName)) {
 							DialogUtil.displayConfirmationMessage(SelectDirectoryActivity.this,
 									new ConfirmDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
-
 										@Override
 										public void onDialogPositiveClick(final DialogFragment dialog) {
 											boolean success = imageList.addFolder(folderName);

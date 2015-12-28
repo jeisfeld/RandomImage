@@ -297,11 +297,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			}
 			else {
 				DialogUtil.displayInfo(this, new MessageDialogListener() {
-					/**
-					 * The serial version id.
-					 */
-					private static final long serialVersionUID = 1L;
-
 					@Override
 					public void onDialogFinished() {
 						SettingsActivity.startActivity(DisplayAllImagesActivity.this);
@@ -331,11 +326,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			if (nestedListsToBeRemoved.size() > 0 || imagesToBeRemoved.size() > 0 || foldersToBeRemoved.size() > 0) {
 
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog) {
 								ArrayList<String> removedNestedLists = new ArrayList<>();
@@ -450,22 +440,12 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void createNewImageList(final CreationStyle creationStyle) {
 		DialogUtil
 				.displayInputDialog(this, new RequestInputDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
 								String name = text == null ? null : text.trim();
 
 								if (name == null || name.length() == 0) {
 									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
-
 										@Override
 										public void onDialogFinished() {
 											createNewImageList(creationStyle);
@@ -475,11 +455,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 								}
 								else if (ImageRegistry.getImageListNames().contains(name)) {
 									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
-
 										@Override
 										public void onDialogFinished() {
 											createNewImageList(creationStyle);
@@ -526,11 +501,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 								switchToImageList(text, CreationStyle.NONE);
@@ -553,20 +523,10 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int positin, final String text) {
 								DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 										new ConfirmDialogListener() {
-											/**
-											 * The serial version id.
-											 */
-											private static final long serialVersionUID = 1L;
-
 											@Override
 											public void onDialogPositiveClick(final DialogFragment dialog1) {
 												ImageRegistry.deleteImageList(text);
@@ -600,11 +560,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void renameImageList() {
 		DialogUtil
 				.displayInputDialog(this, new RequestInputDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final String text) {
 								String name = text == null ? null : text.trim();
@@ -616,11 +571,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 								}
 								else if (name == null || name.length() == 0) {
 									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
-
 										@Override
 										public void onDialogFinished() {
 											renameImageList();
@@ -630,11 +580,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 								}
 								else if (ImageRegistry.getImageListNames().contains(name)) {
 									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
-
 										@Override
 										public void onDialogFinished() {
 											renameImageList();
@@ -667,21 +612,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 								if (backupNames.contains(text)) {
 									DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 											new ConfirmDialogListener() {
-												/**
-												 * The serial version id.
-												 */
-												private static final long serialVersionUID = 1L;
-
 												@Override
 												public void onDialogPositiveClick(final DialogFragment dialog2) {
 													doBackup(text);
@@ -734,21 +669,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 								if (listNames.contains(text)) {
 									DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
 											new ConfirmDialogListener() {
-												/**
-												 * The serial version id.
-												 */
-												private static final long serialVersionUID = 1L;
-
 												@Override
 												public void onDialogPositiveClick(final DialogFragment dialog2) {
 													doRestore(text);
@@ -800,11 +725,6 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							/**
-							 * The serial version id.
-							 */
-							private static final long serialVersionUID = 1L;
-
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 								ImageList imageList = ImageRegistry.getCurrentImageList(true);

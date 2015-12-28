@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="de.jeisfeld.randomimage.underground"
+<manifest
+    package="de.jeisfeld.randomimage.underground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
           android:versionCode="16"
           android:versionName="0.2.7">
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="23" />
+        android:targetSdkVersion="23"/>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name="de.jeisfeld.randomimage.Application"
@@ -21,153 +22,153 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="false"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name="de.jeisfeld.randomimage.DisplayRandomImageActivity"
             android:label="@string/app_name_short"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.AddSentImagesActivity"
             android:clearTaskOnLaunch="true"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth" >
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth">
             <intent-filter>
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:mimeType="image/*" />
+                <data android:mimeType="image/*"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:mimeType="image/*" />
+                <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectDirectoryActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth" >
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayAllImagesActivity"
             android:icon="@drawable/ic_launcher_setup"
             android:label="@string/title_activity_display_images"
             android:launchMode="singleTask"
-            android:logo="@drawable/ic_launcher" >
+            android:logo="@drawable/ic_launcher">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImagesFromFolderActivity"
-            android:label="@string/title_activity_display_images" >
+            android:label="@string/title_activity_display_images">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectImageFolderActivity"
-            android:label="@string/title_activity_select_image_folder" >
+            android:label="@string/title_activity_select_image_folder">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImageDetailsActivity"
             android:label="@string/title_activity_display_image_details"
-            android:theme="@android:style/Theme.Holo.Dialog" >
+            android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayNestedListDetailsActivity"
             android:label="@string/title_activity_display_nested_list_details"
-            android:theme="@android:style/Theme.Holo.Dialog" >
+            android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationActivity"
-            android:theme="@android:style/Theme.Holo.Dialog" >
+            android:theme="@android:style/Theme.Holo.Dialog">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationActivity"
-            android:theme="@android:style/Theme.Holo.Dialog" >
+            android:label="@string/title_activity_image_widget_configuration">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationActivity"
-            android:theme="@android:style/Theme.Holo.Dialog" >
+            android:label="@string/title_activity_image_widget_configuration">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings">
         </activity>
 
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.MiniWidget"
-            android:label="@string/mini_widget_name" >
+            android:label="@string/mini_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_mini" />
+                android:resource="@xml/widget_mini"/>
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.ImageWidget"
-            android:label="@string/image_widget_name" >
+            android:label="@string/image_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_image" />
+                android:resource="@xml/widget_image"/>
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidget"
-            android:label="@string/stacked_image_widget_name" >
+            android:label="@string/stacked_image_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_stacked_image" />
+                android:resource="@xml/widget_stacked_image"/>
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.SdMountReceiver"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
 
-                <data android:scheme="file" />
+                <data android:scheme="file"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
 
-                <data android:scheme="file" />
+                <data android:scheme="file"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver" />
+        <receiver android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver"/>
 
         <service
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
     </application>
 
 </manifest>

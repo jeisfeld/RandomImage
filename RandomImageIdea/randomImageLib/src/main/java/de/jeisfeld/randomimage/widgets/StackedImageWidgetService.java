@@ -177,6 +177,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			// update image size
 			int viewWidth =
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
+			// Update the list name
+			mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
 			mImageSize = calculateImageSize(viewWidth);
 
 			// create new image list

@@ -5,6 +5,9 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_list_name"/>
+    <Preference
+        android:key="@string/key_pref_edit_list"
+        android:title="@string/menu_edit_list"/>
     <ListPreference
         android:entries="@array/timer_duration_names"
         android:entryValues="@array/timer_durations"

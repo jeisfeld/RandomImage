@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -15,7 +16,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * The stacked widget, showing a stack of images.
  */
-public class StackedImageWidget extends GenericWidget {
+public class StackedImageWidget extends GenericImageWidget {
 	/**
 	 * The resource key for the input folder.
 	 */
@@ -48,7 +49,7 @@ public class StackedImageWidget extends GenericWidget {
 
 		intent.putExtra(STRING_EXTRA_WIDTH, width);
 		intent.putExtra(STRING_EXTRA_LISTNAME, getListName(appWidgetId));
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_stacked_image);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 
 		// Set up the RemoteViews object to use a RemoteViews adapter.
 		// This adapter connects
@@ -68,6 +69,9 @@ public class StackedImageWidget extends GenericWidget {
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
+		configureButtons(context, appWidgetManager, appWidgetId);
+		configureBackground(context, appWidgetManager, appWidgetId);
+
 		// trigger also onDataStackChanged, as the intent will not update the service once created.
 		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
 			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
@@ -76,20 +80,13 @@ public class StackedImageWidget extends GenericWidget {
 
 	@Override
 	public final void onAppWidgetOptionsChanged(final Context context, final AppWidgetManager appWidgetManager,
-												final int appWidgetId,
-												final Bundle newOptions) {
+												final int appWidgetId, final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
+		configureButtons(context, appWidgetManager, appWidgetId);
+		configureBackground(context, appWidgetManager, appWidgetId);
+
 		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
-	}
-
-	@Override
-	public final void onDeleted(final Context context, final int[] appWidgetIds) {
-		super.onDeleted(context, appWidgetIds);
-
-		for (int appWidgetId : appWidgetIds) {
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetId);
-		}
 	}
 
 	/**
@@ -97,12 +94,16 @@ public class StackedImageWidget extends GenericWidget {
 	 *
 	 * @param appWidgetId The widget id.
 	 * @param listName    The list name to be used by the widget.
-	 * @param interval    The shuffle interval.
+	 * @param updateType  flag indicating what should be updated.
 	 */
-	public static final void configure(final int appWidgetId, final String listName, final long interval) {
+	public static final void configure(final int appWidgetId, final String listName, final UpdateType updateType) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatestackedimagewidget);
+
+		long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId,
+				Long.parseLong(Application.getAppContext().getString(R.string.pref_default_widget_alarm_interval)));
+
 		doBaseConfiguration(appWidgetId, listName, interval);
-		updateInstances(UpdateType.NEW_LIST, appWidgetId);
+		updateInstances(updateType, appWidgetId);
 	}
 
 	/**
@@ -116,6 +117,15 @@ public class StackedImageWidget extends GenericWidget {
 	}
 
 	/**
+	 * Update timers for instances of the widget.
+	 *
+	 * @param appWidgetIds the list of instances to be updated. If empty, then all instances will be updated.
+	 */
+	public static final void updateTimers(final int... appWidgetIds) {
+		updateTimers(StackedImageWidget.class, appWidgetIds);
+	}
+
+	/**
 	 * Check if there is an StackedImageWidget of this id.
 	 *
 	 * @param appWidgetId The widget id.
@@ -123,5 +133,32 @@ public class StackedImageWidget extends GenericWidget {
 	 */
 	public static boolean hasWidgetOfId(final int appWidgetId) {
 		return hasWidgetOfId(StackedImageWidget.class, appWidgetId);
+	}
+
+	/**
+	 * Get the layout resource id for the widget.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @return The layout resource id.
+	 */
+	@Override
+	protected final int getWidgetLayoutId(final int appWidgetId) {
+		Context context = Application.getAppContext();
+		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
+				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
+
+		switch (buttonStyle) {
+		case 0:
+			return R.layout.widget_stacked_image_bottom_buttons;
+		case 1:
+			return R.layout.widget_stacked_image_top_buttons;
+		default:
+			return R.layout.widget_stacked_image_centered_buttons;
+		}
+	}
+
+	@Override
+	protected final Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass() {
+		return StackedImageWidgetConfigurationActivity.class;
 	}
 }

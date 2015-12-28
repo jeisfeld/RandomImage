@@ -17,6 +17,7 @@
     <string name="key_pref_help_page" translatable="false">pref_help_page</string>
     <string name="key_pref_contact_developer" translatable="false">pref_contact_developer</string>
     <string name="key_pref_pro_app" translatable="false">pref_pro_app</string>
+    <string name="key_pref_edit_list" translatable="false">pref_edit_list</string>
 
     <!-- Keys for shared preferences -->
 

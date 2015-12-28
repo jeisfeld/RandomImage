@@ -9,10 +9,10 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Fragment for displaying the settings of the image widget.
  */
-public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigurationFragment {
+public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetConfigurationFragment {
 	@Override
-	protected final GenericImageWidgetConfigurationFragment.OnWidgetPreferenceChangeListener createOnPreferenceChangeListener() {
-		return new GenericImageWidgetConfigurationFragment.OnWidgetPreferenceChangeListener() {
+	protected final OnWidgetPreferenceChangeListener createOnPreferenceChangeListener() {
+		return new OnWidgetPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(final Preference preference, final Object value) {
 				String stringValue = value.toString();
@@ -20,20 +20,20 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 
 				if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
 					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, getAppWidgetId(), stringValue);
-					ImageWidget.configure(getAppWidgetId(), stringValue, GenericWidget.UpdateType.NEW_LIST);
+					StackedImageWidget.configure(getAppWidgetId(), stringValue, GenericWidget.UpdateType.NEW_LIST);
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_alarm_interval))) {
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
-					ImageWidget.updateTimers(getAppWidgetId());
+					StackedImageWidget.updateTimers(getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, getAppWidgetId(), Integer.parseInt(stringValue));
-					ImageWidget.updateInstances(GenericWidget.UpdateType.BUTTONS, getAppWidgetId());
+					StackedImageWidget.updateInstances(GenericWidget.UpdateType.BUTTONS, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, getAppWidgetId(),
 							Integer.parseInt(stringValue));
-					ImageWidget.updateInstances(GenericWidget.UpdateType.BACKGROUND, getAppWidgetId());
+					StackedImageWidget.updateInstances(GenericWidget.UpdateType.BACKGROUND, getAppWidgetId());
 				}
 
 				if (isReconfigureWidget()) {

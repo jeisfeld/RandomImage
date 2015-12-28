@@ -179,11 +179,6 @@ public class DisplayImageDetailsActivity extends Activity {
 
 							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
 									new ConfirmDialogListener() {
-										/**
-										 * The serial version id.
-										 */
-										private static final long serialVersionUID = 1L;
-
 										@Override
 										public void onDialogPositiveClick(final DialogFragment dialog) {
 											imageList.removeFile(mFileName);
@@ -203,7 +198,7 @@ public class DisplayImageDetailsActivity extends Activity {
 		}
 
 		if (mListName != null) {
-			listMenu.addItem(R.string.menu_display_list, new OnClickListener() {
+			listMenu.addItem(R.string.menu_edit_list, new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					if (mPreventDisplayAll) {
@@ -277,7 +272,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * @return The image information.
 	 */
 	private CharSequence getImageInfo() {
-		StringBuffer imageInfo = new StringBuffer();
+		StringBuilder imageInfo = new StringBuilder();
 		File file = new File(mFileName);
 
 		imageInfo.append(formatImageInfoLine(this,

@@ -39,11 +39,6 @@ public class AddSentImagesActivity extends Activity {
 		else {
 			DialogUtil
 					.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-								/**
-								 * The serial version id.
-								 */
-								private static final long serialVersionUID = 1L;
-
 								@Override
 								public void onDialogPositiveClick(final DialogFragment dialog, final int position,
 																  final String text) {

@@ -105,7 +105,7 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationActivity"
-            android:theme="@android:style/Theme.Holo.Dialog">
+            android:label="@string/title_activity_image_widget_configuration">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>

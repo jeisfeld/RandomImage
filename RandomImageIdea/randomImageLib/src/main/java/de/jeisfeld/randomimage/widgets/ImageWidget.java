@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,18 +24,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * The extended widget, also displaying a changing image.
  */
-public class ImageWidget extends GenericWidget {
-	/**
-	 * Method name to set the background color.
-	 */
-	private static final String SET_BACKGROUND_COLOR = "setBackgroundColor";
-
-	/**
-	 * Method name to set the background resource.
-	 */
-	private static final String SET_BACKGROUND_RESOURCE = "setBackgroundResource";
-
-
+public class ImageWidget extends GenericImageWidget {
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
 									 final int appWidgetId, final UpdateType updateType) {
@@ -139,7 +127,9 @@ public class ImageWidget extends GenericWidget {
 				configureButtons(context, appWidgetManager, appWidgetId);
 				configureBackground(context, appWidgetManager, appWidgetId);
 
-				if (getWidgetLayoutId(appWidgetId) == R.layout.widget_image_inside_temp_buttons) {
+				int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
+						Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
+				if (buttonStyle > 1) {
 					new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
 							R.id.buttonNextImage, R.id.buttonSettings).start();
 				}
@@ -156,20 +146,6 @@ public class ImageWidget extends GenericWidget {
 			}
 		});
 
-	}
-
-	@Override
-	public final void onDeleted(final Context context, final int[] appWidgetIds) {
-		super.onDeleted(context, appWidgetIds);
-
-		for (int appWidgetId : appWidgetIds) {
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_background_style, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_button_style, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetId);
-		}
 	}
 
 	/**
@@ -213,103 +189,6 @@ public class ImageWidget extends GenericWidget {
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
-	}
-
-	/**
-	 * Set the intents for the action buttons on the widget.
-	 *
-	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
-	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
-	 */
-	private void configureButtons(final Context context, final AppWidgetManager appWidgetManager,
-								  final int appWidgetId) {
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId)); // STORE_PROPERTY
-
-		// Set the onClick intent for the "next" button
-		Intent nextIntent = new Intent(context, ImageWidget.class);
-		nextIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {appWidgetId});
-		nextIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.NEW_IMAGE_BY_USER);
-		PendingIntent pendingNextIntent =
-				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);
-
-		// Set the onClick intent for the "settings" button
-		Intent settingsIntent = new Intent(context, ImageWidgetConfigurationActivity.class);
-		settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-		settingsIntent.putExtra(WidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
-		PendingIntent pendingSettingsIntent =
-				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
-
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
-		if (buttonStyle > 0) {
-			int padding = context.getResources().getDimensionPixelSize(
-					buttonStyle == 1 ? R.dimen.widget_button_padding_narrow : R.dimen.widget_button_padding_wide);
-			remoteViews.setViewPadding(R.id.buttonNextImage, padding, 0, padding, 0);
-			remoteViews.setViewPadding(R.id.buttonSettings, padding, 0, padding, 0);
-		}
-
-		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
-
-		if (buttonStyle > 0) {
-			new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
-					R.id.buttonNextImage, R.id.buttonSettings).start();
-		}
-	}
-
-	/**
-	 * Configure the background of the widget.
-	 *
-	 * @param context          The {@link android.content.Context Context} in which this receiver is running.
-	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
-	 */
-	private void configureBackground(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
-
-		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
-
-		switch (backgroundStyle) {
-		case 0:
-		case 1:
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.TRANSPARENT);
-			break;
-		case 2:
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_white);
-			break;
-		case 3: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
-			break;
-		case 4: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.LTGRAY);
-			break;
-		case 5: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.DKGRAY);
-			break;
-		case 6: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(0, 51, 141)); // MAGIC_NUMBER
-			break;
-		case 7: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(141, 0, 26)); // MAGIC_NUMBER
-			break;
-		case 8: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(173, 210, 149)); // MAGIC_NUMBER
-			break;
-		case 9: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(253, 240, 146)); // MAGIC_NUMBER
-			break;
-		case 10: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(91, 60, 26)); // MAGIC_NUMBER
-			break;
-		default:
-			break;
-		}
-
-		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 	}
 
 	/**
@@ -365,32 +244,26 @@ public class ImageWidget extends GenericWidget {
 	 * @param appWidgetId The widget id.
 	 * @return The layout resource id.
 	 */
-	private static int getWidgetLayoutId(final int appWidgetId) {
+	@Override
+	protected final int getWidgetLayoutId(final int appWidgetId) {
 		Context context = Application.getAppContext();
 		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
 				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
 		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
 				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
 
-		if (backgroundStyle == 0) {
-			return buttonStyle == 0 ? R.layout.widget_image_crop_fixed_buttons : R.layout.widget_image_crop_temp_buttons;
-		}
-		else {
-			return buttonStyle == 0 ? R.layout.widget_image_inside_fixed_buttons : R.layout.widget_image_inside_temp_buttons;
+		switch (buttonStyle) {
+		case 0:
+			return backgroundStyle == 0 ? R.layout.widget_image_crop_bottom_buttons : R.layout.widget_image_inside_bottom_buttons;
+		case 1:
+			return backgroundStyle == 0 ? R.layout.widget_image_crop_top_buttons : R.layout.widget_image_inside_top_buttons;
+		default:
+			return backgroundStyle == 0 ? R.layout.widget_image_crop_centered_buttons : R.layout.widget_image_inside_centered_buttons;
 		}
 	}
 
-	/**
-	 * The style of the widget - defines the layout XML.
-	 */
-	protected enum WidgetStyle {
-		/**
-		 * Buttons are displayed temporarily on full height.
-		 */
-		BUTTONS_FULL_HEIGHT,
-		/**
-		 * Buttons are displayed permanently on the lower corners.
-		 */
-		BUTTONS_LOWER_CORNERS
+	@Override
+	protected final Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass() {
+		return ImageWidgetConfigurationActivity.class;
 	}
 }

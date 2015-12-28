@@ -19,7 +19,7 @@
     <string name="menu_include_other_list">Include other list in current list</string>
     <string name="menu_remove_image_from_list">Remove image from list</string>
     <string name="menu_remove_folder_from_list">Remove folder from list</string>
-    <string name="menu_display_list">Display image list</string>
+    <string name="menu_edit_list">Edit image list</string>
     <string name="menu_view_in_gallery">View in gallery</string>
     <string name="menu_send_to">Send to&#8230;</string>
     <string name="menu_settings">Settings</string>

@@ -256,8 +256,6 @@ public class SettingsFragment extends PreferenceFragment {
 		public void handlePurchase(final Purchase purchase, final boolean addedPremiumProduct) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, true);
 			MessageDialogListener listener = new MessageDialogListener() {
-				private static final long serialVersionUID = 1L;
-
 				@Override
 				public void onDialogFinished() {
 					((SettingsActivity) getActivity()).returnResult(true);

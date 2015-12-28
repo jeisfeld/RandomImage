@@ -18,7 +18,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Generic activity for the configuration of widgets. First select the image list, then continue initialization.
  */
-public abstract class WidgetConfigurationActivity extends Activity {
+public abstract class GenericWidgetConfigurationActivity extends Activity {
 	/**
 	 * Resource name for the flag to indicate if the widget should just be reconfigured.
 	 */
@@ -77,11 +77,6 @@ public abstract class WidgetConfigurationActivity extends Activity {
 			}
 			else {
 				DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-					/**
-					 * The serial version id.
-					 */
-					private static final long serialVersionUID = 1L;
-
 					@Override
 					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						initialize(savedInstanceState, appWidgetId, text);
