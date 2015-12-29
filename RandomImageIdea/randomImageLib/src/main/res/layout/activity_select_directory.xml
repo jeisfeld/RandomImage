@@ -75,12 +75,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_below="@id/listViewSubfolders"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="6dp"
             android:columnWidth="@dimen/mini_grid_pictures_size"
             android:gravity="center"
             android:horizontalSpacing="4dp"
             android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
+            android:stretchMode="spacingWidthUniform"
             android:verticalSpacing="4dp"
             android:visibility="gone"/>
 

@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -55,6 +56,10 @@ public class SelectDirectoryActivity extends Activity {
 	 * The resource key for the flag indicating if the image list was updated.
 	 */
 	private static final String STRING_RESULT_UPDATED_LIST = "de.jeisfeld.randomimage.UPDATED_LIST";
+	/**
+	 * The size of the displayed thumbnails.
+	 */
+	private static final int GRIDVIEW_THUMB_SIZE = Application.getAppContext().getResources().getDimensionPixelSize(R.dimen.mini_grid_pictures_size);
 
 	/**
 	 * The text view showing the current folder.
@@ -457,7 +462,7 @@ public class SelectDirectoryActivity extends Activity {
 		}
 
 		/**
-		 * Default adapter to be used by the framework.
+		 * Default constructor to be used by the framework.
 		 *
 		 * @param context The Context the view is running in.
 		 */
@@ -467,15 +472,11 @@ public class SelectDirectoryActivity extends Activity {
 
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final ImageView imageView;
-			if (convertView != null && convertView instanceof ImageView) {
-				imageView = (ImageView) convertView;
-			}
-			else {
-				imageView = new ImageView(SelectDirectoryActivity.this);
-			}
+			// Due to background loading, ignore convertView
+			final ImageView imageView = new ImageView(SelectDirectoryActivity.this);
 
 			imageView.setAdjustViewBounds(true);
+			imageView.setLayoutParams(new LayoutParams(GRIDVIEW_THUMB_SIZE, GRIDVIEW_THUMB_SIZE));
 
 			new Thread() {
 				@Override
