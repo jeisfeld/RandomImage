@@ -27,6 +27,11 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	 * Factor by which the image sizes are reduced compared to allowed size.
 	 */
 	private static final float IMAGE_SCALE_FACTOR = 0.6f;
+	/**
+	 * The size of the border around the image.
+	 */
+	private static final int IMAGE_BORDER_SIZE = Application.getAppContext().getResources()
+			.getDimensionPixelSize(R.dimen.stack_image_widget_border_size);
 
 	/**
 	 * A map storing instances of the factory.
@@ -133,12 +138,15 @@ public class StackedImageWidgetService extends RemoteViewsService {
 						R.drawable.ic_launcher);
 			}
 			else {
-				// scale only by half the view width
+				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
+
 				remoteViews.setImageViewBitmap(
 						R.id.imageViewWidget,
-						ImageUtil.getImageBitmap(currentFileName,
-								Math.min(ImageUtil.MAX_BITMAP_SIZE, mImageSize)));
+						ImageUtil.getBitmapOfExactSize(currentFileName, Math.min(ImageUtil.MAX_BITMAP_SIZE, mImageSize),
+								stretchToFit ? -1 : IMAGE_BORDER_SIZE));
 			}
+
+			GenericImageWidget.configureBackground(mContext, remoteViews, AppWidgetManager.getInstance(mContext), mAppWidgetId);
 
 			// Next, we set a fill-intent which will be used to fill-in the pending intent template
 			// which is set on the collection view in StackedImageWidget.

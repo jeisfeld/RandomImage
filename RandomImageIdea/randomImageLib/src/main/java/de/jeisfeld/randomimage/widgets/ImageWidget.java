@@ -65,8 +65,7 @@ public class ImageWidget extends GenericImageWidget {
 		}
 		else {
 			setImage(context, appWidgetManager, appWidgetId, listName, currentFileName);
-			configureButtons(context, appWidgetManager, appWidgetId);
-			configureBackground(context, appWidgetManager, appWidgetId);
+			configureButtons(context, appWidgetManager, appWidgetId, true);
 		}
 
 	}
@@ -90,8 +89,7 @@ public class ImageWidget extends GenericImageWidget {
 			setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, true);
 		}
 		else {
-			configureButtons(context, appWidgetManager, appWidgetId);
-			configureBackground(context, appWidgetManager, appWidgetId);
+			configureButtons(context, appWidgetManager, appWidgetId, true);
 		}
 
 	}
@@ -124,8 +122,7 @@ public class ImageWidget extends GenericImageWidget {
 				String fileName = imageList.getRandomFileName();
 
 				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-				configureButtons(context, appWidgetManager, appWidgetId);
-				configureBackground(context, appWidgetManager, appWidgetId);
+				configureButtons(context, appWidgetManager, appWidgetId, true);
 
 				int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
 						Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));

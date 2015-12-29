@@ -53,8 +53,10 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @param context          The {@link Context Context} in which this method is called.
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
+	 * @param setBackgroundColor Flag indicating if the background color should be set as well.
 	 */
-	protected final void configureButtons(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
+	protected final void configureButtons(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
+										  final boolean setBackgroundColor) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId)); // STORE_PROPERTY
 
 		// Set the onClick intent for the "next" button
@@ -84,6 +86,10 @@ public abstract class GenericImageWidget extends GenericWidget {
 		}
 		remoteViews.setBitmap(R.id.buttonNextImage, SET_IMAGE_BITMAP, getColoredButtonBitmap(context, appWidgetId, R.drawable.ic_widget_next));
 		remoteViews.setBitmap(R.id.buttonSettings, SET_IMAGE_BITMAP, getColoredButtonBitmap(context, appWidgetId, R.drawable.ic_widget_settings));
+
+		if (setBackgroundColor) {
+			configureBackground(context, remoteViews, appWidgetManager, appWidgetId);
+		}
 
 		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 
@@ -133,53 +139,51 @@ public abstract class GenericImageWidget extends GenericWidget {
 	/**
 	 * Configure the background of the widget.
 	 *
-	 * @param context          The {@link Context Context} in which this receiver is running.
+	 * @param context          The {@link Context Context} in which this method is called.
+	 * @param remoteViews      The remoteViews via which the update should be made
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 */
-	protected final void configureBackground(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
-
+	protected static final void configureBackground(final Context context, final RemoteViews remoteViews, final AppWidgetManager appWidgetManager,
+													final int appWidgetId) {
 		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
 				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
 
 		switch (backgroundStyle) {
 		case 0:
 		case 1:
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.TRANSPARENT);
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.TRANSPARENT);
 			break;
 		case 2:
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_white);
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_white);
 			break;
 		case 3: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
 			break;
 		case 4: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.LTGRAY);
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.LTGRAY);
 			break;
 		case 5: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.DKGRAY);
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.DKGRAY);
 			break;
 		case 6: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(142, 196, 250)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(142, 196, 250)); // MAGIC_NUMBER
 			break;
 		case 7: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(141, 0, 26)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(141, 0, 26)); // MAGIC_NUMBER
 			break;
 		case 8: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(173, 210, 149)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(173, 210, 149)); // MAGIC_NUMBER
 			break;
 		case 9: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(253, 240, 146)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(253, 240, 146)); // MAGIC_NUMBER
 			break;
 		case 10: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.widgetMainFrame, SET_BACKGROUND_COLOR, Color.rgb(91, 60, 26)); // MAGIC_NUMBER
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(91, 60, 26)); // MAGIC_NUMBER
 			break;
 		default:
 			break;
 		}
-
-		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 	}
 
 	/**

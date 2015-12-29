@@ -21,6 +21,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -176,12 +177,14 @@ public final class ImageUtil {
 					|| maxSize <= MediaStoreUtil.MINI_THUMB_SIZE) {
 				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
 				if (bitmap.getWidth() > bitmap.getHeight()) {
+					//noinspection UnnecessaryLocalVariable
 					int targetWidth = maxSize;
 					int targetHeight = bitmap.getHeight() * maxSize / bitmap.getWidth();
 					bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 				}
 				else {
 					int targetWidth = bitmap.getWidth() * maxSize / bitmap.getHeight();
+					//noinspection UnnecessaryLocalVariable
 					int targetHeight = maxSize;
 					bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 				}
@@ -195,6 +198,34 @@ public final class ImageUtil {
 		}
 
 		return bitmap;
+	}
+
+
+	/**
+	 * Return a bitmap of this photo, where the Bitmap object has the exact given size.
+	 *
+	 * @param path   The file path of the image.
+	 * @param size   The size of the target bitmap.
+	 * @param border The size of the border around the image. If negative, the image will be stretched to fill the bitmap.
+	 * @return the bitmap.
+	 */
+	public static Bitmap getBitmapOfExactSize(final String path, final int size, final int border) {
+		Bitmap baseBitmap = getImageBitmap(path, size - 2 * border);
+		Bitmap targetBitmap = Bitmap.createBitmap(size, size, baseBitmap.getConfig());
+		Paint paint = new Paint();
+		Canvas canvas = new Canvas(targetBitmap);
+
+		if (border >= 0) {
+			canvas.drawBitmap(baseBitmap, (size - baseBitmap.getWidth()) / 2, (size - baseBitmap.getHeight()) / 2, paint);
+		}
+		else {
+			int baseBitmapMinSize = Math.min(baseBitmap.getWidth(), baseBitmap.getHeight());
+			int leftPadding = (baseBitmap.getWidth() - baseBitmapMinSize) / 2;
+			int topPadding = (baseBitmap.getHeight() - baseBitmapMinSize) / 2;
+			Rect srcRect = new Rect(leftPadding, topPadding, leftPadding + baseBitmapMinSize, topPadding + baseBitmapMinSize);
+			canvas.drawBitmap(baseBitmap, srcRect, new Rect(0, 0, size, size), paint);
+		}
+		return targetBitmap;
 	}
 
 	/**

@@ -9,5 +9,6 @@
     <dimen name="mini_grid_pictures_size">90dp</dimen>
     <dimen name="widget_button_padding_narrow">4dp</dimen>
     <dimen name="widget_button_padding_wide">25dp</dimen>
+    <dimen name="stack_image_widget_border_size">4dp</dimen>
 
 </resources>
