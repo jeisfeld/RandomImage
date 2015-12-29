@@ -283,6 +283,9 @@ public class DisplayRandomImageActivity extends Activity {
 	private PinchImageView createImageView(final String fileName, final int cacheIndex) {
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setGestureDetector(mGestureDetector);
+		if (mAppWidgetId != null) {
+			imageView.setInitialScaleType(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+		}
 		imageView.setImage(fileName, this, cacheIndex);
 		return imageView;
 	}

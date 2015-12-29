@@ -8,6 +8,7 @@
     <string name="pref_title_widget_background_style">Hintergrund</string>
     <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_button_color">Button-Farbe</string>
+    <string name="pref_title_widget_detail_scale_type">Skalierung in Detailansicht</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -49,6 +50,12 @@
         <item>Türkis</item>
         <item>Pink</item>
         <item>Braun</item>
+    </string-array>
+    <string-array name="detail_scale_type_names">
+        <item>Ins Fenster einpassen</item>
+        <item>Das Fenster ausfüllen</item>
+        <item>Drehen und einpassen</item>
+        <item>Drehen und ausfüllen</item>
     </string-array>
 
 </resources>

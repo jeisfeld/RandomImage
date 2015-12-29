@@ -9,6 +9,7 @@
     <string name="key_widget_background_style" translatable="false">widget_background_style</string>
     <string name="key_widget_button_style" translatable="false">widget_button_style</string>
     <string name="key_widget_button_color" translatable="false">widget_button_color</string>
+    <string name="key_widget_detail_scale_type" translatable="false">widget_detail_scale_type</string>
     <string name="key_widget_current_file_name" translatable="false">current_file_name</string>
 
     <!-- Strings related to Settings -->
@@ -18,10 +19,12 @@
     <string name="pref_title_widget_background_style">Background Style</string>
     <string name="pref_title_widget_button_style">Button Style</string>
     <string name="pref_title_widget_button_color">Button Color</string>
+    <string name="pref_title_widget_detail_scale_type">Scaling when showing details</string>
     <string name="pref_default_widget_alarm_interval" translatable="false">3600000</string>
     <string name="pref_default_widget_background_style" translatable="false">2</string>
     <string name="pref_default_widget_button_style" translatable="false">0</string>
     <string name="pref_default_widget_button_color" translatable="false">2</string>
+    <string name="pref_default_widget_detail_scale_type" translatable="false">0</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -103,6 +106,18 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+    </string-array>
+    <string-array name="detail_scale_type_names">
+        <item>Fit into window</item>
+        <item>Stretch to fill window</item>
+        <item>Rotate and fit</item>
+        <item>Rotate and stretch</item>
+    </string-array>
+    <string-array name="detail_scale_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
 </resources>

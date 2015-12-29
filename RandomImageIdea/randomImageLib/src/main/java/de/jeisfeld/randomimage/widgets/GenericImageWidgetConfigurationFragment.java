@@ -68,6 +68,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_background_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_color);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		addEditListListener();
 	}
 
@@ -141,6 +142,13 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_color, R.string.pref_default_widget_button_color));
 		}
+		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId, -1);
+		if (detailScaleType == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
+							R.string.pref_default_widget_detail_scale_type));
+		}
 		return isUpdated;
 	}
 
@@ -158,6 +166,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1)));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_color,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
 	}
 
 	/**
@@ -194,7 +204,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		}
 		else if (preferenceKey == R.string.key_widget_background_style
 				|| preferenceKey == R.string.key_widget_button_style
-				|| preferenceKey == R.string.key_widget_button_color) {
+				|| preferenceKey == R.string.key_widget_button_color
+				|| preferenceKey == R.string.key_widget_detail_scale_type) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
 		else {

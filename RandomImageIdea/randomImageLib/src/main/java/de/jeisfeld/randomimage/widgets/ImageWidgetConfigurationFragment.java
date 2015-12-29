@@ -30,15 +30,19 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, getAppWidgetId(),
 							Integer.parseInt(stringValue));
-					ImageWidget.updateInstances(UpdateType.BACKGROUND, getAppWidgetId());
+					ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, getAppWidgetId(), Integer.parseInt(stringValue));
-					ImageWidget.updateInstances(UpdateType.BUTTONS, getAppWidgetId());
+					ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_color))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, getAppWidgetId(), Integer.parseInt(stringValue));
-					ImageWidget.updateInstances(UpdateType.BUTTONS, getAppWidgetId());
+					ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
+				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, getAppWidgetId(),
+							Integer.parseInt(stringValue));
 				}
 
 				if (isReconfigureWidget()) {
@@ -68,7 +72,7 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 
 			@Override
 			public void updateWidget(final UpdateType updateType) {
-				ImageWidget.updateInstances(UpdateType.BUTTONS, getAppWidgetId());
+				ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
 			}
 		};
 	}

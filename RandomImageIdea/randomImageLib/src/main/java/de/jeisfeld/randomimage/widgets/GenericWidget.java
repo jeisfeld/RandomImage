@@ -477,12 +477,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 */
 		SCALING,
 		/**
-		 * Update the widget buttons.
+		 * Update the widget buttons and background.
 		 */
-		BUTTONS,
-		/**
-		 * Update the widget background.
-		 */
-		BACKGROUND
+		BUTTONS_BACKGROUND,
 	}
 }

@@ -48,95 +48,95 @@ public class PinchImageView extends ImageView {
 	 */
 	private static final int ANIMATION_DURATION = SystemUtil.isTablet() ? 150 : 100; // MAGIC_NUMBER
 
-	// PUBLIC_FIELDS:START
-	// Fields are used also in OverlayPinchImageView.
-
 	/**
 	 * Pointer id used in case of invalid pointer.
 	 */
-	protected static final int INVALID_POINTER_ID = -1;
+	private static final int INVALID_POINTER_ID = -1;
 
 	/**
 	 * Indicator if the view is initialized with the image bitmap, i.e. the initial scaling has been done.
 	 */
-	protected boolean mInitialized = false;
+	private boolean mInitialized = false;
 
 	/**
 	 * Indicator if the view has been populated with the bitmap.
 	 */
-	protected boolean mIsBitmapSet = false;
+	private boolean mIsBitmapSet = false;
 
 	/**
 	 * Field used to check if a gesture was moving the image (then no context menu will appear).
 	 */
-	protected boolean mHasMoved = false;
+	private boolean mHasMoved = false;
 
 	/**
 	 * These are the relative positions of the Bitmap which are displayed in center of the screen. Range: [0,1]
 	 */
-	protected float mPosX, mPosY;
+	private float mPosX, mPosY;
 
 	/**
 	 * This is the scale factor of the image.
 	 */
-	protected float mScaleFactor = 1.f;
+	private float mScaleFactor = 1.f;
 
 	/**
 	 * The last touch position.
 	 */
-	protected float mLastTouchX, mLastTouchY;
+	private float mLastTouchX, mLastTouchY;
 
 	/**
 	 * The last average touch position (used when pinching and moving at the same time).
 	 */
-	protected float mLastTouchX0, mLastTouchY0;
+	private float mLastTouchX0, mLastTouchY0;
 
 	/**
 	 * The primary pointer id.
 	 */
-	protected int mActivePointerId = INVALID_POINTER_ID;
+	private int mActivePointerId = INVALID_POINTER_ID;
 
 	/**
 	 * The secondary pointer id.
 	 */
-	protected int mActivePointerId2 = INVALID_POINTER_ID;
+	private int mActivePointerId2 = INVALID_POINTER_ID;
 
 	/**
 	 * A ScaleGestureDetector detecting the scale change.
 	 */
-	protected ScaleGestureDetector mScaleDetector;
+	private ScaleGestureDetector mScaleDetector;
 
 	/**
 	 * An additional GestureDetector which may be applied.
 	 */
-	protected GestureDetector mGestureDetector = null;
+	private GestureDetector mGestureDetector = null;
 
 	/**
 	 * The path name of the displayed image.
 	 */
-	protected String mPathName = null;
+	private String mPathName = null;
 
 	/**
 	 * The resource id of the displayed image.
 	 */
-	protected int mImageResource = -1;
+	private int mImageResource = -1;
 
 	/**
 	 * The displayed bitmap.
 	 */
-	protected Bitmap mBitmap = null;
+	private Bitmap mBitmap = null;
 
 	/**
 	 * The maximum allowed resolution of the bitmap. The image is scaled to this size.
 	 */
-	protected static int mMaxBitmapSize = ImageUtil.MAX_BITMAP_SIZE;
-
-	// PUBLIC_FIELDS:END
+	private static int mMaxBitmapSize = ImageUtil.MAX_BITMAP_SIZE;
 
 	/**
 	 * The last scale factor.
 	 */
 	private float mLastScaleFactor = 1.f;
+
+	/**
+	 * The initial scale type to be used.
+	 */
+	private InitialScaleType mInitialScaleType = InitialScaleType.FIT;
 
 	/**
 	 * Standard constructor to be implemented for all views.
@@ -182,8 +182,7 @@ public class PinchImageView extends ImageView {
 	 * @param activity   The triggering activity (required for bitmap caching)
 	 * @param cacheIndex A unique index of the view in the activity
 	 */
-	// OVERRIDABLE
-	public void setImage(final String pathName, final Activity activity, final int cacheIndex) {
+	public final void setImage(final String pathName, final Activity activity, final int cacheIndex) {
 		// retrieve bitmap from cache if possible
 		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(),
 				cacheIndex);
@@ -232,7 +231,17 @@ public class PinchImageView extends ImageView {
 	protected final float getNaturalScaleFactor() {
 		float heightFactor = 1f * getHeight() / mBitmap.getHeight();
 		float widthFactor = 1f * getWidth() / mBitmap.getWidth();
-		return Math.min(widthFactor, heightFactor);
+
+		switch (mInitialScaleType) {
+		case FIT:
+		case TURN_FIT:
+			return Math.min(widthFactor, heightFactor);
+		case STRETCH:
+		case TURN_STRETCH:
+			return Math.max(widthFactor, heightFactor);
+		default:
+			return Math.min(widthFactor, heightFactor);
+		}
 	}
 
 	/**
@@ -262,6 +271,7 @@ public class PinchImageView extends ImageView {
 	public final void doScalingToFit() {
 		mPosX = ONE_HALF;
 		mPosY = ONE_HALF;
+		rotateIfRequired();
 		mScaleFactor = getNaturalScaleFactor();
 		if (mScaleFactor > 0) {
 			mInitialized = true;
@@ -270,6 +280,65 @@ public class PinchImageView extends ImageView {
 			invalidate();
 		}
 	}
+
+	/**
+	 * Rotate the bitmap if requested and if it fits better into the view.
+	 */
+	private void rotateIfRequired() {
+		if (mInitialScaleType == InitialScaleType.TURN_FIT || mInitialScaleType == InitialScaleType.TURN_STRETCH) {
+			int rotationAngle = getRotationAngle();
+			if (rotationAngle != 0) {
+				Matrix matrix = new Matrix();
+				matrix.setRotate(rotationAngle);
+				mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+				super.setImageBitmap(mBitmap);
+			}
+		}
+	}
+
+	/**
+	 * Check if the image has the wrong aspect ratio for the view.
+	 *
+	 * @return The rotation angle to optimize the image view.
+	 */
+	private int getRotationAngle() {
+		if (mBitmap.getWidth() > mBitmap.getHeight() && getWidth() < getHeight()) {
+			return 90; // MAGIC_NUMBER
+		}
+		else if (mBitmap.getWidth() < mBitmap.getHeight() && getWidth() > getHeight()) {
+			return -90; // MAGIC_NUMBER
+		}
+		else {
+			return 0;
+		}
+
+	}
+
+
+	/**
+	 * Set the initial scale type.
+	 *
+	 * @param resourceScaleType The initial scaletype, as defined in the preference resource array.
+	 */
+	public final void setInitialScaleType(final int resourceScaleType) {
+		switch (resourceScaleType) {
+		case 0:
+			mInitialScaleType = InitialScaleType.FIT;
+			break;
+		case 1:
+			mInitialScaleType = InitialScaleType.STRETCH;
+			break;
+		case 2:
+			mInitialScaleType = InitialScaleType.TURN_FIT;
+			break;
+		case 3: // MAGIC_NUMBER
+			mInitialScaleType = InitialScaleType.TURN_STRETCH;
+			break;
+		default:
+			break;
+		}
+	}
+
 
 	/**
 	 * Animate the image out of the view.
@@ -356,8 +425,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Redo the scaling.
 	 */
-	// OVERRIDABLE
-	protected void setMatrix() {
+	protected final void setMatrix() {
 		if (mBitmap != null) {
 			Matrix matrix = new Matrix();
 			matrix.setTranslate(-mPosX * mBitmap.getWidth(), -mPosY * mBitmap.getHeight());
@@ -370,9 +438,8 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Override requestLayout to reposition the image.
 	 */
-	// OVERRIDABLE
 	@Override
-	public void requestLayout() {
+	public final void requestLayout() {
 		super.requestLayout();
 		setMatrix();
 	}
@@ -388,10 +455,9 @@ public class PinchImageView extends ImageView {
 	/*
 	 * Method to do the scaling based on pinching.
 	 */
-	// OVERRIDABLE
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
-	public boolean onTouchEvent(final MotionEvent ev) {
+	public final boolean onTouchEvent(final MotionEvent ev) {
 		// Let the ScaleGestureDetector inspect all events.
 		mScaleDetector.onTouchEvent(ev);
 
@@ -475,8 +541,7 @@ public class PinchImageView extends ImageView {
 	 *
 	 * @param ev The motion event.
 	 */
-	// OVERRIDABLE
-	protected void startPointerMove(final MotionEvent ev) {
+	protected final void startPointerMove(final MotionEvent ev) {
 		// do nothing
 	}
 
@@ -485,8 +550,7 @@ public class PinchImageView extends ImageView {
 	 *
 	 * @param ev The motion event.
 	 */
-	// OVERRIDABLE
-	protected void finishPointerMove(final MotionEvent ev) {
+	protected final void finishPointerMove(final MotionEvent ev) {
 		// do nothing
 	}
 
@@ -496,10 +560,9 @@ public class PinchImageView extends ImageView {
 	 * @param ev The motion event.
 	 * @return true if a move has been made (i.e. the position of the image changed).
 	 */
-	// OVERRIDABLE
 	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY",
 			justification = "Using floating point equality to see if value has changed")
-	protected boolean handlePointerMove(final MotionEvent ev) {
+	protected final boolean handlePointerMove(final MotionEvent ev) {
 		if (!mInitialized) {
 			return false;
 		}
@@ -557,9 +620,8 @@ public class PinchImageView extends ImageView {
 	 * Save scale factor, center position, path name and bitmap. (Bitmap to be retained if the view is recreated with
 	 * same pathname.)
 	 */
-	// OVERRIDABLE
 	@Override
-	protected Parcelable onSaveInstanceState() {
+	protected final Parcelable onSaveInstanceState() {
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("instanceState", super.onSaveInstanceState());
 		bundle.putFloat("mScaleFactor", this.mScaleFactor);
@@ -571,9 +633,8 @@ public class PinchImageView extends ImageView {
 		return bundle;
 	}
 
-	// OVERRIDABLE
 	@Override
-	protected void onRestoreInstanceState(final Parcelable state) {
+	protected final void onRestoreInstanceState(final Parcelable state) {
 		Parcelable enhancedState = state;
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
@@ -657,6 +718,28 @@ public class PinchImageView extends ImageView {
 			super.onCreate(savedInstanceState);
 			setRetainInstance(true);
 		}
+	}
+
+	/**
+	 * The way in which the image is initially scaled.
+	 */
+	private enum InitialScaleType {
+		/**
+		 * Fit into window, keeping orientation.
+		 */
+		FIT,
+		/**
+		 * Stretch to fill window, keeping orientation.
+		 */
+		STRETCH,
+		/**
+		 * Fit into window, optimizing orientation.
+		 */
+		TURN_FIT,
+		/**
+		 * Stretch to fill window, optimizing orientation.
+		 */
+		TURN_STRETCH
 	}
 
 }
