@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,6 +47,10 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The resource key for the flat indicating if it should be prevented to trigger the DisplayAllImagesActivity.
 	 */
 	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
+	/**
+	 * The resource key for the id of the widget triggering this activity.
+	 */
+	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
 	/**
 	 * The resource key for the flag if the parent activity should be refreshed.
 	 */
@@ -122,6 +127,11 @@ public class DisplayRandomImageActivity extends Activity {
 	private boolean mPreventDisplayAll;
 
 	/**
+	 * The id of the widget triggering this activity.
+	 */
+	private Integer mAppWidgetId;
+
+	/**
 	 * The imageList used by the activity.
 	 */
 	private RandomFileProvider mRandomFileProvider;
@@ -133,10 +143,11 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @param listName          the image list which should be taken.
 	 * @param fileName          the image file name which should be displayed first.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * @param appWidgetId       the id of the widget triggering this activity.
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName,
-											final boolean preventDisplayAll) {
+											final boolean preventDisplayAll, final Integer appWidgetId) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -152,6 +163,11 @@ public class DisplayRandomImageActivity extends Activity {
 		else {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		}
+
+		if (appWidgetId != null) {
+			intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
+		}
+
 		return intent;
 	}
 
@@ -182,7 +198,6 @@ public class DisplayRandomImageActivity extends Activity {
 			mListName = savedInstanceState.getString("listName");
 			mCurrentFileName = savedInstanceState.getString("currentFileName");
 			mPreviousFileName = savedInstanceState.getString("previousFileName");
-			mPreventDisplayAll = savedInstanceState.getBoolean("preventDisplayAll");
 			mLastFlingDirection =
 					new FlingDirection(savedInstanceState.getFloat("lastFlingX", 0),
 							savedInstanceState.getFloat("lastFlingY", 0));
@@ -197,10 +212,14 @@ public class DisplayRandomImageActivity extends Activity {
 			mCurrentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		}
 
-		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
-
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
+		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+			mAppWidgetId = null;
+		}
+
+		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
 			// If folderName is provided, then use the list of images in this folder.
 			mRandomFileProvider = new FolderRandomFileProvider(folderName, mCurrentFileName);
@@ -411,7 +430,6 @@ public class DisplayRandomImageActivity extends Activity {
 		if (mCurrentFileName != null) {
 			outState.putString("currentFileName", mCurrentFileName);
 			outState.putString("listName", mListName);
-			outState.putBoolean("preventDisplayAll", mPreventDisplayAll);
 			if (mLastFlingDirection != null) {
 				outState.putFloat("lastFlingX", mLastFlingDirection.mVelocityX);
 				outState.putFloat("lastFlingY", mLastFlingDirection.mVelocityY);

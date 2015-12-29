@@ -339,7 +339,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 						}
 						else {
 							mActivity.startActivityForResult(DisplayRandomImageActivity
-											.createIntent(mActivity, null, displayFileName.getFileName(), true),
+											.createIntent(mActivity, null, displayFileName.getFileName(), true, null),
 									DisplayRandomImageActivity.REQUEST_CODE);
 						}
 					}
