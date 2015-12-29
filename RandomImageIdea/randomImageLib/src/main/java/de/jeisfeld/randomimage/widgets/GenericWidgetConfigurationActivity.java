@@ -8,6 +8,7 @@ import android.app.DialogFragment;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 
 import de.jeisfeld.randomimage.DisplayAllImagesActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -23,6 +24,10 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 	 * Resource name for the flag to indicate if the widget should just be reconfigured.
 	 */
 	public static final String EXTRA_RECONFIGURE_WIDGET = "de.jeisfeld.randomimagelib.RECONFIGURE_WIDGET";
+	/**
+	 * The fragment tag.
+	 */
+	private static final String FRAGMENT_TAG = "FRAGMENT_TAG";
 
 	/**
 	 * The Intent used as result.
@@ -59,7 +64,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 		ArrayList<String> listNames = getImageListNames();
 
 		if (reconfigureWidget) {
-			update(savedInstanceState, appWidgetId);
+			startConfigurationPage(appWidgetId, true);
 		}
 		else {
 			List<String> imageListNames = ImageRegistry.getImageListNames();
@@ -120,17 +125,45 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 	 * @param appWidgetId        the widgetId of the widget to be configured.
 	 * @param listName           The selected image list name.
 	 */
-	protected abstract void initialize(Bundle savedInstanceState, int appWidgetId, String listName);
+	private void initialize(final Bundle savedInstanceState, final int appWidgetId, final String listName) {
+		configure(appWidgetId, listName);
+		setResult(true);
 
-	/**
-	 * Start the configuration view in case of update. Does the same things as the usual onCreate() method.
-	 *
-	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the
-	 *                           data it most recently supplied in onSaveInstanceState
-	 * @param appWidgetId        the widgetId of the widget to be configured.
-	 */
-	protected void update(final Bundle savedInstanceState, final int appWidgetId) {
-		// do nothing - to be implemented in subclass if required.
+		startConfigurationPage(appWidgetId, false);
 	}
 
+	/**
+	 * Start the configuration page of the widget.
+	 *
+	 * @param appWidgetId       the widgetId of the widget to be configured.
+	 * @param reconfigureWidget Flag indicating if the widget is already configured.
+	 */
+	private void startConfigurationPage(final int appWidgetId, final boolean reconfigureWidget) {
+		PreferenceFragment fragment = (PreferenceFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+		if (fragment == null) {
+			fragment = createFragment();
+			Bundle bundle = new Bundle();
+			bundle.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+			bundle.putBoolean(EXTRA_RECONFIGURE_WIDGET, reconfigureWidget);
+			fragment.setArguments(bundle);
+
+			getFragmentManager().beginTransaction().replace(android.R.id.content, fragment, FRAGMENT_TAG).commit();
+			getFragmentManager().executePendingTransactions();
+		}
+	}
+
+	/**
+	 * Configure an instance of the widget.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @param listName    The list name to be used by the widget.
+	 */
+	protected abstract void configure(final int appWidgetId, final String listName);
+
+	/**
+	 * Create an instance of the configuration fragment.
+	 *
+	 * @return An instance of the configuration fragment.
+	 */
+	protected abstract PreferenceFragment createFragment();
 }

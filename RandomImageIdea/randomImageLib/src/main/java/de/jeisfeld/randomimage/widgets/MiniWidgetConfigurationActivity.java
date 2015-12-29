@@ -1,15 +1,18 @@
 package de.jeisfeld.randomimage.widgets;
 
-import android.os.Bundle;
+import android.preference.PreferenceFragment;
 
 /**
  * Activity for the configuration of the MiniWidget.
  */
 public class MiniWidgetConfigurationActivity extends GenericWidgetConfigurationActivity {
 	@Override
-	protected final void initialize(final Bundle savedInstanceState, final int appWidgetId, final String listName) {
+	protected final void configure(final int appWidgetId, final String listName) {
 		MiniWidget.configure(appWidgetId, listName);
-		setResult(true);
-		finish();
+	}
+
+	@Override
+	protected final PreferenceFragment createFragment() {
+		return new MiniWidgetConfigurationFragment();
 	}
 }

@@ -24,50 +24,28 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Fragment for displaying the settings of the image widget.
  */
-public abstract class GenericImageWidgetConfigurationFragment extends PreferenceFragment {
+public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	/**
 	 * The app widget id.
 	 */
 	private int mAppWidgetId;
 
-	protected final int getAppWidgetId() {
-		return mAppWidgetId;
-	}
-
-	/**
-	 * A flag indicating if the widget is already configured.
-	 */
-	private boolean mReconfigureWidget;
-
-	protected final boolean isReconfigureWidget() {
-		return mReconfigureWidget;
-	}
-
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	private OnWidgetPreferenceChangeListener mOnPreferenceChangeListener;
+	private OnWidgetPreferenceChangeListener mOnPreferenceChangeListener = new OnWidgetPreferenceChangeListener();
 
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mOnPreferenceChangeListener = createOnPreferenceChangeListener();
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
-		mReconfigureWidget = getArguments().getBoolean(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, false);
 
-		boolean isUpdated = setDefaultValues(getActivity(), mAppWidgetId);
-		if (isUpdated) {
-			mOnPreferenceChangeListener.updateWidget(null);
-		}
+		setDefaultValues(getActivity(), mAppWidgetId);
 		setNonIndexedValues();
 
-		addPreferencesFromResource(R.xml.pref_widget_image);
+		addPreferencesFromResource(R.xml.pref_widget_mini);
 
 		configureListNameProperty();
-		bindPreferenceSummaryToValue(R.string.key_widget_alarm_interval);
-		bindPreferenceSummaryToValue(R.string.key_widget_background_style);
-		bindPreferenceSummaryToValue(R.string.key_widget_button_style);
-		bindPreferenceSummaryToValue(R.string.key_widget_button_color);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		addEditListListener();
 	}
@@ -79,7 +57,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		// Add cancel button
 		if (preferenceLayout != null) {
 			Button btn = new Button(getActivity());
-			btn.setText(mReconfigureWidget ? R.string.button_cancel : R.string.button_widget_configuration);
+			btn.setText(R.string.button_widget_configuration);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
@@ -103,9 +81,6 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			public boolean onPreferenceClick(final Preference preference) {
 				DisplayAllImagesActivity.startActivity(getActivity(),
 						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
-				if (mReconfigureWidget) {
-					getActivity().finish();
-				}
 				return true;
 			}
 		});
@@ -120,30 +95,6 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	 */
 	protected static boolean setDefaultValues(final Context context, final int appWidgetId) {
 		boolean isUpdated = false;
-		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, -1);
-		if (alarmInterval == -1) {
-			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId,
-					Long.parseLong(context.getString(R.string.pref_default_widget_alarm_interval)));
-		}
-		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId, -1);
-		if (backgroundStyle == -1) {
-			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_background_style, R.string.pref_default_widget_background_style));
-		}
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId, -1);
-		if (buttonStyle == -1) {
-			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_style, R.string.pref_default_widget_button_style));
-		}
-		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId, -1);
-		if (buttonColor == -1) {
-			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_color, R.string.pref_default_widget_button_color));
-		}
 		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId, -1);
 		if (detailScaleType == -1) {
 			isUpdated = true;
@@ -160,14 +111,6 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	private void setNonIndexedValues() {
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_list_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_alarm_interval,
-				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_background_style,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_style,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_color,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1)));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
 	}
@@ -201,13 +144,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		String value;
-		if (preferenceKey == R.string.key_widget_alarm_interval) {
-			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
-		}
-		else if (preferenceKey == R.string.key_widget_background_style
-				|| preferenceKey == R.string.key_widget_button_style
-				|| preferenceKey == R.string.key_widget_button_color
-				|| preferenceKey == R.string.key_widget_detail_scale_type) {
+		if (preferenceKey == R.string.key_widget_detail_scale_type) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
 		else {
@@ -219,28 +156,48 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	}
 
 	/**
-	 * Set the onPreferenceChangeListener.
-	 */
-	protected abstract OnWidgetPreferenceChangeListener createOnPreferenceChangeListener();
-
-	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	protected interface OnWidgetPreferenceChangeListener extends OnPreferenceChangeListener {
+	private class OnWidgetPreferenceChangeListener implements OnPreferenceChangeListener {
+		@Override
+		public boolean onPreferenceChange(final Preference preference, final Object value) {
+			String stringValue = value.toString();
+			setSummary(preference, stringValue);
+
+			if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
+				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId, stringValue);
+				ImageWidget.configure(mAppWidgetId, stringValue, UpdateType.NEW_LIST);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
+						Integer.parseInt(stringValue));
+			}
+
+			return true;
+		}
+
 		/**
 		 * Set the summary of the preference.
 		 *
 		 * @param preference The preference.
 		 * @param value      The value of the preference.
 		 */
-		void setSummary(final Preference preference, final String value);
+		private void setSummary(final Preference preference, final String value) {
+			// set summary
+			if (preference.getClass().equals(ListPreference.class)) {
+				// For list preferences (except customized ones), look up the correct display value in
+				// the preference's 'entries' list.
+				ListPreference listPreference = (ListPreference) preference;
+				int index = listPreference.findIndexOfValue(value);
 
-		/**
-		 * Update the widget.
-		 *
-		 * @param updateType The update type.
-		 */
-		void updateWidget(final UpdateType updateType);
+				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+			}
+			else {
+				// For all other preferences, set the summary to the value's
+				// simple string representation.
+				preference.setSummary(value);
+			}
+		}
 	}
 
 }
