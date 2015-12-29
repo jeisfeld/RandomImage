@@ -199,14 +199,18 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * Set the default values of parameters for all instances. (Required for version migration.)
 	 */
 	// TODO: Remove this method when not required any more.
-	@SuppressWarnings("unchecked")
 	public static final void setDefaultValuesForAllInstances() {
-		for (Class<? extends GenericWidget> widgetType : new Class[] {ImageWidget.class, StackedImageWidget.class}) {
+		for (Class<? extends GenericWidget> widgetType : WIDGET_TYPES) {
 			int[] ids = getAllWidgetIds(widgetType);
 			for (int appWidgetId : ids) {
-				boolean isUpdated = GenericImageWidgetConfigurationFragment.setDefaultValues(Application.getAppContext(), appWidgetId);
-				if (isUpdated) {
-					updateInstances(widgetType, null, appWidgetId);
+				if (widgetType == MiniWidget.class) {
+					MiniWidgetConfigurationFragment.setDefaultValues(Application.getAppContext(), appWidgetId);
+				}
+				else {
+					boolean isUpdated = GenericImageWidgetConfigurationFragment.setDefaultValues(Application.getAppContext(), appWidgetId);
+					if (isUpdated) {
+						updateInstances(widgetType, null, appWidgetId);
+					}
 				}
 			}
 		}

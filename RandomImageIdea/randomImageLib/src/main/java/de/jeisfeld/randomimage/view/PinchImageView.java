@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
@@ -136,7 +137,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * The initial scale type to be used.
 	 */
-	private InitialScaleType mInitialScaleType = InitialScaleType.FIT;
+	private DisplayRandomImageActivity.ScaleType mScaleType = DisplayRandomImageActivity.ScaleType.FIT;
 
 	/**
 	 * Standard constructor to be implemented for all views.
@@ -232,7 +233,7 @@ public class PinchImageView extends ImageView {
 		float heightFactor = 1f * getHeight() / mBitmap.getHeight();
 		float widthFactor = 1f * getWidth() / mBitmap.getWidth();
 
-		switch (mInitialScaleType) {
+		switch (mScaleType) {
 		case FIT:
 		case TURN_FIT:
 			return Math.min(widthFactor, heightFactor);
@@ -285,7 +286,8 @@ public class PinchImageView extends ImageView {
 	 * Rotate the bitmap if requested and if it fits better into the view.
 	 */
 	private void rotateIfRequired() {
-		if (mInitialScaleType == InitialScaleType.TURN_FIT || mInitialScaleType == InitialScaleType.TURN_STRETCH) {
+		if (mScaleType == DisplayRandomImageActivity.ScaleType.TURN_FIT
+				|| mScaleType == DisplayRandomImageActivity.ScaleType.TURN_STRETCH) {
 			int rotationAngle = getRotationAngle();
 			if (rotationAngle != 0) {
 				Matrix matrix = new Matrix();
@@ -314,29 +316,13 @@ public class PinchImageView extends ImageView {
 
 	}
 
-
 	/**
-	 * Set the initial scale type.
+	 * Set the scale type.
 	 *
-	 * @param resourceScaleType The initial scaletype, as defined in the preference resource array.
+	 * @param scaleType The scaletype, as defined in the preference resource array.
 	 */
-	public final void setInitialScaleType(final int resourceScaleType) {
-		switch (resourceScaleType) {
-		case 0:
-			mInitialScaleType = InitialScaleType.FIT;
-			break;
-		case 1:
-			mInitialScaleType = InitialScaleType.STRETCH;
-			break;
-		case 2:
-			mInitialScaleType = InitialScaleType.TURN_FIT;
-			break;
-		case 3: // MAGIC_NUMBER
-			mInitialScaleType = InitialScaleType.TURN_STRETCH;
-			break;
-		default:
-			break;
-		}
+	public final void setScaleType(final DisplayRandomImageActivity.ScaleType scaleType) {
+		mScaleType = scaleType;
 	}
 
 
@@ -719,27 +705,4 @@ public class PinchImageView extends ImageView {
 			setRetainInstance(true);
 		}
 	}
-
-	/**
-	 * The way in which the image is initially scaled.
-	 */
-	private enum InitialScaleType {
-		/**
-		 * Fit into window, keeping orientation.
-		 */
-		FIT,
-		/**
-		 * Stretch to fill window, keeping orientation.
-		 */
-		STRETCH,
-		/**
-		 * Fit into window, optimizing orientation.
-		 */
-		TURN_FIT,
-		/**
-		 * Stretch to fill window, optimizing orientation.
-		 */
-		TURN_STRETCH
-	}
-
 }

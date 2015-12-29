@@ -16,7 +16,7 @@
 
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_alarm_interval">Change Frequency</string>
-    <string name="pref_title_widget_background_style">Background Style</string>
+    <string name="pref_title_widget_background_style">Background</string>
     <string name="pref_title_widget_button_style">Button Style</string>
     <string name="pref_title_widget_button_color">Button Color</string>
     <string name="pref_title_widget_detail_scale_type">Scaling when showing details</string>

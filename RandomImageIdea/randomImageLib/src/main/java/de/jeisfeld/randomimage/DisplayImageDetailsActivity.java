@@ -9,6 +9,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -94,6 +95,8 @@ public class DisplayImageDetailsActivity extends Activity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_image_details);
+		// Ensure that this activity can be shown in Landscape mode, even if the parent activity is forced to Portrait.
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
 		// Enable icon
 		final TextView title = (TextView) findViewById(android.R.id.title);

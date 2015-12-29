@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -132,6 +133,11 @@ public class DisplayRandomImageActivity extends Activity {
 	private Integer mAppWidgetId;
 
 	/**
+	 * The way in which the image gets initially scaled.
+	 */
+	private ScaleType mScaleType = ScaleType.FIT;
+
+	/**
 	 * The imageList used by the activity.
 	 */
 	private RandomFileProvider mRandomFileProvider;
@@ -218,6 +224,13 @@ public class DisplayRandomImageActivity extends Activity {
 		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			mAppWidgetId = null;
 		}
+		else {
+			mScaleType = ScaleType.fromResourceScaleType(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+		}
+		if (mScaleType == ScaleType.TURN_FIT || mScaleType == ScaleType.TURN_STRETCH) {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
 
 		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
@@ -283,9 +296,7 @@ public class DisplayRandomImageActivity extends Activity {
 	private PinchImageView createImageView(final String fileName, final int cacheIndex) {
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setGestureDetector(mGestureDetector);
-		if (mAppWidgetId != null) {
-			imageView.setInitialScaleType(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
-		}
+		imageView.setScaleType(mScaleType);
 		imageView.setImage(fileName, this, cacheIndex);
 		return imageView;
 	}
@@ -604,6 +615,49 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 			double angleDiff = Math.abs(getAngle() - otherDirection.getAngle());
 			return angleDiff > Math.PI / 2 && angleDiff < 3 * Math.PI / 2; // MAGIC_NUMBER
+		}
+	}
+
+	/**
+	 * The way in which the image is initially scaled.
+	 */
+	public enum ScaleType {
+		/**
+		 * Fit into window, keeping orientation.
+		 */
+		FIT,
+		/**
+		 * Stretch to fill window, keeping orientation.
+		 */
+		STRETCH,
+		/**
+		 * Fit into window, optimizing orientation.
+		 */
+		TURN_FIT,
+		/**
+		 * Stretch to fill window, optimizing orientation.
+		 */
+		TURN_STRETCH;
+
+		/**
+		 * Get the scale type from the scaleType value as defined in the preference resource array.
+		 *
+		 * @param resourceScaleType The scale type, as defined in the preference resource array.
+		 * @return The corresponding ScaleType.
+		 */
+		public static final ScaleType fromResourceScaleType(final int resourceScaleType) {
+			switch (resourceScaleType) {
+			case 0:
+				return FIT;
+			case 1:
+				return STRETCH;
+			case 2:
+				return TURN_FIT;
+			case 3: // MAGIC_NUMBER
+				return TURN_STRETCH;
+			default:
+				return FIT;
+			}
 		}
 	}
 
