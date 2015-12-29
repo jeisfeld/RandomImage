@@ -148,7 +148,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
-		setAdapter(mNestedListNames, mFolderNames, mFileNames);
+		setAdapter(mNestedListNames, mFolderNames, mFileNames, false);
 		setTitle(mListName);
 		invalidateOptionsMenu();
 	}

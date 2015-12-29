@@ -62,6 +62,11 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	private ArrayList<String> mFileNames;
 
 	/**
+	 * Flag indicating if fixed thumbnail images should be used (for performance reasons).
+	 */
+	private boolean mFixedThumbs;
+
+	/**
 	 * The set of nested list names selected for deletion.
 	 */
 	private Set<String> mSelectedNestedListNames = new HashSet<>();
@@ -144,12 +149,14 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @param nestedListNames The names of nested lists to be displayed.
 	 * @param folderNames     The names of folders to be displayed.
 	 * @param fileNames       The names of files to be displayed.
+	 * @param fixedThumbs     Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
 	public DisplayImageListArrayAdapter(final DisplayImageListActivity activity,
 										final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
-										final ArrayList<String> fileNames) {
+										final ArrayList<String> fileNames, final boolean fixedThumbs) {
 		super(activity, R.layout.text_view_initializing);
 		this.mActivity = activity;
+		this.mFixedThumbs = fixedThumbs;
 
 		if (nestedListNames == null) {
 			this.mNestedListNames = new ArrayList<>();
@@ -242,13 +249,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 					if (imageList == null) {
 						return null;
 					}
-					ArrayList<String> imageFiles = imageList.getAllImageFiles();
-					if (imageFiles.size() > 0) {
-						return imageFiles.get(new Random().nextInt(imageFiles.size()));
-					}
-					else {
-						return null;
-					}
+					return imageList.getRandomFileName();
 				}
 			});
 
@@ -264,7 +265,12 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				public String getFileName() {
 					ArrayList<String> imageFiles = new ArrayList<>(ImageList.getImageFilesInFolder(entryName));
 					if (imageFiles.size() > 0) {
-						return imageFiles.get(new Random().nextInt(imageFiles.size()));
+						if (mFixedThumbs) {
+							return imageFiles.get(0);
+						}
+						else {
+							return imageFiles.get(new Random().nextInt(imageFiles.size()));
+						}
 					}
 					else {
 						return null;
@@ -620,14 +626,15 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				for (int i = startPosition; i <= endPosition; i++) {
 					if (mCache.indexOfKey(i) < 0) {
 						ThumbImageView view = createThumbImageView(i, mParentView, true);
-						if (mIsInterrupted) {
-							mIsPreloadRunning = false;
-							return;
-						}
 						mCache.put(i, view);
 
 						// Prevent wrong marking status in race conditions.
 						view.setMarkable(mMarkingType);
+
+						if (mIsInterrupted || mWaitingThreads[0] != null) {
+							mIsPreloadRunning = false;
+							break;
+						}
 					}
 				}
 
@@ -673,7 +680,6 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 					mWaitingThreads[0] = null;
 					preloadThread.start();
 				}
-
 			}
 		}
 
@@ -682,6 +688,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		 */
 		private void interrupt() {
 			mIsInterrupted = true;
+			mWaitingThreads[0] = null;
 			mCache.clear();
 		}
 

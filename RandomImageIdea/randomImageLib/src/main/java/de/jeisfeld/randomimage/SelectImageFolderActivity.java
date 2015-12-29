@@ -63,7 +63,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 */
 	private void fillListOfFolders() {
 		ArrayList<String> allImageFolders = ImageUtil.getAllImageFoldersFromStorage();
-		setAdapter(null, allImageFolders, null);
+		setAdapter(null, allImageFolders, null, true);
 
 		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
 
@@ -82,7 +82,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 						getAdapter().cleanupCache();
 					}
 
-					setAdapter(null, folderNames, null);
+					setAdapter(null, folderNames, null, true);
 				}
 				else {
 					getAdapter().addFolder(imageFolder);

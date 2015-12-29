@@ -75,10 +75,11 @@ public abstract class DisplayImageListActivity extends Activity {
 	 * @param nestedListNames The nested list names.
 	 * @param folderNames     The list of folders.
 	 * @param fileNames       The list of image files.
+	 * @param fixedThumbs     Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
 	protected final void setAdapter(final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
-									final ArrayList<String> fileNames) {
-		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames);
+									final ArrayList<String> fileNames, final boolean fixedThumbs) {
+		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
 		getGridView().setAdapter(mAdapter);
 		if (mSelectedFiles != null) {
 			mAdapter.setSelectedFiles(new ArrayList<>(Arrays.asList(mSelectedFiles)));
@@ -130,9 +131,10 @@ public abstract class DisplayImageListActivity extends Activity {
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		if (getAdapter() != null) {
-			outState.putStringArray("selectedFiles", getAdapter().getSelectedFiles().toArray(new String[0]));
-			outState.putStringArray("selectedFolders", getAdapter().getSelectedFolders().toArray(new String[0]));
-			outState.putStringArray("selectedLists", getAdapter().getSelectedNestedLists().toArray(new String[0]));
+			String[] emptyArray = {};
+			outState.putStringArray("selectedFiles", getAdapter().getSelectedFiles().toArray(emptyArray));
+			outState.putStringArray("selectedFolders", getAdapter().getSelectedFolders().toArray(emptyArray));
+			outState.putStringArray("selectedLists", getAdapter().getSelectedNestedLists().toArray(emptyArray));
 		}
 	}
 

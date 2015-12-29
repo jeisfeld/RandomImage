@@ -281,7 +281,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			getAdapter().cleanupCache();
 		}
 
-		setAdapter(null, null, fileNames);
+		setAdapter(null, null, fileNames, false);
 		setTitle(mFolderName);
 	}
 
