@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 
 import de.jeisfeld.randomimage.DisplayAllImagesActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
@@ -121,7 +122,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	private void configureListNameProperty() {
 		ListPreference preference = (ListPreference) findPreference(getString(R.string.key_widget_list_name));
 
-		ArrayList<String> listNameList = ImageRegistry.getImageListNames();
+		ArrayList<String> listNameList = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		String[] listNames = listNameList.toArray(new String[listNameList.size()]);
 
 		preference.setEntries(listNames);

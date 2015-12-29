@@ -19,6 +19,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
@@ -622,7 +623,7 @@ public abstract class ImageList extends RandomFileProvider {
 			return false;
 		}
 
-		if (!ImageRegistry.getImageListNames().contains(nestedListName)) {
+		if (!ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(nestedListName)) {
 			return false;
 		}
 

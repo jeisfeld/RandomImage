@@ -14,6 +14,7 @@ import de.jeisfeld.randomimage.DisplayAllImagesActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -67,7 +68,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 			startConfigurationPage(appWidgetId, true);
 		}
 		else {
-			List<String> imageListNames = ImageRegistry.getImageListNames();
+			List<String> imageListNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 
 			if (imageListNames.size() == 0) {
 				// On first startup need to create default list.
@@ -104,7 +105,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 	 */
 	// OVERRIDABLE
 	protected ArrayList<String> getImageListNames() {
-		return ImageRegistry.getImageListNames();
+		return ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 	}
 
 	/**

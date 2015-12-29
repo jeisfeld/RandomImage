@@ -25,6 +25,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
@@ -170,7 +171,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		case DISPLAY:
 			getMenuInflater().inflate(R.menu.display_image_list, menu);
 
-			if (ImageRegistry.getImageListNames().size() < 2) {
+			if (ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP).size() < 2) {
 				menu.findItem(R.id.action_switch_list).setEnabled(false);
 				menu.findItem(R.id.action_delete_list).setEnabled(false);
 			}
@@ -290,7 +291,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private boolean checkIfMoreListsAllowed() {
 		boolean hasPremium = AuthorizationHelper.hasPremium();
 		if (!hasPremium) {
-			boolean moreListsAllowed = ImageRegistry.getImageListNames().size() < ALLOWED_LISTS_NON_PREMIUM;
+			boolean moreListsAllowed = ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).size() < ALLOWED_LISTS_NON_PREMIUM;
 
 			if (moreListsAllowed) {
 				return true;
@@ -453,7 +454,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 									}, 0, R.string.dialog_info_name_too_short);
 								}
-								else if (ImageRegistry.getImageListNames().contains(name)) {
+								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
 									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
 										@Override
 										public void onDialogFinished() {
@@ -496,7 +497,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Switch to another image list after selecting the list.
 	 */
 	private void switchImageList() {
-		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		listNames.remove(mListName);
 
 		DialogUtil
@@ -518,7 +519,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Delete an image list after selecting the list.
 	 */
 	private void deleteImageList() {
-		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		listNames.remove(mListName);
 
 		DialogUtil
@@ -578,7 +579,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 									}, 0, R.string.dialog_info_name_too_short);
 								}
-								else if (ImageRegistry.getImageListNames().contains(name)) {
+								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
 									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
 										@Override
 										public void onDialogFinished() {
@@ -607,7 +608,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Backup an image list after selecting the list to backup.
 	 */
 	private void backupImageList() {
-		final ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		final ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
 
 		DialogUtil
@@ -664,7 +665,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Restore an image list after selecting the list to backup.
 	 */
 	private void restoreImageList() {
-		final ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		final ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
 
 		DialogUtil
@@ -719,7 +720,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Select another list to include in the current list.
 	 */
 	private void includeOtherList() {
-		ArrayList<String> listNames = ImageRegistry.getImageListNames();
+		ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		listNames.remove(mListName);
 		listNames.removeAll(mNestedListNames);
 

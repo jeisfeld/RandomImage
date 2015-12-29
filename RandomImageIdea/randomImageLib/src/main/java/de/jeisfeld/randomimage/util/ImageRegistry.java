@@ -77,7 +77,7 @@ public final class ImageRegistry {
 		}
 
 		if (mCurrentImageList == null && mImageListInfoMap.size() > 0) {
-			String firstName = getImageListNames().get(0);
+			String firstName = getImageListNames(ListFiltering.HIDE_BY_REGEXP).get(0);
 			switchToImageList(firstName, CreationStyle.NONE, toastIfFilesMissing);
 		}
 
@@ -117,12 +117,27 @@ public final class ImageRegistry {
 	/**
 	 * Get the names of all available image lists.
 	 *
+	 * @param listFiltering The way in which the list should be filtered.
 	 * @return The names of all available image lists.
 	 */
-	public static ArrayList<String> getImageListNames() {
+	public static ArrayList<String> getImageListNames(final ListFiltering listFiltering) {
 		ArrayList<String> nameList = new ArrayList<>(mImageListInfoMap.keySet());
 		Collections.sort(nameList);
-		return nameList;
+		switch (listFiltering) {
+		case ALL_LISTS:
+			return nameList;
+		case HIDE_BY_REGEXP:
+			String hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
+			ArrayList<String> filteredList = new ArrayList<>();
+			for (String name : nameList) {
+				if (hiddenListsPattern == null || hiddenListsPattern.length() == 0 || !name.matches(hiddenListsPattern)) {
+					filteredList.add(name);
+				}
+			}
+			return filteredList;
+		default:
+			return nameList;
+		}
 	}
 
 	/**
@@ -386,8 +401,6 @@ public final class ImageRegistry {
 	 * @return The map from list names to image list files.
 	 */
 	private static Map<String, ImageListInfo> parseConfigFiles(final File configFileFolder) {
-		String hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
-
 		File[] configFiles = configFileFolder.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(final File file) {
@@ -409,9 +422,6 @@ public final class ImageRegistry {
 
 				if (name == null) {
 					Log.e(Application.TAG, "List name is null");
-				}
-				else if (hiddenListsPattern != null && hiddenListsPattern.length() > 0 && name.matches(hiddenListsPattern)) {
-					Log.d(Application.TAG, "Hiding list " + name);
 				}
 				else if (fileMap.containsKey(name)) {
 					Log.e(Application.TAG, "Duplicate config list name " + name);
@@ -514,6 +524,20 @@ public final class ImageRegistry {
 		 * Clone the current list.
 		 */
 		CLONE_CURRENT
+	}
+
+	/**
+	 * Types of filtering the list of image lists.
+	 */
+	public enum ListFiltering {
+		/**
+		 * Show all lists.
+		 */
+		ALL_LISTS,
+		/**
+		 * Hide the lists as per the regular expression in the configuration.
+		 */
+		HIDE_BY_REGEXP
 	}
 
 }

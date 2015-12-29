@@ -50,9 +50,9 @@ public abstract class GenericImageWidget extends GenericWidget {
 	/**
 	 * Set the intents for the action buttons on the widget.
 	 *
-	 * @param context          The {@link Context Context} in which this method is called.
-	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
+	 * @param context            The {@link Context Context} in which this method is called.
+	 * @param appWidgetManager   A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+	 * @param appWidgetId        The appWidgetId of the widget whose size changed.
 	 * @param setBackgroundColor Flag indicating if the background color should be set as well.
 	 */
 	protected final void configureButtons(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
@@ -115,24 +115,10 @@ public abstract class GenericImageWidget extends GenericWidget {
 		switch (buttonColor) {
 		case 0:
 			return sourceBitmap;
-		case 1:
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.WHITE, Color.BLACK);
-		case 2:
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.BLUE, Color.WHITE);
-		case 3: // MAGIC_NUMBER
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(191, 0, 0), Color.WHITE); // MAGIC_NUMBER
-		case 4: // MAGIC_NUMBER
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(0, 191, 0), Color.WHITE); // MAGIC_NUMBER
-		case 5: // MAGIC_NUMBER
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.YELLOW, Color.BLACK);
-		case 6: // MAGIC_NUMBER
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(63, 255, 255), Color.BLACK); // MAGIC_NUMBER
-		case 7: // MAGIC_NUMBER
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(255, 127, 255), Color.BLACK); // MAGIC_NUMBER
-		case 8: // MAGIC_NUMBER
-			return ImageUtil.changeBitmapColor(sourceBitmap, Color.rgb(101, 70, 46), Color.rgb(254, 237, 160)); // MAGIC_NUMBER
 		default:
-			return null;
+			return ImageUtil.changeBitmapColor(sourceBitmap,
+					ButtonColor.getButtonColor(buttonColor),
+					ButtonColor.getButtonSecondaryColor(buttonColor));
 		}
 	}
 
@@ -150,38 +136,14 @@ public abstract class GenericImageWidget extends GenericWidget {
 				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
 
 		switch (backgroundStyle) {
-		case 0:
-		case 1:
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.TRANSPARENT);
-			break;
 		case 2:
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_white);
 			break;
 		case 3: // MAGIC_NUMBER
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
 			break;
-		case 4: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.LTGRAY);
-			break;
-		case 5: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.DKGRAY);
-			break;
-		case 6: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(142, 196, 250)); // MAGIC_NUMBER
-			break;
-		case 7: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(141, 0, 26)); // MAGIC_NUMBER
-			break;
-		case 8: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(173, 210, 149)); // MAGIC_NUMBER
-			break;
-		case 9: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(253, 240, 146)); // MAGIC_NUMBER
-			break;
-		case 10: // MAGIC_NUMBER
-			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, Color.rgb(91, 60, 26)); // MAGIC_NUMBER
-			break;
 		default:
+			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, BackgroundColor.getBackgroundColor(backgroundStyle));
 			break;
 		}
 	}
@@ -200,4 +162,122 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @return The fragment class.
 	 */
 	protected abstract Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass(); // SUPPRESS_CHECKSTYLE
+
+	/**
+	 * Helper class containing constants for background colors.
+	 */
+	private static class BackgroundColor {
+		// JAVADOC:OFF
+		private static final int TRANSPARENT = Color.TRANSPARENT;
+		private static final int LIGHT_GREY = Color.parseColor("#DFDFDF");
+		private static final int DARK_GREY = Color.parseColor("#1F1F1F");
+		private static final int BLUE = Color.parseColor("#8EC4FA");
+		private static final int RED = Color.parseColor("#8D001A");
+		private static final int GREEN = Color.parseColor("#ADD295");
+		private static final int YELLOW = Color.parseColor("#FDF092");
+		private static final int BROWN = Color.parseColor("#5B3C1A");
+		// JAVADOC:ON
+
+		/**
+		 * Get the background color value from the resource value.
+		 *
+		 * @param resourceValue The value from the resource array.
+		 * @return The color.
+		 */
+		private static int getBackgroundColor(final int resourceValue) {
+			switch (resourceValue) {
+			case 4: // MAGIC_NUMBER
+				return LIGHT_GREY;
+			case 5: // MAGIC_NUMBER
+				return DARK_GREY;
+			case 6: // MAGIC_NUMBER
+				return BLUE;
+			case 7: // MAGIC_NUMBER
+				return RED;
+			case 8: // MAGIC_NUMBER
+				return GREEN;
+			case 9: // MAGIC_NUMBER
+				return YELLOW;
+			case 10: // MAGIC_NUMBER
+				return BROWN;
+			default:
+				return TRANSPARENT;
+			}
+		}
+	}
+
+	/**
+	 * Helper class containing constants for button colors.
+	 */
+	private static class ButtonColor {
+		// JAVADOC:OFF
+		private static final int BLACK = Color.parseColor("#000000");
+		private static final int WHITE = Color.parseColor("#FFFFFF");
+		private static final int BLUE = Color.parseColor("#0000FF");
+		private static final int RED = Color.parseColor("#BF0000");
+		private static final int GREEN = Color.parseColor("#00BF00");
+		private static final int YELLOW = Color.parseColor("#FFFF00");
+		private static final int CYAN = Color.parseColor("#3FFFFF");
+		private static final int MAGENTA = Color.parseColor("#FF7FFF");
+		private static final int BROWN = Color.parseColor("#65462E");
+		private static final int BROWN_SECONDARY = Color.parseColor("#FFF6CE");
+		// JAVADOC:ON
+
+		/**
+		 * Get the button color value from the resource value.
+		 *
+		 * @param resourceValue The value from the resource array.
+		 * @return The color.
+		 */
+		private static int getButtonColor(final int resourceValue) {
+			switch (resourceValue) {
+			case 0:
+				return BLACK;
+			case 1:
+				return WHITE;
+			case 2:
+				return BLUE;
+			case 3: // MAGIC_NUMBER
+				return RED;
+			case 4: // MAGIC_NUMBER
+				return GREEN;
+			case 5: // MAGIC_NUMBER
+				return YELLOW;
+			case 6: // MAGIC_NUMBER
+				return CYAN;
+			case 7: // MAGIC_NUMBER
+				return MAGENTA;
+			case 8: // MAGIC_NUMBER
+				return BROWN;
+			default:
+				return BLACK;
+			}
+		}
+
+		/**
+		 * Get the secondary button color value from the resource value.
+		 *
+		 * @param resourceValue The value from the resource array.
+		 * @return The color.
+		 */
+		private static int getButtonSecondaryColor(final int resourceValue) {
+			switch (resourceValue) {
+			case 0:
+			case 2:
+			case 3:// MAGIC_NUMBER
+			case 4: // MAGIC_NUMBER
+				return WHITE;
+			case 1:
+			case 5: // MAGIC_NUMBER
+			case 6: // MAGIC_NUMBER
+			case 7: // MAGIC_NUMBER
+				return BLACK;
+			case 8: // MAGIC_NUMBER
+				return BROWN_SECONDARY;
+			default:
+				return WHITE;
+			}
+		}
+	}
+
 }
