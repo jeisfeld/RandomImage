@@ -29,6 +29,9 @@ public class ImageWidget extends GenericImageWidget {
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
 									 final int appWidgetId, final UpdateType updateType) {
 		final String listName = getListName(appWidgetId);
+		if (listName == null) {
+			return;
+		}
 		Log.i(Application.TAG, "Updating ImageWidget " + appWidgetId + " for list \"" + listName + "\" with type " + updateType);
 
 		String currentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId);

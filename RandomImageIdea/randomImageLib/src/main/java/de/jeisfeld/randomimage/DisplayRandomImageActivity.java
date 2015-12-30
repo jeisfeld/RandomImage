@@ -271,7 +271,6 @@ public class DisplayRandomImageActivity extends Activity {
 
 		if (mCurrentFileName == null) {
 			displayRandomImage();
-			DialogUtil.displayInfo(this, null, R.string.key_info_display_image, R.string.dialog_info_display_image);
 		}
 		else {
 			mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
@@ -285,6 +284,9 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
+		if (savedInstanceState == null) {
+			DialogUtil.displayInfo(this, null, R.string.key_info_display_image, R.string.dialog_info_display_image);
+		}
 
 		test();
 	}

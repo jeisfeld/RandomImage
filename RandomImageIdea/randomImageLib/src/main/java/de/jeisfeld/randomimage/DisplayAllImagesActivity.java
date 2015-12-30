@@ -621,7 +621,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 						if (position == 0) {
 							// Go through all lists in reverse order, so that dialog of first list appears on top.
-							for (int i = listNames.size() - 1; i > 1; i--) {
+							for (int i = listNames.size() - 1; i > 0; i--) {
 								backupSingleList(backupNames, listNames.get(i));
 							}
 						}
@@ -699,7 +699,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 								if (position == 0) {
 									// Go through all lists in reverse order, so that dialog of first list appears on top.
-									for (int i = backupNames.size() - 1; i > 1; i--) {
+									for (int i = backupNames.size() - 1; i > 0; i--) {
 										restoreSingleList(listNames, backupNames.get(i));
 									}
 								}
