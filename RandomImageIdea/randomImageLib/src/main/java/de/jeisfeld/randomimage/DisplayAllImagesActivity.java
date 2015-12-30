@@ -609,38 +609,60 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void backupImageList() {
 		final ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
+		// Add entry to select all lists on first position.
+		final String allListsText = Application.getAppContext().getString(R.string.menu_backup_all_lists);
+
+		listNames.add(0, allListsText);
+
 		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
 
-		DialogUtil
-				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							@Override
-							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-								if (backupNames.contains(text)) {
-									DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
-											new ConfirmDialogListener() {
-												@Override
-												public void onDialogPositiveClick(final DialogFragment dialog2) {
-													doBackup(text);
-												}
-
-												@Override
-												public void onDialogNegativeClick(final DialogFragment dialog2) {
-													// do nothing
-												}
-											}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, text);
-
-								}
-								else {
-									doBackup(text);
-								}
+		DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+						if (position == 0) {
+							// Go through all lists in reverse order, so that dialog of first list appears on top.
+							for (int i = listNames.size() - 1; i > 1; i--) {
+								backupSingleList(backupNames, listNames.get(i));
 							}
+						}
+						else {
+							backupSingleList(backupNames, text);
+						}
+					}
 
-							@Override
-							public void onDialogNegativeClick(final DialogFragment dialog) {
-								// do nothing
-							}
-						}, R.string.title_dialog_select_list_name, listNames,
-						R.string.dialog_select_list_for_backup);
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing
+					}
+				}, R.string.title_dialog_select_list_name, listNames,
+				R.string.dialog_select_list_for_backup);
+	}
+
+	/**
+	 * Backup an image list, warning in case of overwriting.
+	 *
+	 * @param existingBackups the list of existing backups.
+	 * @param listName        the name of the list.
+	 */
+	private void backupSingleList(final ArrayList<String> existingBackups, final String listName) {
+		if (existingBackups.contains(listName)) {
+			DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+					new ConfirmDialogListener() {
+						@Override
+						public void onDialogPositiveClick(final DialogFragment dialog2) {
+							doBackup(listName);
+						}
+
+						@Override
+						public void onDialogNegativeClick(final DialogFragment dialog2) {
+							// do nothing
+						}
+					}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, listName);
+
+		}
+		else {
+			doBackup(listName);
+		}
 	}
 
 	/**
@@ -667,28 +689,22 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void restoreImageList() {
 		final ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
+		// Add entry to select all lists on first position.
+		final String allListsText = Application.getAppContext().getString(R.string.menu_restore_all_lists);
+		backupNames.add(0, allListsText);
 
 		DialogUtil
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-								if (listNames.contains(text)) {
-									DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
-											new ConfirmDialogListener() {
-												@Override
-												public void onDialogPositiveClick(final DialogFragment dialog2) {
-													doRestore(text);
-												}
-
-												@Override
-												public void onDialogNegativeClick(final DialogFragment dialog2) {
-													// do nothing
-												}
-											}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, text);
-
+								if (position == 0) {
+									// Go through all lists in reverse order, so that dialog of first list appears on top.
+									for (int i = backupNames.size() - 1; i > 1; i--) {
+										restoreSingleList(listNames, backupNames.get(i));
+									}
 								}
 								else {
-									doRestore(text);
+									restoreSingleList(listNames, text);
 								}
 							}
 
@@ -698,6 +714,33 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 							}
 						}, R.string.title_dialog_select_list_name, backupNames,
 						R.string.dialog_select_list_for_restore);
+	}
+
+	/**
+	 * Restore an image list, warning in case of overwriting.
+	 *
+	 * @param existingLists the list of existing list names
+	 * @param listName      the name of the list.
+	 */
+	private void restoreSingleList(final ArrayList<String> existingLists, final String listName) {
+		if (existingLists.contains(listName)) {
+			DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+					new ConfirmDialogListener() {
+						@Override
+						public void onDialogPositiveClick(final DialogFragment dialog2) {
+							doRestore(listName);
+						}
+
+						@Override
+						public void onDialogNegativeClick(final DialogFragment dialog2) {
+							// do nothing
+						}
+					}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, listName);
+
+		}
+		else {
+			doRestore(listName);
+		}
 	}
 
 	/**
