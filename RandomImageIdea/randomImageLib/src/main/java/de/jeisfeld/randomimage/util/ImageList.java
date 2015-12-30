@@ -116,10 +116,11 @@ public abstract class ImageList extends RandomFileProvider {
 			load(false); // OVERRIDABLE
 		}
 		else {
-			this.mConfigFile = configFile;
 			if (cloneFile != null) {
+				this.mConfigFile = cloneFile;
 				load(false); // OVERRIDABLE
 			}
+			this.mConfigFile = configFile;
 			setListName(listName);
 			update(false); // OVERRIDABLE
 		}

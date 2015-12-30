@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.os.Environment;
@@ -122,7 +124,12 @@ public final class ImageRegistry {
 	 */
 	public static ArrayList<String> getImageListNames(final ListFiltering listFiltering) {
 		ArrayList<String> nameList = new ArrayList<>(mImageListInfoMap.keySet());
-		Collections.sort(nameList);
+		Collections.sort(nameList, new Comparator<String>() {
+			@Override
+			public int compare(final String lhs, final String rhs) {
+				return lhs.toLowerCase(Locale.getDefault()).compareTo(rhs.toLowerCase(Locale.getDefault()));
+			}
+		});
 		switch (listFiltering) {
 		case ALL_LISTS:
 			return nameList;
