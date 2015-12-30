@@ -1,5 +1,8 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -84,8 +87,10 @@ public abstract class GenericImageWidget extends GenericWidget {
 			remoteViews.setViewPadding(R.id.buttonNextImage, padding, 0, padding, 0);
 			remoteViews.setViewPadding(R.id.buttonSettings, padding, 0, padding, 0);
 		}
-		remoteViews.setBitmap(R.id.buttonNextImage, SET_IMAGE_BITMAP, getColoredButtonBitmap(context, appWidgetId, R.drawable.ic_widget_next));
-		remoteViews.setBitmap(R.id.buttonSettings, SET_IMAGE_BITMAP, getColoredButtonBitmap(context, appWidgetId, R.drawable.ic_widget_settings));
+
+		Bitmap[] buttonBitmaps = getColoredButtonBitmaps(context, appWidgetId, R.drawable.ic_widget_settings, R.drawable.ic_widget_next);
+		remoteViews.setBitmap(R.id.buttonSettings, SET_IMAGE_BITMAP, buttonBitmaps[0]);
+		remoteViews.setBitmap(R.id.buttonNextImage, SET_IMAGE_BITMAP, buttonBitmaps[1]);
 
 		if (setBackgroundColor) {
 			configureBackground(context, remoteViews, appWidgetManager, appWidgetId);
@@ -100,26 +105,33 @@ public abstract class GenericImageWidget extends GenericWidget {
 	}
 
 	/**
-	 * Get the coloured version of a button bitmap.
+	 * Get the coloured versions of button bitmaps.
 	 *
-	 * @param context        The {@link Context Context} in which this method is called.
-	 * @param appWidgetId    The appWidgetId of the widget whose size changed.
-	 * @param bitmapResource The resourceId of the button bitmap.
-	 * @return The coloured button bitmap.
+	 * @param context         The {@link Context Context} in which this method is called.
+	 * @param appWidgetId     The appWidgetId of the widget whose size changed.
+	 * @param bitmapResources The resourceIds of the button bitmaps.
+	 * @return The coloured button bitmaps.
 	 */
-	private static Bitmap getColoredButtonBitmap(final Context context, final int appWidgetId, final int bitmapResource) {
-		Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapResource);
-
+	private static Bitmap[] getColoredButtonBitmaps(final Context context, final int appWidgetId, final int... bitmapResources) {
+		ArrayList<Bitmap> resultList = new ArrayList<>();
 		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId, -1);
+		int colorValue = ButtonColor.getButtonColor(buttonColor);
 
-		switch (buttonColor) {
-		case 0:
-			return sourceBitmap;
-		default:
-			return ImageUtil.changeBitmapColor(sourceBitmap,
-					ButtonColor.getButtonColor(buttonColor),
-					ButtonColor.getButtonSecondaryColor(buttonColor));
+		for (int bitmapResource : bitmapResources) {
+			Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapResource);
+
+			switch (buttonColor) {
+			case 8: // MAGIC_NUMBER
+			case 10: // MAGIC_NUMBER
+				resultList.add(ImageUtil.changeBitmapColor(sourceBitmap, colorValue, ButtonColor.getSecondaryColor(colorValue)));
+				break;
+			default:
+				resultList.add(ImageUtil.changeBitmapColor(sourceBitmap, colorValue, ButtonColor.getSecondaryBwColor(colorValue)));
+				break;
+			}
 		}
+
+		return resultList.toArray(new Bitmap[bitmapResources.length]);
 	}
 
 	/**
@@ -200,6 +212,13 @@ public abstract class GenericImageWidget extends GenericWidget {
 				return YELLOW;
 			case 10: // MAGIC_NUMBER
 				return BROWN;
+			case 11: // MAGIC_NUMBER
+				Random random = new Random();
+				return Color.rgb(random.nextInt(0x100), random.nextInt(0x100), random.nextInt(0x100)); // MAGIC_NUMBER
+			case 12: // MAGIC_NUMBER
+				Random random2 = new Random();
+				return Color.argb(0x10 + random2.nextInt(0xE0), // MAGIC_NUMBER
+						random2.nextInt(0x100), random2.nextInt(0x100), random2.nextInt(0x100)); // MAGIC_NUMBER
 			default:
 				return TRANSPARENT;
 			}
@@ -220,7 +239,6 @@ public abstract class GenericImageWidget extends GenericWidget {
 		private static final int CYAN = Color.parseColor("#3FFFFF");
 		private static final int MAGENTA = Color.parseColor("#FF7FFF");
 		private static final int BROWN = Color.parseColor("#65462E");
-		private static final int BROWN_SECONDARY = Color.parseColor("#FFF6CE");
 		// JAVADOC:ON
 
 		/**
@@ -249,35 +267,44 @@ public abstract class GenericImageWidget extends GenericWidget {
 				return MAGENTA;
 			case 8: // MAGIC_NUMBER
 				return BROWN;
+			case 9: // MAGIC_NUMBER
+			case 10: // MAGIC_NUMBER
+				Random random = new Random();
+				return Color.rgb(random.nextInt(0x100), random.nextInt(0x100), random.nextInt(0x100)); // MAGIC_NUMBER
 			default:
 				return BLACK;
 			}
 		}
 
 		/**
-		 * Get the secondary button color value from the resource value.
+		 * Get the secondary button color value as B/W color from the primary color.
 		 *
-		 * @param resourceValue The value from the resource array.
+		 * @param primaryColor The value from the resource array.
 		 * @return The color.
 		 */
-		private static int getButtonSecondaryColor(final int resourceValue) {
-			switch (resourceValue) {
-			case 0:
-			case 2:
-			case 3:// MAGIC_NUMBER
-			case 4: // MAGIC_NUMBER
-				return WHITE;
-			case 1:
-			case 5: // MAGIC_NUMBER
-			case 6: // MAGIC_NUMBER
-			case 7: // MAGIC_NUMBER
-				return BLACK;
-			case 8: // MAGIC_NUMBER
-				return BROWN_SECONDARY;
-			default:
-				return WHITE;
+		private static int getSecondaryBwColor(final int primaryColor) {
+			if (Color.red(primaryColor) + Color.green(primaryColor) + Color.green(primaryColor) >= 3 * 0x80) { // MAGIC_NUMBER
+				return Color.BLACK;
+			}
+			else {
+				return Color.WHITE;
 			}
 		}
+
+		/**
+		 * Get the secondary button color from the primary color.
+		 *
+		 * @param primaryColor The value from the resource array.
+		 * @return The color.
+		 */
+		private static int getSecondaryColor(final int primaryColor) {
+			return Color.rgb(
+					((byte) Color.red(primaryColor)) + 0x80, // MAGIC_NUMBER
+					((byte) Color.green(primaryColor)) + 0x80, // MAGIC_NUMBER
+					((byte) Color.blue(primaryColor)) + 0x80 // MAGIC_NUMBER
+			);
+		}
+
 	}
 
 }

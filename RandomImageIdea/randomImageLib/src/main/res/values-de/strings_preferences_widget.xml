@@ -33,6 +33,8 @@
         <item>Grün</item>
         <item>Gelb</item>
         <item>Braun</item>
+        <item>Zufällig</item>
+        <item>Zufällig (transparent)</item>
     </string-array>
     <string-array name="button_style_names">
         <item>Immer sichtbar, unten</item>
@@ -50,6 +52,8 @@
         <item>Türkis</item>
         <item>Pink</item>
         <item>Braun</item>
+        <item>Zufällig (schwarzweißer Pfeil)</item>
+        <item>Zufällig (bunter Pfeil)</item>
     </string-array>
     <string-array name="detail_scale_type_names">
         <item>Ins Fenster einpassen</item>

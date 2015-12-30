@@ -59,6 +59,8 @@
         <item>Green</item>
         <item>Yellow</item>
         <item>Brown</item>
+        <item>Random</item>
+        <item>Random (transparent)</item>
     </string-array>
     <string-array name="background_style_values" translatable="false">
         <item>0</item>
@@ -72,6 +74,8 @@
         <item>8</item>
         <item>9</item>
         <item>10</item>
+        <item>11</item>
+        <item>12</item>
     </string-array>
     <string-array name="button_style_names">
         <item>Always visible, bottom</item>
@@ -95,6 +99,8 @@
         <item>Cyan</item>
         <item>Magenta</item>
         <item>Brown</item>
+        <item>Random (black/white arrow)</item>
+        <item>Random (colored arrow)</item>
     </string-array>
     <string-array name="button_color_values" translatable="false">
         <item>0</item>
@@ -106,6 +112,8 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
+        <item>10</item>
     </string-array>
     <string-array name="detail_scale_type_names">
         <item>Fit into window</item>
