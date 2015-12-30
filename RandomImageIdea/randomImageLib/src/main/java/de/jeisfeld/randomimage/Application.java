@@ -13,7 +13,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -53,9 +52,6 @@ public class Application extends android.app.Application {
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
-
-		// TODO: delete in next version
-		GenericWidget.setDefaultValuesForAllInstances();
 	}
 
 	/**
