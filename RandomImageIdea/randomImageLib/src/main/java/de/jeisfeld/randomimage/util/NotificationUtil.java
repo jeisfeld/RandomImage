@@ -61,11 +61,27 @@ public final class NotificationUtil {
 				new Notification.Builder(context)
 						.setSmallIcon(R.drawable.ic_launcher)
 						.setContentTitle(title)
-						.setContentText(message);
+						.setContentText(message)
+						.setStyle(new Notification.BigTextStyle().bigText(message));
 
 		NotificationManager notificationManager =
 				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		notificationManager.notify(listName, notificationId, notificationBuilder.build());
 	}
+
+	/**
+	 * Cancel a notification.
+	 *
+	 * @param context        the current activity or context
+	 * @param listName       the list name - optional tag for the notification.
+	 * @param notificationId the unique id of the notification.
+	 */
+	public static void cancelNotification(final Context context, final String listName, final int notificationId) {
+		NotificationManager notificationManager =
+				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		notificationManager.cancel(listName, notificationId);
+	}
+
 }

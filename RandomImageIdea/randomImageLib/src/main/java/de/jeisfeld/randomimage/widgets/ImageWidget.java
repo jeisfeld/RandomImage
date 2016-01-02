@@ -66,6 +66,7 @@ public class ImageWidget extends GenericImageWidget {
 				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 			}
 			else {
+				NotificationUtil.cancelNotification(context, listName, NotificationUtil.TAG_ERROR_LOADING_LIST);
 				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, isVisibleToUser);
 			}
 		}
@@ -89,6 +90,9 @@ public class ImageWidget extends GenericImageWidget {
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
 			NotificationUtil.displayNotification(context, listName, NotificationUtil.TAG_ERROR_LOADING_LIST,
 					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
+		}
+		else {
+			NotificationUtil.cancelNotification(context, listName, NotificationUtil.TAG_ERROR_LOADING_LIST);
 		}
 
 		String fileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId);

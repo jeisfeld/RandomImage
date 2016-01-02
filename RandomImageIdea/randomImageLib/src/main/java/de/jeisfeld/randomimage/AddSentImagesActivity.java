@@ -72,6 +72,7 @@ public class AddSentImagesActivity extends Activity {
 					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 			return;
 		}
+		NotificationUtil.cancelNotification(this, listName, NotificationUtil.TAG_ERROR_LOADING_LIST);
 
 		Intent intent = getIntent();
 

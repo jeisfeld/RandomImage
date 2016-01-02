@@ -114,6 +114,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				mFileNames = new String[0];
 			}
 			else {
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST);
 				mFileNames = imageList.getShuffledFileNames();
 			}
 		}
@@ -202,6 +203,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				mFileNames = new String[0];
 			}
 			else {
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST);
 				mFileNames = imageList.getShuffledFileNames();
 			}
 		}

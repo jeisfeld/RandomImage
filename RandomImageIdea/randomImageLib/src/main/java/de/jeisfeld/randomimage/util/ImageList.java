@@ -437,6 +437,7 @@ public abstract class ImageList extends RandomFileProvider {
 				writer.close();
 			}
 		}
+		NotificationUtil.cancelNotification(Application.getAppContext(), getListName(), NotificationUtil.TAG_ERROR_SAVING_LIST);
 		return true;
 	}
 

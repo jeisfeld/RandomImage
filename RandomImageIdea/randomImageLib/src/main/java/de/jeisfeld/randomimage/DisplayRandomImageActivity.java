@@ -264,6 +264,7 @@ public class DisplayRandomImageActivity extends Activity {
 							R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 					return;
 				}
+				NotificationUtil.cancelNotification(this, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST);
 				imageList = ImageRegistry.getCurrentImageList(false);
 			}
 
