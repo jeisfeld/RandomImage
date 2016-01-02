@@ -35,6 +35,7 @@
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
     <string name="toast_failed_to_load_files">%1$d files or folders of the image list “%2$s” could not be found</string>
     <string name="toast_failed_to_load_files_single">One file or folder of the image list “%1$s” could not be found</string>
+    <string name="toast_failed_to_load_files_all">The following files or folders of the image list “%1$s” could not be found: %2$s</string>
     <string name="toast_failed_to_open_google_play">Failed to open Google Play.</string>
     <string name="toast_cyclic_nesting">The list “%1$s” cannot be added because it contains the current list.</string>
     <string name="toast_cancelled_add_images">The addition of images was cancelled.</string>

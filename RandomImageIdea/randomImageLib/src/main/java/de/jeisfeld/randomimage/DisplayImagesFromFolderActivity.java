@@ -167,13 +167,13 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 				else if (totalAddedCount == 1) {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_single, addedImagesString);
 					NotificationUtil.displayNotification(DisplayImagesFromFolderActivity.this, imageList.getListName(),
-							NotificationUtil.TAG_UPDATED_LIST, R.string.title_notification_updated_list,
+							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
 							R.string.toast_added_single, addedImagesString);
 				}
 				else {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_multiple, addedImagesString);
 					NotificationUtil.displayNotification(DisplayImagesFromFolderActivity.this, imageList.getListName(),
-							NotificationUtil.TAG_UPDATED_LIST, R.string.title_notification_updated_list,
+							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
 							R.string.toast_added_multiple, addedImagesString);
 				}
 
@@ -251,7 +251,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			String addedFoldersString =
 					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
-			NotificationUtil.displayNotification(this, imageList2.getListName(), NotificationUtil.TAG_UPDATED_LIST,
+			NotificationUtil.displayNotification(this, imageList2.getListName(), NotificationUtil.ID_UPDATED_LIST,
 					R.string.title_notification_updated_list, R.string.toast_added_single, addedFoldersString);
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
 			imageList2.update(true);

@@ -109,12 +109,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget creation");
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
-				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 				mFileNames = new String[0];
 			}
 			else {
-				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST);
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);
 				mFileNames = imageList.getShuffledFileNames();
 			}
 		}
@@ -198,12 +198,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget data change");
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
-				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 				mFileNames = new String[0];
 			}
 			else {
-				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST);
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);
 				mFileNames = imageList.getShuffledFileNames();
 			}
 		}

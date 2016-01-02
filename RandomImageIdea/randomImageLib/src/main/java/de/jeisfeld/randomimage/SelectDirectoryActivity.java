@@ -234,7 +234,7 @@ public class SelectDirectoryActivity extends Activity {
 										String addedFoldersString = DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
 										DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
 										NotificationUtil.displayNotification(SelectDirectoryActivity.this, imageList.getListName(),
-												NotificationUtil.TAG_UPDATED_LIST, R.string.title_notification_updated_list,
+												NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
 												R.string.toast_added_single, addedFoldersString);
 										imageList.update(true);
 										mUpdatedList = true;

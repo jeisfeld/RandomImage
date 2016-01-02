@@ -68,11 +68,11 @@ public class AddSentImagesActivity extends Activity {
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list");
 			DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
-			NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+			NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_ERROR_LOADING_LIST,
 					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 			return;
 		}
-		NotificationUtil.cancelNotification(this, listName, NotificationUtil.TAG_ERROR_LOADING_LIST);
+		NotificationUtil.cancelNotification(this, listName, NotificationUtil.ID_ERROR_LOADING_LIST);
 
 		Intent intent = getIntent();
 
@@ -84,7 +84,7 @@ public class AddSentImagesActivity extends Activity {
 				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 				String shortFileName = new File(addedFileName).getName();
 				DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
-				NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+				NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
 						R.string.title_notification_updated_list, R.string.toast_added_images_single_external, shortFileName, listName);
 				imageList.update(true);
 			}
@@ -107,7 +107,7 @@ public class AddSentImagesActivity extends Activity {
 				if (addedFileCount > 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedFileCount, listName);
-					NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+					NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
 							R.string.title_notification_updated_list, R.string.toast_added_images_count_external, addedFileCount, listName);
 					imageList.update(true);
 				}
@@ -115,13 +115,13 @@ public class AddSentImagesActivity extends Activity {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					String shortFileName = new File(lastAddedFileName).getName();
 					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
-					NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+					NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
 							R.string.title_notification_updated_list, R.string.toast_added_images_single_external, shortFileName, listName);
 					imageList.update(true);
 				}
 				else {
 					DialogUtil.displayToast(this, R.string.toast_added_images_none_external, listName);
-					NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+					NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
 							R.string.title_notification_updated_list, R.string.toast_added_images_none_external, listName);
 				}
 			}

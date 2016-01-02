@@ -33,8 +33,9 @@
     <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
     <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
-    <string name="toast_failed_to_load_files">%1$d Bilder oder Verzeichnisse der Bildliste  „%2$s“ wurden nicht gefunden</string>
+    <string name="toast_failed_to_load_files">%1$d Bilder oder Verzeichnisse der Bildliste „%2$s“ wurden nicht gefunden</string>
     <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s“ wurde nicht gefunden</string>
+    <string name="toast_failed_to_load_files_all">Folgende Bilder oder Verzeichnisse der Bildliste „%1$s“ wurden nicht gefunden: %2$s</string>
     <string name="toast_failed_to_open_google_play">Google Play konnte nicht gestartet werden.</string>
     <string name="toast_cyclic_nesting">Die Liste „%1$s“ kann nicht eingefügt werden, da sie die aktuelle Liste enthält.</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>

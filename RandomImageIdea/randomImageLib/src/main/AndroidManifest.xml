@@ -115,6 +115,9 @@
         </activity>
 
         <receiver
+            android:name="de.jeisfeld.randomimage.util.NotificationBroadcastReceiver">
+        </receiver>
+        <receiver
             android:name="de.jeisfeld.randomimage.widgets.MiniWidget"
             android:label="@string/mini_widget_name">
             <intent-filter>
