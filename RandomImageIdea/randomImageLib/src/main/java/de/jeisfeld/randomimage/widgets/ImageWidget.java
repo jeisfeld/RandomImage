@@ -18,6 +18,7 @@ import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -56,6 +57,8 @@ public class ImageWidget extends GenericImageWidget {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+				NotificationUtil.displayNotification(context, listName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 
 				// Put view in good state again.
 				RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
@@ -84,6 +87,8 @@ public class ImageWidget extends GenericImageWidget {
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list " + listName + " for ImageWidget option change");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
+			NotificationUtil.displayNotification(context, listName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 		}
 
 		String fileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId);

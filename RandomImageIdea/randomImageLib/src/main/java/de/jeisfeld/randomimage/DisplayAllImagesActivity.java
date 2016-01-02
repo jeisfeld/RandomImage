@@ -27,6 +27,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
@@ -366,6 +367,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 								}
 
 								DialogUtil.displayToast(DisplayAllImagesActivity.this, messageId, fileFolderMessageString);
+								NotificationUtil.displayNotification(DisplayAllImagesActivity.this, mListName, NotificationUtil.TAG_UPDATED_LIST,
+										R.string.title_notification_updated_list, messageId, fileFolderMessageString);
 
 								if (totalRemovedCount > 0) {
 									imageList.update(true);
@@ -673,13 +676,14 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void doBackup(final String listToBeBackuped) {
 		String backupFile = ImageRegistry.backupImageList(listToBeBackuped);
 		DialogUtil.displayToast(DisplayAllImagesActivity.this,
-				backupFile == null ? R.string.toast_failed_to_backup_list
-						: R.string.toast_backup_of_list,
-				listToBeBackuped);
-		if (backupFile != null) {
-			DialogUtil.displayInfo(DisplayAllImagesActivity.this, null,
-					R.string.key_info_backup, R.string.dialog_info_backup, listToBeBackuped,
-					backupFile);
+				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackuped);
+		if (backupFile == null) {
+			NotificationUtil.displayNotification(this, null, NotificationUtil.TAG_BACKUP_RESTORE, R.string.title_notification_backup_restore,
+					R.string.toast_failed_to_backup_list, listToBeBackuped);
+		}
+		else {
+			NotificationUtil.displayNotification(this, null, NotificationUtil.TAG_BACKUP_RESTORE, R.string.title_notification_backup_restore,
+					R.string.dialog_info_backup, listToBeBackuped, backupFile);
 		}
 	}
 
@@ -751,9 +755,9 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	private void doRestore(final String listToBeRestored) {
 		boolean success = ImageRegistry.restoreImageList(listToBeRestored);
 		DialogUtil.displayToast(DisplayAllImagesActivity.this,
-				success ? R.string.toast_restore_of_list
-						: R.string.toast_failed_to_restore_list,
-				listToBeRestored);
+				success ? R.string.toast_restore_of_list : R.string.toast_failed_to_restore_list, listToBeRestored);
+		NotificationUtil.displayNotification(this, null, NotificationUtil.TAG_BACKUP_RESTORE, R.string.title_notification_backup_restore,
+				success ? R.string.toast_restore_of_list : R.string.toast_failed_to_restore_list, listToBeRestored);
 		if (success) {
 			switchToImageList(listToBeRestored, CreationStyle.NONE);
 		}

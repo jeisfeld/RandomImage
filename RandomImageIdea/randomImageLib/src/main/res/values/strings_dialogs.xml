@@ -9,6 +9,14 @@
     <string name="title_dialog_select_change_frequency">Select change frequency</string>
     <string name="title_dialog_select_folder">Select folder</string>
 
+    <!-- Titles of notifications -->
+
+    <string name="title_notification_updated_list">Updated “%1$s”</string>
+    <string name="title_notification_failed_loading">Failed to load “%1$s”</string>
+    <string name="title_notification_failed_saving">Failed to save “%1$s”</string>
+    <string name="title_notification_backup_restore">Backup/Restore</string>
+    <string name="title_notification_missing_files">“%1$s” has missing files</string>
+
     <!-- Contents of toasts -->
     <string name="toast_added_multiple">%1$s have been added to the list</string>
     <string name="toast_added_single">%1$s has been added to the list</string>

@@ -318,7 +318,7 @@ public final class DialogUtil {
 	 * @param input The input String
 	 * @return The same string with the first letter capitalized.
 	 */
-	private static String capitalizeFirst(final String input) {
+	protected static String capitalizeFirst(final String input) {
 		if (input == null || input.length() == 0) {
 			return input;
 		}

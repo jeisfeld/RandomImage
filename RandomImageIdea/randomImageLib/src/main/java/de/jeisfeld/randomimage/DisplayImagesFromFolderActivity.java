@@ -18,6 +18,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.Mess
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimagelib.R;
@@ -69,7 +70,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
 		}
 		if (forAddition) {
-			intent.putExtra(STRING_EXTRA_FORADDITION, forAddition);
+			intent.putExtra(STRING_EXTRA_FORADDITION, true);
 		}
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
@@ -164,12 +165,16 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_no_image);
 				}
 				else if (totalAddedCount == 1) {
-					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_single,
-							addedImagesString);
+					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_single, addedImagesString);
+					NotificationUtil.displayNotification(DisplayImagesFromFolderActivity.this, imageList.getListName(),
+							NotificationUtil.TAG_UPDATED_LIST, R.string.title_notification_updated_list,
+							R.string.toast_added_single, addedImagesString);
 				}
 				else {
-					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_multiple,
-							addedImagesString);
+					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_multiple, addedImagesString);
+					NotificationUtil.displayNotification(DisplayImagesFromFolderActivity.this, imageList.getListName(),
+							NotificationUtil.TAG_UPDATED_LIST, R.string.title_notification_updated_list,
+							R.string.toast_added_multiple, addedImagesString);
 				}
 
 				if (totalAddedCount > 0) {
@@ -246,6 +251,8 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			String addedFoldersString =
 					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
+			NotificationUtil.displayNotification(this, imageList2.getListName(), NotificationUtil.TAG_UPDATED_LIST,
+					R.string.title_notification_updated_list, R.string.toast_added_single, addedFoldersString);
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
 			imageList2.update(true);
 		}

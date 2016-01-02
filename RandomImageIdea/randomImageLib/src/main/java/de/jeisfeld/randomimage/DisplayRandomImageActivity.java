@@ -19,6 +19,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -259,6 +260,8 @@ public class DisplayRandomImageActivity extends Activity {
 				if (!foundList) {
 					Log.e(Application.TAG, "Could not load image list");
 					DialogUtil.displayToast(this, R.string.toast_error_while_loading, mListName);
+					NotificationUtil.displayNotification(this, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+							R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 					return;
 				}
 				imageList = ImageRegistry.getCurrentImageList(false);

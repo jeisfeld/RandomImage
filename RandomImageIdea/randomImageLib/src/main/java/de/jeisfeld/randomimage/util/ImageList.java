@@ -148,6 +148,8 @@ public abstract class ImageList extends RandomFileProvider {
 		else {
 			Log.e(Application.TAG, "Error while saving the image list.");
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_error_while_saving, getListName());
+			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.TAG_ERROR_SAVING_LIST,
+					R.string.title_notification_failed_saving, R.string.toast_failed_to_save_list, getListName());
 			return false;
 		}
 	}
@@ -339,12 +341,14 @@ public abstract class ImageList extends RandomFileProvider {
 
 		if (toastIfFilesMissing) {
 			if (notFoundFiles > 1) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files,
-						notFoundFiles, getListName());
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, notFoundFiles, getListName());
+				NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.TAG_MISSING_FILES,
+						R.string.title_notification_missing_files, R.string.toast_failed_to_load_files, notFoundFiles, getListName());
 			}
 			else if (notFoundFiles == 1) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single,
-						getListName());
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single, getListName());
+				NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.TAG_MISSING_FILES,
+						R.string.title_notification_missing_files, R.string.toast_failed_to_load_files_single, getListName());
 			}
 		}
 
@@ -374,6 +378,8 @@ public abstract class ImageList extends RandomFileProvider {
 			if (!success) {
 				Log.e(Application.TAG, "Could not backup config file to " + backupFile.getAbsolutePath());
 				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
+				NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.TAG_ERROR_SAVING_LIST,
+						R.string.title_notification_failed_saving, R.string.toast_failed_to_save_list, getListName());
 				return false;
 			}
 		}
@@ -422,6 +428,8 @@ public abstract class ImageList extends RandomFileProvider {
 		catch (IOException e) {
 			Log.e(Application.TAG, "Could not store configuration to file " + mConfigFile.getAbsolutePath(), e);
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
+			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.TAG_ERROR_SAVING_LIST,
+					R.string.title_notification_failed_saving, R.string.toast_failed_to_save_list, getListName());
 			return false;
 		}
 		finally {

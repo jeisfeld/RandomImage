@@ -13,6 +13,7 @@ import android.util.Log;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
@@ -67,6 +68,8 @@ public class AddSentImagesActivity extends Activity {
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list");
 			DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
+			NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 			return;
 		}
 
@@ -80,6 +83,8 @@ public class AddSentImagesActivity extends Activity {
 				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 				String shortFileName = new File(addedFileName).getName();
 				DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
+				NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+						R.string.title_notification_updated_list, R.string.toast_added_images_single_external, shortFileName, listName);
 				imageList.update(true);
 			}
 		}
@@ -101,17 +106,22 @@ public class AddSentImagesActivity extends Activity {
 				if (addedFileCount > 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedFileCount, listName);
+					NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+							R.string.title_notification_updated_list, R.string.toast_added_images_count_external, addedFileCount, listName);
 					imageList.update(true);
 				}
 				else if (addedFileCount == 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 					String shortFileName = new File(lastAddedFileName).getName();
-					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName,
-							listName);
+					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
+					NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+							R.string.title_notification_updated_list, R.string.toast_added_images_single_external, shortFileName, listName);
 					imageList.update(true);
 				}
 				else {
 					DialogUtil.displayToast(this, R.string.toast_added_images_none_external, listName);
+					NotificationUtil.displayNotification(this, listName, NotificationUtil.TAG_UPDATED_LIST,
+							R.string.title_notification_updated_list, R.string.toast_added_images_none_external, listName);
 				}
 			}
 		}

@@ -15,6 +15,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
@@ -108,6 +109,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget creation");
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
+				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 				mFileNames = new String[0];
 			}
 			else {
@@ -194,6 +197,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget data change");
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
+				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.TAG_ERROR_LOADING_LIST,
+						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 				mFileNames = new String[0];
 			}
 			else {
