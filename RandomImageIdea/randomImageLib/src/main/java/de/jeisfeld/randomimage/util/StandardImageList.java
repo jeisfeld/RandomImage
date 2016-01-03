@@ -182,6 +182,36 @@ public final class StandardImageList extends ImageList {
 	}
 
 	@Override
+	public double getProbability(final String fileName) {
+		File file = new File(fileName);
+		double nonNestedWeight = getNestedListWeight("");
+		if (nonNestedWeight == 0) {
+			return 0;
+		}
+		int nonNestedSize = mImageFilesByNestedList.get("").size();
+
+		if (file.isFile()) {
+			if (getFileNames().contains(file.getAbsolutePath())) {
+				return nonNestedWeight / nonNestedSize;
+			}
+			else {
+				return 0;
+			}
+		}
+		else if (file.isDirectory()) {
+			if (getFolderNames().contains(file.getAbsolutePath())) {
+				return nonNestedWeight * ImageUtil.getImagesInFolder(fileName).size() / nonNestedSize;
+			}
+			else {
+				return 0;
+			}
+		}
+		else {
+			return 0;
+		}
+	}
+
+	@Override
 	public synchronized boolean update(final boolean toastIfFilesMissing) {
 		boolean success = super.update(toastIfFilesMissing);
 		if (success) {

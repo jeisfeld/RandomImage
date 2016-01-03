@@ -3,11 +3,12 @@
 
     <string name="app_name">Surprise Image</string>
     <string name="app_name_short">Surprise Image</string>
-    <string name="authorization_class" translatable="false"></string>
+    <string name="authorization_class" translatable="false"/>
     <string name="mini_widget_name">Surprise Image Widget</string>
     <string name="image_widget_name">Surprise Image Frame</string>
     <string name="stacked_image_widget_name">Surprise Image Deck</string>
     <string name="title_activity_display_image_details">Image Details</string>
+    <string name="title_activity_display_folder_details">Folder Details</string>
     <string name="title_activity_display_nested_list_details">Nested List Details</string>
     <string name="title_activity_display_images">Surprise List Setup</string>
     <string name="title_activity_select_image_folder">Select Image Folder</string>
@@ -34,10 +35,11 @@
     <string name="info_file_location">Folder:</string>
     <string name="info_folder_location">Parent folder:</string>
     <string name="info_file_date">Date:</string>
+    <string name="info_image_count">Number of images:</string>
 
     <!-- Strings for nested list info -->
     <string name="info_nested_list_images">Number of images: %1$d</string>
-    <string name="info_nested_list_image_proportion">Image Proportion: %1$,.1f%%</string>
+    <string name="info_nested_list_image_proportion">Image Proportion: %1$s%%</string>
     <string name="info_nested_list_view_frequency">View Frequency:</string>
     <string name="percent" translatable="false">%</string>
 

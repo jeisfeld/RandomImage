@@ -756,6 +756,14 @@ public abstract class ImageList extends RandomFileProvider {
 	public abstract ArrayList<String> getAllImageFiles();
 
 	/**
+	 * Get the probability that the given file or folder is selected as random imiage.
+	 *
+	 * @param fileName The requested file or folder name.
+	 * @return The probability.
+	 */
+	public abstract double getProbability(String fileName);
+
+	/**
 	 * Class holding information on an image file.
 	 */
 	protected static final class ImageListInfo {

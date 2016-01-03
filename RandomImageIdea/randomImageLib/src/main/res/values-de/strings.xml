@@ -7,6 +7,7 @@
     <string name="image_widget_name">Überraschungsbilderrahmen</string>
     <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
     <string name="title_activity_display_image_details">Bildinformationen</string>
+    <string name="title_activity_display_folder_details">Verzeichnisinformationen</string>
     <string name="title_activity_display_nested_list_details">Unterlisteninformationen</string>
     <string name="title_activity_display_images">Ü-Bild Einrichtung</string>
     <string name="title_activity_select_image_folder">Bildverzeichnis wählen</string>
@@ -33,10 +34,11 @@
     <string name="info_file_location">Verzeichnis:</string>
     <string name="info_folder_location">Verzeichnisort:</string>
     <string name="info_file_date">Datum:</string>
+    <string name="info_image_count">Anzahl der Bilder:</string>
 
     <!-- Strings for nested list info -->
     <string name="info_nested_list_images">Zahl der Bilder: %1$d</string>
-    <string name="info_nested_list_image_proportion">Anteil der Bilder: %1$,.1f%%</string>
+    <string name="info_nested_list_image_proportion">Anteil der Bilder: %1$s%%</string>
     <string name="info_nested_list_view_frequency">Anzeigehäufigkeit:</string>
 
 </resources>

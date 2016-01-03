@@ -125,6 +125,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			galleryFileName = mFileName;
 		}
 		else if (file.isDirectory()) {
+			setTitle(R.string.title_activity_display_folder_details);
 			ArrayList<String> files = ImageUtil.getImagesInFolder(mFileName);
 			if (files.size() > 0) {
 				galleryFileName = files.get(0);
@@ -200,17 +201,12 @@ public class DisplayImageDetailsActivity extends Activity {
 					});
 		}
 
-		if (mListName != null) {
+		if (mListName != null && !mPreventDisplayAll) {
 			listMenu.addItem(R.string.menu_edit_list, new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					if (mPreventDisplayAll) {
-						returnResult(true, false);
-					}
-					else {
-						DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
-						returnResult(false, false);
-					}
+					DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
+					returnResult(false, false);
 				}
 			});
 		}
@@ -286,8 +282,21 @@ public class DisplayImageDetailsActivity extends Activity {
 		Date imageDate = ImageUtil.getExifDate(mFileName);
 		if (imageDate != null) {
 			imageInfo.append(formatImageInfoLine(this, R.string.info_file_date, DateUtil.format(imageDate)));
-
 		}
+
+		if (file.isDirectory()) {
+			int imageCount = ImageUtil.getImagesInFolder(mFileName).size();
+			double probability = -1;
+			if (mListName.equals(ImageRegistry.getCurrentListName())) {
+				probability = ImageRegistry.getCurrentImageList(false).getProbability(mFileName);
+			}
+			String probabilityString = "";
+			if (probability > 0) {
+				probabilityString = " (" + DisplayNestedListDetailsActivity.getPercentageString(probability) + "%)";
+			}
+			imageInfo.append(formatImageInfoLine(this, R.string.info_image_count, Integer.toString(imageCount) + probabilityString));
+		}
+
 
 		return Html.fromHtml(imageInfo.toString());
 	}

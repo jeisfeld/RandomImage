@@ -86,18 +86,16 @@ public class DisplayNestedListDetailsActivity extends Activity {
 
 		((TextView) findViewById(R.id.textViewWeight)).setText(
 				String.format(getString(R.string.info_nested_list_image_proportion),
-						HUNDRED * imageList.getImagePercentage(mNestedListName)));
+						getPercentageString(imageList.getImagePercentage(mNestedListName))));
 
 		final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
 		Double customNestedListWeight = imageList.getCustomNestedListWeight(mNestedListName);
 		if (customNestedListWeight == null) {
 			double nestedListWeight = imageList.getNestedListWeight(mNestedListName);
-			int percentage = (int) Math.round(nestedListWeight * HUNDRED);
-			editTextViewFrequency.setHint(Integer.toString(percentage));
+			editTextViewFrequency.setHint(getPercentageString(nestedListWeight));
 		}
 		else {
-			int percentage = (int) Math.round(customNestedListWeight * HUNDRED);
-			editTextViewFrequency.setText(Integer.toString(percentage));
+			editTextViewFrequency.setText(getPercentageString(customNestedListWeight));
 		}
 
 		ImageButton buttonSave = (ImageButton) findViewById(R.id.button_save);
@@ -105,24 +103,43 @@ public class DisplayNestedListDetailsActivity extends Activity {
 		buttonSave.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				String percentageString = editTextViewFrequency.getText().toString();
+				String percentageString = editTextViewFrequency.getText().toString().replace(',', '.');
 
-				Double weight = null;
-				if (percentageString.length() > 0) {
-					weight = Double.parseDouble(percentageString) / HUNDRED;
-					if (weight > 1) {
-						weight = 1.0;
+				try {
+					Double weight = null;
+					if (percentageString.length() > 0) {
+						weight = Double.parseDouble(percentageString) / HUNDRED;
+						if (weight > 1) {
+							weight = 1.0;
+						}
+						if (weight < 0) {
+							weight = 0.0;
+						}
 					}
-					if (weight < 0) {
-						weight = 0.0;
-					}
+
+					imageList.setCustomNestedListWeight(mNestedListName, weight);
 				}
-
-				imageList.setCustomNestedListWeight(mNestedListName, weight);
+				catch (NumberFormatException e) {
+					// do not change weight
+				}
 				finish();
 			}
 		});
 
 	}
 
+	/**
+	 * Get a rounded percentage String out of a probability.
+	 *
+	 * @param probability The probability.
+	 * @return The percentage String.
+	 */
+	public static final String getPercentageString(final double probability) {
+		if (probability >= 0.1) { // MAGIC_NUMBER
+			return String.format("%1$,.1f", probability * HUNDRED);
+		}
+		else {
+			return String.format("%1$,.2G", probability * HUNDRED);
+		}
+	}
 }
