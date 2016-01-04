@@ -16,8 +16,10 @@
     <string name="title_notification_failed_saving">„%1$s“ - Speicherfehler</string>
     <string name="title_notification_backup_restore">Sicherung/Wiederherstellung</string>
     <string name="title_notification_missing_files">„%1$s“ hat fehlende Bilder</string>
+    <string name="title_notification_unmounted_paths">“%1$s” nicht verfügbar</string>
 
-    <!-- Contents of toasts -->
+    <!-- Contents of toasts or notifications -->
+    <string name="notification_unmounted_path">Auf das externe Verzeichnis “%1$s” kann nicht zugegriffen werden. Daher fehlen Bilder in den Bildlisten %2$s.</string>
     <string name="toast_added_multiple">Es wurden %1$s zur Liste hinzugefügt</string>
     <string name="toast_added_single">%1$s wurde zur Liste hinzugefügt</string>
     <string name="toast_added_folder_none">Das Verzeichnis „%1$s“ war bereits in der Liste.</string>
@@ -87,5 +89,6 @@
     <string name="partial_folder_single">das Verzeichnis „%1$s“</string>
     <string name="partial_folder_two">die Verzeichnisse „%1$s“ und „%2$s“</string>
     <string name="partial_folder_multiple">%1$d Verzeichnisse</string>
+    <string name="partial_quoted_string">„%1$s“</string>
 
 </resources>

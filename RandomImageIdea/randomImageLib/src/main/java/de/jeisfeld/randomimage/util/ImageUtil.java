@@ -24,7 +24,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -384,16 +383,10 @@ public final class ImageUtil {
 			public void run() {
 				final ArrayList<String> imageFolders = new ArrayList<>();
 
-				if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.KITKAT)) {
-					imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
+				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
 
-					for (String path : FileUtil.getExtSdCardPaths()) {
-						imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
-					}
-				}
-				else {
-					imageFolders.addAll(getAllImageSubfolders(new File("/mnt"), handler, listener));
-					imageFolders.addAll(getAllImageSubfolders(new File("/Removable"), handler, listener));
+				for (String path : FileUtil.getExtSdCardPaths()) {
+					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
 				}
 
 				if (listener != null) {
@@ -405,7 +398,7 @@ public final class ImageUtil {
 					});
 				}
 
-				saveAllImageFolders(imageFolders);
+				PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
 			}
 		}.start();
 	}
@@ -463,44 +456,6 @@ public final class ImageUtil {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Save the list of image folders in a shared preference.
-	 *
-	 * @param imageFolders The list of image folders.
-	 */
-	private static void saveAllImageFolders(final ArrayList<String> imageFolders) {
-		if (imageFolders == null || imageFolders.size() == 0) {
-			PreferenceUtil.removeSharedPreference(R.string.key_all_image_folders);
-			return;
-		}
-
-		StringBuilder saveStringBuffer = new StringBuilder();
-
-		for (String imageFolder : imageFolders) {
-			saveStringBuffer.append("\n");
-			saveStringBuffer.append(imageFolder);
-		}
-
-		String saveString = saveStringBuffer.substring("\n".length());
-
-		PreferenceUtil.setSharedPreferenceString(R.string.key_all_image_folders, saveString);
-	}
-
-	/**
-	 * Restore the saved list of image folders from shared preference.
-	 *
-	 * @return The retrieved list of image folders.
-	 */
-	public static ArrayList<String> getAllImageFoldersFromStorage() {
-		String restoreString = PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders);
-		if (restoreString == null || restoreString.length() == 0) {
-			return new ArrayList<>();
-		}
-
-		String[] folderArray = restoreString.split("\\r?\\n");
-		return new ArrayList<>(Arrays.asList(folderArray));
 	}
 
 	/**

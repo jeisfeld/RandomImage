@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -266,8 +267,7 @@ public abstract class ImageList extends RandomFileProvider {
 		mNestedListNames.clear();
 		mNestedListProperties.clear();
 		mProperties.clear();
-		int notFoundFilesCount = 0;
-		StringBuilder notFoundFiles = new StringBuilder();
+		List<String> notFoundFiles = new ArrayList<>();
 
 		SparseArray<Properties> nestedPropertiesArray = new SparseArray<>();
 		HashMap<String, Integer> nestedListIndices = new HashMap<>();
@@ -298,11 +298,7 @@ public abstract class ImageList extends RandomFileProvider {
 					}
 					else {
 						Log.w(Application.TAG, "Cannot find file " + line);
-						if (notFoundFilesCount > 0) {
-							notFoundFiles.append(", ");
-						}
-						notFoundFiles.append(file.getAbsolutePath());
-						notFoundFilesCount++;
+						notFoundFiles.add(file.getAbsolutePath());
 					}
 					continue;
 				}
@@ -344,23 +340,17 @@ public abstract class ImageList extends RandomFileProvider {
 			Log.e(Application.TAG, "Could not find configuration file", e);
 		}
 
-		if (notFoundFilesCount > 1) {
+		if (notFoundFiles.size() > 1) {
 			if (toastIfFilesMissing) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, notFoundFilesCount, getListName());
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, notFoundFiles.size(), getListName());
 			}
-			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_MISSING_FILES,
-					R.string.title_notification_missing_files, R.string.toast_failed_to_load_files_all, getListName(), notFoundFiles);
 		}
-		else if (notFoundFilesCount == 1) {
+		else if (notFoundFiles.size() == 1) {
 			if (toastIfFilesMissing) {
 				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single, getListName());
 			}
-			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_MISSING_FILES,
-					R.string.title_notification_missing_files, R.string.toast_failed_to_load_files_all, getListName(), notFoundFiles);
 		}
-		else {
-			NotificationUtil.cancelNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_MISSING_FILES);
-		}
+		NotificationUtil.notifyNotFoundFiles(Application.getAppContext(), getListName(), notFoundFiles);
 
 		// Nested properties are filled now.
 		for (String nestedListName : mNestedListNames) {

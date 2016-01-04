@@ -9,11 +9,13 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.util.Log;
 
@@ -23,6 +25,29 @@ import de.jeisfeld.randomimage.Application;
  * Utility class for helping parsing file systems.
  */
 public final class FileUtil {
+	/**
+	 * Potential external SD paths for pre-Kitkat devices.
+	 */
+	private static final String[] EXT_SD_PATHS = {
+			"/storage/sdcard1", //!< Motorola Xoom
+			"/storage/extSdCard",  //!< Samsung SGS3
+			"/storage/sdcard0/external_sdcard",  // user request
+			"/mnt/extSdCard",
+			"/mnt/sdcard/external_sd",  //!< Samsung galaxy family
+			"/mnt/external_sd",
+			"/mnt/media_rw/sdcard1",   //!< 4.4.2 on CyanogenMod S3
+			"/Removable/MicroSD",              //!< Asus transformer prime
+			"/mnt/emmc",
+			"/storage/external_sd",            //!< LG
+			"/storage/ext_sd",                 //!< HTC One Max
+			"/storage/removable/sdcard1",      //!< Sony Xperia Z1
+			"/data/sdext",
+			"/data/sdext2",
+			"/data/sdext3",
+			"/data/sdext4",
+	};
+
+
 	/**
 	 * Hide default constructor.
 	 */
@@ -62,7 +87,12 @@ public final class FileUtil {
 				else if (SystemUtil.isKitkat()) {
 					// Workaround for Kitkat ext SD card
 					Uri uri = MediaStoreUtil.getUriFromFile(target.getAbsolutePath());
-					outStream = Application.getAppContext().getContentResolver().openOutputStream(uri);
+					if (uri == null) {
+						return false;
+					}
+					else {
+						outStream = Application.getAppContext().getContentResolver().openOutputStream(uri);
+					}
 				}
 				else {
 					return false;
@@ -86,28 +116,35 @@ public final class FileUtil {
 		}
 		finally {
 			try {
-				inStream.close();
+				if (inStream != null) {
+					inStream.close();
+				}
 			}
-			catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				outStream.close();
-			}
-			catch (Exception e) {
-				// ignore exception
+			catch (IOException e) {
+				e.printStackTrace();
 			}
 			try {
-				inChannel.close();
+				if (outStream != null) {
+					outStream.close();
+				}
 			}
-			catch (Exception e) {
-				// ignore exception
+			catch (IOException e) {
+				e.printStackTrace();
 			}
 			try {
+				if (inChannel != null) {
+					inChannel.close();
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				assert outChannel != null;
 				outChannel.close();
 			}
-			catch (Exception e) {
-				// ignore exception
+			catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		return true;
@@ -137,7 +174,9 @@ public final class FileUtil {
 
 			try {
 				Uri uri = MediaStoreUtil.getUriFromFile(file.getAbsolutePath());
-				resolver.delete(uri, null, null);
+				if (uri != null) {
+					resolver.delete(uri, null, null);
+				}
 				return !file.exists();
 			}
 			catch (Exception e) {
@@ -194,6 +233,7 @@ public final class FileUtil {
 
 		// Ensure that file is not created during this process.
 		if (!isExisting) {
+			//noinspection ResultOfMethodCallIgnored
 			file.delete();
 		}
 
@@ -206,7 +246,7 @@ public final class FileUtil {
 	 * @return A list of external SD card paths.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
-	protected static String[] getExtSdCardPaths() {
+	private static String[] getExtSdCardPathsForKitkat() {
 		List<String> paths = new ArrayList<>();
 		for (File file : Application.getAppContext().getExternalFilesDirs("external")) {
 			if (file != null && !file.equals(Application.getAppContext().getExternalFilesDir("external"))) {
@@ -226,7 +266,27 @@ public final class FileUtil {
 				}
 			}
 		}
-		return paths.toArray(new String[0]);
+		return paths.toArray(new String[paths.size()]);
+	}
+
+	/**
+	 * Get a list of external SD card paths.
+	 *
+	 * @return A list of external SD card paths.
+	 */
+	protected static String[] getExtSdCardPaths() {
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.KITKAT)) {
+			return getExtSdCardPathsForKitkat();
+		}
+		else {
+			List<String> paths = new ArrayList<>();
+			for (String path : EXT_SD_PATHS) {
+				if (new File(path).isDirectory()) {
+					paths.add(path);
+				}
+			}
+			return paths.toArray(new String[paths.size()]);
+		}
 	}
 
 	/**
@@ -236,31 +296,15 @@ public final class FileUtil {
 	 * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
 	 * null is returned.
 	 */
-	@TargetApi(Build.VERSION_CODES.KITKAT)
+
 	public static String getExtSdCardFolder(final File file) {
-		String[] extSdPaths = getExtSdCardPaths();
-		try {
-			for (int i = 0; i < extSdPaths.length; i++) {
-				if (file.getCanonicalPath().startsWith(extSdPaths[i])) {
-					return extSdPaths[i];
-				}
+		// Do not use Kitkat API, as it is unreliable for unmounted paths.
+		for (String path : EXT_SD_PATHS) {
+			if (file.getAbsolutePath().toLowerCase(Locale.getDefault()).startsWith(path.toLowerCase(Locale.getDefault()))) {
+				return file.getAbsolutePath().substring(0, path.length());
 			}
 		}
-		catch (IOException e) {
-			return null;
-		}
 		return null;
-	}
-
-	/**
-	 * Determine if a file is on external sd card. (Kitkat or higher.)
-	 *
-	 * @param file The file.
-	 * @return true if on external sd card.
-	 */
-	@TargetApi(Build.VERSION_CODES.KITKAT)
-	public static boolean isOnExtSdCard(final File file) {
-		return getExtSdCardFolder(file) != null;
 	}
 
 	/**
@@ -279,6 +323,63 @@ public final class FileUtil {
 		}
 		return sdCardDirectory;
 	}
+
+	/**
+	 * Find out if a file is on an unmounted SD card path (for Lollipop).
+	 *
+	 * @param file The file
+	 * @return the unmounted SD card path, if existing. Otherwise null.
+	 */
+	@TargetApi(VERSION_CODES.LOLLIPOP)
+	public static String getUnmountedSdCardPathLollipop(final File file) {
+		File currentFile = file;
+		String mountStatus = Environment.getExternalStorageState(file);
+
+		if (Environment.MEDIA_MOUNTED.equals(mountStatus)
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(mountStatus)
+				|| Environment.MEDIA_UNKNOWN.equals(mountStatus)) {
+			return null;
+		}
+
+		File parentFile = currentFile.getParentFile();
+		String parentStatus = Environment.getExternalStorageState(parentFile);
+		while (!Environment.MEDIA_UNKNOWN.equals(parentStatus)) {
+			currentFile = parentFile;
+			parentFile = currentFile.getParentFile();
+			parentStatus = Environment.getExternalStorageState(parentFile);
+		}
+		return currentFile.getAbsolutePath();
+	}
+
+	/**
+	 * Find out if a file is on an unmounted SD card path.
+	 *
+	 * @param file The file
+	 * @return the unmounted SD card path, if existing. Otherwise null.
+	 */
+	public static String getUnmountedSdCardPath(final File file) {
+		if (SystemUtil.isAndroid5()) {
+			return getUnmountedSdCardPathLollipop(file);
+		}
+
+		String path = getExtSdCardFolder(file);
+		if (path == null) {
+			return null;
+		}
+		else if (new File(path).isDirectory()) {
+			String[] contents = new File(path).list();
+			if (contents != null && contents.length > 0) {
+				return null;
+			}
+			else {
+				return path;
+			}
+		}
+		else {
+			return path;
+		}
+	}
+
 
 	/**
 	 * Determine the camera folder. There seems to be no Android API to work for real devices, so this is a best guess.

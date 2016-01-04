@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -62,7 +63,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * Fill the view with the list of all image folders.
 	 */
 	private void fillListOfFolders() {
-		ArrayList<String> allImageFolders = ImageUtil.getAllImageFoldersFromStorage();
+		ArrayList<String> allImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
 		setAdapter(null, allImageFolders, null, true);
 
 		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {

@@ -23,10 +23,8 @@
 
     <string name="key_current_list_name" translatable="false">current_list_name</string>
     <string name="key_all_image_folders" translatable="false">all_image_folders</string>
-
-    <!-- Indexed keys for temporary storage -->
-
     <string name="key_directory_chooser_last_folder" translatable="false">directory_chooser_last_folder</string>
+    <string name="key_image_list_mount_issues" translatable="false">image_list_mount_issues</string>
 
     <!-- Keys for statistics -->
 

@@ -1,10 +1,11 @@
 package de.jeisfeld.randomimage.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
@@ -76,40 +77,6 @@ public final class PreferenceUtil {
 	public static void setSharedPreferenceString(final int preferenceId, final String s) {
 		Editor editor = getSharedPreferences().edit();
 		editor.putString(Application.getAppContext().getString(preferenceId), s);
-		editor.apply();
-	}
-
-	/**
-	 * Retrieve an Uri shared preference.
-	 *
-	 * @param preferenceId the id of the shared preference.
-	 * @return the corresponding preference value.
-	 */
-	public static Uri getSharedPreferenceUri(final int preferenceId) {
-		String uriString = getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), null);
-
-		if (uriString == null) {
-			return null;
-		}
-		else {
-			return Uri.parse(uriString);
-		}
-	}
-
-	/**
-	 * Set a shared preference for an Uri.
-	 *
-	 * @param preferenceId the id of the shared preference.
-	 * @param uri          the target value of the preference.
-	 */
-	public static void setSharedPreferenceUri(final int preferenceId, final Uri uri) {
-		Editor editor = getSharedPreferences().edit();
-		if (uri == null) {
-			editor.putString(Application.getAppContext().getString(preferenceId), null);
-		}
-		else {
-			editor.putString(Application.getAppContext().getString(preferenceId), uri.toString());
-		}
 		editor.apply();
 	}
 
@@ -228,6 +195,44 @@ public final class PreferenceUtil {
 		Editor editor = getSharedPreferences().edit();
 		editor.putLong(Application.getAppContext().getString(preferenceId), i);
 		editor.apply();
+	}
+
+	/**
+	 * Retrieve a String List shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static ArrayList<String> getSharedPreferenceStringList(final int preferenceId) {
+		String restoreString = getSharedPreferenceString(preferenceId);
+		if (restoreString == null || restoreString.length() == 0) {
+			return new ArrayList<>();
+		}
+
+		String[] folderArray = restoreString.split("\\r?\\n");
+		return new ArrayList<>(Arrays.asList(folderArray));
+	}
+
+	/**
+	 * Set a String List shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param stringList   the target value of the preference.
+	 */
+	public static void setSharedPreferenceStringList(final int preferenceId, final List<String> stringList) {
+		if (stringList == null || stringList.size() == 0) {
+			PreferenceUtil.removeSharedPreference(preferenceId);
+		}
+		else {
+			StringBuilder saveStringBuffer = new StringBuilder();
+			for (String string : stringList) {
+				if (saveStringBuffer.length() > 0) {
+					saveStringBuffer.append("\n");
+				}
+				saveStringBuffer.append(string);
+			}
+			PreferenceUtil.setSharedPreferenceString(preferenceId, saveStringBuffer.toString());
+		}
 	}
 
 	/**
