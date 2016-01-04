@@ -74,7 +74,7 @@ public class DisplayNestedListDetailsActivity extends Activity {
 		String parentListName = getIntent().getStringExtra(STRING_EXTRA_PARENT_LISTNAME);
 
 		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(parentListName, true);
-		if (imageList == null) {
+		if (imageList == null || !imageList.isReady()) {
 			finish();
 			return;
 		}

@@ -291,7 +291,6 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		}
 
 		thumbImageView.setMarkable(mMarkingType);
-		thumbImageView.setImage(mActivity, displayFileName, sameThread);
 
 		final String listName;
 		if (mActivity instanceof DisplayAllImagesActivity) {
@@ -373,6 +372,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				return true;
 			}
 		});
+
+		// Setting of thumb may be in separate thread. Therefore, do this last.
+		thumbImageView.setImage(mActivity, displayFileName, sameThread);
 
 		return thumbImageView;
 	}
