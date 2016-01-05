@@ -229,9 +229,8 @@ public class SelectDirectoryActivity extends Activity {
 									boolean success = imageList.addFolder(selectedFolder);
 
 									if (success) {
-										ArrayList<String> addedFolderList = new ArrayList<>();
-										addedFolderList.add(selectedFolder);
-										String addedFoldersString = DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
+										String addedFoldersString =
+												DialogUtil.createFileFolderMessageString(null, Collections.singletonList(selectedFolder), null);
 										DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
 										NotificationUtil.displayNotification(SelectDirectoryActivity.this, imageList.getListName(),
 												NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,

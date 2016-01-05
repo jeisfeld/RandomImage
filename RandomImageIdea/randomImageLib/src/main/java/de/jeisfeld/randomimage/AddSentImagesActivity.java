@@ -2,6 +2,8 @@ package de.jeisfeld.randomimage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -80,12 +82,16 @@ public class AddSentImagesActivity extends Activity {
 			// Application was started from other application by passing one image
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			String addedFileName = imageList.add(imageUri);
-			if (addedFileName != null) {
+			if (addedFileName == null) {
+				DialogUtil.displayToast(this, R.string.toast_added_image_none);
+			}
+			else {
 				PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
 				String shortFileName = new File(addedFileName).getName();
 				DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
+				String addedImagesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(addedFileName));
 				NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
-						R.string.title_notification_updated_list, R.string.toast_added_images_single_external, shortFileName, listName);
+						R.string.title_notification_updated_list, R.string.toast_added_single, addedImagesString);
 				imageList.update(true);
 			}
 		}
@@ -94,35 +100,32 @@ public class AddSentImagesActivity extends Activity {
 			// Application was started from other application by passing a list of images
 			ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 			if (imageUris != null) {
-				int addedFileCount = 0;
+				List<String> addedImages = new ArrayList<>();
 				String addedFileName;
-				String lastAddedFileName = null;
 				for (int i = 0; i < imageUris.size(); i++) {
 					addedFileName = imageList.add(imageUris.get(i));
 					if (addedFileName != null) {
-						addedFileCount++;
-						lastAddedFileName = addedFileName;
+						addedImages.add(addedFileName);
 					}
 				}
-				if (addedFileCount > 1) {
+				String addedImagesString = DialogUtil.createFileFolderMessageString(null, null, addedImages);
+				if (addedImages.size() > 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
-					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedFileCount, listName);
+					DialogUtil.displayToast(this, R.string.toast_added_images_count_external, addedImages.size(), listName);
 					NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
-							R.string.title_notification_updated_list, R.string.toast_added_images_count_external, addedFileCount, listName);
+							R.string.title_notification_updated_list, R.string.toast_added_multiple, addedImagesString);
 					imageList.update(true);
 				}
-				else if (addedFileCount == 1) {
+				else if (addedImages.size() == 1) {
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddexternal);
-					String shortFileName = new File(lastAddedFileName).getName();
+					String shortFileName = new File(addedImages.get(0)).getName();
 					DialogUtil.displayToast(this, R.string.toast_added_images_single_external, shortFileName, listName);
 					NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
-							R.string.title_notification_updated_list, R.string.toast_added_images_single_external, shortFileName, listName);
+							R.string.title_notification_updated_list, R.string.toast_added_single, addedImagesString);
 					imageList.update(true);
 				}
 				else {
 					DialogUtil.displayToast(this, R.string.toast_added_images_none_external, listName);
-					NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_UPDATED_LIST,
-							R.string.title_notification_updated_list, R.string.toast_added_images_none_external, listName);
 				}
 			}
 		}

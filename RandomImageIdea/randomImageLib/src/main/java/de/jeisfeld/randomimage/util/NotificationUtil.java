@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -158,7 +159,7 @@ public final class NotificationUtil {
 						.setContentText(message)
 						.setStyle(new Notification.BigTextStyle().bigText(message));
 
-		if (notificationId == ID_UPDATED_LIST || notificationId == ID_BACKUP_RESTORE) {
+		if (notificationId == ID_UPDATED_LIST || notificationId == ID_BACKUP_RESTORE || notificationId == ID_UNMOUNTED_PATH) {
 			Intent intent = new Intent(context, NotificationBroadcastReceiver.class);
 			intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
 			if (notificationTag != null) {
@@ -309,12 +310,28 @@ public final class NotificationUtil {
 		for (String entry : storageArray) {
 			if (entry.startsWith(LIST_PREFIX)) {
 				listName = entry.substring(LIST_PREFIX.length());
-				mMountingIssues.put(listName, new HashSet<String>());
+				// Do not restore entries from outdated lists.
+				if (!ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(listName)) {
+					listName = null;
+				}
+				if (listName != null) {
+					mMountingIssues.put(listName, new HashSet<String>());
+				}
 			}
 			else if (entry.startsWith(PATH_PREFIX)) {
-				String pathName = entry.substring(PATH_PREFIX.length());
-				mMountingIssues.get(listName).add(pathName);
+				if (listName != null) {
+					String pathName = entry.substring(PATH_PREFIX.length());
+					mMountingIssues.get(listName).add(pathName);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Clean the mounting issues from shared preferences.
+	 */
+	protected static void cleanupMountingIssues() {
+		mMountingIssues = new HashMap<>();
+		PreferenceUtil.removeSharedPreference(R.string.key_image_list_mount_issues);
 	}
 }

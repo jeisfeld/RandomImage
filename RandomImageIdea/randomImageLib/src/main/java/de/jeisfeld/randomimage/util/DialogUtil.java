@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -238,9 +239,9 @@ public final class DialogUtil {
 	 * @param imageList        The list of files.
 	 * @return The message sub-string.
 	 */
-	public static String createFileFolderMessageString(final ArrayList<String> nestedImageLists,
-													   final ArrayList<String> folderList,
-													   final ArrayList<String> imageList) {
+	public static String createFileFolderMessageString(final List<String> nestedImageLists,
+													   final List<String> folderList,
+													   final List<String> imageList) {
 		int nestedListCount = nestedImageLists == null ? 0 : nestedImageLists.size();
 		int folderCount = folderList == null ? 0 : folderList.size();
 		int imageCount = imageList == null ? 0 : imageList.size();

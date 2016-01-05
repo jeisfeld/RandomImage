@@ -16,5 +16,8 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 		if (notificationId == NotificationUtil.ID_UPDATED_LIST || notificationId == NotificationUtil.ID_BACKUP_RESTORE) {
 			NotificationUtil.cancelNotification(context, listName, notificationId);
 		}
+		else if (notificationId == NotificationUtil.ID_UNMOUNTED_PATH) {
+			NotificationUtil.cleanupMountingIssues();
+		}
 	}
 }

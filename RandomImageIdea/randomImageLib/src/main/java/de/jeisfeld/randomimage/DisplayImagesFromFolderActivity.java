@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -246,10 +247,8 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		final ImageList imageList2 = ImageRegistry.getCurrentImageList(true);
 		boolean success = imageList2.addFolder(mFolderName);
 		if (success) {
-			ArrayList<String> addedFolderList = new ArrayList<>();
-			addedFolderList.add(mFolderName);
 			String addedFoldersString =
-					DialogUtil.createFileFolderMessageString(null, addedFolderList, null);
+					DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFolderName), null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
 			NotificationUtil.displayNotification(this, imageList2.getListName(), NotificationUtil.ID_UPDATED_LIST,
 					R.string.title_notification_updated_list, R.string.toast_added_single, addedFoldersString);

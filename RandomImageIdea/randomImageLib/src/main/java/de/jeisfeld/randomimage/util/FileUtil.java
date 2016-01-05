@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -28,6 +29,7 @@ public final class FileUtil {
 	/**
 	 * Potential external SD paths for pre-Kitkat devices.
 	 */
+	@SuppressLint("SdCardPath")
 	private static final String[] EXT_SD_PATHS = {
 			"/storage/sdcard1", //!< Motorola Xoom
 			"/storage/extSdCard",  //!< Samsung SGS3
@@ -342,11 +344,11 @@ public final class FileUtil {
 		}
 
 		File parentFile = currentFile.getParentFile();
-		String parentStatus = Environment.getExternalStorageState(parentFile);
-		while (!Environment.MEDIA_UNKNOWN.equals(parentStatus)) {
+		String parentStatus = parentFile == null ? null : Environment.getExternalStorageState(parentFile);
+		while (parentStatus != null && !Environment.MEDIA_UNKNOWN.equals(parentStatus)) {
 			currentFile = parentFile;
 			parentFile = currentFile.getParentFile();
-			parentStatus = Environment.getExternalStorageState(parentFile);
+			parentStatus = parentFile == null ? null : Environment.getExternalStorageState(parentFile);
 		}
 		return currentFile.getAbsolutePath();
 	}

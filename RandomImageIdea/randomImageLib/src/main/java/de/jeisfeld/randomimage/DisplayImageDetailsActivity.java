@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
@@ -24,6 +25,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDial
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ListMenuView;
@@ -169,17 +171,13 @@ public class DisplayImageDetailsActivity extends Activity {
 					new OnClickListener() {
 						@Override
 						public void onClick(final View v) {
-							ArrayList<String> filesToBeRemoved = new ArrayList<>();
-							ArrayList<String> foldersToBeRemoved = new ArrayList<>();
+							final String filesString;
 							if (isDirectory) {
-								foldersToBeRemoved.add(mFileName);
+								filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
 							}
 							else {
-								filesToBeRemoved.add(mFileName);
+								filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
 							}
-							String filesString =
-									DialogUtil
-											.createFileFolderMessageString(null, foldersToBeRemoved, filesToBeRemoved);
 
 							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
 									new ConfirmDialogListener() {
@@ -188,6 +186,10 @@ public class DisplayImageDetailsActivity extends Activity {
 											imageList.removeFile(mFileName);
 											imageList.removeFolder(mFileName);
 											imageList.update(true);
+											DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_removed_single, filesString);
+											NotificationUtil.displayNotification(DisplayImageDetailsActivity.this, mListName,
+													NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
+													R.string.toast_removed_single, filesString);
 											returnResult(mPreventDisplayAll, true);
 										}
 
