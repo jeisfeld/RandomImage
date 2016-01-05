@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -69,6 +68,11 @@ public abstract class ImageList extends RandomFileProvider {
 	 * The list of image folders.
 	 */
 	private ArrayList<String> mFolderNames = new ArrayList<>();
+
+	/**
+	 * Path names stored in the config file which currently cannot be loaded.
+	 */
+	private ArrayList<String> mMissingPathNames = new ArrayList<>();
 
 	/**
 	 * The list of nested image lists.
@@ -267,7 +271,7 @@ public abstract class ImageList extends RandomFileProvider {
 		mNestedListNames.clear();
 		mNestedListProperties.clear();
 		mProperties.clear();
-		List<String> notFoundFiles = new ArrayList<>();
+		mMissingPathNames = new ArrayList<>();
 
 		SparseArray<Properties> nestedPropertiesArray = new SparseArray<>();
 		HashMap<String, Integer> nestedListIndices = new HashMap<>();
@@ -298,7 +302,7 @@ public abstract class ImageList extends RandomFileProvider {
 					}
 					else {
 						Log.w(Application.TAG, "Cannot find file " + line);
-						notFoundFiles.add(file.getAbsolutePath());
+						mMissingPathNames.add(file.getAbsolutePath());
 					}
 					continue;
 				}
@@ -340,17 +344,17 @@ public abstract class ImageList extends RandomFileProvider {
 			Log.e(Application.TAG, "Could not find configuration file", e);
 		}
 
-		if (notFoundFiles.size() > 1) {
+		if (mMissingPathNames.size() > 1) {
 			if (toastIfFilesMissing) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, notFoundFiles.size(), getListName());
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, mMissingPathNames.size(), getListName());
 			}
 		}
-		else if (notFoundFiles.size() == 1) {
+		else if (mMissingPathNames.size() == 1) {
 			if (toastIfFilesMissing) {
 				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single, getListName());
 			}
 		}
-		NotificationUtil.notifyNotFoundFiles(Application.getAppContext(), getListName(), notFoundFiles);
+		NotificationUtil.notifyNotFoundFiles(Application.getAppContext(), getListName(), mMissingPathNames);
 
 		// Nested properties are filled now.
 		for (String nestedListName : mNestedListNames) {
@@ -391,28 +395,41 @@ public abstract class ImageList extends RandomFileProvider {
 			for (String key : mProperties.stringPropertyNames()) {
 				writer.println(key + PROPERTY_SEPARATOR + mProperties.getProperty(key));
 			}
-			writer.println();
-			writer.println("# Nested List names");
-			for (int i = 0; i < mNestedListNames.size(); i++) {
-				String nestedListName = mNestedListNames.get(i);
-				writer.println(PROP_NESTED_LIST_PREFIX + "[" + i + "]" + PROPERTY_SEPARATOR + nestedListName);
-				Properties nestedProperties = mNestedListProperties.get(nestedListName);
-				if (nestedProperties != null) {
-					for (String nestedKey : nestedProperties.stringPropertyNames()) {
-						writer.println(PROP_NESTED_PROPERTY_PREFIX + "." + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
-								+ nestedProperties.getProperty(nestedKey));
+			if (mNestedListNames.size() > 0) {
+				writer.println();
+				writer.println("# Nested List names");
+				for (int i = 0; i < mNestedListNames.size(); i++) {
+					String nestedListName = mNestedListNames.get(i);
+					writer.println(PROP_NESTED_LIST_PREFIX + "[" + i + "]" + PROPERTY_SEPARATOR + nestedListName);
+					Properties nestedProperties = mNestedListProperties.get(nestedListName);
+					if (nestedProperties != null) {
+						for (String nestedKey : nestedProperties.stringPropertyNames()) {
+							writer.println(PROP_NESTED_PROPERTY_PREFIX + "." + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
+									+ nestedProperties.getProperty(nestedKey));
+						}
 					}
 				}
 			}
-			writer.println();
-			writer.println("# Folder names");
-			for (String folderName : mFolderNames) {
-				writer.println(folderName);
+			if (mFolderNames.size() > 0) {
+				writer.println();
+				writer.println("# Folder names");
+				for (String folderName : mFolderNames) {
+					writer.println(folderName);
+				}
 			}
-			writer.println();
-			writer.println("# File names");
-			for (String fileName : mFileNames) {
-				writer.println(fileName);
+			if (mFileNames.size() > 0) {
+				writer.println();
+				writer.println("# File names");
+				for (String fileName : mFileNames) {
+					writer.println(fileName);
+				}
+			}
+			if (mMissingPathNames.size() > 0) {
+				writer.println();
+				writer.println("# Missing path names");
+				for (String fileName : mMissingPathNames) {
+					writer.println(fileName);
+				}
 			}
 
 			writer.close();
