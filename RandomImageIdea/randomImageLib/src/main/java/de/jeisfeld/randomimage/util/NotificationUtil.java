@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import de.jeisfeld.randomimage.DisplayAllImagesActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimagelib.R;
 
@@ -159,13 +160,21 @@ public final class NotificationUtil {
 						.setContentText(message)
 						.setStyle(new Notification.BigTextStyle().bigText(message));
 
+		if (notificationId == ID_MISSING_FILES || notificationId == ID_UPDATED_LIST
+				|| notificationId == ID_ERROR_LOADING_LIST || notificationId == ID_ERROR_SAVING_LIST) {
+			Intent actionIntent = DisplayAllImagesActivity.createIntent(context, notificationTag);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+			notificationBuilder.setContentIntent(pendingIntent);
+		}
+
 		if (notificationId == ID_UPDATED_LIST || notificationId == ID_BACKUP_RESTORE || notificationId == ID_UNMOUNTED_PATH) {
-			Intent intent = new Intent(context, NotificationBroadcastReceiver.class);
-			intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+			Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
+			dismissalIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
 			if (notificationTag != null) {
-				intent.putExtra(EXTRA_LIST_NAME, notificationTag);
+				dismissalIntent.putExtra(EXTRA_LIST_NAME, notificationTag);
 			}
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 0,
+					dismissalIntent, PendingIntent.FLAG_ONE_SHOT);
 			notificationBuilder.setDeleteIntent(pendingIntent);
 		}
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -87,14 +88,25 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * Static helper method to start the activity.
 	 *
 	 * @param listName the image list which should be displayed first.
-	 * @param activity The activity starting this activity.
+	 * @param context  The context creating the intent.
 	 */
-	public static final void startActivity(final Activity activity, final String listName) {
-		Intent intent = new Intent(activity, DisplayAllImagesActivity.class);
+	public static final void startActivity(final Activity context, final String listName) {
+		context.startActivity(createIntent(context, listName));
+	}
+
+	/**
+	 * Static helper method to create an intent for the activity.
+	 *
+	 * @param listName the image list which should be displayed first.
+	 * @param context  The context creating the intent.
+	 * @return the intent.
+	 */
+	public static final Intent createIntent(final Context context, final String listName) {
+		Intent intent = new Intent(context, DisplayAllImagesActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
 		}
-		activity.startActivity(intent);
+		return intent;
 	}
 
 	@Override
