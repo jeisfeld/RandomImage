@@ -160,6 +160,14 @@ public abstract class ImageList extends RandomFileProvider {
 	}
 
 	/**
+	 * Remove missing files from the list.
+	 */
+	public final void cleanupMissingFiles() {
+		mMissingPathNames = new ArrayList<>();
+		update(true);
+	}
+
+	/**
 	 * Check if the file or folder is contained in the list.
 	 *
 	 * @param fileName The file name to be checked.
@@ -346,7 +354,7 @@ public abstract class ImageList extends RandomFileProvider {
 
 		if (mMissingPathNames.size() > 1) {
 			if (toastIfFilesMissing) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, mMissingPathNames.size(), getListName());
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, getListName(), mMissingPathNames.size());
 			}
 		}
 		else if (mMissingPathNames.size() == 1) {
@@ -570,6 +578,15 @@ public abstract class ImageList extends RandomFileProvider {
 	 */
 	public final ArrayList<String> getNestedListNames() {
 		return new ArrayList<>(mNestedListNames);
+	}
+
+	/**
+	 * Get the list of missing path names for the list.
+	 *
+	 * @return The list of missing path names.
+	 */
+	public final ArrayList<String> getMissingPathNames() {
+		return new ArrayList<>(mMissingPathNames);
 	}
 
 	/**

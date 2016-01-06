@@ -1,19 +1,35 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/buttonShowMissing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/button_missing_images"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone"
+        />
 
     <TextView
         android:id="@+id/textViewTitle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/buttonShowMissing"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/buttonShowMissing"
         android:textSize="20sp"
         android:textStyle="bold"/>
 
     <GridView
         android:id="@+id/gridViewDisplayImages"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/textViewTitle"
         android:columnWidth="@dimen/grid_pictures_size"
         android:gravity="center"
         android:horizontalSpacing="0dp"
@@ -21,4 +37,4 @@
         android:stretchMode="columnWidth"
         android:verticalSpacing="0dp"/>
 
-</LinearLayout>
+</RelativeLayout>

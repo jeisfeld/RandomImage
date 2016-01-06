@@ -8,6 +8,7 @@
     <string name="title_dialog_select_list_name">Select list name</string>
     <string name="title_dialog_select_change_frequency">Select change frequency</string>
     <string name="title_dialog_select_folder">Select folder</string>
+    <string name="title_dialog_missing_images">Missing images</string>
 
     <!-- Titles of notifications -->
 
@@ -36,9 +37,8 @@
     <string name="toast_failed_to_backup_list">Failed to backup list “%1$s”</string>
     <string name="toast_restore_of_list">Restored list “%1$s”</string>
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
-    <string name="toast_failed_to_load_files">%1$d files or folders of the image list “%2$s” could not be found</string>
+    <string name="toast_failed_to_load_files">%2$d files or folders of the image list “%1$s” could not be found</string>
     <string name="toast_failed_to_load_files_single">One file or folder of the image list “%1$s” could not be found</string>
-    <string name="toast_failed_to_load_files_all">The following files or folders of the image list “%1$s” could not be found: %2$s</string>
     <string name="toast_failed_to_open_google_play">Failed to open Google Play.</string>
     <string name="toast_cyclic_nesting">The list “%1$s” cannot be added because it contains the current list.</string>
     <string name="toast_cancelled_add_images">The addition of images was cancelled.</string>
@@ -79,6 +79,7 @@
     <string name="dialog_confirmation_add_folder">Do you want to add the folder “%1$s” to the image list?</string>
     <string name="dialog_confirmation_overwrite_list">The image list “%1$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup">The backup list “%1$s” exists already. Do you want to overwrite it?</string>
+    <string name="dialog_confirmation_missing_images">The following images of the list “%1$s” cannot be loaded.\n\n%2$s</string>
 
     <!-- Partial strings used to construct other strings -->
     <string name="partial_none">no images</string>

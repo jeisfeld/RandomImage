@@ -20,12 +20,14 @@
     <string name="button_cancel">Abbrechen</string>
     <string name="button_delete">Löschen</string>
     <string name="button_remove">Entfernen</string>
+    <string name="button_remove_from_list">Aus Liste entfernen</string>
     <string name="button_overwrite">Überschreiben</string>
     <string name="button_dont_show">Nicht mehr zeigen</string>
     <string name="button_add_folder">Ordner Hinzufügen</string>
     <string name="button_add_images">Bilder auswählen</string>
     <string name="button_purchased_item">%1$s (gekauft)</string>
     <string name="button_widget_configuration">Widget-Konfiguration beenden</string>
+    <string name="button_missing_images">Fehlende Bilder</string>
     <string name="default_list_name">Bildliste</string>
 
     <!-- Strings for image info -->

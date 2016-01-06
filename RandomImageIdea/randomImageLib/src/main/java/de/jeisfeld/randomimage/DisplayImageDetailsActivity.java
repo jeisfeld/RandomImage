@@ -197,7 +197,7 @@ public class DisplayImageDetailsActivity extends Activity {
 										public void onDialogNegativeClick(final DialogFragment dialog) {
 											returnResult(false, false);
 										}
-									}, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
+									}, null, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
 									filesString);
 						}
 					});

@@ -212,7 +212,7 @@ public final class NotificationUtil {
 		Set<String> oldMissingMounts = mMountingIssues.get(listName);
 
 		if (notFoundFiles.size() > 0) {
-			StringBuilder notFoundFilesString = new StringBuilder();
+			int notFoundFilesCount = 0;
 			Set<String> missingMounts = new HashSet<>();
 			for (String file : notFoundFiles) {
 				String missingMount = FileUtil.getUnmountedSdCardPath(new File(file));
@@ -222,16 +222,15 @@ public final class NotificationUtil {
 				else {
 					// Re-check if the file still does not exist.
 					if (!new File(file).exists()) {
-						if (notFoundFilesString.length() > 0) {
-							notFoundFilesString.append(", ");
-						}
-						notFoundFilesString.append(file);
+						notFoundFilesCount++;
 					}
 				}
 			}
-			if (notFoundFilesString.length() > 0) {
+			if (notFoundFilesCount > 0) {
 				NotificationUtil.displayNotification(context, listName, NotificationUtil.ID_MISSING_FILES,
-						R.string.title_notification_missing_files, R.string.toast_failed_to_load_files_all, listName, notFoundFilesString.toString());
+						R.string.title_notification_missing_files,
+						notFoundFilesCount == 1 ? R.string.toast_failed_to_load_files_single : R.string.toast_failed_to_load_files,
+						listName, notFoundFilesCount);
 			}
 			if (missingMounts.size() > 0) {
 				mMountingIssues.put(listName, missingMounts);

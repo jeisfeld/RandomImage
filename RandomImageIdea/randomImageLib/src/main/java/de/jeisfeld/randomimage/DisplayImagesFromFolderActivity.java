@@ -195,7 +195,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 							public void onDialogNegativeClick(final DialogFragment dialog) {
 								returnResult(false);
 							}
-						}, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
+						}, null, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
 						new File(mFolderName).getName());
 			}
 			return true;
@@ -216,7 +216,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 							public void onDialogNegativeClick(final DialogFragment dialog) {
 								// stay in the activity.
 							}
-						}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
+						}, null, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
 						new File(mFolderName).getName());
 			}
 			return true;

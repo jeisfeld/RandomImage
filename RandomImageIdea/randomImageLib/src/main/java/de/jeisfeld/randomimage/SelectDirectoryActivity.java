@@ -244,7 +244,7 @@ public class SelectDirectoryActivity extends Activity {
 								public void onDialogNegativeClick(final DialogFragment dialog) {
 									// do nothing
 								}
-							}, R.string.button_add_folder, R.string.dialog_confirmation_add_folder,
+							}, null, R.string.button_add_folder, R.string.dialog_confirmation_add_folder,
 							folderShortName);
 
 				}

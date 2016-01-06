@@ -140,17 +140,19 @@ public final class DialogUtil {
 	 *
 	 * @param activity        the current activity
 	 * @param listener        The listener waiting for the response
+	 * @param titleResource   the title of the confirmation dialog
 	 * @param buttonResource  the display on the positive button
 	 * @param messageResource the confirmation message
 	 * @param args            arguments for the confirmation message
 	 */
-	public static void displayConfirmationMessage(final Activity activity,
-												  final ConfirmDialogListener listener, final int buttonResource,
+	public static void displayConfirmationMessage(final Activity activity, final ConfirmDialogListener listener,
+												  final Integer titleResource, final int buttonResource,
 												  final int messageResource, final Object... args) {
 		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_BUTTON_RESOURCE, buttonResource);
+		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource == null ? R.string.title_dialog_confirmation : titleResource);
 		ConfirmDialogFragment fragment = new ConfirmDialogFragment();
 		fragment.setListener(listener);
 		fragment.setArguments(bundle);
@@ -435,6 +437,7 @@ public final class DialogUtil {
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int confirmButtonResource = getArguments().getInt(PARAM_BUTTON_RESOURCE);
+			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
 
 			// Listeners cannot retain functionality when automatically recreated.
 			// Therefore, dialogs with listeners must be re-created by the activity on orientation change.
@@ -447,7 +450,7 @@ public final class DialogUtil {
 			}
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(R.string.title_dialog_confirmation) //
+			builder.setTitle(titleResource) //
 					.setIcon(R.drawable.ic_title_warning) //
 					.setMessage(message) //
 					.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {

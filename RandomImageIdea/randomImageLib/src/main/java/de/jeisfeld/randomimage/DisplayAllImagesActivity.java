@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
@@ -152,7 +154,44 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		}
 		setAdapter(mNestedListNames, mFolderNames, mFileNames, false);
 		setTitle(mListName);
+		configureMissingImagesButton(imageList);
 		invalidateOptionsMenu();
+	}
+
+	/**
+	 * Configure the button to show missing images.
+	 *
+	 * @param imageList the image list.
+	 */
+	private void configureMissingImagesButton(final ImageList imageList) {
+		Button missingImagesButton = (Button) findViewById(R.id.buttonShowMissing);
+		boolean hasMissingImages = imageList.getMissingPathNames().size() > 0;
+		missingImagesButton.setVisibility(hasMissingImages ? View.VISIBLE : View.GONE);
+		if (hasMissingImages) {
+			missingImagesButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					StringBuilder missingImagesString = new StringBuilder();
+					for (String pathName : imageList.getMissingPathNames()) {
+						missingImagesString.append(pathName).append("\n");
+					}
+
+					DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this, new ConfirmDialogListener() {
+								@Override
+								public void onDialogPositiveClick(final DialogFragment dialog) {
+									imageList.cleanupMissingFiles();
+									fillListOfImages();
+								}
+
+								@Override
+								public void onDialogNegativeClick(final DialogFragment dialog) {
+									// do nothing
+								}
+							}, R.string.title_dialog_missing_images, R.string.button_remove_from_list, R.string.dialog_confirmation_missing_images,
+							mListName, missingImagesString);
+				}
+			});
+		}
 	}
 
 	/**
@@ -381,7 +420,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 							public void onDialogNegativeClick(final DialogFragment dialog) {
 								// do nothing.
 							}
-						}, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
+						}, null, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
 						imageFolderString);
 
 			}
@@ -547,7 +586,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 											public void onDialogNegativeClick(final DialogFragment dialog1) {
 												// do nothing.
 											}
-										}, R.string.button_delete, R.string.dialog_confirmation_delete_list, text);
+										}, null, R.string.button_delete, R.string.dialog_confirmation_delete_list, text);
 							}
 
 							@Override
@@ -660,7 +699,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						public void onDialogNegativeClick(final DialogFragment dialog2) {
 							// do nothing
 						}
-					}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, listName);
+					}, null, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_backup, listName);
 
 		}
 		else {
@@ -739,7 +778,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						public void onDialogNegativeClick(final DialogFragment dialog2) {
 							// do nothing
 						}
-					}, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, listName);
+					}, null, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, listName);
 
 		}
 		else {
