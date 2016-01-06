@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.view.ThumbImageView;
@@ -41,11 +40,6 @@ public abstract class DisplayImageListActivity extends Activity {
 	}
 
 	/**
-	 * The view showing the name of the list or folder.
-	 */
-	private TextView mTextViewTitle;
-
-	/**
 	 * The adapter handling the list of images.
 	 */
 	private DisplayImageListArrayAdapter mAdapter;
@@ -58,9 +52,8 @@ public abstract class DisplayImageListActivity extends Activity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_images);
+		setContentView(getLayoutId());
 		mGridView = (GridView) findViewById(R.id.gridViewDisplayImages);
-		mTextViewTitle = (TextView) findViewById(R.id.textViewTitle);
 
 		if (savedInstanceState != null) {
 			mSelectedFiles = savedInstanceState.getStringArray("selectedFiles");
@@ -68,6 +61,13 @@ public abstract class DisplayImageListActivity extends Activity {
 			mSelectedLists = savedInstanceState.getStringArray("selectedLists");
 		}
 	}
+
+	/**
+	 * Get the layout used for the activity.
+	 *
+	 * @return The layout id.
+	 */
+	protected abstract int getLayoutId();
 
 	/**
 	 * Initialize the adapter.
@@ -89,15 +89,6 @@ public abstract class DisplayImageListActivity extends Activity {
 			mSelectedFolders = null;
 			mSelectedLists = null;
 		}
-	}
-
-	/**
-	 * Initialize the adapter.
-	 *
-	 * @param title The title displayed on top of the display.
-	 */
-	protected final void setTitle(final String title) {
-		mTextViewTitle.setText(title);
 	}
 
 	// OVERRIDABLE

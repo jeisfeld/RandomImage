@@ -51,7 +51,7 @@ public final class NotificationUtil {
 	/**
 	 * Notification tag for unmounted paths when loading an image list.
 	 */
-	public static final int ID_UNMOUNTED_PATH = 5;
+	public static final int ID_UNMOUNTED_PATH = 6;
 
 	/**
 	 * A dot used at the end of messages.
@@ -155,17 +155,21 @@ public final class NotificationUtil {
 		if (notificationId == ID_MISSING_FILES || notificationId == ID_UPDATED_LIST
 				|| notificationId == ID_ERROR_LOADING_LIST || notificationId == ID_ERROR_SAVING_LIST) {
 			Intent actionIntent = DisplayAllImagesActivity.createIntent(context, notificationTag);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			int uniqueId = notificationTag.hashCode();
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notificationBuilder.setContentIntent(pendingIntent);
 		}
 
 		if (notificationId == ID_UPDATED_LIST || notificationId == ID_BACKUP_RESTORE || notificationId == ID_UNMOUNTED_PATH) {
 			Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
 			dismissalIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+			int uniqueId = 0;
 			if (notificationTag != null) {
 				dismissalIntent.putExtra(EXTRA_LIST_NAME, notificationTag);
+				uniqueId = notificationTag.hashCode();
 			}
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 0,
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), uniqueId,
 					dismissalIntent, PendingIntent.FLAG_ONE_SHOT);
 			notificationBuilder.setDeleteIntent(pendingIntent);
 		}

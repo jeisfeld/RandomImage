@@ -44,6 +44,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	protected int getLayoutId() {
+		return R.layout.activity_select_image_folder;
+	}
+
+	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -53,6 +54,11 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private String mFolderName;
 
 	/**
+	 * The TextView displaying the folder name.
+	 */
+	private TextView mTextViewFolderName;
+
+	/**
 	 * The current action within this activity.
 	 */
 	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
@@ -77,8 +83,14 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	protected int getLayoutId() {
+		return R.layout.activity_display_images_from_folder;
+	}
+
+	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mTextViewFolderName = (TextView) findViewById(R.id.textViewTitle);
 
 		mFolderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		boolean forAddition = getIntent().getBooleanExtra(STRING_EXTRA_FORADDITION, false);
@@ -288,7 +300,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		}
 
 		setAdapter(null, null, fileNames, false);
-		setTitle(mFolderName);
+		mTextViewFolderName.setText(mFolderName);
 	}
 
 	/**

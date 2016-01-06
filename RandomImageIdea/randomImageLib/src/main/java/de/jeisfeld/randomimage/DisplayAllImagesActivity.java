@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
@@ -80,6 +81,11 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	}
 
 	/**
+	 * The TextView displaying the list name.
+	 */
+	private TextView mTextViewListName;
+
+	/**
 	 * The current action within this activity.
 	 */
 	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
@@ -110,8 +116,14 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	protected int getLayoutId() {
+		return R.layout.activity_configure_image_list;
+	}
+
+	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mTextViewListName = (TextView) findViewById(R.id.textViewTitle);
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -165,7 +177,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 			getAdapter().cleanupCache();
 		}
 		setAdapter(mNestedListNames, mFolderNames, mFileNames, false);
-		setTitle(mListName);
+		mTextViewListName.setText(mListName);
 		configureMissingImagesButton(imageList);
 		invalidateOptionsMenu();
 	}

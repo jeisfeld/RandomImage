@@ -195,6 +195,12 @@ public class SelectDirectoryActivity extends Activity {
 				final ImageList imageList = ImageRegistry.getCurrentImageList(true);
 				boolean success = imageList.addFolder(mCurrentFolder);
 				if (success) {
+					String addedFoldersString =
+							DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mCurrentFolder), null);
+					DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
+					NotificationUtil.displayNotification(SelectDirectoryActivity.this, imageList.getListName(),
+							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
+							R.string.toast_added_single, addedFoldersString);
 					imageList.update(true);
 					mUpdatedList = true;
 				}
