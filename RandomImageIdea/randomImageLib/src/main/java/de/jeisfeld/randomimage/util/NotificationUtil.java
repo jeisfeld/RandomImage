@@ -204,6 +204,11 @@ public final class NotificationUtil {
 	 * @param notFoundFiles the list of files which have not been found.
 	 */
 	public static void notifyNotFoundFiles(final Context context, final String listName, final List<String> notFoundFiles) {
+		// Ignore not found files while booting.
+		if (PreferenceUtil.getSharedPreferenceBoolean(R.string.key_device_shut_down)) {
+			return;
+		}
+
 		Set<String> oldMissingMounts = mMountingIssues.get(listName);
 
 		if (notFoundFiles.size() > 0) {

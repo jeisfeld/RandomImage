@@ -25,6 +25,7 @@
     <string name="key_all_image_folders" translatable="false">all_image_folders</string>
     <string name="key_directory_chooser_last_folder" translatable="false">directory_chooser_last_folder</string>
     <string name="key_image_list_mount_issues" translatable="false">image_list_mount_issues</string>
+    <string name="key_device_shut_down" translatable="false">device_shut_down</string>
 
     <!-- Keys for statistics -->
 
