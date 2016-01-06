@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -116,7 +117,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	}
 
 	@Override
-	protected int getLayoutId() {
+	protected final int getLayoutId() {
 		return R.layout.activity_configure_image_list;
 	}
 
@@ -155,6 +156,37 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayall);
+	}
+
+	@Override
+	public final void onItemClick(final ItemType itemType, final String name) {
+		switch (itemType) {
+		case LIST:
+			switchToImageList(name, CreationStyle.NONE);
+			break;
+		case FOLDER:
+			DisplayImagesFromFolderActivity.startActivity(this, name, false);
+			break;
+		case FILE:
+		default:
+			startActivityForResult(DisplayRandomImageActivity.createIntent(this, null, name, true, null),
+					DisplayRandomImageActivity.REQUEST_CODE);
+			break;
+		}
+	}
+
+	@Override
+	public final void onItemLongClick(final ItemType itemType, final String name) {
+		switch (itemType) {
+		case LIST:
+			DisplayNestedListDetailsActivity.startActivity(this, name, mListName);
+			break;
+		case FOLDER:
+		case FILE:
+		default:
+			DisplayImageDetailsActivity.startActivity(this, name, mListName, true);
+			break;
+		}
 	}
 
 	/**

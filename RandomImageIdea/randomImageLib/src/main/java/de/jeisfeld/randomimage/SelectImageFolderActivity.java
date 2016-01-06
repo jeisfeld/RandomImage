@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -44,7 +45,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
-	protected int getLayoutId() {
+	protected final int getLayoutId() {
 		return R.layout.activity_select_image_folder;
 	}
 
@@ -54,6 +55,17 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 		// This step initializes the adapter.
 		fillListOfFolders();
+	}
+
+	@Override
+	public final void onItemClick(final ItemType itemType, final String name) {
+		// itemType is always folder.
+		returnResult(name);
+	}
+
+	@Override
+	public final void onItemLongClick(final ItemType itemType, final String name) {
+		// itemType is always folder.
 	}
 
 	/**

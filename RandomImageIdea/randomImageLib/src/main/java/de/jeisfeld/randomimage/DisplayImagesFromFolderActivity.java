@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
@@ -83,7 +84,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
-	protected int getLayoutId() {
+	protected final int getLayoutId() {
 		return R.layout.activity_display_images_from_folder;
 	}
 
@@ -113,6 +114,18 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		if (forAddition) {
 			DialogUtil.displayInfo(this, null, R.string.key_info_add_images, R.string.dialog_info_add_images);
 		}
+	}
+
+	@Override
+	public final void onItemClick(final ItemType itemType, final String name) {
+		// itemType is always file.
+		DisplayRandomImageActivity.startActivityForFolder(this, new File(name).getParent(), name);
+	}
+
+	@Override
+	public final void onItemLongClick(final ItemType itemType, final String name) {
+		// itemType is always file.
+		DisplayImageDetailsActivity.startActivity(this, name, null, true);
 	}
 
 	@Override

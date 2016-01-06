@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
 
+import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
@@ -128,5 +129,21 @@ public abstract class DisplayImageListActivity extends Activity {
 			outState.putStringArray("selectedLists", getAdapter().getSelectedNestedLists().toArray(emptyArray));
 		}
 	}
+
+	/**
+	 * This method determines what should happen when clicking on an item in the displayed list if in Selection mode ONE.
+	 *
+	 * @param itemType        The item type (list, folder or file)
+	 * @param name            The name of the item.
+	 */
+	public abstract void onItemClick(ItemType itemType, String name);
+
+	/**
+	 * This method determines what should happen when clicking on an item in the displayed list if in Selection mode ONE.
+	 *
+	 * @param itemType The item type (list, folder or file)
+	 * @param name     The name of the item.
+	 */
+	public abstract void onItemLongClick(ItemType itemType, String name);
 
 }

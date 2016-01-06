@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -68,6 +69,17 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		}
 
 		changeAction(mCurrentAction);
+	}
+
+	@Override
+	public final void onItemClick(final ItemType itemType, final String name) {
+		// itemType is always list.
+		ConfigureImageListActivity.startActivity(this, name);
+	}
+
+	@Override
+	public final void onItemLongClick(final ItemType itemType, final String name) {
+		// itemType is always list.
 	}
 
 	/**
@@ -261,7 +273,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 									}, 0, R.string.dialog_info_name_already_existing, name);
 								}
 								else {
-									boolean success = ImageRegistry.renameCurrentList(name);
+									ImageRegistry.renameCurrentList(name);
 								}
 							}
 
