@@ -49,7 +49,7 @@
     </string-array>
     <string-array name="background_style_names">
         <item>Fill frame with image</item>
-        <item>Transparent background</item>
+        <item>No background</item>
         <item>White shadow</item>
         <item>Black shadow</item>
         <item>Light grey</item>

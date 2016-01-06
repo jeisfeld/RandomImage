@@ -52,19 +52,16 @@ public class StackedImageWidget extends GenericImageWidget {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 
 		// Set up the RemoteViews object to use a RemoteViews adapter.
-		// This adapter connects
-		// to a RemoteViewsService through the specified intent.
+		// This adapter connects to a RemoteViewsService through the specified intent.
 		// This is how you populate the data.
 		remoteViews.setRemoteAdapter(R.id.stackViewWidget, intent);
 
 		// The empty view is displayed when the collection has no items.
-		// It should be in the same layout used to instantiate the RemoteViews
-		// object above.
+		// It should be in the same layout used to instantiate the RemoteViews object above.
 		remoteViews.setEmptyView(R.id.stackViewWidget, R.id.textViewWidgetEmpty);
 
 		Intent nestedIntent = DisplayRandomImageActivity.createIntent(context, getListName(appWidgetId), null, false, appWidgetId);
-		PendingIntent pendingIntent =
-				PendingIntent.getActivity(context, appWidgetId, nestedIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, nestedIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setPendingIntentTemplate(R.id.stackViewWidget, pendingIntent);
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);

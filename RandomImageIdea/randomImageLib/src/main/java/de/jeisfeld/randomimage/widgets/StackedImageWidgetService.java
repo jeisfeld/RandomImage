@@ -1,11 +1,12 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.util.ArrayList;
+
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -34,11 +35,6 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	private static final int IMAGE_BORDER_SIZE = Application.getAppContext().getResources()
 			.getDimensionPixelSize(R.dimen.stack_image_widget_border_size);
 
-	/**
-	 * A map storing instances of the factory.
-	 */
-	private static SparseArray<StackRemoteViewsFactory> mFactoryMap = new SparseArray<>();
-
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
 		return new StackRemoteViewsFactory(this.getApplicationContext(), intent);
@@ -61,7 +57,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		/**
 		 * The file names of the stacked images.
 		 */
-		private String[] mFileNames = new String[0];
+		private ArrayList<String> mFileNames = new ArrayList<>();
 
 		/**
 		 * The application context.
@@ -91,15 +87,11 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		 */
 		private StackRemoteViewsFactory(final Context context, final Intent intent) {
 			this.mContext = context;
-
-			mAppWidgetId =
-					intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+			mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
 			int viewWidth = intent.getIntExtra(StackedImageWidget.STRING_EXTRA_WIDTH, MediaStoreUtil.MINI_THUMB_SIZE);
 			mImageSize = calculateImageSize(viewWidth);
 			mListName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
-
-			mFactoryMap.put(mAppWidgetId, this);
 		}
 
 		@Override
@@ -111,7 +103,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
 				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
-				mFileNames = new String[0];
+				mFileNames = new ArrayList<>();
 			}
 			else {
 				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);
@@ -121,25 +113,21 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onDestroy() {
-			mFactoryMap.remove(mAppWidgetId);
 		}
 
 		@Override
 		public int getCount() {
-			return mFileNames.length;
+			return mFileNames.size();
 		}
 
 		@Override
 		public RemoteViews getViewAt(final int position) {
-
 			RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_stacked_image_item);
 
-			String currentFileName = mFileNames[position];
+			String currentFileName = mFileNames.get(position);
 
 			if (currentFileName == null) {
-				remoteViews.setImageViewResource(
-						R.id.imageViewWidget,
-						R.drawable.ic_launcher);
+				remoteViews.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_launcher);
 			}
 			else {
 				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
@@ -187,8 +175,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		@Override
 		public void onDataSetChanged() {
 			// update image size
-			int viewWidth =
-					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
+			int viewWidth = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
 			// Update the list name
 			mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
 			mImageSize = calculateImageSize(viewWidth);
@@ -200,7 +187,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
 				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
-				mFileNames = new String[0];
+				mFileNames = new ArrayList<>();
 			}
 			else {
 				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);

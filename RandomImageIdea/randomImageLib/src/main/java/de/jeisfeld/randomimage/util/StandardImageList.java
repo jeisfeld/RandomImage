@@ -97,10 +97,10 @@ public final class StandardImageList extends ImageList {
 	 *
 	 * @return The list of file names.
 	 */
-	public String[] getShuffledFileNames() {
+	public ArrayList<String> getShuffledFileNames() {
 		ArrayList<String> clonedList = getAllImageFiles();
 		Collections.shuffle(clonedList);
-		return clonedList.toArray(new String[clonedList.size()]);
+		return clonedList;
 	}
 
 	/**

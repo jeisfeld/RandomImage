@@ -23,7 +23,7 @@
     </string-array>
     <string-array name="background_style_names">
         <item>Rahmen mit Bild füllen</item>
-        <item>Transparenter Hintergrund</item>
+        <item>Kein Hintergrund</item>
         <item>Heller Schatten</item>
         <item>Dunkler Schatten</item>
         <item>Hellgrau</item>

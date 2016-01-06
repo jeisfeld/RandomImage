@@ -332,6 +332,46 @@ public final class PreferenceUtil {
 	}
 
 	/**
+	 * Retrieve a String List indexed shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param index        The index
+	 * @return the corresponding preference value.
+	 */
+	public static ArrayList<String> getIndexedSharedPreferenceStringList(final int preferenceId, final int index) {
+		String restoreString = getIndexedSharedPreferenceString(preferenceId, index);
+		if (restoreString == null || restoreString.length() == 0) {
+			return new ArrayList<>();
+		}
+
+		String[] folderArray = restoreString.split("\\r?\\n");
+		return new ArrayList<>(Arrays.asList(folderArray));
+	}
+
+	/**
+	 * Set a String List indexed shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param index        The index
+	 * @param stringList   the target value of the preference.
+	 */
+	public static void setIndexedSharedPreferenceStringList(final int preferenceId, final int index, final List<String> stringList) {
+		if (stringList == null || stringList.size() == 0) {
+			PreferenceUtil.removeIndexedSharedPreference(preferenceId, index);
+		}
+		else {
+			StringBuilder saveStringBuffer = new StringBuilder();
+			for (String string : stringList) {
+				if (saveStringBuffer.length() > 0) {
+					saveStringBuffer.append("\n");
+				}
+				saveStringBuffer.append(string);
+			}
+			PreferenceUtil.setIndexedSharedPreferenceString(preferenceId, index, saveStringBuffer.toString());
+		}
+	}
+
+	/**
 	 * Remove an indexed shared preference.
 	 *
 	 * @param preferenceId the id of the shared preference.
