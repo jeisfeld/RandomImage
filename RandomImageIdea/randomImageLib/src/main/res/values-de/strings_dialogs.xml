@@ -21,6 +21,10 @@
 
     <!-- Contents of toasts or notifications -->
     <string name="notification_unmounted_path">Auf das externe Verzeichnis “%1$s” kann nicht zugegriffen werden. Daher fehlen Bilder in den Bildlisten %2$s.</string>
+    <string name="notification_backup_of_list">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s“.</string>
+    <string name="notification_restore_of_list">Die Listen %1$s wurden wiederhergestellt.</string>
+    <string name="notification_backup_of_list_single">Die Liste %1$s wurde gesichert im Verzeichnis „%2$s“.</string>
+    <string name="notification_restore_of_list_single">Die Liste %1$s wurde wiederhergestellt.</string>
     <string name="toast_added_multiple">Es wurden %1$s zur Liste hinzugefügt</string>
     <string name="toast_added_single">%1$s wurde zur Liste hinzugefügt</string>
     <string name="toast_added_image_none">Das Bild war bereits in der Liste.</string>
@@ -33,7 +37,7 @@
     <string name="toast_removed_single">%1$s wurde aus der Liste entfernt</string>
     <string name="toast_removed_no_image">Es wurde kein Bild zum Entfernen ausgewählt</string>
     <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s“</string>
-    <string name="toast_backup_of_list">Die Liste „%1$s“ wurde gesichert</string>
+    <string name="toast_backup_of_list">Die Liste „%1$s“ wurde gesichert in der Datei „%2$s“</string>
     <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
     <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>

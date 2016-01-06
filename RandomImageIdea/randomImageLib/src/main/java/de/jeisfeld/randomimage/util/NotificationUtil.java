@@ -84,9 +84,14 @@ public final class NotificationUtil {
 	private static Map<String, List<String>> mListUpdateMap = new HashMap<>();
 
 	/**
-	 * A list storing the backup/restore messages.
+	 * A list storing the names of backed up or restored lists.
 	 */
-	private static List<String> mBackupMessages = new ArrayList<>();
+	private static List<String> mBackedUpLists = new ArrayList<>();
+
+	/**
+	 * Flag indicating if the last action was backup or restore.
+	 */
+	private static boolean mWasRestore = false;
 
 	/**
 	 * A map storing information on mounting issues while loading image lists.
@@ -139,19 +144,6 @@ public final class NotificationUtil {
 			}
 			message = messageBuilder.toString();
 		}
-		else if (notificationId == ID_BACKUP_RESTORE) {
-			if (!message.endsWith(DOT)) {
-				message += DOT;
-			}
-			mBackupMessages.add(message);
-
-			StringBuilder messageBuilder = new StringBuilder(mBackupMessages.get(0));
-			for (String partialMessage : mBackupMessages.subList(1, mBackupMessages.size())) {
-				messageBuilder.append("\n");
-				messageBuilder.append(partialMessage);
-			}
-			message = messageBuilder.toString();
-		}
 
 		Notification.Builder notificationBuilder =
 				new Notification.Builder(context)
@@ -199,10 +191,42 @@ public final class NotificationUtil {
 			mListUpdateMap.remove(notificationTag);
 		}
 		else if (notificationId == ID_BACKUP_RESTORE) {
-			mBackupMessages.clear();
+			mBackedUpLists.clear();
 		}
 
 		notificationManager.cancel(notificationTag, notificationId);
+	}
+
+	/**
+	 * Notify about backup or restore of a list.
+	 *
+	 * @param context    the current activity or context
+	 * @param listName   The name of the list to be backed up or restored.
+	 * @param backupPath The path where backup files are stored.
+	 * @param isRestore  True for restore, false for backup.
+	 */
+	public static void notifyBackupRestore(final Context context, final String listName, final String backupPath, final boolean isRestore) {
+		if (isRestore != mWasRestore) {
+			mBackedUpLists.clear();
+		}
+		mWasRestore = isRestore;
+		mBackedUpLists.add(listName);
+		StringBuilder backedUpListString = new StringBuilder();
+		for (String name : mBackedUpLists) {
+			if (backedUpListString.length() > 0) {
+				backedUpListString.append(", ");
+			}
+			backedUpListString.append(String.format(context.getString(R.string.partial_quoted_string), name));
+		}
+		int messageId;
+		if (mBackedUpLists.size() == 1) {
+			messageId = isRestore ? R.string.notification_restore_of_list_single : R.string.notification_backup_of_list_single;
+		}
+		else {
+			messageId = isRestore ? R.string.notification_restore_of_list : R.string.notification_backup_of_list;
+		}
+		NotificationUtil.displayNotification(context, null, NotificationUtil.ID_BACKUP_RESTORE, R.string.title_notification_backup_restore,
+				messageId, backedUpListString.toString(), backupPath);
 	}
 
 	/**

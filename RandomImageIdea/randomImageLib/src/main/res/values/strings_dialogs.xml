@@ -21,6 +21,10 @@
 
     <!-- Contents of toasts or notifications -->
     <string name="notification_unmounted_path">The external storage “%1$s” cannot be accessed. This causes missing images in the image lists %2$s.</string>
+    <string name="notification_backup_of_list">Made backup of the lists %1$s to the folder “%2$s”.</string>
+    <string name="notification_restore_of_list">The lists %1$s have been restored.</string>
+    <string name="notification_backup_of_list_single">Made backup of the list %1$s to the folder “%2$s”.</string>
+    <string name="notification_restore_of_list_single">The list %1$s has been restored.</string>
     <string name="toast_added_multiple">%1$s have been added to the list</string>
     <string name="toast_added_single">%1$s has been added to the list</string>
     <string name="toast_added_image_none">The image was already in the list.</string>
@@ -33,7 +37,7 @@
     <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
-    <string name="toast_backup_of_list">Made backup of list “%1$s”</string>
+    <string name="toast_backup_of_list">Made backup of list “%1$s” to the file “%2$s”</string>
     <string name="toast_failed_to_backup_list">Failed to backup list “%1$s”</string>
     <string name="toast_restore_of_list">Restored list “%1$s”</string>
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>

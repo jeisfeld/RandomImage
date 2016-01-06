@@ -728,13 +728,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		String backupFile = ImageRegistry.backupImageList(listToBeBackuped);
 		DialogUtil.displayToast(DisplayAllImagesActivity.this,
 				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackuped);
-		if (backupFile == null) {
-			NotificationUtil.displayNotification(this, null, NotificationUtil.ID_BACKUP_RESTORE, R.string.title_notification_backup_restore,
-					R.string.toast_failed_to_backup_list, listToBeBackuped);
-		}
-		else {
-			NotificationUtil.displayNotification(this, null, NotificationUtil.ID_BACKUP_RESTORE, R.string.title_notification_backup_restore,
-					R.string.toast_backup_of_list, listToBeBackuped, backupFile);
+		if (backupFile != null) {
+			NotificationUtil.notifyBackupRestore(this, listToBeBackuped, new File(backupFile).getParent(), false);
 		}
 	}
 
@@ -807,9 +802,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 		boolean success = ImageRegistry.restoreImageList(listToBeRestored);
 		DialogUtil.displayToast(DisplayAllImagesActivity.this,
 				success ? R.string.toast_restore_of_list : R.string.toast_failed_to_restore_list, listToBeRestored);
-		NotificationUtil.displayNotification(this, null, NotificationUtil.ID_BACKUP_RESTORE, R.string.title_notification_backup_restore,
-				success ? R.string.toast_restore_of_list : R.string.toast_failed_to_restore_list, listToBeRestored);
 		if (success) {
+			NotificationUtil.notifyBackupRestore(this, listToBeRestored, null, true);
 			switchToImageList(listToBeRestored, CreationStyle.NONE);
 		}
 	}
