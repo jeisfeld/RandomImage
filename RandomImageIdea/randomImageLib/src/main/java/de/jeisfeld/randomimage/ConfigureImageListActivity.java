@@ -40,7 +40,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display and configure the list of images in an image list.
  */
-public class DisplayAllImagesActivity extends DisplayImageListActivity {
+public class ConfigureImageListActivity extends DisplayImageListActivity {
 	/**
 	 * The resource key for the name of the image list to be displayed.
 	 */
@@ -108,7 +108,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName) {
-		Intent intent = new Intent(context, DisplayAllImagesActivity.class);
+		Intent intent = new Intent(context, ConfigureImageListActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
 		}
@@ -200,7 +200,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 						missingImagesString.append(pathName).append("\n");
 					}
 
-					DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this, new ConfirmDialogListener() {
+					DialogUtil.displayConfirmationMessage(ConfigureImageListActivity.this, new ConfirmDialogListener() {
 								@Override
 								public void onDialogPositiveClick(final DialogFragment dialog) {
 									imageList.cleanupMissingFiles();
@@ -224,7 +224,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	protected final void bringOnTop() {
 		Intent reorderIntent = new Intent(this, DisplayRandomImageActivity.class);
 		reorderIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		Intent displayAllIntent = new Intent(this, DisplayAllImagesActivity.class);
+		Intent displayAllIntent = new Intent(this, ConfigureImageListActivity.class);
 		displayAllIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivities(new Intent[] {reorderIntent, displayAllIntent});
 	}
@@ -364,7 +364,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				DialogUtil.displayInfo(this, new MessageDialogListener() {
 					@Override
 					public void onDialogFinished() {
-						SettingsActivity.startActivity(DisplayAllImagesActivity.this);
+						SettingsActivity.startActivity(ConfigureImageListActivity.this);
 					}
 				}, 0, R.string.dialog_info_need_premium);
 				return false;
@@ -429,8 +429,8 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 									messageId = R.string.toast_removed_multiple;
 								}
 
-								DialogUtil.displayToast(DisplayAllImagesActivity.this, messageId, fileFolderMessageString);
-								NotificationUtil.displayNotification(DisplayAllImagesActivity.this, mListName, NotificationUtil.ID_UPDATED_LIST,
+								DialogUtil.displayToast(ConfigureImageListActivity.this, messageId, fileFolderMessageString);
+								NotificationUtil.displayNotification(ConfigureImageListActivity.this, mListName, NotificationUtil.ID_UPDATED_LIST,
 										R.string.title_notification_updated_list, messageId, fileFolderMessageString);
 
 								if (totalRemovedCount > 0) {
@@ -449,7 +449,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 
 			}
 			else {
-				DialogUtil.displayToast(DisplayAllImagesActivity.this, R.string.toast_removed_no_image);
+				DialogUtil.displayToast(ConfigureImageListActivity.this, R.string.toast_removed_no_image);
 				changeAction(CurrentAction.DISPLAY);
 			}
 			return true;
@@ -512,7 +512,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 								String name = text == null ? null : text.trim();
 
 								if (name == null || name.length() == 0) {
-									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+									DialogUtil.displayInfo(ConfigureImageListActivity.this, new MessageDialogListener() {
 										@Override
 										public void onDialogFinished() {
 											createNewImageList(creationStyle);
@@ -521,7 +521,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 									}, 0, R.string.dialog_info_name_too_short);
 								}
 								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
-									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+									DialogUtil.displayInfo(ConfigureImageListActivity.this, new MessageDialogListener() {
 										@Override
 										public void onDialogFinished() {
 											createNewImageList(creationStyle);
@@ -592,14 +592,14 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int positin, final String text) {
-								DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+								DialogUtil.displayConfirmationMessage(ConfigureImageListActivity.this,
 										new ConfirmDialogListener() {
 											@Override
 											public void onDialogPositiveClick(final DialogFragment dialog1) {
 												ImageRegistry.deleteImageList(text);
 
 												if (GenericWidget.getWidgetIdsForName(text).size() > 0) {
-													DialogUtil.displayInfo(DisplayAllImagesActivity.this, null, 0,
+													DialogUtil.displayInfo(ConfigureImageListActivity.this, null, 0,
 															R.string.dialog_info_delete_widgets, text);
 												}
 
@@ -637,7 +637,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 									return;
 								}
 								else if (name == null || name.length() == 0) {
-									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+									DialogUtil.displayInfo(ConfigureImageListActivity.this, new MessageDialogListener() {
 										@Override
 										public void onDialogFinished() {
 											renameImageList();
@@ -646,7 +646,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 									}, 0, R.string.dialog_info_name_too_short);
 								}
 								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
-									DialogUtil.displayInfo(DisplayAllImagesActivity.this, new MessageDialogListener() {
+									DialogUtil.displayInfo(ConfigureImageListActivity.this, new MessageDialogListener() {
 										@Override
 										public void onDialogFinished() {
 											renameImageList();
@@ -712,7 +712,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void backupSingleList(final ArrayList<String> existingBackups, final String listName) {
 		if (existingBackups.contains(listName)) {
-			DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+			DialogUtil.displayConfirmationMessage(ConfigureImageListActivity.this,
 					new ConfirmDialogListener() {
 						@Override
 						public void onDialogPositiveClick(final DialogFragment dialog2) {
@@ -738,7 +738,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void doBackup(final String listToBeBackuped) {
 		String backupFile = ImageRegistry.backupImageList(listToBeBackuped);
-		DialogUtil.displayToast(DisplayAllImagesActivity.this,
+		DialogUtil.displayToast(ConfigureImageListActivity.this,
 				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackuped);
 		if (backupFile != null) {
 			NotificationUtil.notifyBackupRestore(this, listToBeBackuped, new File(backupFile).getParent(), false);
@@ -786,7 +786,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void restoreSingleList(final ArrayList<String> existingLists, final String listName) {
 		if (existingLists.contains(listName)) {
-			DialogUtil.displayConfirmationMessage(DisplayAllImagesActivity.this,
+			DialogUtil.displayConfirmationMessage(ConfigureImageListActivity.this,
 					new ConfirmDialogListener() {
 						@Override
 						public void onDialogPositiveClick(final DialogFragment dialog2) {
@@ -812,7 +812,7 @@ public class DisplayAllImagesActivity extends DisplayImageListActivity {
 	 */
 	private void doRestore(final String listToBeRestored) {
 		boolean success = ImageRegistry.restoreImageList(listToBeRestored);
-		DialogUtil.displayToast(DisplayAllImagesActivity.this,
+		DialogUtil.displayToast(ConfigureImageListActivity.this,
 				success ? R.string.toast_restore_of_list : R.string.toast_failed_to_restore_list, listToBeRestored);
 		if (success) {
 			NotificationUtil.notifyBackupRestore(this, listToBeRestored, null, true);

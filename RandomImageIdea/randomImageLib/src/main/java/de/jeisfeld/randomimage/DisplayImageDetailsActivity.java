@@ -48,7 +48,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 	/**
-	 * The resource key for the flat indicating if it should be prevented to trigger the DisplayAllImagesActivity.
+	 * The resource key for the flat indicating if it should be prevented to trigger the ConfigureImageListActivity.
 	 */
 	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
 	/**
@@ -71,7 +71,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	private String mListName;
 
 	/**
-	 * flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 */
 	private boolean mPreventDisplayAll;
 
@@ -81,7 +81,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * @param activity          The activity starting this activity.
 	 * @param fileName          The name of the file whose details should be displayed.
 	 * @param listName          The name of the list from which this file is taken.
-	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 */
 	public static final void startActivity(final Activity activity, final String fileName, final String listName,
 										   final boolean preventDisplayAll) {
@@ -207,7 +207,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			listMenu.addItem(R.string.menu_edit_list, new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					DisplayAllImagesActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
+					ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
 					returnResult(false, false);
 				}
 			});

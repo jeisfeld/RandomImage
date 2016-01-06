@@ -214,7 +214,7 @@ public class SettingsFragment extends PreferenceFragment {
 		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
 								   final boolean isPremium) {
 			if (isPremium != PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium)) {
-				// Update premium status, also in DisplayAllImagesActivity.
+				// Update premium status, also in ConfigureImageListActivity.
 				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
 				((SettingsActivity) getActivity()).returnResult(true);
 			}

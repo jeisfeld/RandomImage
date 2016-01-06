@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-import de.jeisfeld.randomimage.DisplayAllImagesActivity;
+import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -76,7 +76,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 				String listName = ImageRegistry.getCurrentListName();
 
 				initialize(savedInstanceState, appWidgetId, listName);
-				DisplayAllImagesActivity.startActivity(this, listName);
+				ConfigureImageListActivity.startActivity(this, listName);
 			}
 			else if (imageListNames.size() == 1) {
 				initialize(savedInstanceState, appWidgetId, imageListNames.get(0));

@@ -293,8 +293,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		thumbImageView.setMarkable(mMarkingType);
 
 		final String listName;
-		if (mActivity instanceof DisplayAllImagesActivity) {
-			listName = ((DisplayAllImagesActivity) mActivity).getListName();
+		if (mActivity instanceof ConfigureImageListActivity) {
+			listName = ((ConfigureImageListActivity) mActivity).getListName();
 		}
 		else {
 			listName = null;
@@ -318,8 +318,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				switch (mSelectionMode) {
 				case ONE:
 					if (isNestedList) {
-						if (mActivity instanceof DisplayAllImagesActivity) {
-							((DisplayAllImagesActivity) mActivity).switchToImageList(entryName, CreationStyle.NONE);
+						if (mActivity instanceof ConfigureImageListActivity) {
+							((ConfigureImageListActivity) mActivity).switchToImageList(entryName, CreationStyle.NONE);
 						}
 					}
 					else if (isFolder) {

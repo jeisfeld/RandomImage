@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import de.jeisfeld.randomimage.DisplayAllImagesActivity;
+import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -80,7 +80,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		editListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
-				DisplayAllImagesActivity.startActivity(getActivity(),
+				ConfigureImageListActivity.startActivity(getActivity(),
 						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 				return true;
 			}

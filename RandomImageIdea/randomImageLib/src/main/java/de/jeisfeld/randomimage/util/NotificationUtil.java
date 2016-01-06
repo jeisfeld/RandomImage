@@ -15,7 +15,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import de.jeisfeld.randomimage.DisplayAllImagesActivity;
+import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimagelib.R;
 
@@ -154,7 +154,7 @@ public final class NotificationUtil {
 
 		if (notificationId == ID_MISSING_FILES || notificationId == ID_UPDATED_LIST
 				|| notificationId == ID_ERROR_LOADING_LIST || notificationId == ID_ERROR_SAVING_LIST) {
-			Intent actionIntent = DisplayAllImagesActivity.createIntent(context, notificationTag);
+			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag);
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			int uniqueId = notificationTag.hashCode();
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);

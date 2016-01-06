@@ -154,7 +154,7 @@ public class Application extends android.app.Application {
 	 * @param triggeringActivity triggeringActivity the triggering activity.
 	 */
 	public static final void startApplication(final Activity triggeringActivity) {
-		Intent intent = new Intent(triggeringActivity, DisplayAllImagesActivity.class);
+		Intent intent = new Intent(triggeringActivity, ConfigureImageListActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		triggeringActivity.startActivity(intent);
 	}

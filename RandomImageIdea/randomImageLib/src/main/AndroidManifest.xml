@@ -59,7 +59,7 @@
             android:label="@string/title_activity_select_image_folder">
         </activity>
         <activity
-            android:name="de.jeisfeld.randomimage.DisplayAllImagesActivity"
+            android:name="de.jeisfeld.randomimage.ConfigureImageListActivity"
             android:icon="@drawable/ic_launcher_setup"
             android:label="@string/title_activity_display_images"
             android:launchMode="singleTask"

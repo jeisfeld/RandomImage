@@ -47,7 +47,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 */
 	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
 	/**
-	 * The resource key for the flat indicating if it should be prevented to trigger the DisplayAllImagesActivity.
+	 * The resource key for the flat indicating if it should be prevented to trigger the ConfigureImageListActivity.
 	 */
 	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
 	/**
@@ -125,7 +125,7 @@ public class DisplayRandomImageActivity extends Activity {
 	private FlingDirection mLastFlingDirection = null;
 
 	/**
-	 * flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 */
 	private boolean mPreventDisplayAll;
 
@@ -150,7 +150,7 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @param context           The context in which this activity is started.
 	 * @param listName          the image list which should be taken.
 	 * @param fileName          the image file name which should be displayed first.
-	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger DisplayAllImagesActivity.
+	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 * @param appWidgetId       the id of the widget triggering this activity.
 	 * @return the intent.
 	 */
@@ -338,7 +338,7 @@ public class DisplayRandomImageActivity extends Activity {
 					if (mCurrentFileName == null) {
 						// Handle the case where the provider does not return any image.
 						if (mListName != null) {
-							DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, mListName);
+							ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName);
 						}
 						finish();
 						return;
@@ -384,7 +384,7 @@ public class DisplayRandomImageActivity extends Activity {
 					}
 				}
 				else {
-					DisplayAllImagesActivity.startActivity(DisplayRandomImageActivity.this, mListName);
+					ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName);
 				}
 				return true;
 			}
