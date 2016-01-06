@@ -61,8 +61,12 @@
         <activity
             android:name="de.jeisfeld.randomimage.ConfigureImageListActivity"
             android:icon="@drawable/ic_launcher_setup"
-            android:label="@string/title_activity_display_images"
-            android:launchMode="singleTask"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name="de.jeisfeld.randomimage.MainConfigurationActivity"
+            android:icon="@drawable/ic_launcher_setup"
+            android:label="@string/title_activity_main_configuration"
             android:logo="@drawable/ic_launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -72,7 +76,7 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImagesFromFolderActivity"
-            android:label="@string/title_activity_display_images">
+            android:label="@string/title_activity_configure_image_list">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectImageFolderActivity"

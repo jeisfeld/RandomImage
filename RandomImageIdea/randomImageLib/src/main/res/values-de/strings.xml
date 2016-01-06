@@ -9,7 +9,8 @@
     <string name="title_activity_display_image_details">Bildinformationen</string>
     <string name="title_activity_display_folder_details">Verzeichnisinformationen</string>
     <string name="title_activity_display_nested_list_details">Unterlisteninformationen</string>
-    <string name="title_activity_display_images">Ü-Bild Einrichtung</string>
+    <string name="title_activity_configure_image_list">Bildliste Konfigurieren</string>
+    <string name="title_activity_main_configuration">Ü-Bild Einrichtung</string>
     <string name="title_activity_select_image_folder">Bildverzeichnis wählen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_image_widget_configuration">Widget-Einstellungen</string>
@@ -28,6 +29,8 @@
     <string name="button_purchased_item">%1$s (gekauft)</string>
     <string name="button_widget_configuration">Widget-Konfiguration beenden</string>
     <string name="button_missing_images">Fehlende Bilder</string>
+    <string name="button_widgets">Überraschungsbild-Widgets</string>
+    <string name="button_notifications">Überraschungsbild-Benachrichtigungen</string>
     <string name="default_list_name">Bildliste</string>
 
     <!-- Strings for image info -->

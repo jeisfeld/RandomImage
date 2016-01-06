@@ -321,6 +321,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 						if (mActivity instanceof ConfigureImageListActivity) {
 							((ConfigureImageListActivity) mActivity).switchToImageList(entryName, CreationStyle.NONE);
 						}
+						else if (mActivity instanceof MainConfigurationActivity) {
+							ConfigureImageListActivity.startActivity(mActivity, entryName);
+						}
 					}
 					else if (isFolder) {
 						if (mActivity instanceof SelectImageFolderActivity) {

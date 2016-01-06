@@ -116,14 +116,6 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
-	protected final void onDestroy() {
-		super.onDestroy();
-		if (getAdapter() != null) {
-			getAdapter().cleanupCache();
-		}
-	}
-
-	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
 		case DISPLAY:

@@ -157,14 +157,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayall);
 	}
 
-	@Override
-	protected final void onDestroy() {
-		super.onDestroy();
-		if (getAdapter() != null) {
-			getAdapter().cleanupCache();
-		}
-	}
-
 	/**
 	 * Fill the view with the current list of images.
 	 */

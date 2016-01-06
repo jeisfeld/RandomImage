@@ -56,14 +56,6 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		fillListOfFolders();
 	}
 
-	@Override
-	protected final void onDestroy() {
-		super.onDestroy();
-		if (getAdapter() != null) {
-			getAdapter().cleanupCache();
-		}
-	}
-
 	/**
 	 * Fill the view with the list of all image folders.
 	 */
