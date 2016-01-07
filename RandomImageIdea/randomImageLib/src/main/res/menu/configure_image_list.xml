@@ -13,24 +13,6 @@
                 android:id="@+id/action_switch_list"
                 android:title="@string/menu_switch_list"/>
             <item
-                android:id="@+id/action_create_list"
-                android:title="@string/menu_create_list"/>
-            <item
-                android:id="@+id/action_clone_list"
-                android:title="@string/menu_clone_list"/>
-            <item
-                android:id="@+id/action_rename_list"
-                android:title="@string/menu_rename_list"/>
-            <item
-                android:id="@+id/action_backup_list"
-                android:title="@string/menu_backup_list"/>
-            <item
-                android:id="@+id/action_restore_list"
-                android:title="@string/menu_restore_list"/>
-            <item
-                android:id="@+id/action_delete_list"
-                android:title="@string/menu_delete_list"/>
-            <item
                 android:id="@+id/action_include_other_list"
                 android:title="@string/menu_include_other_list"/>
         </menu>

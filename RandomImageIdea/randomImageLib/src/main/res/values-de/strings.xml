@@ -8,7 +8,8 @@
     <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
     <string name="title_activity_display_image_details">Bildinformationen</string>
     <string name="title_activity_display_folder_details">Verzeichnisinformationen</string>
-    <string name="title_activity_display_nested_list_details">Unterlisteninformationen</string>
+    <string name="title_activity_display_list_info">Listeninformationen</string>
+    <string name="title_activity_display_nested_list_info">Unterlisteninformationen</string>
     <string name="title_activity_configure_image_list">Bildliste Konfigurieren</string>
     <string name="title_activity_main_configuration">Ü-Bild Einrichtung</string>
     <string name="title_activity_select_image_folder">Bildverzeichnis wählen</string>
@@ -31,6 +32,11 @@
     <string name="button_missing_images">Fehlende Bilder</string>
     <string name="button_widgets">Überraschungsbild-Widgets</string>
     <string name="button_notifications">Überraschungsbild-Benachrichtigungen</string>
+    <string name="button_clone_list">Liste klonen</string>
+    <string name="button_rename_list">Liste umbenennen</string>
+    <string name="button_delete_list">Liste löschen</string>
+    <string name="button_backup_list">Liste sichern</string>
+    <string name="button_restore_list">Liste wiederherstellen</string>
     <string name="default_list_name">Bildliste</string>
 
     <!-- Strings for image info -->

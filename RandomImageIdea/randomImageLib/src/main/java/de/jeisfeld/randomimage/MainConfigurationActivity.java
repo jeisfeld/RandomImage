@@ -2,6 +2,8 @@ package de.jeisfeld.randomimage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -23,6 +25,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -55,7 +58,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	}
 
 	@Override
-	protected int getLayoutId() {
+	protected final int getLayoutId() {
 		return R.layout.activity_main_configuration;
 	}
 
@@ -80,6 +83,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		// itemType is always list.
+		DisplayListInfoActivity.startActivity(this, name, null);
 	}
 
 	/**
@@ -97,13 +101,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
 		case DISPLAY:
-			getMenuInflater().inflate(R.menu.display_image_list, menu);
-
-			if (ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP).size() < 2) {
-				menu.findItem(R.id.action_switch_list).setEnabled(false);
-				menu.findItem(R.id.action_delete_list).setEnabled(false);
-			}
-
+			getMenuInflater().inflate(R.menu.main_configuration, menu);
 			return true;
 		default:
 			return false;
@@ -129,12 +127,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @return true if menu item was consumed.
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
-		if (menuId == R.id.action_select_images_for_removal) {
-			changeAction(CurrentAction.REMOVE);
-			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
-			return true;
-		}
-		else if (menuId == R.id.action_backup_list) {
+		if (menuId == R.id.action_backup_list) {
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
 			backupImageList();
 			return true;
@@ -142,13 +135,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		else if (menuId == R.id.action_restore_list) {
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
 			restoreImageList();
-			return true;
-		}
-		else if (menuId == R.id.action_clone_list) {
-			if (checkIfMoreListsAllowed()) {
-				PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
-				createNewImageList(CreationStyle.CLONE_CURRENT);
-			}
 			return true;
 		}
 		else if (menuId == R.id.action_create_list) {
@@ -225,6 +211,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 								}
 								else {
 									ImageRegistry.switchToImageList(name, creationStyle, true);
+									ConfigureImageListActivity.startActivity(MainConfigurationActivity.this, name);
+									fillListOfLists();
 								}
 							}
 
@@ -235,6 +223,33 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 						}, R.string.title_dialog_enter_list_name, R.string.button_ok, "",
 						creationStyle == CreationStyle.CREATE_EMPTY ? R.string.dialog_input_enter_list_name_new
 								: R.string.dialog_input_enter_list_name_cloned);
+	}
+
+	/**
+	 * Delete an image list after selecting the list.
+	 *
+	 * @param listName The name of the list to be deleted.
+	 */
+	private void deleteImageList(final String listName) {
+		DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
+				new ConfirmDialogListener() {
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog1) {
+						ImageRegistry.deleteImageList(listName);
+
+						if (GenericWidget.getWidgetIdsForName(listName).size() > 0) {
+							DialogUtil.displayInfo(MainConfigurationActivity.this, null, 0,
+									R.string.dialog_info_delete_widgets, listName);
+						}
+
+						fillListOfLists();
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog1) {
+						// do nothing.
+					}
+				}, null, R.string.button_delete, R.string.dialog_confirmation_delete_list, listName);
 	}
 
 	/**
@@ -274,6 +289,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 								}
 								else {
 									ImageRegistry.renameCurrentList(name);
+									fillListOfLists();
 								}
 							}
 
@@ -325,7 +341,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @param existingBackups the list of existing backups.
 	 * @param listName        the name of the list.
 	 */
-	private void backupSingleList(final ArrayList<String> existingBackups, final String listName) {
+	private void backupSingleList(final List<String> existingBackups, final String listName) {
 		if (existingBackups.contains(listName)) {
 			DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 					new ConfirmDialogListener() {
@@ -399,7 +415,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @param existingLists the list of existing list names
 	 * @param listName      the name of the list.
 	 */
-	private void restoreSingleList(final ArrayList<String> existingLists, final String listName) {
+	private void restoreSingleList(final List<String> existingLists, final String listName) {
 		if (existingLists.contains(listName)) {
 			DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 					new ConfirmDialogListener() {
@@ -457,12 +473,45 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
-		case SettingsActivity.REQUEST_CODE:
-			boolean boughtPremium = SettingsActivity.getResultBoughtPremium(resultCode, data);
-			if (boughtPremium) {
-				invalidateOptionsMenu();
+		case DisplayListInfoActivity.REQUEST_CODE:
+			handleListInfoResult(resultCode, data);
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * Handle the result of DisplayListInfoActivity.
+	 *
+	 * @param resultCode The integer result code returned by the child activity through its setResult().
+	 * @param data       An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+	 */
+	private void handleListInfoResult(final int resultCode, final Intent data) {
+		ListAction listAction = DisplayListInfoActivity.getResultListAction(resultCode, data);
+		String selectedListName = DisplayListInfoActivity.getResultListName(resultCode, data);
+		switch (listAction) {
+		case DELETE:
+			deleteImageList(selectedListName);
+			break;
+		case RENAME:
+			renameImageList(selectedListName);
+			break;
+		case CLONE:
+			if (selectedListName != null && checkIfMoreListsAllowed()) {
+				if (ImageRegistry.switchToImageList(selectedListName, CreationStyle.NONE, true)) {
+					PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatelist);
+					createNewImageList(CreationStyle.CLONE_CURRENT);
+				}
 			}
 			break;
+		case BACKUP:
+			backupSingleList(ImageRegistry.getBackupImageListNames(), selectedListName);
+			break;
+		case RESTORE:
+			restoreSingleList(Collections.singletonList(selectedListName), selectedListName);
+			break;
+		case NONE:
 		default:
 			break;
 		}
@@ -480,6 +529,36 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		 * Delete photos.
 		 */
 		REMOVE
+	}
+
+	/**
+	 * Action to be done with the list whose details are displayed.
+	 */
+	public enum ListAction {
+		/**
+		 * Do nothing.
+		 */
+		NONE,
+		/**
+		 * Clone list.
+		 */
+		CLONE,
+		/**
+		 * Rename list.
+		 */
+		RENAME,
+		/**
+		 * Delete list.
+		 */
+		DELETE,
+		/**
+		 * Backup list.
+		 */
+		BACKUP,
+		/**
+		 * Restore list.
+		 */
+		RESTORE
 	}
 
 }

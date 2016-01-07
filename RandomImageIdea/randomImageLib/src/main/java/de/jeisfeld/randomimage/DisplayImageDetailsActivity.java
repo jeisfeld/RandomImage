@@ -294,7 +294,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			}
 			String probabilityString = "";
 			if (probability > 0) {
-				probabilityString = " (" + DisplayNestedListDetailsActivity.getPercentageString(probability) + "%)";
+				probabilityString = " (" + DisplayListInfoActivity.getPercentageString(probability) + "%)";
 			}
 			imageInfo.append(formatImageInfoLine(this, R.string.info_image_count, Integer.toString(imageCount) + probabilityString));
 		}

@@ -88,8 +88,8 @@
             android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
         <activity
-            android:name="de.jeisfeld.randomimage.DisplayNestedListDetailsActivity"
-            android:label="@string/title_activity_display_nested_list_details"
+            android:name="de.jeisfeld.randomimage.DisplayListInfoActivity"
+            android:label="@string/title_activity_display_list_info"
             android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
         <activity

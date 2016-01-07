@@ -9,7 +9,8 @@
     <string name="stacked_image_widget_name">Surprise Image Deck</string>
     <string name="title_activity_display_image_details">Image Details</string>
     <string name="title_activity_display_folder_details">Folder Details</string>
-    <string name="title_activity_display_nested_list_details">Nested List Details</string>
+    <string name="title_activity_display_list_info">List Details</string>
+    <string name="title_activity_display_nested_list_info">Nested List Details</string>
     <string name="title_activity_main_configuration">Surprise List Setup</string>
     <string name="title_activity_configure_image_list">Configure Image List</string>
     <string name="title_activity_select_image_folder">Select Image Folder</string>
@@ -32,6 +33,11 @@
     <string name="button_missing_images">Missing images</string>
     <string name="button_widgets">Surprise Image Widgets</string>
     <string name="button_notifications">Surprise Image Notifications</string>
+    <string name="button_clone_list">Clone List</string>
+    <string name="button_rename_list">Rename List</string>
+    <string name="button_delete_list">Delete List</string>
+    <string name="button_backup_list">Backup List</string>
+    <string name="button_restore_list">Restore List</string>
     <string name="default_list_name">Image List</string>
 
     <!-- Strings for image info -->
