@@ -13,11 +13,11 @@
                 android:id="@+id/action_create_list"
                 android:title="@string/menu_create_list"/>
             <item
-                android:id="@+id/action_backup_list"
-                android:title="@string/menu_backup_list"/>
+                android:id="@+id/action_backup_lists"
+                android:title="@string/menu_backup_lists"/>
             <item
-                android:id="@+id/action_restore_list"
-                android:title="@string/menu_restore_list"/>
+                android:id="@+id/action_restore_lists"
+                android:title="@string/menu_restore_lists"/>
         </menu>
     </item>
     <item

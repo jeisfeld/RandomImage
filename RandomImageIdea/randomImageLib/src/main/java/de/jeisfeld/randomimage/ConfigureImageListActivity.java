@@ -115,6 +115,9 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (getActionBar() != null) {
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
 		mTextViewListName = (TextView) findViewById(R.id.textViewTitle);
 
 		if (savedInstanceState != null) {
@@ -250,9 +253,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		case DISPLAY:
 			getMenuInflater().inflate(R.menu.configure_image_list, menu);
 
-			if (ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP).size() < 2) {
-				menu.findItem(R.id.action_switch_list).setEnabled(false);
-			}
 			if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 				MenuItem menuItemRemove = menu.findItem(R.id.action_select_images_for_removal);
 				menuItemRemove.setEnabled(false);
@@ -303,17 +303,18 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * @return true if menu item was consumed.
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
-		if (menuId == R.id.action_select_images_for_removal) {
+		if (menuId == android.R.id.home || menuId == R.id.action_home) {
+			MainConfigurationActivity.startActivity(this);
+			finish();
+			return true;
+		}
+		else if (menuId == R.id.action_select_images_for_removal) {
 			changeAction(CurrentAction.REMOVE);
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;
 		}
 		else if (menuId == R.id.action_add_images) {
 			addImagesToList();
-			return true;
-		}
-		else if (menuId == R.id.action_switch_list) {
-			switchImageList();
 			return true;
 		}
 		else if (menuId == R.id.action_include_other_list) {
@@ -469,28 +470,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			fillListOfImages();
 		}
 		return success;
-	}
-
-	/**
-	 * Switch to another image list after selecting the list.
-	 */
-	private void switchImageList() {
-		ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-		listNames.remove(mListName);
-
-		DialogUtil
-				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							@Override
-							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-								switchToImageList(text, CreationStyle.NONE);
-							}
-
-							@Override
-							public void onDialogNegativeClick(final DialogFragment dialog) {
-								// do nothing
-							}
-						}, R.string.title_dialog_select_list_name, listNames,
-						R.string.dialog_select_list_for_switch);
 	}
 
 	/**

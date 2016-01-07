@@ -472,7 +472,7 @@ public final class ImageRegistry {
 						+ name.replaceAll("[\\.]", ",")
 						.replaceAll("[\\s]", " ")
 						.replaceAll(
-								"[^A-Za-z0-9äöüßÄÖÜáàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ\\ \\-\\_\\%\\&\\?\\!\\$\\(\\)\\,\\;\\:]",
+								"[^A-Za-z0-9äöüßÄÖÜáàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ \\-_%&\\?!\\$\\(\\),;:]",
 								"");
 		if (baseName.length() > MAX_NAME_LENGTH) {
 			baseName = baseName.substring(0, MAX_NAME_LENGTH);

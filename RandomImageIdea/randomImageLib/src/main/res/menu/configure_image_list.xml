@@ -3,20 +3,11 @@
       tools:context="de.jeisfeld.randomimage.DisplayRandomImageActivity">
 
     <item
-        android:id="@+id/action_manage_lists"
+        android:id="@+id/action_include_other_list"
         android:icon="@drawable/ic_action_folder"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_manage_lists">
-        <menu>
-            <item
-                android:id="@+id/action_switch_list"
-                android:title="@string/menu_switch_list"/>
-            <item
-                android:id="@+id/action_include_other_list"
-                android:title="@string/menu_include_other_list"/>
-        </menu>
-    </item>
+        android:title="@string/menu_include_other_list"/>
     <item
         android:id="@+id/action_add_images"
         android:icon="@drawable/ic_action_plus"
@@ -35,5 +26,11 @@
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/menu_settings"/>
+    <item
+        android:id="@+id/action_home"
+        android:icon="@drawable/ic_action_home"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_manage_lists"/>
 
 </menu>

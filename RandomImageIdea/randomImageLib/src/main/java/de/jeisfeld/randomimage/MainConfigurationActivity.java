@@ -54,6 +54,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	public static final void startActivity(final Activity context) {
 		Intent intent = new Intent(context, MainConfigurationActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		context.startActivity(intent);
 	}
 
@@ -127,12 +128,12 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @return true if menu item was consumed.
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
-		if (menuId == R.id.action_backup_list) {
+		if (menuId == R.id.action_backup_lists) {
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
 			backupImageList();
 			return true;
 		}
-		else if (menuId == R.id.action_restore_list) {
+		else if (menuId == R.id.action_restore_lists) {
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
 			restoreImageList();
 			return true;
@@ -365,14 +366,14 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	/**
 	 * Make a backup of the list without querying.
 	 *
-	 * @param listToBeBackuped The list name.
+	 * @param listToBeBackedUp The list name.
 	 */
-	private void doBackup(final String listToBeBackuped) {
-		String backupFile = ImageRegistry.backupImageList(listToBeBackuped);
+	private void doBackup(final String listToBeBackedUp) {
+		String backupFile = ImageRegistry.backupImageList(listToBeBackedUp);
 		DialogUtil.displayToast(MainConfigurationActivity.this,
-				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackuped);
+				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackedUp);
 		if (backupFile != null) {
-			NotificationUtil.notifyBackupRestore(this, listToBeBackuped, new File(backupFile).getParent(), false);
+			NotificationUtil.notifyBackupRestore(this, listToBeBackedUp, new File(backupFile).getParent(), false);
 		}
 	}
 
