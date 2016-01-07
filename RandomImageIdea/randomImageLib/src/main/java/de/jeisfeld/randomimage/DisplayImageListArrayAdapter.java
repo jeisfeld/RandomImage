@@ -116,6 +116,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		if (selectionMode == SelectionMode.ONE) {
 			mSelectedFolderNames.clear();
 			mSelectedFileNames.clear();
+			mSelectedNestedListNames.clear();
 		}
 
 		mMarkingType = getMarkingTypeFromSelectionMode(selectionMode);
@@ -455,6 +456,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			else {
 				setSelectedFiles(null);
 				setSelectedFolders(null);
+				setSelectedNestedLists(null);
 				for (ThumbImageView view : mViewCache.getCachedImages()) {
 					view.setMarked(false);
 				}

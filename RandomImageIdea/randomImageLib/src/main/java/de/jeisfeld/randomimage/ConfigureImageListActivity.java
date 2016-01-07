@@ -285,6 +285,11 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	@Override
 	public final boolean onOptionsItemSelected(final MenuItem item) {
 		int id = item.getItemId();
+		if (id == android.R.id.home || id == R.id.action_home) {
+			MainConfigurationActivity.startActivity(this);
+			finish();
+			return true;
+		}
 
 		switch (mCurrentAction) {
 		case DISPLAY:
@@ -303,12 +308,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * @return true if menu item was consumed.
 	 */
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
-		if (menuId == android.R.id.home || menuId == R.id.action_home) {
-			MainConfigurationActivity.startActivity(this);
-			finish();
-			return true;
-		}
-		else if (menuId == R.id.action_select_images_for_removal) {
+		if (menuId == R.id.action_select_images_for_removal) {
 			changeAction(CurrentAction.REMOVE);
 			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
 			return true;

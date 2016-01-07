@@ -82,7 +82,8 @@
     <string name="dialog_confirmation_add_folder_ignore_selection">You decided to add the whole folder to the list - this will ignore your image selection. Do you want to proceed?</string>
     <string name="dialog_confirmation_add_folder">Do you want to add the folder “%1$s” to the image list?</string>
     <string name="dialog_confirmation_overwrite_list">Do you want to overwrite the image list “%1$s” with the backup?</string>
-    <string name="dialog_confirmation_overwrite_backup">The backup list “%1$s” exists already. Do you want to overwrite it?</string>
+    <string name="dialog_confirmation_overwrite_backup_single">The list “%2$s” has already a backup. Do you want to overwrite it?</string>
+    <string name="dialog_confirmation_overwrite_backup_multiple">For %1$d of the selected lists, there exist already backups. Do you want to overwrite them?</string>
     <string name="dialog_confirmation_missing_images">The following images of the list “%1$s” cannot be loaded.\n\n%2$s</string>
 
     <!-- Partial strings used to construct other strings -->
