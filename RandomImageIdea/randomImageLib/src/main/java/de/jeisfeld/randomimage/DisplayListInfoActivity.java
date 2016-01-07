@@ -201,7 +201,7 @@ public class DisplayListInfoActivity extends Activity {
 			@Override
 			public void run() {
 				final int numberOfImages = ImageRegistry.getImageListByName(mListName, true).getAllImageFiles().size();
-				textViewNumberOfImages.post(new Runnable() {
+				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						textViewNumberOfImages.setText(String.format(getString(R.string.info_nested_list_images), numberOfImages));

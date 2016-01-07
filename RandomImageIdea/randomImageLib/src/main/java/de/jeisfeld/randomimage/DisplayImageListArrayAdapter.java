@@ -251,16 +251,21 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		case LIST:
 			entryName = mNestedListNames.get(position);
 
-			displayFileName = new LoadableFileName(new FileNameProvider() {
-				@Override
-				public String getFileName() {
-					ImageList imageList = ImageRegistry.getImageListByName(entryName, true);
-					if (imageList == null) {
-						return null;
+			if (mFixedThumbs) {
+				displayFileName = null;
+			}
+			else {
+				displayFileName = new LoadableFileName(new FileNameProvider() {
+					@Override
+					public String getFileName() {
+						ImageList imageList = ImageRegistry.getImageListByName(entryName, true);
+						if (imageList == null) {
+							return null;
+						}
+						return imageList.getRandomFileName();
 					}
-					return imageList.getRandomFileName();
-				}
-			});
+				});
+			}
 
 			thumbImageView.initWithStyle(mActivity, ThumbStyle.IMAGE_LIST);
 			thumbImageView.setMarked(mSelectedNestedListNames.contains(entryName));

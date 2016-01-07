@@ -150,8 +150,11 @@ public class ThumbImageView extends FrameLayout {
 	 * @param loadableFileName a provider of the name of the file to be loaded.
 	 */
 	private void loadImage(final Activity activity, final LoadableFileName loadableFileName) {
+		if (loadableFileName == null) {
+			return;
+		}
 		final Bitmap imageBitmap;
-		if (loadableFileName == null || loadableFileName.getFileName() == null) {
+		if (loadableFileName.getFileName() == null) {
 			imageBitmap = ImageUtil.getDummyBitmap();
 		}
 		else {

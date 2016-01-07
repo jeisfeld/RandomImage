@@ -12,6 +12,7 @@
     <string name="menu_backup_lists">Backup image lists</string>
     <string name="menu_backup">Backup</string>
     <string name="menu_restore_lists">Restore image lists</string>
+    <string name="menu_restore">Restore</string>
     <string name="menu_create_list">Create new image list</string>
     <string name="menu_include_other_list">Include other list in current list</string>
     <string name="menu_remove_image_from_list">Remove image from list</string>
@@ -23,8 +24,6 @@
     <string name="menu_browse_folders">Browse in file manager</string>
     <string name="menu_title_pro_app">Surprise Image Pro</string>
     <string name="menu_detail_pro_app">An alternative to the premium add-on</string>
-    <string name="menu_backup_all_lists">Backup all lists</string>
-    <string name="menu_restore_all_lists">Restore all lists</string>
 
     <!-- Entries related to buttons in the settings -->
 

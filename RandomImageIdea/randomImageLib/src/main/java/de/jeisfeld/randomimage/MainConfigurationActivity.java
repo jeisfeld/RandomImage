@@ -20,7 +20,6 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
-import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
@@ -101,6 +100,18 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		invalidateOptionsMenu();
 	}
 
+	/**
+	 * Fill the view with the list of backups.
+	 */
+	private void fillListOfBackups() {
+		mListNames = ImageRegistry.getBackupImageListNames();
+		if (getAdapter() != null) {
+			getAdapter().cleanupCache();
+		}
+		setAdapter(mListNames, null, null, true);
+		invalidateOptionsMenu();
+	}
+
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
@@ -115,6 +126,9 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		case BACKUP:
 			getMenuInflater().inflate(R.menu.backup_multiple_lists, menu);
 			return true;
+		case RESTORE:
+			getMenuInflater().inflate(R.menu.restore_multiple_lists, menu);
+			return true;
 		default:
 			return false;
 		}
@@ -128,6 +142,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		case DISPLAY:
 			return onOptionsItemSelectedDisplay(id);
 		case BACKUP:
+		case RESTORE:
 			return onOptionsItemsSelectedMultiSelect(id);
 		default:
 			return super.onOptionsItemSelected(item);
@@ -146,8 +161,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_restore_lists) {
-			PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
-			restoreImageList();
+			changeAction(CurrentAction.RESTORE);
 			return true;
 		}
 		else if (menuId == R.id.action_create_list) {
@@ -188,8 +202,21 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_do_backup) {
-			backupImageLists(getAdapter().getSelectedNestedLists());
-			changeAction(CurrentAction.DISPLAY);
+			if (getAdapter().getSelectedNestedLists().size() > 0) {
+				backupImageLists(getAdapter().getSelectedNestedLists());
+			}
+			else {
+				changeAction(CurrentAction.DISPLAY);
+			}
+			return true;
+		}
+		else if (menuId == R.id.action_do_restore) {
+			if (getAdapter().getSelectedNestedLists().size() > 0) {
+				restoreImageLists(getAdapter().getSelectedNestedLists());
+			}
+			else {
+				changeAction(CurrentAction.DISPLAY);
+			}
 			return true;
 		}
 		return false;
@@ -349,6 +376,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @param listNames the name of the lists.
 	 */
 	private void backupImageLists(final List<String> listNames) {
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
 		if (listNames == null || listNames.size() == 0) {
 			return;
 		}
@@ -364,6 +392,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 							for (String listName : listNames) {
 								doBackup(listName);
 							}
+							changeAction(CurrentAction.DISPLAY);
 						}
 
 						@Override
@@ -372,6 +401,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 								if (!existingBackups.contains(listName)) {
 									doBackup(listName);
 								}
+								changeAction(CurrentAction.DISPLAY);
 							}
 						}
 					}, null, R.string.button_overwrite,
@@ -384,6 +414,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			for (String listName : listNames) {
 				doBackup(listName);
 			}
+			changeAction(CurrentAction.DISPLAY);
 		}
 	}
 
@@ -402,62 +433,50 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	}
 
 	/**
-	 * Restore an image list after selecting the list to backup.
-	 */
-	private void restoreImageList() {
-		final ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-		final ArrayList<String> backupNames = ImageRegistry.getBackupImageListNames();
-		// Add entry to select all lists on first position.
-		final String allListsText = Application.getAppContext().getString(R.string.menu_restore_all_lists);
-		backupNames.add(0, allListsText);
-
-		DialogUtil
-				.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							@Override
-							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-								if (position == 0) {
-									// Go through all lists in reverse order, so that dialog of first list appears on top.
-									for (int i = backupNames.size() - 1; i > 0; i--) {
-										restoreSingleList(listNames, backupNames.get(i));
-									}
-								}
-								else {
-									restoreSingleList(listNames, text);
-								}
-							}
-
-							@Override
-							public void onDialogNegativeClick(final DialogFragment dialog) {
-								// do nothing
-							}
-						}, R.string.title_dialog_select_list_name, backupNames,
-						R.string.dialog_select_list_for_restore);
-	}
-
-	/**
-	 * Restore an image list, warning in case of overwriting.
+	 * Restore image lists, warning in case of overwriting.
 	 *
-	 * @param existingLists the list of existing list names
-	 * @param listName      the name of the list.
+	 * @param listNames      the names of the lists.
 	 */
-	private void restoreSingleList(final List<String> existingLists, final String listName) {
-		if (existingLists.contains(listName)) {
+	private void restoreImageLists(final List<String> listNames) {
+		PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
+		if (listNames == null || listNames.size() == 0) {
+			return;
+		}
+		final List<String> existingLists = ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS);
+		existingLists.retainAll(listNames);
+		int existingCount = existingLists.size();
+
+		if (existingCount > 0) {
 			DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 					new ConfirmDialogListener() {
 						@Override
 						public void onDialogPositiveClick(final DialogFragment dialog2) {
-							doRestore(listName);
+							for (String listName : listNames) {
+								doRestore(listName);
+							}
+							changeAction(CurrentAction.DISPLAY);
 						}
 
 						@Override
 						public void onDialogNegativeClick(final DialogFragment dialog2) {
-							// do nothing
+							for (String listName : listNames) {
+								if (!existingLists.contains(listName)) {
+									doRestore(listName);
+								}
+								changeAction(CurrentAction.DISPLAY);
+							}
 						}
-					}, null, R.string.button_overwrite, R.string.dialog_confirmation_overwrite_list, listName);
+					}, null, R.string.button_overwrite,
+					existingCount == 1 ? R.string.dialog_confirmation_overwrite_list_single
+							: R.string.dialog_confirmation_overwrite_list_multiple,
+					existingCount, existingLists.get(0));
 
 		}
 		else {
-			doRestore(listName);
+			for (String listName : listNames) {
+				doRestore(listName);
+			}
+			changeAction(CurrentAction.DISPLAY);
 		}
 	}
 
@@ -483,8 +502,14 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
+			if (mCurrentAction == CurrentAction.RESTORE && action != mCurrentAction) {
+				fillListOfLists();
+			}
+			if (action == CurrentAction.RESTORE && action != mCurrentAction) {
+				fillListOfBackups();
+			}
 			mCurrentAction = action;
-			setSelectionMode(action == CurrentAction.BACKUP ? SelectionMode.MULTIPLE_ADD : SelectionMode.ONE);
+			setSelectionMode(action == CurrentAction.DISPLAY ? SelectionMode.ONE : SelectionMode.MULTIPLE_ADD);
 			invalidateOptionsMenu();
 		}
 	}
@@ -534,7 +559,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			backupImageLists(Collections.singletonList(selectedListName));
 			break;
 		case RESTORE:
-			restoreSingleList(Collections.singletonList(selectedListName), selectedListName);
+			restoreImageLists(Collections.singletonList(selectedListName));
 			break;
 		case NONE:
 		default:
@@ -553,7 +578,11 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		/**
 		 * Backup image lists.
 		 */
-		BACKUP
+		BACKUP,
+		/**
+		 * Restore image lists.
+		 */
+		RESTORE
 	}
 
 	/**

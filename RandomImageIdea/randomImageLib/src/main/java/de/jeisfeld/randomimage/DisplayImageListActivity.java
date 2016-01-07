@@ -133,8 +133,8 @@ public abstract class DisplayImageListActivity extends Activity {
 	/**
 	 * This method determines what should happen when clicking on an item in the displayed list if in Selection mode ONE.
 	 *
-	 * @param itemType        The item type (list, folder or file)
-	 * @param name            The name of the item.
+	 * @param itemType The item type (list, folder or file)
+	 * @param name     The name of the item.
 	 */
 	public abstract void onItemClick(ItemType itemType, String name);
 

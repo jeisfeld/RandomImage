@@ -12,6 +12,7 @@
     <string name="menu_backup_lists">Bildlisten sichern</string>
     <string name="menu_backup">Sichern</string>
     <string name="menu_restore_lists">Bildlisten wiederherstellen</string>
+    <string name="menu_restore">Wiederherstellen</string>
     <string name="menu_create_list">Neue Bildliste erstellen</string>
     <string name="menu_include_other_list">Andere Liste zu aktueller hinzufügen</string>
     <string name="menu_remove_image_from_list">Bild aus der Liste entfernen</string>
@@ -23,8 +24,6 @@
     <string name="menu_browse_folders">Im Dateimanager suchen</string>
     <string name="menu_title_pro_app">Überraschungsbild Pro</string>
     <string name="menu_detail_pro_app">Eine Alternative zur Premium-Erweiterung</string>
-    <string name="menu_backup_all_lists">Alle Listen sichern</string>
-    <string name="menu_restore_all_lists">Alle Listen wiederherstellen</string>
 
     <!-- Entries related to buttons in the settings -->
 

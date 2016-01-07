@@ -82,6 +82,8 @@
     <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>
     <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s“ zur Bildliste hinzufügen?</string>
     <string name="dialog_confirmation_overwrite_list">Wollen Sie die Bildliste „%1$s“ mit dem Backup überschreiben?</string>
+    <string name="dialog_confirmation_overwrite_list_single">Die Liste „%2$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
+    <string name="dialog_confirmation_overwrite_list_multiple">%1$d der ausgewählen Listen existieren bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup_single">Das Backup von „%2$s“ existiert bereits. Wollen Sie es überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup_multiple">Für %1$d der ausgewählten Listen gibt es bereits ein Backup. Wollen Sie diese überschreiben?</string>
     <string name="dialog_confirmation_missing_images">Folgende Bilder der Liste „%1$s“ können nicht geladen werden: \n\n%2$s</string>
