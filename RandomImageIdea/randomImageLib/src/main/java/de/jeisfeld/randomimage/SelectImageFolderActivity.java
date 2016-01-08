@@ -81,6 +81,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		super.onCreate(savedInstanceState);
 		mEditTextFilter = (EditText) findViewById(R.id.editTextFilterString);
 
+		String lastFilterValue = PreferenceUtil.getSharedPreferenceString(R.string.key_folder_selection_filter);
+		if (lastFilterValue != null) {
+			mEditTextFilter.setText(lastFilterValue);
+		}
+
 		// This step initializes the adapter.
 		fillListOfFolders();
 
@@ -88,6 +93,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			@Override
 			public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 				fillListOfFolders();
+				PreferenceUtil.setSharedPreferenceString(R.string.key_folder_selection_filter, s.toString());
 			}
 
 			@Override

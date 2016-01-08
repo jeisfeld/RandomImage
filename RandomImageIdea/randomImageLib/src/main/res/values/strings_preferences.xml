@@ -27,6 +27,7 @@
     <string name="key_image_list_mount_issues" translatable="false">image_list_mount_issues</string>
     <string name="key_device_shut_down" translatable="false">device_shut_down</string>
     <string name="key_last_thumb_creation_time" translatable="false">last_thumb_creation_time</string>
+    <string name="key_folder_selection_filter" translatable="false">folder_selection_filter</string>
 
     <!-- Keys for statistics -->
 
