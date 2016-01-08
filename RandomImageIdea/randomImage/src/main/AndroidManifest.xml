@@ -61,7 +61,6 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.ConfigureImageListActivity"
-            android:icon="@drawable/ic_launcher_setup"
             android:launchMode="singleTask">
         </activity>
         <activity
