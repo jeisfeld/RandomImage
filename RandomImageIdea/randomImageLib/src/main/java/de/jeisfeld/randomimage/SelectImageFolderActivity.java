@@ -1,12 +1,17 @@
 package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -34,6 +39,21 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private static final String STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY = "de.jeisfeld.randomimage.TRIGGER_SELECT_DIRECTORY_ACTIVITY";
 
 	/**
+	 * A filter for the displayed folders.
+	 */
+	private EditText mEditTextFilter;
+
+	/**
+	 * A filtered list of image folders to be displayed.
+	 */
+	private List<String> mFilteredImageFolders = new ArrayList<>();
+
+	/**
+	 * A list of all image folders to be displayed.
+	 */
+	private List<String> mAllImageFolders = null;
+
+	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
 	 * @param activity The activity starting this activity.
@@ -52,9 +72,27 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mEditTextFilter = (EditText) findViewById(R.id.editTextFilterString);
 
 		// This step initializes the adapter.
 		fillListOfFolders();
+
+		mEditTextFilter.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+				fillListOfFolders();
+			}
+
+			@Override
+			public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+				// do nothing
+			}
+
+			@Override
+			public void afterTextChanged(final Editable s) {
+				// do nothing
+			}
+		});
 	}
 
 	@Override
@@ -72,33 +110,63 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * Fill the view with the list of all image folders.
 	 */
 	private void fillListOfFolders() {
-		ArrayList<String> allImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
-		setAdapter(null, allImageFolders, null, true);
+		boolean firstStart = mAllImageFolders == null;
+		if (getAdapter() != null) {
+			getAdapter().cleanupCache();
+		}
 
-		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
+		if (firstStart) {
+			mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
+		}
 
-			@Override
-			public void handleImageFolders(final ArrayList<String> imageFolders) {
-				// No action required, as folders are added one by one.
+		mFilteredImageFolders.clear();
+		String filterString = mEditTextFilter.getText().toString();
+
+		if (filterString.length() > 0) {
+			mFilteredImageFolders = new ArrayList<>();
+			for (String name : mAllImageFolders) {
+				if (name.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))) {
+					mFilteredImageFolders.add(name);
+				}
 			}
+		}
+		else {
+			mFilteredImageFolders = new ArrayList<>(mAllImageFolders);
+		}
 
-			@Override
-			public void handleImageFolder(final String imageFolder) {
-				if (getAdapter() == null) {
-					ArrayList<String> folderNames = new ArrayList<>();
-					folderNames.add(imageFolder);
+		setAdapter(null, mFilteredImageFolders, null, true);
 
-					if (getAdapter() != null) {
-						getAdapter().cleanupCache();
+		if (firstStart) {
+			ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
+
+				@Override
+				public void handleImageFolders(final ArrayList<String> imageFolders) {
+					// No action required, as folders are added one by one.
+				}
+
+				@Override
+				public void handleImageFolder(final String imageFolder) {
+					if (!mAllImageFolders.contains(imageFolder)) {
+						mAllImageFolders.add(imageFolder);
 					}
+					if (mFilteredImageFolders.contains(imageFolder)) {
+						if (getAdapter() == null) {
+							ArrayList<String> folderNames = new ArrayList<>();
+							folderNames.add(imageFolder);
 
-					setAdapter(null, folderNames, null, true);
+							if (getAdapter() != null) {
+								getAdapter().cleanupCache();
+							}
+
+							setAdapter(null, folderNames, null, true);
+						}
+						else {
+							getAdapter().addFolder(imageFolder);
+						}
+					}
 				}
-				else {
-					getAdapter().addFolder(imageFolder);
-				}
-			}
-		});
+			});
+		}
 	}
 
 	@Override

@@ -1,6 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/editTextFilterString"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_search_path"/>
 
     <GridView
         android:id="@+id/gridViewDisplayImages"
@@ -13,4 +20,4 @@
         android:stretchMode="columnWidth"
         android:verticalSpacing="0dp"/>
 
-</FrameLayout>
+</LinearLayout>

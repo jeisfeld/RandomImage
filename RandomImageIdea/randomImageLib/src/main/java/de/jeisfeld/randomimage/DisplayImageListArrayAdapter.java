@@ -49,17 +49,17 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * The names of the nested lists.
 	 */
-	private ArrayList<String> mNestedListNames;
+	private List<String> mNestedListNames;
 
 	/**
 	 * The names of the folders.
 	 */
-	private ArrayList<String> mFolderNames;
+	private List<String> mFolderNames;
 
 	/**
 	 * The names of the files.
 	 */
-	private ArrayList<String> mFileNames;
+	private List<String> mFileNames;
 
 	/**
 	 * Flag indicating if fixed thumbnail images should be used (for performance reasons).
@@ -153,8 +153,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @param fixedThumbs     Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
 	public DisplayImageListArrayAdapter(final DisplayImageListActivity activity,
-										final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
-										final ArrayList<String> fileNames, final boolean fixedThumbs) {
+										final List<String> nestedListNames, final List<String> folderNames,
+										final List<String> fileNames, final boolean fixedThumbs) {
 		super(activity, R.layout.text_view_initializing);
 		this.mActivity = activity;
 		this.mFixedThumbs = fixedThumbs;
@@ -212,6 +212,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 		mFolderNames.add(folderName);
 		add(folderName);
+
 		mViewCache.incrementMaxPosition();
 		notifyDataSetChanged();
 	}

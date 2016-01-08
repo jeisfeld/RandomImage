@@ -1,7 +1,7 @@
 package de.jeisfeld.randomimage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -78,8 +78,8 @@ public abstract class DisplayImageListActivity extends Activity {
 	 * @param fileNames       The list of image files.
 	 * @param fixedThumbs     Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
-	protected final void setAdapter(final ArrayList<String> nestedListNames, final ArrayList<String> folderNames,
-									final ArrayList<String> fileNames, final boolean fixedThumbs) {
+	protected final void setAdapter(final List<String> nestedListNames, final List<String> folderNames,
+									final List<String> fileNames, final boolean fixedThumbs) {
 		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
 		getGridView().setAdapter(mAdapter);
 		if (mSelectedFiles != null || mSelectedFolders != null || mSelectedLists != null) {

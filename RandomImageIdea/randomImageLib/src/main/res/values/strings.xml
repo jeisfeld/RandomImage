@@ -41,6 +41,7 @@
     <string name="button_backup_list">Backup List</string>
     <string name="button_restore_list">Restore List</string>
     <string name="default_list_name">Image List</string>
+    <string name="hint_search_path">Filter name</string>
 
     <!-- Strings for image info -->
     <string name="info_file_name">File name:</string>
