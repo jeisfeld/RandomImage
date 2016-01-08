@@ -376,11 +376,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @param selectedFiles The names of the files.
 	 */
 	public final void setSelectedFiles(final ArrayList<String> selectedFiles) {
-		if (selectedFiles == null) {
-			mSelectedFileNames.clear();
-		}
-		else {
-			mSelectedFileNames = new HashSet<>(selectedFiles);
+		mSelectedFileNames.clear();
+		if (selectedFiles != null) {
+			mSelectedFileNames.addAll(selectedFiles);
 		}
 	}
 
@@ -399,11 +397,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @param selectedFolders The names of the folders.
 	 */
 	public final void setSelectedFolders(final ArrayList<String> selectedFolders) {
-		if (selectedFolders == null) {
-			mSelectedFolderNames.clear();
-		}
-		else {
-			mSelectedFolderNames = new HashSet<>(selectedFolders);
+		mSelectedFolderNames.clear();
+		if (selectedFolders != null) {
+			mSelectedFolderNames.addAll(selectedFolders);
 		}
 	}
 
@@ -422,11 +418,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @param selectedNestedLists The names of the nested lists.
 	 */
 	public final void setSelectedNestedLists(final ArrayList<String> selectedNestedLists) {
-		if (selectedNestedLists == null) {
-			mSelectedNestedListNames.clear();
-		}
-		else {
-			mSelectedNestedListNames = new HashSet<>(selectedNestedLists);
+		mSelectedNestedListNames.clear();
+		if (selectedNestedLists != null) {
+			mSelectedNestedListNames.addAll(selectedNestedLists);
 		}
 	}
 
