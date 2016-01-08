@@ -11,9 +11,11 @@
     <string name="title_activity_display_folder_details">Folder Details</string>
     <string name="title_activity_display_list_info">List Details</string>
     <string name="title_activity_display_nested_list_info">Nested List Details</string>
-    <string name="title_activity_main_configuration">Surprise List Setup</string>
+    <string name="title_activity_main_configuration">Setup Image Lists</string>
+    <string name="title_icon_main_configuration">Surprise Image Setup</string>
     <string name="title_activity_configure_image_list">Configure Image List</string>
-    <string name="title_activity_select_image_folder">Select Image Folder</string>
+    <string name="title_activity_display_images_from_folder">Display image folder</string>
+    <string name="title_activity_add_images">Add images</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_image_widget_configuration">Widget Settings</string>
     <string name="text_initializing">Initializing&#8230;</string>

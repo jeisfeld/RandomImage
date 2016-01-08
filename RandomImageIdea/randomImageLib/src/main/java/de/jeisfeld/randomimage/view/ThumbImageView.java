@@ -165,7 +165,6 @@ public class ThumbImageView extends FrameLayout {
 			public void run() {
 				mImageView.setImageBitmap(imageBitmap);
 				mImageView.invalidate();
-				setMarked(false);
 			}
 		});
 	}

@@ -82,10 +82,10 @@ public abstract class DisplayImageListActivity extends Activity {
 									final ArrayList<String> fileNames, final boolean fixedThumbs) {
 		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
 		getGridView().setAdapter(mAdapter);
-		if (mSelectedFiles != null) {
-			mAdapter.setSelectedFiles(new ArrayList<>(Arrays.asList(mSelectedFiles)));
-			mAdapter.setSelectedFolders(new ArrayList<>(Arrays.asList(mSelectedFolders)));
-			mAdapter.setSelectedNestedLists(new ArrayList<>(Arrays.asList(mSelectedLists)));
+		if (mSelectedFiles != null || mSelectedFolders != null || mSelectedLists != null) {
+			mAdapter.setSelectedFiles(mSelectedFiles == null ? null : Arrays.asList(mSelectedFiles));
+			mAdapter.setSelectedFolders(mSelectedFolders == null ? null : Arrays.asList(mSelectedFolders));
+			mAdapter.setSelectedNestedLists(mSelectedLists == null ? null : Arrays.asList(mSelectedLists));
 			mSelectedFiles = null;
 			mSelectedFolders = null;
 			mSelectedLists = null;

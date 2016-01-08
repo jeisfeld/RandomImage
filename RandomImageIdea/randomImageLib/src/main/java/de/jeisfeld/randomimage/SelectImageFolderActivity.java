@@ -24,9 +24,9 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	public static final int REQUEST_CODE = 7;
 
 	/**
-	 * The resource key for the name of the selected folder.
+	 * The resource key for the flag indicating that the list was updated.
 	 */
-	private static final String STRING_RESULT_SELECTED_FOLDER = "de.jeisfeld.randomimage.SELECTED_FOLDER";
+	private static final String STRING_RESULT_UPDATED = "de.jeisfeld.randomimage.UPDATED";
 
 	/**
 	 * The resource key for the flag to trigger SelectDirectoryActivity.
@@ -60,7 +60,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemClick(final ItemType itemType, final String name) {
 		// itemType is always folder.
-		returnResult(name);
+		DisplayImagesFromFolderActivity.startActivity(this, name, true);
 	}
 
 	@Override
@@ -125,15 +125,15 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
 	 * @param data       The activity response data.
-	 * @return the selected folder
+	 * @return the flag indicating that the list was updated
 	 */
-	public static final String getSelectedFolder(final int resultCode, final Intent data) {
+	public static final boolean getUpdatedFlag(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getString(STRING_RESULT_SELECTED_FOLDER);
+			return res.getBoolean(STRING_RESULT_UPDATED, false);
 		}
 		else {
-			return null;
+			return false;
 		}
 	}
 
@@ -155,13 +155,13 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	/**
-	 * Helper method: Return the selected folder.
+	 * Helper method: Return the flag indicating that the list was updated.
 	 *
-	 * @param selectedFolder The selected folder.
+	 * @param isUpdated The flag indicating that the list was updated.
 	 */
-	protected final void returnResult(final String selectedFolder) {
+	protected final void returnResult(final boolean isUpdated) {
 		Bundle resultData = new Bundle();
-		resultData.putString(STRING_RESULT_SELECTED_FOLDER, selectedFolder);
+		resultData.putBoolean(STRING_RESULT_UPDATED, isUpdated);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
@@ -179,5 +179,20 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		setResult(RESULT_OK, intent);
 		finish();
 	}
+
+	@Override
+	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+		case DisplayImagesFromFolderActivity.REQUEST_CODE:
+			if (resultCode == RESULT_OK) {
+				boolean isUpdated = DisplayImagesFromFolderActivity.getResultFilesAdded(resultCode, data);
+				returnResult(isUpdated);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 
 }

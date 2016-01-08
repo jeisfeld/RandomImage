@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -375,7 +376,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @param selectedFiles The names of the files.
 	 */
-	public final void setSelectedFiles(final ArrayList<String> selectedFiles) {
+	public final void setSelectedFiles(final List<String> selectedFiles) {
 		mSelectedFileNames.clear();
 		if (selectedFiles != null) {
 			mSelectedFileNames.addAll(selectedFiles);
@@ -396,7 +397,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @param selectedFolders The names of the folders.
 	 */
-	public final void setSelectedFolders(final ArrayList<String> selectedFolders) {
+	public final void setSelectedFolders(final List<String> selectedFolders) {
 		mSelectedFolderNames.clear();
 		if (selectedFolders != null) {
 			mSelectedFolderNames.addAll(selectedFolders);
@@ -417,7 +418,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @param selectedNestedLists The names of the nested lists.
 	 */
-	public final void setSelectedNestedLists(final ArrayList<String> selectedNestedLists) {
+	public final void setSelectedNestedLists(final List<String> selectedNestedLists) {
 		mSelectedNestedListNames.clear();
 		if (selectedNestedLists != null) {
 			mSelectedNestedListNames.addAll(selectedNestedLists);

@@ -446,9 +446,8 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			break;
 		case 2:
 			// via Gallery
-			Intent intent = new Intent();
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.setType("image/*");
-			intent.setAction(Intent.ACTION_GET_CONTENT);
 			startActivityForResult(intent, REQUEST_CODE_GALLERY);
 			break;
 		default:
@@ -520,12 +519,11 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		boolean needsRefresh = false;
+
 		switch (requestCode) {
 		case DisplayRandomImageActivity.REQUEST_CODE:
-			boolean needsRefresh1 = DisplayRandomImageActivity.getResult(resultCode, data);
-			if (needsRefresh1) {
-				fillListOfImages();
-			}
+			needsRefresh = DisplayRandomImageActivity.getResult(resultCode, data);
 			break;
 		case SettingsActivity.REQUEST_CODE:
 			boolean boughtPremium = SettingsActivity.getResultBoughtPremium(resultCode, data);
@@ -534,31 +532,20 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			}
 			break;
 		case DisplayImageDetailsActivity.REQUEST_CODE:
-			boolean needsRefresh2 = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
-			if (needsRefresh2) {
+			needsRefresh = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
+			if (needsRefresh) {
 				changeAction(CurrentAction.DISPLAY);
-				fillListOfImages();
 			}
 			break;
 		case SelectDirectoryActivity.REQUEST_CODE:
 			if (resultCode == RESULT_OK) {
-				String folderName = SelectDirectoryActivity.getResultFolder(resultCode, data);
-				if (SelectDirectoryActivity.getResultUpdatedList(resultCode, data)) {
-					fillListOfImages();
-				}
-
-				if (folderName != null) {
-					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
-				}
+				needsRefresh = SelectDirectoryActivity.getUpdatedFlag(resultCode, data);
 			}
 			break;
 		case SelectImageFolderActivity.REQUEST_CODE:
 			if (resultCode == RESULT_OK) {
-				String folderName = SelectImageFolderActivity.getSelectedFolder(resultCode, data);
-				if (folderName != null) {
-					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
-				}
-				else if (SelectImageFolderActivity.triggeredSelectDirectoryActivity(resultCode, data)) {
+				needsRefresh = SelectImageFolderActivity.getUpdatedFlag(resultCode, data);
+				if (SelectImageFolderActivity.triggeredSelectDirectoryActivity(resultCode, data)) {
 					SelectDirectoryActivity.startActivity(this);
 				}
 			}
@@ -580,13 +567,13 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			}
 			break;
 		case DisplayImagesFromFolderActivity.REQUEST_CODE:
-			boolean needsRefresh3 = DisplayImagesFromFolderActivity.getResultFilesAdded(resultCode, data);
-			if (needsRefresh3) {
-				fillListOfImages();
-			}
+			needsRefresh = DisplayImagesFromFolderActivity.getResultFilesAdded(resultCode, data);
 			break;
 		default:
 			break;
+		}
+		if (needsRefresh) {
+			fillListOfImages();
 		}
 	}
 

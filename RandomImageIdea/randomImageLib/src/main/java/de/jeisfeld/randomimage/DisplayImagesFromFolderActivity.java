@@ -95,6 +95,9 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 
 		mFolderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		boolean forAddition = getIntent().getBooleanExtra(STRING_EXTRA_FORADDITION, false);
+		if (forAddition) {
+			setTitle(R.string.title_activity_add_images);
+		}
 
 		// This step initializes the adapter.
 		fillListOfImagesFromFolder();

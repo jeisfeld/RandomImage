@@ -50,13 +50,9 @@ public class SelectDirectoryActivity extends Activity {
 	 */
 	public static final int REQUEST_CODE = 6;
 	/**
-	 * The resource key for the returned folder.
+	 * The resource key for the flag indicating that the list was updated.
 	 */
-	private static final String STRING_RESULT_FOLDER = "de.jeisfeld.randomimage.FOLDER";
-	/**
-	 * The resource key for the flag indicating if the image list was updated.
-	 */
-	private static final String STRING_RESULT_UPDATED_LIST = "de.jeisfeld.randomimage.UPDATED_LIST";
+	private static final String STRING_RESULT_UPDATED = "de.jeisfeld.randomimage.UPDATED";
 	/**
 	 * The size of the displayed thumbnails.
 	 */
@@ -178,14 +174,14 @@ public class SelectDirectoryActivity extends Activity {
 		mBtnCancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				sendResult(null);
+				returnResult(false);
 			}
 		});
 		mBtnSelectImages.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-				sendResult(mCurrentFolder);
+				DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, true);
 			}
 		});
 		mBtnSelectFolder.setOnClickListener(new OnClickListener() {
@@ -204,7 +200,7 @@ public class SelectDirectoryActivity extends Activity {
 					imageList.update(true);
 					mUpdatedList = true;
 				}
-				sendResult(null);
+				returnResult(true);
 			}
 		});
 
@@ -404,49 +400,49 @@ public class SelectDirectoryActivity extends Activity {
 	}
 
 	/**
-	 * Static helper method to extract the result folder.
+	 * Static helper method to extract the selected folder.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
 	 * @param data       The activity response data.
-	 * @return the result folder.
+	 * @return the flag indicating that the list was updated
 	 */
-	public static final String getResultFolder(final int resultCode, final Intent data) {
+	public static final boolean getUpdatedFlag(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
-			return data.getStringExtra(STRING_RESULT_FOLDER);
+			Bundle res = data.getExtras();
+			return res.getBoolean(STRING_RESULT_UPDATED, false);
 		}
 		else {
-			return null;
+			return false;
 		}
 	}
 
 	/**
-	 * Static helper method to extract the flag indicating if the image list was updated.
+	 * Helper method: Return the flag indicating that the list was updated.
 	 *
-	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data       The activity response data.
-	 * @return the flag indicating if the image list was updated.
+	 * @param isUpdated The flag indicating that the list was updated.
 	 */
-	public static final boolean getResultUpdatedList(final int resultCode, final Intent data) {
-		return resultCode == RESULT_OK && data.getBooleanExtra(STRING_RESULT_UPDATED_LIST, false);
-	}
-
-	/**
-	 * Send the result to the calling activity.
-	 *
-	 * @param chosenDir The selected directory.
-	 */
-	private void sendResult(final String chosenDir) {
+	protected final void returnResult(final boolean isUpdated) {
 		Bundle resultData = new Bundle();
-		if (chosenDir != null) {
-			resultData.putString(STRING_RESULT_FOLDER, chosenDir);
-		}
-		resultData.putBoolean(STRING_RESULT_UPDATED_LIST, mUpdatedList);
+		resultData.putBoolean(STRING_RESULT_UPDATED, mUpdatedList || isUpdated);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
-		setResult(chosenDir != null || mUpdatedList ? RESULT_OK : RESULT_CANCELED, intent);
+		setResult(RESULT_OK, intent);
 		finish();
 	}
 
+	@Override
+	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+		case DisplayImagesFromFolderActivity.REQUEST_CODE:
+			if (resultCode == RESULT_OK) {
+				boolean isUpdated = DisplayImagesFromFolderActivity.getResultFilesAdded(resultCode, data);
+				returnResult(isUpdated);
+			}
+			break;
+		default:
+			break;
+		}
+	}
 
 	/**
 	 * Adapter for the GridView displaying the image files.

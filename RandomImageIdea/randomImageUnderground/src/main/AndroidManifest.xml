@@ -2,7 +2,7 @@
 <manifest
     package="de.jeisfeld.randomimage.underground"
     xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="17"
+    android:versionCode="17"
     android:versionName="0.3">
 
     <uses-sdk
@@ -56,16 +56,17 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectDirectoryActivity"
-            android:label="@string/title_activity_select_image_folder">
+            android:label="@string/title_activity_add_images">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.ConfigureImageListActivity"
+            android:label="@string/title_activity_configure_image_list"
             android:launchMode="singleTask">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.MainConfigurationActivity"
             android:icon="@drawable/ic_launcher_setup"
-            android:label="@string/title_activity_main_configuration"
+            android:label="@string/title_icon_main_configuration"
             android:logo="@drawable/ic_launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -75,11 +76,11 @@
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImagesFromFolderActivity"
-            android:label="@string/title_activity_configure_image_list">
+            android:label="@string/title_activity_display_images_from_folder">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectImageFolderActivity"
-            android:label="@string/title_activity_select_image_folder">
+            android:label="@string/title_activity_add_images">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImageDetailsActivity"

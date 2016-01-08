@@ -67,6 +67,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle(R.string.title_activity_main_configuration);
 		fillListOfLists();
 
 		if (savedInstanceState != null) {
