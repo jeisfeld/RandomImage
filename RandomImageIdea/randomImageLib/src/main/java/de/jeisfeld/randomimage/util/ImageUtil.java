@@ -373,9 +373,10 @@ public final class ImageUtil {
 	/**
 	 * Get all image folders on the device in a separate thread.
 	 *
-	 * @param listener A listener handling the response via callback.
+	 * @param listener     A listener handling the response via callback.
+	 * @param createThumbs Flag indicating if thumbnails should be created.
 	 */
-	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
+	public static void getAllImageFolders(final OnImageFoldersFoundListener listener, final boolean createThumbs) {
 		final Handler handler = new Handler();
 
 		new Thread() {
@@ -383,10 +384,10 @@ public final class ImageUtil {
 			public void run() {
 				final ArrayList<String> imageFolders = new ArrayList<>();
 
-				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
+				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener, createThumbs));
 
 				for (String path : FileUtil.getExtSdCardPaths()) {
-					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
+					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener, createThumbs));
 				}
 
 				if (listener != null) {
@@ -399,6 +400,9 @@ public final class ImageUtil {
 				}
 
 				PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
+				if (createThumbs) {
+					PreferenceUtil.setSharedPreferenceLong(R.string.key_last_thumb_creation_time, System.currentTimeMillis());
+				}
 			}
 		}.start();
 	}
@@ -409,10 +413,11 @@ public final class ImageUtil {
 	 * @param parentFolder the folder where to look for image sub folders
 	 * @param handler      A handler running on the GUI thread.
 	 * @param listener     A listener handling the response via callback.
+	 * @param createThumbs Flag indicating if thumbnails should be created.
 	 * @return The array of image folders.
 	 */
 	private static ArrayList<String> getAllImageSubfolders(final File parentFolder, final Handler handler,
-														   final OnImageFoldersFoundListener listener) {
+														   final OnImageFoldersFoundListener listener, final boolean createThumbs) {
 		ArrayList<String> result = new ArrayList<>();
 		if (parentFolder == null) {
 			return result;
@@ -429,7 +434,9 @@ public final class ImageUtil {
 			return result;
 		}
 
-		if (isImageFolder(parentFolder.getAbsolutePath())) {
+		final List<String> imageFiles = getImagesInFolder(parentFolder.getAbsolutePath());
+
+		if (imageFiles.size() > 0) {
 			result.add(parentFolder.getAbsolutePath());
 			if (handler != null && listener != null) {
 				handler.post(new Runnable() {
@@ -438,6 +445,9 @@ public final class ImageUtil {
 						listener.handleImageFolder(parentFolder.getAbsolutePath());
 					}
 				});
+			}
+			if (createThumbs) {
+				MediaStoreUtil.getThumbnailFromPath(imageFiles.get(0), MediaStoreUtil.MINI_THUMB_SIZE);
 			}
 		}
 
@@ -452,7 +462,7 @@ public final class ImageUtil {
 		}
 
 		for (File aChildren : children) {
-			result.addAll(getAllImageSubfolders(aChildren, handler, listener));
+			result.addAll(getAllImageSubfolders(aChildren, handler, listener, createThumbs));
 		}
 
 		return result;

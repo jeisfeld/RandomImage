@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -37,6 +38,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * The resource key for the flag to trigger SelectDirectoryActivity.
 	 */
 	private static final String STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY = "de.jeisfeld.randomimage.TRIGGER_SELECT_DIRECTORY_ACTIVITY";
+
+	/**
+	 * Recreate all thumbs every 12 weeks.
+	 */
+	private static final long THUMB_CREATION_FREQUENCY = DateUtils.WEEK_IN_MILLIS * 12;
 
 	/**
 	 * A filter for the displayed folders.
@@ -137,6 +143,9 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		setAdapter(null, mFilteredImageFolders, null, true);
 
 		if (firstStart) {
+			long lastThumbCreationTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_last_thumb_creation_time, -1);
+			boolean createThumbs = System.currentTimeMillis() > lastThumbCreationTime + THUMB_CREATION_FREQUENCY;
+
 			ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
 
 				@Override
@@ -165,7 +174,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 						}
 					}
 				}
-			});
+			}, createThumbs);
 		}
 	}
 
