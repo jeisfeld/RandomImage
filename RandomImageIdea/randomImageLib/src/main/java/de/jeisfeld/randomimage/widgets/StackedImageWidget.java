@@ -72,6 +72,11 @@ public class StackedImageWidget extends GenericImageWidget {
 		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
 			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 		}
+
+		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER) {
+			// re-trigger timer - just in case that timer is not valid any more.
+			StackedImageWidget.updateTimers(appWidgetId);
+		}
 	}
 
 	@Override

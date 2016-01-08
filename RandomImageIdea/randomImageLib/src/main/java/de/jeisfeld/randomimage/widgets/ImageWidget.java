@@ -142,6 +142,11 @@ public class ImageWidget extends GenericImageWidget {
 					new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
 							R.id.buttonNextImage, R.id.buttonSettings).start();
 				}
+
+				if (userTriggered) {
+					// re-trigger timer - just in case that timer is not valid any more.
+					ImageWidget.updateTimers(appWidgetId);
+				}
 			}
 		}, new Runnable() {
 			@Override
