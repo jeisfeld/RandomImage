@@ -17,6 +17,7 @@ import android.widget.EditText;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -144,14 +145,26 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		setAdapter(null, mFilteredImageFolders, null, true);
 
 		if (firstStart) {
-			long lastThumbCreationTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_last_thumb_creation_time, -1);
-			boolean createThumbs = System.currentTimeMillis() > lastThumbCreationTime + THUMB_CREATION_FREQUENCY;
-
 			ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
 
 				@Override
 				public void handleImageFolders(final ArrayList<String> imageFolders) {
-					// No action required, as folders are added one by one.
+					// Every now and then, trigger thumbnail creation.
+					long lastThumbCreationTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_last_thumb_creation_time, -1);
+					if (System.currentTimeMillis() > lastThumbCreationTime + THUMB_CREATION_FREQUENCY) {
+						new Thread() {
+							@Override
+							public void run() {
+								for (String imageFolder : imageFolders) {
+									List<String> images = ImageUtil.getImagesInFolder(imageFolder);
+									if (images != null && images.size() > 0) {
+										MediaStoreUtil.getThumbnailFromPath(images.get(0), MediaStoreUtil.MINI_THUMB_SIZE);
+									}
+								}
+								PreferenceUtil.setSharedPreferenceLong(R.string.key_last_thumb_creation_time, System.currentTimeMillis());
+							}
+						}.start();
+					}
 				}
 
 				@Override
@@ -178,7 +191,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 						}
 					}
 				}
-			}, createThumbs);
+			});
 		}
 	}
 
