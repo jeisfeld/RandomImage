@@ -163,21 +163,21 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			this.mNestedListNames = new ArrayList<>();
 		}
 		else {
-			this.mNestedListNames = nestedListNames;
+			this.mNestedListNames = new ArrayList<>(nestedListNames);
 			addAll(nestedListNames);
 		}
 		if (folderNames == null) {
 			this.mFolderNames = new ArrayList<>();
 		}
 		else {
-			this.mFolderNames = folderNames;
+			this.mFolderNames = new ArrayList<>(folderNames);
 			addAll(folderNames);
 		}
 		if (fileNames == null) {
 			this.mFileNames = new ArrayList<>();
 		}
 		else {
-			this.mFileNames = fileNames;
+			this.mFileNames = new ArrayList<>(fileNames);
 			addAll(fileNames);
 		}
 

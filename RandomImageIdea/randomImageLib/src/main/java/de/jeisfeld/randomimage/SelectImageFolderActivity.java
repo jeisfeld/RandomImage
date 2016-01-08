@@ -132,7 +132,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		if (filterString.length() > 0) {
 			mFilteredImageFolders = new ArrayList<>();
 			for (String name : mAllImageFolders) {
-				if (name.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))) {
+				if (matchesFilter(name, filterString)) {
 					mFilteredImageFolders.add(name);
 				}
 			}
@@ -158,6 +158,9 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				public void handleImageFolder(final String imageFolder) {
 					if (!mAllImageFolders.contains(imageFolder)) {
 						mAllImageFolders.add(imageFolder);
+						if (matchesFilter(imageFolder, mEditTextFilter.getText().toString())) {
+							mFilteredImageFolders.add(imageFolder);
+						}
 					}
 					if (mFilteredImageFolders.contains(imageFolder)) {
 						if (getAdapter() == null) {
@@ -178,6 +181,19 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			}, createThumbs);
 		}
 	}
+
+	/**
+	 * Check if a file path matches a filter string.
+	 *
+	 * @param path         The file path.
+	 * @param filterString The filter string.
+	 * @return true if it matches.
+	 */
+	private boolean matchesFilter(final String path, final String filterString) {
+		return filterString == null || filterString.length() == 0
+				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()));
+	}
+
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
