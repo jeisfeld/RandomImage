@@ -183,7 +183,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 
 				int totalAddedCount = addedImages.size();
 				if (totalAddedCount == 0) {
-					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_no_image);
+					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_images_none);
 				}
 				else if (totalAddedCount == 1) {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_single, addedImagesString);

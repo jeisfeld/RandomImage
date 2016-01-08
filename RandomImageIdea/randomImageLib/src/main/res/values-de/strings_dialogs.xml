@@ -28,11 +28,11 @@
     <string name="toast_added_multiple">Es wurden %1$s zur Liste hinzugefügt</string>
     <string name="toast_added_single">%1$s wurde zur Liste hinzugefügt</string>
     <string name="toast_added_image_none">Das Bild war bereits in der Liste.</string>
+    <string name="toast_added_images_none">Alle ausgewählten Bilder waren bereits in der Liste.</string>
     <string name="toast_added_folder_none">Das Verzeichnis „%1$s“ war bereits in der Liste.</string>
     <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Überraschungsbildliste „%2$s“ hinzugefügt</string>
     <string name="toast_added_images_single_external">Das Bild „%1$s“ wurde zur Überraschungsbildliste „%2$s“ hinzugefügt</string>
     <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Überraschungsbildliste „%1$s“</string>
-    <string name="toast_added_no_image">Es wurde kein Bild zum Hinzufügen ausgewählt</string>
     <string name="toast_removed_multiple">Es wurden %1$s aus der Liste entfernt</string>
     <string name="toast_removed_single">%1$s wurde aus der Liste entfernt</string>
     <string name="toast_removed_no_image">Es wurde kein Bild zum Entfernen ausgewählt</string>
