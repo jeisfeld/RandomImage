@@ -87,7 +87,9 @@ public class DisplayImageDetailsActivity extends Activity {
 										   final boolean preventDisplayAll) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
-		intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		if (listName != null) {
+			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		}
 		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, preventDisplayAll);
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
@@ -162,6 +164,20 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
+		if (mListName != null) {
+			addButtonsForImageList(listMenu);
+		}
+
+		// Adapter must be set after header, so better set it in the and.
+		listMenu.setAdapter();
+	}
+
+	/**
+	 * Add the buttons related to the image list.
+	 *
+	 * @param listMenu The menu where to add the buttons.
+	 */
+	private void addButtonsForImageList(final ListMenuView listMenu) {
 		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 		if (imageList != null && imageList.contains(mFileName)) {
 			final boolean isDirectory = new File(mFileName).isDirectory();
@@ -213,9 +229,8 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
-		// Adapter must be set after header, so better set it in the and.
-		listMenu.setAdapter();
 	}
+
 
 	/**
 	 * Static helper method to extract the finishParent flag.
@@ -289,7 +304,7 @@ public class DisplayImageDetailsActivity extends Activity {
 		if (file.isDirectory()) {
 			int imageCount = ImageUtil.getImagesInFolder(mFileName).size();
 			double probability = -1;
-			if (mListName.equals(ImageRegistry.getCurrentListName())) {
+			if (mListName != null && mListName.equals(ImageRegistry.getCurrentListName())) {
 				probability = ImageRegistry.getCurrentImageList(false).getProbability(mFileName);
 			}
 			String probabilityString = "";
