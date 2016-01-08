@@ -389,21 +389,17 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 					new ConfirmDialogListener() {
 						@Override
-						public void onDialogPositiveClick(final DialogFragment dialog2) {
-							for (String listName : listNames) {
-								doBackup(listName);
-							}
+						public void onDialogPositiveClick(final DialogFragment dialog) {
+							doBackupAsynchroneously(listNames);
 							changeAction(CurrentAction.DISPLAY);
 						}
 
 						@Override
-						public void onDialogNegativeClick(final DialogFragment dialog2) {
-							for (String listName : listNames) {
-								if (!existingBackups.contains(listName)) {
-									doBackup(listName);
-								}
-								changeAction(CurrentAction.DISPLAY);
-							}
+						public void onDialogNegativeClick(final DialogFragment dialog) {
+							List<String> listsToBeBackedUp = new ArrayList<>(listNames);
+							listsToBeBackedUp.removeAll(existingBackups);
+							doBackupAsynchroneously(listsToBeBackedUp);
+							changeAction(CurrentAction.DISPLAY);
 						}
 					}, null, R.string.button_overwrite,
 					existingCount == 1 ? R.string.dialog_confirmation_overwrite_backup_single
@@ -412,12 +408,27 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 
 		}
 		else {
-			for (String listName : listNames) {
-				doBackup(listName);
-			}
+			doBackupAsynchroneously(listNames);
 			changeAction(CurrentAction.DISPLAY);
 		}
 	}
+
+	/**
+	 * Make a backup of multiple lists in a background thread.
+	 *
+	 * @param listsToBeBackedUp The list names.
+	 */
+	private void doBackupAsynchroneously(final List<String> listsToBeBackedUp) {
+		new Thread() {
+			@Override
+			public void run() {
+				for (String listName : listsToBeBackedUp) {
+					doBackup(listName);
+				}
+			}
+		}.start();
+	}
+
 
 	/**
 	 * Make a backup of the list without querying.
@@ -427,7 +438,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	private void doBackup(final String listToBeBackedUp) {
 		String backupFile = ImageRegistry.backupImageList(listToBeBackedUp);
 		DialogUtil.displayToast(MainConfigurationActivity.this,
-				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackedUp);
+				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackedUp, backupFile);
 		if (backupFile != null) {
 			NotificationUtil.notifyBackupRestore(this, listToBeBackedUp, new File(backupFile).getParent(), false);
 		}
@@ -436,7 +447,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	/**
 	 * Restore image lists, warning in case of overwriting.
 	 *
-	 * @param listNames      the names of the lists.
+	 * @param listNames the names of the lists.
 	 */
 	private void restoreImageLists(final List<String> listNames) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
@@ -451,34 +462,49 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 					new ConfirmDialogListener() {
 						@Override
-						public void onDialogPositiveClick(final DialogFragment dialog2) {
-							for (String listName : listNames) {
-								doRestore(listName);
-							}
+						public void onDialogPositiveClick(final DialogFragment dialog) {
+							doRestoreAsynchroneously(listNames);
 							changeAction(CurrentAction.DISPLAY);
 						}
 
 						@Override
-						public void onDialogNegativeClick(final DialogFragment dialog2) {
-							for (String listName : listNames) {
-								if (!existingLists.contains(listName)) {
-									doRestore(listName);
-								}
-								changeAction(CurrentAction.DISPLAY);
-							}
+						public void onDialogNegativeClick(final DialogFragment dialog) {
+							List<String> listsToBeRestored = new ArrayList<>(listNames);
+							listsToBeRestored.removeAll(existingLists);
+							doRestoreAsynchroneously(listsToBeRestored);
+							changeAction(CurrentAction.DISPLAY);
 						}
 					}, null, R.string.button_overwrite,
 					existingCount == 1 ? R.string.dialog_confirmation_overwrite_list_single
 							: R.string.dialog_confirmation_overwrite_list_multiple,
 					existingCount, existingLists.get(0));
-
 		}
 		else {
-			for (String listName : listNames) {
-				doRestore(listName);
-			}
+			doRestoreAsynchroneously(listNames);
 			changeAction(CurrentAction.DISPLAY);
 		}
+	}
+
+	/**
+	 * Restore multiple lists in a background thread.
+	 *
+	 * @param listsToBeRestored The list names.
+	 */
+	private void doRestoreAsynchroneously(final List<String> listsToBeRestored) {
+		new Thread() {
+			@Override
+			public void run() {
+				for (String listName : listsToBeRestored) {
+					doRestore(listName);
+				}
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						fillListOfLists();
+					}
+				});
+			}
+		}.start();
 	}
 
 	/**

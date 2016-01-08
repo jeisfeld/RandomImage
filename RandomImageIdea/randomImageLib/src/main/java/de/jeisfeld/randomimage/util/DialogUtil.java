@@ -13,6 +13,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -127,11 +130,21 @@ public final class DialogUtil {
 	 */
 	public static void displayToast(final Context context, final int resource, final Object... args) {
 		try {
-			String message = capitalizeFirst(String.format(context.getString(resource), args));
-			Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+			final String message = capitalizeFirst(String.format(context.getString(resource), args));
+			if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+			}
+			else {
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+					}
+				});
+			}
 		}
 		catch (Exception e) {
-			// Do nothing - just prevent runtime exception.
+			Log.e(Application.TAG, "Error displaying toast.", e);
 		}
 	}
 
