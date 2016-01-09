@@ -12,13 +12,20 @@ import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
+import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageList;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -61,6 +68,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private List<String> mAllImageFolders = null;
 
 	/**
+	 * The current action within this activity.
+	 */
+	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
+
+	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
 	 * @param activity The activity starting this activity.
@@ -79,11 +91,14 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mEditTextFilter = (EditText) findViewById(R.id.editTextFilterString);
 
+		mEditTextFilter = (EditText) findViewById(R.id.editTextFilterString);
 		String lastFilterValue = PreferenceUtil.getSharedPreferenceString(R.string.key_folder_selection_filter);
 		if (lastFilterValue != null) {
 			mEditTextFilter.setText(lastFilterValue);
+		}
+		if (savedInstanceState != null) {
+			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 		}
 
 		// This step initializes the adapter.
@@ -125,7 +140,9 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 */
 	private void fillListOfFolders() {
 		boolean firstStart = mAllImageFolders == null;
+		List<String> selectedFolders = null;
 		if (getAdapter() != null) {
+			selectedFolders = getAdapter().getSelectedFolders();
 			getAdapter().cleanupCache();
 		}
 
@@ -149,6 +166,10 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		}
 
 		setAdapter(null, mFilteredImageFolders, null, true);
+		changeAction(mCurrentAction);
+		if (selectedFolders != null) {
+			getAdapter().setSelectedFolders(selectedFolders);
+		}
 
 		if (firstStart) {
 			ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
@@ -209,28 +230,136 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * @return true if it matches.
 	 */
 	private boolean matchesFilter(final String path, final String filterString) {
-		return filterString == null || filterString.length() == 0
-				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()));
+		return filterString == null || filterString.length() == 0 // BOOLEAN_EXPRESSION_COMPLEXITY
+				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
+				|| (getAdapter() != null && getAdapter().getSelectedFolders().contains(path));
 	}
 
+	/**
+	 * Change the action within this activity (display or remove).
+	 *
+	 * @param action the new action.
+	 */
+	private void changeAction(final CurrentAction action) {
+		if (action != null) {
+			mCurrentAction = action;
+			setSelectionMode(action == CurrentAction.SELECT ? SelectionMode.MULTIPLE_ADD : SelectionMode.ONE);
+			invalidateOptionsMenu();
+		}
+	}
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.select_image_folder, menu);
-		return true;
+		switch (mCurrentAction) {
+		case DISPLAY:
+			getMenuInflater().inflate(R.menu.select_image_folder, menu);
+			return true;
+		case SELECT:
+			getMenuInflater().inflate(R.menu.select_image_folders, menu);
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	@Override
 	public final boolean onOptionsItemSelected(final MenuItem item) {
-		if (item.getItemId() == R.id.action_browse_folders) {
+		int id = item.getItemId();
+
+		switch (mCurrentAction) {
+		case DISPLAY:
+			return onOptionsItemSelectedDisplay(id);
+		case SELECT:
+			return onOptionsItemSelectedSelect(id);
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	/**
+	 * Handler for options selected while in display mode.
+	 *
+	 * @param menuId The selected menu item.
+	 * @return true if menu item was consumed.
+	 */
+	public final boolean onOptionsItemSelectedDisplay(final int menuId) {
+		if (menuId == R.id.action_browse_folders) {
 			triggerSelectDirectoryActivity();
 			finish();
+			return true;
+		}
+		else if (menuId == R.id.action_select_multiple) {
+			changeAction(CurrentAction.SELECT);
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
 
+	/**
+	 * Handler for options selected while in sekect mode.
+	 *
+	 * @param menuId The selected menu item.
+	 * @return true if menu item was consumed.
+	 */
+	private boolean onOptionsItemSelectedSelect(final int menuId) {
+		if (menuId == R.id.action_add_folders) {
+			final ArrayList<String> foldersToBeAdded = getAdapter().getSelectedFolders();
+			if (foldersToBeAdded.size() > 0) {
+				ImageList imageList = ImageRegistry.getCurrentImageList(false);
+
+				ArrayList<String> addedFolders = new ArrayList<>();
+				for (String folderName : foldersToBeAdded) {
+					boolean isAdded = imageList.addFolder(folderName);
+					if (isAdded) {
+						addedFolders.add(folderName);
+					}
+				}
+
+				String folderMessageString = DialogUtil.createFileFolderMessageString(null, addedFolders, null);
+				int messageId;
+				if (addedFolders.size() == 0) {
+					messageId = R.string.toast_added_folders_none;
+				}
+				else if (addedFolders.size() == 1) {
+					messageId = R.string.toast_added_single;
+				}
+				else {
+					messageId = R.string.toast_added_multiple;
+				}
+
+				DialogUtil.displayToast(SelectImageFolderActivity.this, messageId, folderMessageString);
+				if (addedFolders.size() > 0) {
+					NotificationUtil.displayNotification(SelectImageFolderActivity.this, ImageRegistry.getCurrentListName(),
+							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list, messageId, folderMessageString);
+				}
+
+				returnResult(addedFolders.size() > 0);
+			}
+			else {
+				DialogUtil.displayToast(SelectImageFolderActivity.this, R.string.toast_add_no_folder_selected);
+				changeAction(CurrentAction.DISPLAY);
+			}
+			return true;
+		}
+		else if (menuId == R.id.action_cancel) {
+			changeAction(CurrentAction.DISPLAY);
+			return true;
+		}
+		else if (menuId == R.id.action_select_all) {
+			boolean markingStatus = getAdapter().toggleSelectAll();
+			for (int i = 0; i < getGridView().getChildCount(); i++) {
+				View imageView = getGridView().getChildAt(i);
+				if (imageView instanceof ThumbImageView) {
+					((ThumbImageView) imageView).setMarked(markingStatus);
+				}
+			}
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/**
@@ -294,6 +423,12 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	protected final void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("currentAction", mCurrentAction);
+	}
+
+	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 		case DisplayImagesFromFolderActivity.REQUEST_CODE:
@@ -307,5 +442,17 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		}
 	}
 
-
+	/**
+	 * The current action in this activity.
+	 */
+	private enum CurrentAction {
+		/**
+		 * Just display the folders.
+		 */
+		DISPLAY,
+		/**
+		 * Select folders for addition.
+		 */
+		SELECT
+	}
 }

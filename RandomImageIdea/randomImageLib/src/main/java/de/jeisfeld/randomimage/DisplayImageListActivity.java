@@ -80,16 +80,18 @@ public abstract class DisplayImageListActivity extends Activity {
 	 */
 	protected final void setAdapter(final List<String> nestedListNames, final List<String> folderNames,
 									final List<String> fileNames, final boolean fixedThumbs) {
-		mAdapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
-		getGridView().setAdapter(mAdapter);
+		DisplayImageListArrayAdapter adapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
 		if (mSelectedFiles != null || mSelectedFolders != null || mSelectedLists != null) {
-			mAdapter.setSelectedFiles(mSelectedFiles == null ? null : Arrays.asList(mSelectedFiles));
-			mAdapter.setSelectedFolders(mSelectedFolders == null ? null : Arrays.asList(mSelectedFolders));
-			mAdapter.setSelectedNestedLists(mSelectedLists == null ? null : Arrays.asList(mSelectedLists));
+			adapter.setSelectedFiles(mSelectedFiles == null ? null : Arrays.asList(mSelectedFiles));
+			adapter.setSelectedFolders(mSelectedFolders == null ? null : Arrays.asList(mSelectedFolders));
+			adapter.setSelectedNestedLists(mSelectedLists == null ? null : Arrays.asList(mSelectedLists));
 			mSelectedFiles = null;
 			mSelectedFolders = null;
 			mSelectedLists = null;
 		}
+		mAdapter = adapter;
+
+		getGridView().setAdapter(mAdapter);
 	}
 
 	// OVERRIDABLE

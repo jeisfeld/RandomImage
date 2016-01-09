@@ -3,16 +3,22 @@
       tools:context="de.jeisfeld.randomimage.DisplayRandomImageActivity">
 
     <item
-        android:id="@+id/action_select_multiple"
+        android:id="@+id/action_select_all"
         android:icon="@drawable/ic_action_checkbox_hook"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/menu_select_all"/>
     <item
-        android:id="@+id/action_browse_folders"
-        android:icon="@drawable/ic_action_folder"
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_action_cancel"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_browse_folders"/>
+        android:title="@string/menu_cancel"/>
+    <item
+        android:id="@+id/action_add_folders"
+        android:icon="@drawable/ic_action_add_checked"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_add_folders"/>
 
 </menu>

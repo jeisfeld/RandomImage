@@ -30,9 +30,11 @@
     <string name="toast_added_image_none">The image was already in the list.</string>
     <string name="toast_added_images_none">All selected images were already in the list.</string>
     <string name="toast_added_folder_none">The folder “%1$s” was already in the list.</string>
+    <string name="toast_added_folders_none">All selected folders were already in the list.</string>
     <string name="toast_added_images_count_external">Added %1$d images to the surprise image list “%2$s”</string>
     <string name="toast_added_images_single_external">Added image “%1$s” to the surprise image list “%2$s”</string>
     <string name="toast_added_images_none_external">All selected images were already in the surprise image list “%1$s”</string>
+    <string name="toast_add_no_folder_selected">No folder was selected for addition</string>
     <string name="toast_removed_multiple">%1$s have been removed from the list</string>
     <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
