@@ -31,6 +31,10 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	/**
+	 * The resource key for the name of the image list to be displayed.
+	 */
+	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	/**
 	 * The request code used to finish the triggering activity.
 	 */
 	public static final int REQUEST_CODE = 5;
@@ -65,17 +69,27 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
 
 	/**
+	 * The name of the image list to which files should be added.
+	 */
+	private String mListName;
+
+	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
 	 * @param activity    The activity starting this activity.
 	 * @param folderName  the name of the folder which should be displayed.
+	 * @param listName the triggering image list to which files should be added.
 	 * @param forAddition Flag indicating if the activity is opened in order to add images to the current list.
 	 */
-	public static final void startActivity(final Activity activity, final String folderName, final boolean forAddition) {
+	public static final void startActivity(final Activity activity, final String folderName,
+										   final String listName, final boolean forAddition) {
 		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		if (folderName != null) {
 			intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
+		}
+		if (listName != null) {
+			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
 		}
 		if (forAddition) {
 			intent.putExtra(STRING_EXTRA_FORADDITION, true);
@@ -94,6 +108,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		mTextViewFolderName = (TextView) findViewById(R.id.textViewTitle);
 
 		mFolderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
+		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		boolean forAddition = getIntent().getBooleanExtra(STRING_EXTRA_FORADDITION, false);
 		if (forAddition) {
 			setTitle(R.string.title_activity_add_images);
@@ -166,7 +181,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 */
 	private boolean onOptionsItemSelectedAdd(final int menuId) {
 		if (menuId == R.id.action_add_images) {
-			final ImageList imageList = ImageRegistry.getCurrentImageList(true);
+			final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 			final ArrayList<String> imagesToBeAdded = getAdapter().getSelectedFiles();
 			if (imagesToBeAdded.size() > 0) {
 
@@ -264,19 +279,19 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * Add the current folder to the current imageList.
 	 */
 	private void addFolderToImageList() {
-		final ImageList imageList2 = ImageRegistry.getCurrentImageList(true);
-		boolean success = imageList2.addFolder(mFolderName);
+		final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
+		boolean success = imageList.addFolder(mFolderName);
 		if (success) {
 			String addedFoldersString =
 					DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFolderName), null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
-			NotificationUtil.displayNotification(this, imageList2.getListName(), NotificationUtil.ID_UPDATED_LIST,
+			NotificationUtil.displayNotification(this, imageList.getListName(), NotificationUtil.ID_UPDATED_LIST,
 					R.string.title_notification_updated_list, R.string.toast_added_single, addedFoldersString);
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
-			imageList2.update(true);
+			imageList.update(true);
 		}
 		else {
-			if (imageList2.contains(mFolderName)) {
+			if (imageList.contains(mFolderName)) {
 				DialogUtil.displayToast(this, R.string.toast_added_folder_none, new File(mFolderName).getName());
 			}
 			else {

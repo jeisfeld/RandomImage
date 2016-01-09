@@ -159,7 +159,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			switchToImageList(name, CreationStyle.NONE);
 			break;
 		case FOLDER:
-			DisplayImagesFromFolderActivity.startActivity(this, name, false);
+			DisplayImagesFromFolderActivity.startActivity(this, name, mListName, false);
 			break;
 		case FILE:
 		default:
@@ -439,10 +439,10 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 		switch (folderSelectionMode) {
 		case 0:
-			SelectImageFolderActivity.startActivity(this);
+			SelectImageFolderActivity.startActivity(this, mListName);
 			break;
 		case 1:
-			SelectDirectoryActivity.startActivity(this);
+			SelectDirectoryActivity.startActivity(this, mListName);
 			break;
 		case 2:
 			// via Gallery
@@ -546,7 +546,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			if (resultCode == RESULT_OK) {
 				needsRefresh = SelectImageFolderActivity.getUpdatedFlag(resultCode, data);
 				if (SelectImageFolderActivity.triggeredSelectDirectoryActivity(resultCode, data)) {
-					SelectDirectoryActivity.startActivity(this);
+					SelectDirectoryActivity.startActivity(this, mListName);
 				}
 			}
 			break;
@@ -562,7 +562,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 				String folderName = new File(fileName).getParent();
 				if (folderName != null) {
-					DisplayImagesFromFolderActivity.startActivity(this, folderName, true);
+					DisplayImagesFromFolderActivity.startActivity(this, folderName, mListName, true);
 				}
 			}
 			break;

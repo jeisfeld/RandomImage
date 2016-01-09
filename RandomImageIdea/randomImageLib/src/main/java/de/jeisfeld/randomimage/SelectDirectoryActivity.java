@@ -50,6 +50,10 @@ public class SelectDirectoryActivity extends Activity {
 	 */
 	public static final int REQUEST_CODE = 6;
 	/**
+	 * The resource key for the name of the image list to be displayed.
+	 */
+	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	/**
 	 * The resource key for the flag indicating that the list was updated.
 	 */
 	private static final String STRING_RESULT_UPDATED = "de.jeisfeld.randomimage.UPDATED";
@@ -114,18 +118,28 @@ public class SelectDirectoryActivity extends Activity {
 	private boolean mUpdatedList = false;
 
 	/**
+	 * The name of the image list to which files should be added.
+	 */
+	private String mListName;
+
+	/**
 	 * Static helper method to start the activity.
 	 *
 	 * @param activity The activity starting this activity.
+	 * @param listName the triggering image list to which files should be added.
 	 */
-	public static void startActivity(final Activity activity) {
+	public static void startActivity(final Activity activity, final String listName) {
 		Intent intent = new Intent(activity, SelectDirectoryActivity.class);
+		if (listName != null) {
+			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		}
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		setContentView(R.layout.activity_select_directory);
 
 		if (savedInstanceState != null) {
@@ -181,14 +195,14 @@ public class SelectDirectoryActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-				DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, true);
+				DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, mListName, true);
 			}
 		});
 		mBtnSelectFolder.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-				final ImageList imageList = ImageRegistry.getCurrentImageList(true);
+				final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 				boolean success = imageList.addFolder(mCurrentFolder);
 				if (success) {
 					String addedFoldersString =
@@ -219,7 +233,7 @@ public class SelectDirectoryActivity extends Activity {
 										   final long id) {
 				final String selectedFolder = mCurrentFolder + File.separator + mListAdapter.getItem(position);
 
-				final ImageList imageList = ImageRegistry.getCurrentImageList(true);
+				final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 
 				String folderShortName = new File(selectedFolder).getName();
 

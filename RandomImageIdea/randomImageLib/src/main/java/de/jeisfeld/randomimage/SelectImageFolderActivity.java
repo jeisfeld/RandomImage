@@ -33,6 +33,11 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
+	 * The resource key for the name of the image list to be displayed.
+	 */
+	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+
+	/**
 	 * The request code used to finish the triggering activity.
 	 */
 	public static final int REQUEST_CODE = 7;
@@ -73,13 +78,21 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
 
 	/**
+	 * The name of the image list to which folders should be added.
+	 */
+	private String mListName;
+
+	/**
 	 * Static helper method to start the activity to display the contents of a folder.
 	 *
 	 * @param activity The activity starting this activity.
+	 * @param listName the triggering image list to which folders should be added.
 	 */
-	public static final void startActivity(final Activity activity) {
+	public static final void startActivity(final Activity activity, final String listName) {
 		Intent intent = new Intent(activity, SelectImageFolderActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		if (listName != null) {
+			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		}
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
@@ -91,6 +104,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 
 		mEditTextFilter = (EditText) findViewById(R.id.editTextFilterString);
 		String lastFilterValue = PreferenceUtil.getSharedPreferenceString(R.string.key_folder_selection_filter);
@@ -126,7 +140,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemClick(final ItemType itemType, final String name) {
 		// itemType is always folder.
-		DisplayImagesFromFolderActivity.startActivity(this, name, true);
+		DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true);
 	}
 
 	@Override
@@ -307,7 +321,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		if (menuId == R.id.action_add_folders) {
 			final ArrayList<String> foldersToBeAdded = getAdapter().getSelectedFolders();
 			if (foldersToBeAdded.size() > 0) {
-				ImageList imageList = ImageRegistry.getCurrentImageList(false);
+				ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 
 				ArrayList<String> addedFolders = new ArrayList<>();
 				for (String folderName : foldersToBeAdded) {
@@ -331,7 +345,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 				DialogUtil.displayToast(SelectImageFolderActivity.this, messageId, folderMessageString);
 				if (addedFolders.size() > 0) {
-					NotificationUtil.displayNotification(SelectImageFolderActivity.this, ImageRegistry.getCurrentListName(),
+					NotificationUtil.displayNotification(SelectImageFolderActivity.this, mListName,
 							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list, messageId, folderMessageString);
 				}
 
