@@ -175,8 +175,10 @@ public final class StandardImageList extends ImageList {
 	public ArrayList<String> getAllImageFiles() {
 		mAsyncLoader.waitUntilReady();
 		Set<String> allImageFiles = new HashSet<>();
-		for (ArrayList<String> nestedListImages : mImageFilesByNestedList.values()) {
-			allImageFiles.addAll(nestedListImages);
+		if (mImageFilesByNestedList != null) {
+			for (ArrayList<String> nestedListImages : mImageFilesByNestedList.values()) {
+				allImageFiles.addAll(nestedListImages);
+			}
 		}
 		return new ArrayList<>(allImageFiles);
 	}
