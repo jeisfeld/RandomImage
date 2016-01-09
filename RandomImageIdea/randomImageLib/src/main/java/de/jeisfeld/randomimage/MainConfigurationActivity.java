@@ -105,7 +105,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * Fill the view with the list of backups.
 	 */
 	private void fillListOfBackups() {
-		mListNames = ImageRegistry.getBackupImageListNames();
+		mListNames = ImageRegistry.getBackupImageListNames(ListFiltering.HIDE_BY_REGEXP);
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
@@ -381,7 +381,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		if (listNames == null || listNames.size() == 0) {
 			return;
 		}
-		final List<String> existingBackups = ImageRegistry.getBackupImageListNames();
+		final List<String> existingBackups = ImageRegistry.getBackupImageListNames(ListFiltering.ALL_LISTS);
 		existingBackups.retainAll(listNames);
 		int existingCount = existingBackups.size();
 

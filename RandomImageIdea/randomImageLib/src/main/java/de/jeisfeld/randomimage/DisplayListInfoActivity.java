@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import de.jeisfeld.randomimage.MainConfigurationActivity.ListAction;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
 
@@ -185,7 +186,7 @@ public class DisplayListInfoActivity extends Activity {
 			}
 		});
 
-		if (ImageRegistry.getBackupImageListNames().contains(mListName)) {
+		if (ImageRegistry.getBackupImageListNames(ListFiltering.ALL_LISTS).contains(mListName)) {
 			View buttonRestore = findViewById(R.id.buttonRestore);
 			buttonRestore.setOnClickListener(new OnClickListener() {
 				@Override

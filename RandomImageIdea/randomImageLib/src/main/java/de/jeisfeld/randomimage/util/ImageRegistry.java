@@ -124,6 +124,17 @@ public final class ImageRegistry {
 	 */
 	public static ArrayList<String> getImageListNames(final ListFiltering listFiltering) {
 		ArrayList<String> nameList = new ArrayList<>(mImageListInfoMap.keySet());
+		return filterNameList(nameList, listFiltering);
+	}
+
+	/**
+	 * Prepare a list of list names according to filtering.
+	 *
+	 * @param nameList      The full list.
+	 * @param listFiltering The filtering to be applied.
+	 * @return The filtered list.
+	 */
+	private static ArrayList<String> filterNameList(final ArrayList<String> nameList, final ListFiltering listFiltering) {
 		Collections.sort(nameList, new Comparator<String>() {
 			@Override
 			public int compare(final String lhs, final String rhs) {
@@ -168,13 +179,13 @@ public final class ImageRegistry {
 	/**
 	 * Get the names of all available image lists in the backup.
 	 *
+	 * @param listFiltering The filtering to be applied.
 	 * @return The names of all available image lists in the backup.
 	 */
-	public static ArrayList<String> getBackupImageListNames() {
+	public static ArrayList<String> getBackupImageListNames(final ListFiltering listFiltering) {
 		Map<String, ImageListInfo> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
 		ArrayList<String> nameList = new ArrayList<>(backupConfigFileMap.keySet());
-		Collections.sort(nameList);
-		return nameList;
+		return filterNameList(nameList, listFiltering);
 	}
 
 	/**
