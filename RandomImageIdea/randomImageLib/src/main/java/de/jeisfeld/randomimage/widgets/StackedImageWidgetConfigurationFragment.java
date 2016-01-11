@@ -45,10 +45,6 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 							Integer.parseInt(stringValue));
 				}
 
-				if (isReconfigureWidget()) {
-					getActivity().finish();
-				}
-
 				return true;
 			}
 

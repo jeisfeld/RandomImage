@@ -45,10 +45,6 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 							Integer.parseInt(stringValue));
 				}
 
-				if (isReconfigureWidget()) {
-					getActivity().finish();
-				}
-
 				return true;
 			}
 

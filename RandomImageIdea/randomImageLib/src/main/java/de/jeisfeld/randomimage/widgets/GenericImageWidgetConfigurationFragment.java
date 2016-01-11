@@ -80,7 +80,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		// Add cancel button
 		if (preferenceLayout != null) {
 			Button btn = new Button(getActivity());
-			btn.setText(mReconfigureWidget ? R.string.button_cancel : R.string.button_widget_configuration);
+			btn.setText(R.string.button_widget_configuration);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
@@ -104,7 +104,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			public boolean onPreferenceClick(final Preference preference) {
 				ConfigureImageListActivity.startActivity(getActivity(),
 						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
-				if (mReconfigureWidget) {
+				if (isReconfigureWidget()) {
 					getActivity().finish();
 				}
 				return true;
