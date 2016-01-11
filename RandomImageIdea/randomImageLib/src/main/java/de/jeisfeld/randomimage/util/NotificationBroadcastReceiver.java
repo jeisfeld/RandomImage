@@ -13,7 +13,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 		int notificationId = intent.getIntExtra(NotificationUtil.EXTRA_NOTIFICATION_ID, -1);
 		String listName = intent.getStringExtra(NotificationUtil.EXTRA_LIST_NAME);
 
-		if (notificationId == NotificationUtil.ID_UPDATED_LIST || notificationId == NotificationUtil.ID_BACKUP_RESTORE) {
+		if (notificationId == NotificationUtil.ID_UPDATED_LIST) {
 			NotificationUtil.cancelNotification(context, listName, notificationId);
 		}
 		else if (notificationId == NotificationUtil.ID_UNMOUNTED_PATH) {

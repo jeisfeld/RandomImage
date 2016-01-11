@@ -39,11 +39,6 @@ public final class NotificationUtil {
 	public static final int ID_ERROR_SAVING_LIST = 3;
 
 	/**
-	 * Notification tag for backup or restore.
-	 */
-	public static final int ID_BACKUP_RESTORE = 4;
-
-	/**
 	 * Notification tag for missing files when loading an image list.
 	 */
 	public static final int ID_MISSING_FILES = 5;
@@ -82,16 +77,6 @@ public final class NotificationUtil {
 	 * A map storing the update message texts.
 	 */
 	private static Map<String, List<String>> mListUpdateMap = new HashMap<>();
-
-	/**
-	 * A list storing the names of backed up or restored lists.
-	 */
-	private static List<String> mBackedUpLists = new ArrayList<>();
-
-	/**
-	 * Flag indicating if the last action was backup or restore.
-	 */
-	private static boolean mWasRestore = false;
 
 	/**
 	 * A map storing information on mounting issues while loading image lists.
@@ -161,7 +146,7 @@ public final class NotificationUtil {
 			notificationBuilder.setContentIntent(pendingIntent);
 		}
 
-		if (notificationId == ID_UPDATED_LIST || notificationId == ID_BACKUP_RESTORE || notificationId == ID_UNMOUNTED_PATH) {
+		if (notificationId == ID_UPDATED_LIST || notificationId == ID_UNMOUNTED_PATH) {
 			Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
 			dismissalIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
 			int uniqueId = 0;
@@ -194,43 +179,8 @@ public final class NotificationUtil {
 		if (notificationId == ID_UPDATED_LIST) {
 			mListUpdateMap.remove(notificationTag);
 		}
-		else if (notificationId == ID_BACKUP_RESTORE) {
-			mBackedUpLists.clear();
-		}
 
 		notificationManager.cancel(notificationTag, notificationId);
-	}
-
-	/**
-	 * Notify about backup or restore of a list.
-	 *
-	 * @param context    the current activity or context
-	 * @param listName   The name of the list to be backed up or restored.
-	 * @param backupPath The path where backup files are stored.
-	 * @param isRestore  True for restore, false for backup.
-	 */
-	public static void notifyBackupRestore(final Context context, final String listName, final String backupPath, final boolean isRestore) {
-		if (isRestore != mWasRestore) {
-			mBackedUpLists.clear();
-		}
-		mWasRestore = isRestore;
-		mBackedUpLists.add(listName);
-		StringBuilder backedUpListString = new StringBuilder();
-		for (String name : mBackedUpLists) {
-			if (backedUpListString.length() > 0) {
-				backedUpListString.append(", ");
-			}
-			backedUpListString.append(String.format(context.getString(R.string.partial_quoted_string), name));
-		}
-		int messageId;
-		if (mBackedUpLists.size() == 1) {
-			messageId = isRestore ? R.string.notification_restore_of_list_single : R.string.notification_backup_of_list_single;
-		}
-		else {
-			messageId = isRestore ? R.string.notification_restore_of_list : R.string.notification_backup_of_list;
-		}
-		NotificationUtil.displayNotification(context, null, NotificationUtil.ID_BACKUP_RESTORE, R.string.title_notification_backup_restore,
-				messageId, backedUpListString.toString(), backupPath);
 	}
 
 	/**

@@ -18,6 +18,9 @@
             <item
                 android:id="@+id/action_restore_lists"
                 android:title="@string/menu_restore_lists"/>
+            <item
+                android:id="@+id/action_delete_lists"
+                android:title="@string/menu_delete_lists"/>
         </menu>
     </item>
     <item

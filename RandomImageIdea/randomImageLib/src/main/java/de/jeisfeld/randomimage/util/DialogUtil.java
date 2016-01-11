@@ -85,6 +85,19 @@ public final class DialogUtil {
 	/**
 	 * Display an information message and go back to the current activity.
 	 *
+	 * @param activity        the current activity
+	 * @param messageResource the message resource
+	 * @param args            arguments for the error message
+	 */
+	public static void displayInfo(final Activity activity,
+								   final int messageResource,
+								   final Object... args) {
+		displayInfo(activity, null, 0, messageResource, args);
+	}
+
+	/**
+	 * Display an information message and go back to the current activity.
+	 *
 	 * @param activity           the current activity
 	 * @param listener           an optional listener waiting for the dialog response. If a listener is given, then the dialog will not
 	 *                           be automatically recreated on orientation change!

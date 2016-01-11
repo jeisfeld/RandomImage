@@ -15,16 +15,14 @@
     <string name="title_notification_updated_list">„%1$s“ aktualisiert</string>
     <string name="title_notification_failed_loading">„%1$s“ - Ladefehler</string>
     <string name="title_notification_failed_saving">„%1$s“ - Speicherfehler</string>
-    <string name="title_notification_backup_restore">Sicherung/Wiederherstellung</string>
+    <string name="title_notification_backup">Bildlisten gesichert</string>
+    <string name="title_notification_restore">Bildlisten wiederhergestellt</string>
+    <string name="title_notification_delete">Bildlisten gelöscht</string>
     <string name="title_notification_missing_files">„%1$s“ hat fehlende Bilder</string>
     <string name="title_notification_unmounted_paths">“%1$s” nicht verfügbar</string>
 
     <!-- Contents of toasts or notifications -->
     <string name="notification_unmounted_path">Auf das externe Verzeichnis “%1$s” kann nicht zugegriffen werden. Daher fehlen Bilder in den Bildlisten %2$s.</string>
-    <string name="notification_backup_of_list">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s“.</string>
-    <string name="notification_restore_of_list">Die Listen %1$s wurden wiederhergestellt.</string>
-    <string name="notification_backup_of_list_single">Die Liste %1$s wurde gesichert im Verzeichnis „%2$s“.</string>
-    <string name="notification_restore_of_list_single">Die Liste %1$s wurde wiederhergestellt.</string>
     <string name="toast_added_multiple">Es wurden %1$s zur Liste hinzugefügt</string>
     <string name="toast_added_single">%1$s wurde zur Liste hinzugefügt</string>
     <string name="toast_added_image_none">Das Bild war bereits in der Liste.</string>
@@ -39,10 +37,9 @@
     <string name="toast_removed_single">%1$s wurde aus der Liste entfernt</string>
     <string name="toast_removed_no_image">Es wurde kein Bild zum Entfernen ausgewählt</string>
     <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s“</string>
-    <string name="toast_backup_of_list">Die Liste „%1$s“ wurde gesichert in der Datei „%2$s“</string>
     <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
-    <string name="toast_restore_of_list">Die Liste „%1$s“ wurde wiederhergestellt</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
+    <string name="toast_failed_to_delete_list">Fehler beim Löschen der Liste „%1$s“</string>
     <string name="toast_failed_to_load_files">%2$d Bilder oder Verzeichnisse der Bildliste „%1$s“ wurden nicht gefunden</string>
     <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s“ wurde nicht gefunden</string>
     <string name="toast_failed_to_open_google_play">Google Play konnte nicht gestartet werden.</string>
@@ -61,7 +58,12 @@
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
     <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich widgets für die Liste „%1$s“. Bitte denken Sie daran, diese zu entfernen.</string>
-    <string name="dialog_info_backup">Die Bildliste „%1$s“ wurde gesichert. Die Sicherung befindet sich in der Datei „%2$s“.</string>
+    <string name="dialog_info_backup_of_lists">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s“.</string>
+    <string name="dialog_info_restore_of_lists">Die Listen %1$s wurden wiederhergestellt.</string>
+    <string name="dialog_info_delete_of_lists">Die Listen %1$s wurden gelöscht.</string>
+    <string name="dialog_info_backup_of_list_single">Die Liste %1$s wurde gesichert im Verzeichnis „%2$s“.</string>
+    <string name="dialog_info_restore_of_list_single">Die Liste %1$s wurde wiederhergestellt.</string>
+    <string name="dialog_info_delete_of_list_single">Die Liste %1$s wurde gelöscht.</string>
     <string name="dialog_info_no_images_in_folder">Das Verzeichnis „%1$s“ enthält keine Bilder.</string>
     <string name="dialog_info_premium_thanks">Danke für den Kauf der Premium-Erweiterung! Sie können nun mehrere Bildlisten verwenden.</string>
     <string name="dialog_info_need_premium">Zur Nutzung von mehr als drei Bildlisten müssen Sie eine Premium-Erweiterung erwerben.</string>
@@ -78,7 +80,8 @@
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_select_image_folder_for_add">Wählen Sie das Verzeichnis, dessen Bilder Sie zur Liste hinzufügen wollen.</string>
-    <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%1$s“ wirklich löschen?</string>
+    <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%2$s“ wirklich löschen?</string>
+    <string name="dialog_confirmation_delete_lists">Wollen Sie die %1$d ausgewählten Bildlisten wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s“ entfernen?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
     <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>

@@ -15,6 +15,8 @@
     <string name="menu_backup">Sichern</string>
     <string name="menu_restore_lists">Bildlisten wiederherstellen</string>
     <string name="menu_restore">Wiederherstellen</string>
+    <string name="menu_delete_lists">Bildlisten löschen</string>
+    <string name="menu_delete">Löschen</string>
     <string name="menu_create_list">Neue Bildliste erstellen</string>
     <string name="menu_include_other_list">Andere Liste zu aktueller hinzufügen</string>
     <string name="menu_remove_image_from_list">Bild aus der Liste entfernen</string>

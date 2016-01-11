@@ -23,7 +23,6 @@ import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.Reques
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
@@ -130,6 +129,9 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		case RESTORE:
 			getMenuInflater().inflate(R.menu.restore_multiple_lists, menu);
 			return true;
+		case DELETE:
+			getMenuInflater().inflate(R.menu.delete_multiple_lists, menu);
+			return true;
 		default:
 			return false;
 		}
@@ -144,6 +146,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return onOptionsItemSelectedDisplay(id);
 		case BACKUP:
 		case RESTORE:
+		case DELETE:
 			return onOptionsItemsSelectedMultiSelect(id);
 		default:
 			return super.onOptionsItemSelected(item);
@@ -163,6 +166,10 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		}
 		else if (menuId == R.id.action_restore_lists) {
 			changeAction(CurrentAction.RESTORE);
+			return true;
+		}
+		else if (menuId == R.id.action_delete_lists) {
+			changeAction(CurrentAction.DELETE);
 			return true;
 		}
 		else if (menuId == R.id.action_create_list) {
@@ -214,6 +221,15 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		else if (menuId == R.id.action_do_restore) {
 			if (getAdapter().getSelectedNestedLists().size() > 0) {
 				restoreImageLists(getAdapter().getSelectedNestedLists());
+			}
+			else {
+				changeAction(CurrentAction.DISPLAY);
+			}
+			return true;
+		}
+		else if (menuId == R.id.action_do_delete) {
+			if (getAdapter().getSelectedNestedLists().size() > 0) {
+				deleteImageLists(getAdapter().getSelectedNestedLists());
 			}
 			else {
 				changeAction(CurrentAction.DISPLAY);
@@ -298,20 +314,36 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	/**
 	 * Delete an image list after selecting the list.
 	 *
-	 * @param listName The name of the list to be deleted.
+	 * @param listNames The names of the lists to be deleted.
 	 */
-	private void deleteImageList(final String listName) {
+	private void deleteImageLists(final List<String> listNames) {
+		if (listNames == null || listNames.size() == 0) {
+			return;
+		}
 		DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 				new ConfirmDialogListener() {
 					@Override
-					public void onDialogPositiveClick(final DialogFragment dialog1) {
-						ImageRegistry.deleteImageList(listName);
-
-						if (GenericWidget.getWidgetIdsForName(listName).size() > 0) {
-							DialogUtil.displayInfo(MainConfigurationActivity.this, null, 0,
-									R.string.dialog_info_delete_widgets, listName);
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						List<String> deletedLists = new ArrayList<>();
+						for (String listName : listNames) {
+							boolean success = ImageRegistry.deleteImageList(listName);
+							if (success) {
+								deletedLists.add(listName);
+								if (GenericWidget.getWidgetIdsForName(listName).size() > 0) {
+									DialogUtil.displayInfo(MainConfigurationActivity.this, null, 0, R.string.dialog_info_delete_widgets, listName);
+								}
+							}
+							else {
+								DialogUtil.displayToast(MainConfigurationActivity.this, R.string.toast_failed_to_delete_list, listName);
+							}
+						}
+						if (deletedLists.size() > 0) {
+							DialogUtil.displayInfo(MainConfigurationActivity.this,
+									deletedLists.size() == 1 ? R.string.dialog_info_delete_of_list_single : R.string.dialog_info_delete_of_lists,
+									createListNameString(deletedLists));
 						}
 
+						changeAction(CurrentAction.DISPLAY);
 						fillListOfLists();
 					}
 
@@ -319,7 +351,9 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 					public void onDialogNegativeClick(final DialogFragment dialog1) {
 						// do nothing.
 					}
-				}, null, R.string.button_delete, R.string.dialog_confirmation_delete_list, listName);
+				}, null, R.string.button_delete,
+				listNames.size() == 1 ? R.string.dialog_confirmation_delete_list : R.string.dialog_confirmation_delete_lists,
+				listNames.size(), listNames.get(0));
 	}
 
 	/**
@@ -422,26 +456,31 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		new Thread() {
 			@Override
 			public void run() {
+				List<String> backedUpLists = new ArrayList<>();
+				String backupFolder = null;
 				for (String listName : listsToBeBackedUp) {
-					doBackup(listName);
+					String backupFile = ImageRegistry.backupImageList(listName);
+					if (backupFile == null) {
+						DialogUtil.displayToast(MainConfigurationActivity.this, R.string.toast_failed_to_backup_list, listName);
+					}
+					else {
+						backedUpLists.add(listName);
+						backupFolder = new File(backupFile).getParent();
+					}
 				}
+				if (backedUpLists.size() > 0) {
+					DialogUtil.displayInfo(MainConfigurationActivity.this,
+							backedUpLists.size() == 1 ? R.string.dialog_info_backup_of_list_single : R.string.dialog_info_backup_of_lists,
+							createListNameString(backedUpLists), backupFolder);
+				}
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						changeAction(CurrentAction.DISPLAY);
+					}
+				});
 			}
 		}.start();
-	}
-
-
-	/**
-	 * Make a backup of the list without querying.
-	 *
-	 * @param listToBeBackedUp The list name.
-	 */
-	private void doBackup(final String listToBeBackedUp) {
-		String backupFile = ImageRegistry.backupImageList(listToBeBackedUp);
-		DialogUtil.displayToast(MainConfigurationActivity.this,
-				backupFile == null ? R.string.toast_failed_to_backup_list : R.string.toast_backup_of_list, listToBeBackedUp, backupFile);
-		if (backupFile != null) {
-			NotificationUtil.notifyBackupRestore(this, listToBeBackedUp, new File(backupFile).getParent(), false);
-		}
 	}
 
 	/**
@@ -464,7 +503,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 						@Override
 						public void onDialogPositiveClick(final DialogFragment dialog) {
 							doRestoreAsynchroneously(listNames);
-							changeAction(CurrentAction.DISPLAY);
 						}
 
 						@Override
@@ -472,7 +510,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 							List<String> listsToBeRestored = new ArrayList<>(listNames);
 							listsToBeRestored.removeAll(existingLists);
 							doRestoreAsynchroneously(listsToBeRestored);
-							changeAction(CurrentAction.DISPLAY);
 						}
 					}, null, R.string.button_overwrite,
 					existingCount == 1 ? R.string.dialog_confirmation_overwrite_list_single
@@ -481,7 +518,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		}
 		else {
 			doRestoreAsynchroneously(listNames);
-			changeAction(CurrentAction.DISPLAY);
 		}
 	}
 
@@ -494,33 +530,30 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		new Thread() {
 			@Override
 			public void run() {
+				List<String> restoredLists = new ArrayList<>();
 				for (String listName : listsToBeRestored) {
-					doRestore(listName);
+					boolean success = ImageRegistry.restoreImageList(listName);
+					if (success) {
+						restoredLists.add(listName);
+					}
+					else {
+						DialogUtil.displayToast(MainConfigurationActivity.this, R.string.toast_failed_to_backup_list, listName);
+					}
+				}
+				if (restoredLists.size() > 0) {
+					DialogUtil.displayInfo(MainConfigurationActivity.this,
+							restoredLists.size() == 1 ? R.string.dialog_info_restore_of_list_single : R.string.dialog_info_restore_of_lists,
+							createListNameString(restoredLists));
 				}
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						fillListOfLists();
+						changeAction(CurrentAction.DISPLAY);
 					}
 				});
 			}
 		}.start();
 	}
-
-	/**
-	 * Make a restore of the list without querying.
-	 *
-	 * @param listToBeRestored The list name.
-	 */
-	private void doRestore(final String listToBeRestored) {
-		boolean success = ImageRegistry.restoreImageList(listToBeRestored);
-		DialogUtil.displayToast(MainConfigurationActivity.this,
-				success ? R.string.toast_restore_of_list : R.string.toast_failed_to_restore_list, listToBeRestored);
-		if (success) {
-			NotificationUtil.notifyBackupRestore(this, listToBeRestored, null, true);
-		}
-	}
-
 
 	/**
 	 * Change the action within this activity (display or remove).
@@ -532,7 +565,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			if (mCurrentAction == CurrentAction.RESTORE && action != mCurrentAction) {
 				fillListOfLists();
 			}
-			if (action == CurrentAction.RESTORE && action != mCurrentAction) {
+			else if (action == CurrentAction.RESTORE && action != mCurrentAction) {
 				fillListOfBackups();
 			}
 			mCurrentAction = action;
@@ -540,6 +573,35 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			invalidateOptionsMenu();
 		}
 	}
+
+	/**
+	 * Create a concatenated String for multiple list names.
+	 *
+	 * @param listNames The list names.
+	 * @return The concatenated String.
+	 */
+	private String createListNameString(final List<String> listNames) {
+		if (listNames.size() == 0) {
+			return "";
+		}
+		else if (listNames.size() == 1) {
+			return String.format(getString(R.string.partial_quoted_string), listNames.get(0));
+		}
+		else {
+			String lastTwoNames = String.format(getString(R.string.partial_and),
+					String.format(getString(R.string.partial_quoted_string), listNames.get(listNames.size() - 2)),
+					String.format(getString(R.string.partial_quoted_string), listNames.get(listNames.size() - 1)));
+
+			StringBuilder listNameStringBuilder = new StringBuilder();
+			for (int i = 0; i < listNames.size() - 2; i++) {
+				listNameStringBuilder.append(String.format(getString(R.string.partial_quoted_string), listNames.get(i)));
+				listNameStringBuilder.append(", ");
+			}
+			listNameStringBuilder.append(lastTwoNames);
+			return listNameStringBuilder.toString();
+		}
+	}
+
 
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {
@@ -569,7 +631,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		String selectedListName = DisplayListInfoActivity.getResultListName(resultCode, data);
 		switch (listAction) {
 		case DELETE:
-			deleteImageList(selectedListName);
+			deleteImageLists(Collections.singletonList(selectedListName));
 			break;
 		case RENAME:
 			renameImageList(selectedListName);
@@ -609,7 +671,11 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		/**
 		 * Restore image lists.
 		 */
-		RESTORE
+		RESTORE,
+		/**
+		 * Delete image lists.
+		 */
+		DELETE
 	}
 
 	/**

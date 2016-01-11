@@ -15,16 +15,14 @@
     <string name="title_notification_updated_list">Updated “%1$s”</string>
     <string name="title_notification_failed_loading">Failed to load “%1$s”</string>
     <string name="title_notification_failed_saving">Failed to save “%1$s”</string>
-    <string name="title_notification_backup_restore">Backup/Restore</string>
+    <string name="title_notification_backup">Image lists backed up</string>
+    <string name="title_notification_restore">Image lists restored</string>
+    <string name="title_notification_delete">Image lists deleted</string>
     <string name="title_notification_missing_files">“%1$s” has missing files</string>
     <string name="title_notification_unmounted_paths">“%1$s” missing</string>
 
     <!-- Contents of toasts or notifications -->
     <string name="notification_unmounted_path">The external storage “%1$s” cannot be accessed. This causes missing images in the image lists %2$s.</string>
-    <string name="notification_backup_of_list">Made backup of the lists %1$s to the folder “%2$s”.</string>
-    <string name="notification_restore_of_list">The lists %1$s have been restored.</string>
-    <string name="notification_backup_of_list_single">Made backup of the list %1$s to the folder “%2$s”.</string>
-    <string name="notification_restore_of_list_single">The list %1$s has been restored.</string>
     <string name="toast_added_multiple">%1$s have been added to the list</string>
     <string name="toast_added_single">%1$s has been added to the list</string>
     <string name="toast_added_image_none">The image was already in the list.</string>
@@ -39,10 +37,9 @@
     <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
-    <string name="toast_backup_of_list">Made backup of list “%1$s” to the file “%2$s”</string>
     <string name="toast_failed_to_backup_list">Failed to backup list “%1$s”</string>
-    <string name="toast_restore_of_list">Restored list “%1$s”</string>
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
+    <string name="toast_failed_to_delete_list">Failed to delete list “%1$s”</string>
     <string name="toast_failed_to_load_files">%2$d files or folders of the image list “%1$s” could not be found</string>
     <string name="toast_failed_to_load_files_single">One file or folder of the image list “%1$s” could not be found</string>
     <string name="toast_failed_to_open_google_play">Failed to open Google Play.</string>
@@ -60,8 +57,13 @@
     <string name="dialog_info_delete_images">Select images that you want to remove from the list. Then press the minus icon to remove, or press the cross icon to abort.</string>
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
     <string name="dialog_info_name_already_existing">The name “%1$s” already exists - please choose another one.</string>
-    <string name="dialog_info_delete_widgets">On your home screen, there are widgets for the name “%1$s”. Please remember to remove these.</string>
-    <string name="dialog_info_backup">The backup of the list “%1$s” is completed. The backup is located in the file “%2$s”.</string>
+    <string name="dialog_info_delete_widgets">On your home screen, there are widgets for the list “%1$s”. Please remember to remove these.</string>
+    <string name="dialog_info_backup_of_lists">Made backup of the lists %1$s to the folder “%2$s”.</string>
+    <string name="dialog_info_restore_of_lists">The lists %1$s have been restored.</string>
+    <string name="dialog_info_delete_of_lists">The lists %1$s have been deleted.</string>
+    <string name="dialog_info_backup_of_list_single">Made backup of the list %1$s to the folder “%2$s”.</string>
+    <string name="dialog_info_restore_of_list_single">The list %1$s has been restored.</string>
+    <string name="dialog_info_delete_of_list_single">The list %1$s has been deleted.</string>
     <string name="dialog_info_no_images_in_folder">The folder “%1$s” does not contain any images.</string>
     <string name="dialog_info_premium_thanks">Thanks for buying the premium add-on! You can now use multiple image lists.</string>
     <string name="dialog_info_need_premium">You have to acquire a premium add-on to create more than three image lists.</string>
@@ -78,7 +80,8 @@
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
     <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
     <string name="dialog_select_image_folder_for_add">Select the folder whose images you want to add to the image list.</string>
-    <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%1$s”?</string>
+    <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%2$s”?</string>
+    <string name="dialog_confirmation_delete_lists">Do you really want to delete the %1$d selected image lists?</string>
     <string name="dialog_confirmation_remove">Do you really want to remove %2$s from the list “%1$s”?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">You did not select any image for addition. Do you want to add the whole image folder to the list?</string>
     <string name="dialog_confirmation_add_folder_ignore_selection">You decided to add the whole folder to the list - this will ignore your image selection. Do you want to proceed?</string>
