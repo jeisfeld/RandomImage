@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -387,8 +388,8 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 								}
 
 								DialogUtil.displayToast(ConfigureImageListActivity.this, messageId, fileFolderMessageString);
-								NotificationUtil.displayNotification(ConfigureImageListActivity.this, mListName, NotificationUtil.ID_UPDATED_LIST,
-										R.string.title_notification_updated_list, messageId, fileFolderMessageString);
+								NotificationUtil.notifyUpdatedList(ConfigureImageListActivity.this,
+										mListName, true, removedNestedLists, removedFolders, removedImages);
 
 								if (totalRemovedCount > 0) {
 									imageList.update(true);
@@ -484,9 +485,15 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
 								ImageList imageList = ImageRegistry.getCurrentImageList(true);
-								imageList.addNestedList(text);
-								imageList.update(true);
-								fillListOfImages();
+								boolean success = imageList.addNestedList(text);
+								if (success) {
+									String addedItemString = DialogUtil.createFileFolderMessageString(Collections.singletonList(text), null, null);
+									DialogUtil.displayToast(ConfigureImageListActivity.this, R.string.toast_added_single, addedItemString);
+									NotificationUtil.notifyUpdatedList(ConfigureImageListActivity.this, mListName, false,
+											Collections.singletonList(text), null, null);
+									imageList.update(true);
+									fillListOfImages();
+								}
 							}
 
 							@Override

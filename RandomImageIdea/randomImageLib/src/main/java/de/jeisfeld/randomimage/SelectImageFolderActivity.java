@@ -345,8 +345,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 				DialogUtil.displayToast(SelectImageFolderActivity.this, messageId, folderMessageString);
 				if (addedFolders.size() > 0) {
-					NotificationUtil.displayNotification(SelectImageFolderActivity.this, mListName,
-							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list, messageId, folderMessageString);
+					NotificationUtil.notifyUpdatedList(SelectImageFolderActivity.this, mListName, false, null, addedFolders, null);
 				}
 
 				returnResult(addedFolders.size() > 0);

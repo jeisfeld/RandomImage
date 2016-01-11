@@ -208,9 +208,8 @@ public class SelectDirectoryActivity extends Activity {
 					String addedFoldersString =
 							DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mCurrentFolder), null);
 					DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
-					NotificationUtil.displayNotification(SelectDirectoryActivity.this, imageList.getListName(),
-							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
-							R.string.toast_added_single, addedFoldersString);
+					NotificationUtil.notifyUpdatedList(SelectDirectoryActivity.this, mListName, false, null,
+							Collections.singletonList(mCurrentFolder), null);
 					imageList.update(true);
 					mUpdatedList = true;
 				}
@@ -248,9 +247,8 @@ public class SelectDirectoryActivity extends Activity {
 										String addedFoldersString =
 												DialogUtil.createFileFolderMessageString(null, Collections.singletonList(selectedFolder), null);
 										DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
-										NotificationUtil.displayNotification(SelectDirectoryActivity.this, imageList.getListName(),
-												NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
-												R.string.toast_added_single, addedFoldersString);
+										NotificationUtil.notifyUpdatedList(SelectDirectoryActivity.this, mListName, false, null,
+												Collections.singletonList(selectedFolder), null);
 										imageList.update(true);
 										mUpdatedList = true;
 									}

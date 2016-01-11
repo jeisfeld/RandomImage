@@ -199,13 +199,18 @@ public class DisplayImageDetailsActivity extends Activity {
 									new ConfirmDialogListener() {
 										@Override
 										public void onDialogPositiveClick(final DialogFragment dialog) {
-											imageList.removeFile(mFileName);
-											imageList.removeFolder(mFileName);
+											if (isDirectory) {
+												imageList.removeFolder(mFileName);
+												NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+														null, Collections.singletonList(mFileName), null);
+											}
+											else {
+												imageList.removeFile(mFileName);
+												NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+														null, null, Collections.singletonList(mFileName));
+											}
 											imageList.update(true);
 											DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_removed_single, filesString);
-											NotificationUtil.displayNotification(DisplayImageDetailsActivity.this, mListName,
-													NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
-													R.string.toast_removed_single, filesString);
 											returnResult(mPreventDisplayAll, true);
 										}
 

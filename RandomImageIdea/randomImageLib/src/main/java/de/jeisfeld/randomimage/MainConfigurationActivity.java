@@ -340,7 +340,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 						if (deletedLists.size() > 0) {
 							DialogUtil.displayInfo(MainConfigurationActivity.this,
 									deletedLists.size() == 1 ? R.string.dialog_info_delete_of_list_single : R.string.dialog_info_delete_of_lists,
-									createListNameString(deletedLists));
+									DialogUtil.createListNameString(deletedLists));
 						}
 
 						changeAction(CurrentAction.DISPLAY);
@@ -471,7 +471,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 				if (backedUpLists.size() > 0) {
 					DialogUtil.displayInfo(MainConfigurationActivity.this,
 							backedUpLists.size() == 1 ? R.string.dialog_info_backup_of_list_single : R.string.dialog_info_backup_of_lists,
-							createListNameString(backedUpLists), backupFolder);
+							DialogUtil.createListNameString(backedUpLists), backupFolder);
 				}
 				runOnUiThread(new Runnable() {
 					@Override
@@ -543,7 +543,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 				if (restoredLists.size() > 0) {
 					DialogUtil.displayInfo(MainConfigurationActivity.this,
 							restoredLists.size() == 1 ? R.string.dialog_info_restore_of_list_single : R.string.dialog_info_restore_of_lists,
-							createListNameString(restoredLists));
+							DialogUtil.createListNameString(restoredLists));
 				}
 				runOnUiThread(new Runnable() {
 					@Override
@@ -573,35 +573,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			invalidateOptionsMenu();
 		}
 	}
-
-	/**
-	 * Create a concatenated String for multiple list names.
-	 *
-	 * @param listNames The list names.
-	 * @return The concatenated String.
-	 */
-	private String createListNameString(final List<String> listNames) {
-		if (listNames.size() == 0) {
-			return "";
-		}
-		else if (listNames.size() == 1) {
-			return String.format(getString(R.string.partial_quoted_string), listNames.get(0));
-		}
-		else {
-			String lastTwoNames = String.format(getString(R.string.partial_and),
-					String.format(getString(R.string.partial_quoted_string), listNames.get(listNames.size() - 2)),
-					String.format(getString(R.string.partial_quoted_string), listNames.get(listNames.size() - 1)));
-
-			StringBuilder listNameStringBuilder = new StringBuilder();
-			for (int i = 0; i < listNames.size() - 2; i++) {
-				listNameStringBuilder.append(String.format(getString(R.string.partial_quoted_string), listNames.get(i)));
-				listNameStringBuilder.append(", ");
-			}
-			listNameStringBuilder.append(lastTwoNames);
-			return listNameStringBuilder.toString();
-		}
-	}
-
 
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {

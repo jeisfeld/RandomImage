@@ -109,11 +109,10 @@ public class DisplayListInfoActivity extends Activity {
 			return;
 		}
 		((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
-				String.format(getString(R.string.info_nested_list_images), imageList.getNestedListImageCount(mListName)));
+				getString(R.string.info_nested_list_images, imageList.getNestedListImageCount(mListName)));
 
 		((TextView) findViewById(R.id.textViewWeight)).setText(
-				String.format(getString(R.string.info_nested_list_image_proportion),
-						getPercentageString(imageList.getImagePercentage(mListName))));
+				getString(R.string.info_nested_list_image_proportion, getPercentageString(imageList.getImagePercentage(mListName))));
 
 		final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
 		Double customNestedListWeight = imageList.getCustomNestedListWeight(mListName);
@@ -205,7 +204,7 @@ public class DisplayListInfoActivity extends Activity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						textViewNumberOfImages.setText(String.format(getString(R.string.info_nested_list_images), numberOfImages));
+						textViewNumberOfImages.setText(getString(R.string.info_nested_list_images, numberOfImages));
 					}
 				});
 			}

@@ -15,9 +15,6 @@
     <string name="title_notification_updated_list">„%1$s“ aktualisiert</string>
     <string name="title_notification_failed_loading">„%1$s“ - Ladefehler</string>
     <string name="title_notification_failed_saving">„%1$s“ - Speicherfehler</string>
-    <string name="title_notification_backup">Bildlisten gesichert</string>
-    <string name="title_notification_restore">Bildlisten wiederhergestellt</string>
-    <string name="title_notification_delete">Bildlisten gelöscht</string>
     <string name="title_notification_missing_files">„%1$s“ hat fehlende Bilder</string>
     <string name="title_notification_unmounted_paths">“%1$s” nicht verfügbar</string>
 
@@ -98,8 +95,8 @@
     <string name="partial_and">%1$s und %2$s</string>
     <string name="partial_image_single">das Bild „%1$s“</string>
     <string name="partial_image_multiple">%1$d Bilder</string>
-    <string name="partial_nested_list_single">die Bildliste „%1$s“</string>
-    <string name="partial_nested_list_multiple">%1$d Bildlisten</string>
+    <string name="partial_nested_list_single">die Bildliste %1$s</string>
+    <string name="partial_nested_list_multiple">die Bildlisten %1$s</string>
     <string name="partial_folder_single">das Verzeichnis „%1$s“</string>
     <string name="partial_folder_two">die Verzeichnisse „%1$s“ und „%2$s“</string>
     <string name="partial_folder_multiple">%1$d Verzeichnisse</string>

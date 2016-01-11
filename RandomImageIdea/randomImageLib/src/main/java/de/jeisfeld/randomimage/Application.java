@@ -67,10 +67,11 @@ public class Application extends android.app.Application {
 	 * Get a resource string.
 	 *
 	 * @param resourceId the id of the resource.
+	 * @param args       arguments for the formatting
 	 * @return the value of the String resource.
 	 */
-	public static String getResourceString(final int resourceId) {
-		return getAppContext().getResources().getString(resourceId);
+	public static String getResourceString(final int resourceId, final Object... args) {
+		return getAppContext().getResources().getString(resourceId, args);
 	}
 
 	/**

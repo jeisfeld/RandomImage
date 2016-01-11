@@ -222,9 +222,7 @@ public class SettingsFragment extends PreferenceFragment {
 			// List inventory items.
 			for (PurchasedSku purchase : purchases) {
 				Preference purchasePreference = new Preference(getActivity());
-				String title =
-						String.format(getString(R.string.button_purchased_item), purchase.getSkuDetails()
-								.getDisplayTitle(getActivity()));
+				String title = getString(R.string.button_purchased_item, purchase.getSkuDetails().getDisplayTitle(getActivity()));
 				purchasePreference.setTitle(title);
 				purchasePreference.setSummary(purchase.getSkuDetails().getDescription());
 				purchasePreference.setEnabled(false);

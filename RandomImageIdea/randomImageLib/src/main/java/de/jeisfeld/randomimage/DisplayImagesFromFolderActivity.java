@@ -22,7 +22,6 @@ import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.NotificationUtil;
-import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimagelib.R;
 
@@ -202,19 +201,13 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 				}
 				else if (totalAddedCount == 1) {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_single, addedImagesString);
-					NotificationUtil.displayNotification(DisplayImagesFromFolderActivity.this, imageList.getListName(),
-							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
-							R.string.toast_added_single, addedImagesString);
 				}
 				else {
 					DialogUtil.displayToast(DisplayImagesFromFolderActivity.this, R.string.toast_added_multiple, addedImagesString);
-					NotificationUtil.displayNotification(DisplayImagesFromFolderActivity.this, imageList.getListName(),
-							NotificationUtil.ID_UPDATED_LIST, R.string.title_notification_updated_list,
-							R.string.toast_added_multiple, addedImagesString);
 				}
+				NotificationUtil.notifyUpdatedList(DisplayImagesFromFolderActivity.this, mListName, false, null, null, addedImages);
 
 				if (totalAddedCount > 0) {
-					PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfiles);
 					imageList.update(true);
 				}
 				returnResult(totalAddedCount > 0);
@@ -285,9 +278,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 			String addedFoldersString =
 					DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFolderName), null);
 			DialogUtil.displayToast(this, R.string.toast_added_single, addedFoldersString);
-			NotificationUtil.displayNotification(this, imageList.getListName(), NotificationUtil.ID_UPDATED_LIST,
-					R.string.title_notification_updated_list, R.string.toast_added_single, addedFoldersString);
-			PreferenceUtil.incrementCounter(R.string.key_statistics_countaddfolder);
+			NotificationUtil.notifyUpdatedList(this, imageList.getListName(), false, null, Collections.singletonList(mFolderName), null);
 			imageList.update(true);
 		}
 		else {

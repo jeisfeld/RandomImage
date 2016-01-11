@@ -26,7 +26,7 @@ public final class NotificationUtil {
 	/**
 	 * Notification tag for update of an image list.
 	 */
-	public static final int ID_UPDATED_LIST = 1;
+	protected static final int ID_UPDATED_LIST = 1;
 
 	/**
 	 * Notification tag for errors when loading an image list.
@@ -41,17 +41,12 @@ public final class NotificationUtil {
 	/**
 	 * Notification tag for missing files when loading an image list.
 	 */
-	public static final int ID_MISSING_FILES = 5;
+	protected static final int ID_MISSING_FILES = 4;
 
 	/**
 	 * Notification tag for unmounted paths when loading an image list.
 	 */
-	public static final int ID_UNMOUNTED_PATH = 6;
-
-	/**
-	 * A dot used at the end of messages.
-	 */
-	private static final String DOT = ".";
+	protected static final int ID_UNMOUNTED_PATH = 5;
 
 	/**
 	 * Prefix used before a list name.
@@ -64,6 +59,11 @@ public final class NotificationUtil {
 	private static final String PATH_PREFIX = "P";
 
 	/**
+	 * A dot used at the end of messages.
+	 */
+	private static final String DOT = ".";
+
+	/**
 	 * Key for the notification id within intent.
 	 */
 	public static final String EXTRA_NOTIFICATION_ID = "de.jeisfeld.randomimage.NOTIFICATION_ID";
@@ -74,14 +74,14 @@ public final class NotificationUtil {
 	public static final String EXTRA_LIST_NAME = "de.jeisfeld.randomimage.NOTIFICATION_TAG";
 
 	/**
-	 * A map storing the update message texts.
-	 */
-	private static Map<String, List<String>> mListUpdateMap = new HashMap<>();
-
-	/**
 	 * A map storing information on mounting issues while loading image lists.
 	 */
 	private static Map<String, Set<String>> mMountingIssues = new HashMap<>();
+
+	/**
+	 * The information about added or deleted lists/folders/files per image list.
+	 */
+	private static Map<String, ListUpdateInfo> mListUpdateInfo = new HashMap<>();
 
 	static {
 		restoreMountingIssues();
@@ -106,29 +106,8 @@ public final class NotificationUtil {
 	 */
 	public static void displayNotification(final Context context, final String notificationTag, final int notificationId,
 										   final int titleResource, final int messageResource, final Object... args) {
-		String message = DialogUtil.capitalizeFirst(String.format(context.getString(messageResource), args));
-		String title = String.format(context.getString(titleResource), notificationTag);
-
-		if (notificationId == ID_UPDATED_LIST) {
-			if (!message.endsWith(DOT)) {
-				message += DOT;
-			}
-
-			// Construct message as collection of all prior messages
-			List<String> existingMessages = mListUpdateMap.get(notificationTag);
-			if (existingMessages == null) {
-				existingMessages = new ArrayList<>();
-				mListUpdateMap.put(notificationTag, existingMessages);
-			}
-			existingMessages.add(message);
-
-			StringBuilder messageBuilder = new StringBuilder(existingMessages.get(0));
-			for (String partialMessage : existingMessages.subList(1, existingMessages.size())) {
-				messageBuilder.append("\n");
-				messageBuilder.append(partialMessage);
-			}
-			message = messageBuilder.toString();
-		}
+		String message = DialogUtil.capitalizeFirst(context.getString(messageResource, args));
+		String title = context.getString(titleResource, notificationTag);
 
 		Notification.Builder notificationBuilder =
 				new Notification.Builder(context)
@@ -177,17 +156,85 @@ public final class NotificationUtil {
 				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		if (notificationId == ID_UPDATED_LIST) {
-			mListUpdateMap.remove(notificationTag);
+			mListUpdateInfo.remove(notificationTag);
 		}
 
 		notificationManager.cancel(notificationTag, notificationId);
 	}
 
 	/**
+	 * Notify about updates of an image list.
+	 *
+	 * @param context     The current context.
+	 * @param listName    The name of the updated list.
+	 * @param isRemove    true for removed elements, false for added elements.
+	 * @param nestedLists The nested lists that have been added/removed.
+	 * @param folders     The folders that have been added/removed.
+	 * @param files       The image files that have been added/removed.
+	 */
+	public static void notifyUpdatedList(final Context context, final String listName, final boolean isRemove,
+										 final List<String> nestedLists, final List<String> folders, final List<String> files) {
+
+		ListUpdateInfo listUpdateInfo = mListUpdateInfo.get(listName);
+		if (listUpdateInfo == null) {
+			listUpdateInfo = new ListUpdateInfo();
+			mListUpdateInfo.put(listName, listUpdateInfo);
+		}
+
+		ListUpdateInfo.updateSets(listUpdateInfo.getAddedLists(), listUpdateInfo.getRemovedLists(), nestedLists, isRemove);
+		ListUpdateInfo.updateSets(listUpdateInfo.getAddedFolders(), listUpdateInfo.getRemovedFolders(), folders, isRemove);
+		ListUpdateInfo.updateSets(listUpdateInfo.getAddedFiles(), listUpdateInfo.getRemovedFiles(), files, isRemove);
+
+		int totalAdded = listUpdateInfo.getAddedLists().size() + listUpdateInfo.getAddedFolders().size() + listUpdateInfo.getAddedFiles().size();
+		int totalRemoved = listUpdateInfo.getRemovedLists().size() + listUpdateInfo.getRemovedFolders().size()
+				+ listUpdateInfo.getRemovedFiles().size();
+
+		String addedFileFolderMessageString = null;
+		if (totalAdded > 0) {
+			String addedElementsString = DialogUtil.createFileFolderMessageString(new ArrayList<>(listUpdateInfo.getAddedLists()),
+					new ArrayList<>(listUpdateInfo.getAddedFolders()), new ArrayList<>(listUpdateInfo.getAddedFiles()));
+			int addedFileFolderMessageId = totalAdded == 1 ? R.string.toast_added_single : R.string.toast_added_multiple;
+			addedFileFolderMessageString = context.getString(addedFileFolderMessageId, addedElementsString);
+			if (!addedFileFolderMessageString.endsWith(DOT)) {
+				addedFileFolderMessageString += DOT;
+			}
+			addedFileFolderMessageString = DialogUtil.capitalizeFirst(addedFileFolderMessageString);
+		}
+		String removedFileFolderMessageString = null;
+		if (totalRemoved > 0) {
+			String removedElementsString = DialogUtil.createFileFolderMessageString(new ArrayList<>(listUpdateInfo.getRemovedLists()),
+					new ArrayList<>(listUpdateInfo.getRemovedFolders()), new ArrayList<>(listUpdateInfo.getRemovedFiles()));
+			int removedFileFolderMessageId = totalRemoved == 1 ? R.string.toast_removed_single : R.string.toast_removed_multiple;
+			removedFileFolderMessageString = context.getString(removedFileFolderMessageId, removedElementsString);
+			if (!removedFileFolderMessageString.endsWith(DOT)) {
+				removedFileFolderMessageString += DOT;
+			}
+			removedFileFolderMessageString = DialogUtil.capitalizeFirst(removedFileFolderMessageString);
+		}
+
+		if (totalAdded == 0 && totalRemoved == 0) {
+			cancelNotification(context, listName, ID_UPDATED_LIST);
+		}
+		else {
+			StringBuilder message = new StringBuilder();
+			if (totalAdded > 0) {
+				message.append(addedFileFolderMessageString).append("\n");
+			}
+			if (totalRemoved > 0) {
+				message.append(removedFileFolderMessageString).append("\n");
+			}
+			displayNotification(context, listName, ID_UPDATED_LIST, R.string.title_notification_updated_list,
+					R.string.dummy_original_string, message.toString());
+		}
+
+	}
+
+
+	/**
 	 * Notify about not found files for a list.
 	 *
 	 * @param context       the current activity or context
-	 * @param listName      the list name - optional tag for the notification.
+	 * @param listName      the list name.
 	 * @param notFoundFiles the list of files which have not been found.
 	 */
 	public static void notifyNotFoundFiles(final Context context, final String listName, final List<String> notFoundFiles) {
@@ -258,7 +305,7 @@ public final class NotificationUtil {
 				if (affectedListString.length() > 0) {
 					affectedListString.append(", ");
 				}
-				affectedListString.append(String.format(context.getString(R.string.partial_quoted_string), listName));
+				affectedListString.append(context.getString(R.string.partial_quoted_string, listName));
 			}
 			NotificationUtil.displayNotification(context, missingMount, ID_UNMOUNTED_PATH, R.string.title_notification_unmounted_paths,
 					R.string.notification_unmounted_path, missingMount, affectedListString.toString());
@@ -325,4 +372,91 @@ public final class NotificationUtil {
 		mMountingIssues = new HashMap<>();
 		PreferenceUtil.removeSharedPreference(R.string.key_image_list_mount_issues);
 	}
+
+	/**
+	 * Information about items added or removed from a list.
+	 */
+	private static class ListUpdateInfo {
+		/**
+		 * Nested lists added.
+		 */
+		private Set<String> mAddedLists = new HashSet<>();
+
+		public Set<String> getAddedLists() {
+			return mAddedLists;
+		}
+
+		/**
+		 * Folders added.
+		 */
+		private Set<String> mAddedFolders = new HashSet<>();
+
+		public Set<String> getAddedFolders() {
+			return mAddedFolders;
+		}
+
+		/**
+		 * Files added.
+		 */
+		private Set<String> mAddedFiles = new HashSet<>();
+
+		public Set<String> getAddedFiles() {
+			return mAddedFiles;
+		}
+
+		/**
+		 * Nested lists removed.
+		 */
+		private Set<String> mRemovedLists = new HashSet<>();
+
+		public Set<String> getRemovedLists() {
+			return mRemovedLists;
+		}
+
+		/**
+		 * Folders removed.
+		 */
+		private Set<String> mRemovedFolders = new HashSet<>();
+
+		public Set<String> getRemovedFolders() {
+			return mRemovedFolders;
+		}
+
+		/**
+		 * Files removed.
+		 */
+		private Set<String> mRemovedFiles = new HashSet<>();
+
+		public Set<String> getRemovedFiles() {
+			return mRemovedFiles;
+		}
+
+		/**
+		 * Update the mAddedFolders etc. based on old and new information
+		 *
+		 * @param addedItems   The mAddedLists/mAddedFolders/mAddedFiles set.
+		 * @param removedItems The mRemovedLists/mRemovedFolders/mRemovedFiles set.
+		 * @param updatedItems The list of updated items of this type.
+		 * @param isRemove     Flag indicating if items are added (false) or removed (true).
+		 */
+		private static void updateSets(final Set<String> addedItems, final Set<String> removedItems, final List<String> updatedItems,
+									   final boolean isRemove) {
+			if (updatedItems == null || updatedItems.size() == 0) {
+				return;
+			}
+			Set<String> updatedItemsClone = new HashSet<>(updatedItems);
+			if (isRemove) {
+				updatedItemsClone.removeAll(addedItems);
+				addedItems.removeAll(updatedItems);
+				removedItems.addAll(updatedItemsClone);
+			}
+			else {
+				updatedItemsClone.removeAll(removedItems);
+				removedItems.removeAll(updatedItems);
+				addedItems.addAll(updatedItemsClone);
+			}
+		}
+
+	}
+
 }

@@ -124,7 +124,7 @@ public final class DialogUtil {
 			bundle.putInt(PARAM_SKIPPREFERENCE, skipDialogResource);
 		}
 
-		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
+		String message = capitalizeFirst(activity.getString(messageResource, args));
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putString(PARAM_TITLE, activity.getString(R.string.title_dialog_info));
 		bundle.putInt(PARAM_ICON, R.drawable.ic_title_info);
@@ -143,7 +143,7 @@ public final class DialogUtil {
 	 */
 	public static void displayToast(final Context context, final int resource, final Object... args) {
 		try {
-			final String message = capitalizeFirst(String.format(context.getString(resource), args));
+			final String message = capitalizeFirst(context.getString(resource, args));
 			if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
 				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 			}
@@ -174,7 +174,7 @@ public final class DialogUtil {
 	public static void displayConfirmationMessage(final Activity activity, final ConfirmDialogListener listener,
 												  final Integer titleResource, final int buttonResource,
 												  final int messageResource, final Object... args) {
-		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
+		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_BUTTON_RESOURCE, buttonResource);
@@ -199,7 +199,7 @@ public final class DialogUtil {
 	public static void displayInputDialog(final Activity activity,
 										  final RequestInputDialogListener listener, final int titleResource, final int buttonResource,
 										  final String textValue, final int messageResource, final Object... args) {
-		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
+		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
@@ -226,7 +226,7 @@ public final class DialogUtil {
 												  final SelectFromListDialogListener listener, final int iconId, final int titleResource,
 												  final ArrayList<String> listValues,
 												  final int messageResource, final Object... args) {
-		String message = capitalizeFirst(String.format(activity.getString(messageResource), args));
+		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
 		if (iconId != 0) {
 			bundle.putInt(PARAM_ICON, iconId);
@@ -282,9 +282,9 @@ public final class DialogUtil {
 				? getFormattedString(R.string.partial_image_single, new File(imageList.get(0)).getName())
 				: getFormattedString(R.string.partial_image_multiple, imageCount);
 
-		String nestedListString = nestedImageLists != null && nestedListCount == 1
-				? getFormattedString(R.string.partial_nested_list_single, nestedImageLists.get(0))
-				: getFormattedString(R.string.partial_nested_list_multiple, nestedListCount);
+		String nestedListString = nestedImageLists == null ? "" : getFormattedString(
+				nestedImageLists.size() == 1 ? R.string.partial_nested_list_single : R.string.partial_nested_list_multiple,
+				createListNameString(nestedImageLists));
 
 		String folderString = null;
 		if (folderList != null && folderCount > 0) {
@@ -331,6 +331,34 @@ public final class DialogUtil {
 	}
 
 	/**
+	 * Create a concatenated String for multiple list names.
+	 *
+	 * @param listNames The list names.
+	 * @return The concatenated String.
+	 */
+	public static String createListNameString(final List<String> listNames) {
+		if (listNames.size() == 0) {
+			return "";
+		}
+		else if (listNames.size() == 1) {
+			return Application.getResourceString(R.string.partial_quoted_string, listNames.get(0));
+		}
+		else {
+			String lastTwoNames = Application.getResourceString(R.string.partial_and,
+					Application.getResourceString(R.string.partial_quoted_string, listNames.get(listNames.size() - 2)),
+					Application.getResourceString(R.string.partial_quoted_string, listNames.get(listNames.size() - 1)));
+
+			StringBuilder listNameStringBuilder = new StringBuilder();
+			for (int i = 0; i < listNames.size() - 2; i++) {
+				listNameStringBuilder.append(Application.getResourceString(R.string.partial_quoted_string, listNames.get(i)));
+				listNameStringBuilder.append(", ");
+			}
+			listNameStringBuilder.append(lastTwoNames);
+			return listNameStringBuilder.toString();
+		}
+	}
+
+	/**
 	 * Get a formatted String out of a message resource and parameter strings.
 	 *
 	 * @param resourceId The message resource.
@@ -338,7 +366,7 @@ public final class DialogUtil {
 	 * @return The formatted string.
 	 */
 	private static String getFormattedString(final int resourceId, final Object... args) {
-		return String.format(Application.getResourceString(resourceId), args);
+		return Application.getResourceString(resourceId, args);
 	}
 
 	/**
