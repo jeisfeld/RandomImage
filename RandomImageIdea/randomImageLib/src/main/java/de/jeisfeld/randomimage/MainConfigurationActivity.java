@@ -330,7 +330,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 							if (success) {
 								deletedLists.add(listName);
 								if (GenericWidget.getWidgetIdsForName(listName).size() > 0) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, null, 0, R.string.dialog_info_delete_widgets, listName);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, R.string.dialog_info_delete_widgets, listName);
 								}
 							}
 							else {

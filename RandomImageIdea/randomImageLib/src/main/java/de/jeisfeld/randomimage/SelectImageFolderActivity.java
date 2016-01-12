@@ -135,6 +135,10 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				// do nothing
 			}
 		});
+
+		if (savedInstanceState == null) {
+			DialogUtil.displayInfo(this, null, R.string.key_info_select_folder, R.string.dialog_info_select_folder);
+		}
 	}
 
 	@Override

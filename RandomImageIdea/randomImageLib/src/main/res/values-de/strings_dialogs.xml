@@ -47,11 +47,14 @@
     <string name="toast_error_select_folder">Unerwarteter Fehler beim Versuch, ein Verzeichnis auszuwählen.</string>
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
-    <!-- Messages of dialogs -->
-    <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder zur Liste hinzuzufügen.</string>
+    <!-- Messages of hint dialogs -->
+    <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
+    <string name="dialog_info_select_folder">Hier können Sie das Bildverzeichnis wählen, aus dem Sie Bilder zur Liste hinzufügen wollen.\n\nSie können den Filter nutzen, um nach Verzeichnissen zu suchen.\n\nDrücken Sie das Haken-Symbol, um mehrere Verzeichnisse auszuwählen.\n\nDrücken Sie die Ordner-Symbol, um das Dateisystem zu durchsuchen.</string>
     <string name="dialog_info_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>
-    <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
+    <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\n\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\n\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\n\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Minus-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
+
+    <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
     <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich widgets für die Liste „%1$s“. Bitte denken Sie daran, diese zu entfernen.</string>

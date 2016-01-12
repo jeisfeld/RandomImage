@@ -21,7 +21,7 @@ public final class PreferenceUtil {
 	 */
 	private static final Integer[] INFO_PREFERENCES = {
 			R.string.key_info_add_images,
-			R.string.key_info_backup,
+			R.string.key_info_select_folder,
 			R.string.key_info_delete_images,
 			R.string.key_info_display_image,
 			R.string.key_info_new_list};
