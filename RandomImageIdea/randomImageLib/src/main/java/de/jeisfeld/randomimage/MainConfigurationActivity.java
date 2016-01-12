@@ -162,14 +162,17 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
 		if (menuId == R.id.action_backup_lists) {
 			changeAction(CurrentAction.BACKUP);
+			DialogUtil.displayInfo(this, null, R.string.key_hint_backup_restore_lists, R.string.dialog_hint_backup_lists);
 			return true;
 		}
 		else if (menuId == R.id.action_restore_lists) {
 			changeAction(CurrentAction.RESTORE);
+			DialogUtil.displayInfo(this, null, R.string.key_hint_backup_restore_lists, R.string.dialog_hint_restore_lists);
 			return true;
 		}
 		else if (menuId == R.id.action_delete_lists) {
 			changeAction(CurrentAction.DELETE);
+			DialogUtil.displayInfo(this, null, R.string.key_hint_backup_restore_lists, R.string.dialog_hint_delete_lists);
 			return true;
 		}
 		else if (menuId == R.id.action_create_list) {
@@ -210,30 +213,15 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_do_backup) {
-			if (getAdapter().getSelectedNestedLists().size() > 0) {
-				backupImageLists(getAdapter().getSelectedNestedLists());
-			}
-			else {
-				changeAction(CurrentAction.DISPLAY);
-			}
+			backupImageLists(getAdapter().getSelectedNestedLists());
 			return true;
 		}
 		else if (menuId == R.id.action_do_restore) {
-			if (getAdapter().getSelectedNestedLists().size() > 0) {
-				restoreImageLists(getAdapter().getSelectedNestedLists());
-			}
-			else {
-				changeAction(CurrentAction.DISPLAY);
-			}
+			restoreImageLists(getAdapter().getSelectedNestedLists());
 			return true;
 		}
 		else if (menuId == R.id.action_do_delete) {
-			if (getAdapter().getSelectedNestedLists().size() > 0) {
-				deleteImageLists(getAdapter().getSelectedNestedLists());
-			}
-			else {
-				changeAction(CurrentAction.DISPLAY);
-			}
+			deleteImageLists(getAdapter().getSelectedNestedLists());
 			return true;
 		}
 		return false;
@@ -318,6 +306,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	private void deleteImageLists(final List<String> listNames) {
 		if (listNames == null || listNames.size() == 0) {
+			DialogUtil.displayToast(this, R.string.toast_delete_no_selection);
+			changeAction(CurrentAction.DISPLAY);
 			return;
 		}
 		DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
@@ -413,6 +403,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	private void backupImageLists(final List<String> listNames) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countbackup);
 		if (listNames == null || listNames.size() == 0) {
+			DialogUtil.displayToast(this, R.string.toast_backup_no_selection);
+			changeAction(CurrentAction.DISPLAY);
 			return;
 		}
 		final List<String> existingBackups = ImageRegistry.getBackupImageListNames(ListFiltering.ALL_LISTS);
@@ -491,6 +483,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	private void restoreImageLists(final List<String> listNames) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countrestore);
 		if (listNames == null || listNames.size() == 0) {
+			DialogUtil.displayToast(this, R.string.toast_restore_no_selection);
+			changeAction(CurrentAction.DISPLAY);
 			return;
 		}
 		final List<String> existingLists = ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS);
@@ -561,11 +555,28 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @param action the new action.
 	 */
 	private void changeAction(final CurrentAction action) {
-		if (action != null) {
-			if (mCurrentAction == CurrentAction.RESTORE && action != mCurrentAction) {
+		if (action != null && action != mCurrentAction) {
+			switch (action) {
+			case DISPLAY:
+				setTitle(R.string.title_activity_main_configuration);
+				break;
+			case BACKUP:
+				setTitle(R.string.title_activity_main_configuration_backup);
+				break;
+			case RESTORE:
+				setTitle(R.string.title_activity_main_configuration_restore);
+				break;
+			case DELETE:
+				setTitle(R.string.title_activity_main_configuration_delete);
+				break;
+			default:
+				break;
+			}
+
+			if (mCurrentAction == CurrentAction.RESTORE) {
 				fillListOfLists();
 			}
-			else if (action == CurrentAction.RESTORE && action != mCurrentAction) {
+			else if (action == CurrentAction.RESTORE) {
 				fillListOfBackups();
 			}
 			mCurrentAction = action;

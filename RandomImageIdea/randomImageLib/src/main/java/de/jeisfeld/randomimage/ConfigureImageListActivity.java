@@ -147,7 +147,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		}
 
 		if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
-			DialogUtil.displayInfo(this, null, R.string.key_info_new_list, R.string.dialog_info_new_list);
+			DialogUtil.displayInfo(this, null, R.string.key_hint_new_list, R.string.dialog_hint_new_list);
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayall);
@@ -311,7 +311,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
 		if (menuId == R.id.action_select_images_for_removal) {
 			changeAction(CurrentAction.REMOVE);
-			DialogUtil.displayInfo(this, null, R.string.key_info_delete_images, R.string.dialog_info_delete_images);
+			DialogUtil.displayInfo(this, null, R.string.key_hint_delete_images, R.string.dialog_hint_delete_images);
 			return true;
 		}
 		else if (menuId == R.id.action_add_images) {

@@ -33,6 +33,9 @@
     <string name="toast_removed_multiple">Es wurden %1$s aus der Liste entfernt</string>
     <string name="toast_removed_single">%1$s wurde aus der Liste entfernt</string>
     <string name="toast_removed_no_image">Es wurde kein Bild zum Entfernen ausgewählt</string>
+    <string name="toast_backup_no_selection">Es wurde keine Liste zum Sichern ausgewählt</string>
+    <string name="toast_restore_no_selection">Es wurde keine Liste zum Wiederherstellen ausgewählt</string>
+    <string name="toast_delete_no_selection">Es wurde keine Liste zum Löschen ausgewählt</string>
     <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s“</string>
     <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
     <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
@@ -48,11 +51,14 @@
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
 
     <!-- Messages of hint dialogs -->
-    <string name="dialog_info_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
-    <string name="dialog_info_select_folder">Hier können Sie das Bildverzeichnis wählen, aus dem Sie Bilder zur Liste hinzufügen wollen.\n\nSie können den Filter nutzen, um nach Verzeichnissen zu suchen.\n\nDrücken Sie das Haken-Symbol, um mehrere Verzeichnisse auszuwählen.\n\nDrücken Sie die Ordner-Symbol, um das Dateisystem zu durchsuchen.</string>
-    <string name="dialog_info_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>
-    <string name="dialog_info_display_image">Sie können das Bild zoomen und bewegen.\n\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\n\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\n\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
-    <string name="dialog_info_delete_images">Wählen Sie Bilder aus, die Sie von der Liste entfernen wollen. Dann drücken Sie das Minus-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
+    <string name="dialog_hint_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
+    <string name="dialog_hint_select_folder">Hier können Sie das Bildverzeichnis wählen, aus dem Sie Bilder zur Liste hinzufügen wollen.\n\nSie können den Filter nutzen, um nach Verzeichnissen zu suchen.\n\nDrücken Sie das Haken-Symbol, um mehrere Verzeichnisse auszuwählen.\n\nDrücken Sie die Ordner-Symbol, um das Dateisystem zu durchsuchen.</string>
+    <string name="dialog_hint_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>
+    <string name="dialog_hint_display_image">Sie können das Bild zoomen und bewegen.\n\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\n\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\n\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
+    <string name="dialog_hint_delete_images">Wählen Sie Bilder und Verzeichnisse aus, die Sie aus der Liste entfernen wollen. Dann drücken Sie das Minus-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
+    <string name="dialog_hint_backup_lists">Wählen Sie Bildlisten aus, die Sie sichern wollen. Dann drücken Sie das Haken-Symbol zum Sichern, oder das Kreuz-Symbol zum abbrechen.</string>
+    <string name="dialog_hint_restore_lists">Wählen Sie Bildlisten aus, die Sie wiederherstellen wollen. Dann drücken Sie das Haken-Symbol zum Wiederherstellen, oder das Kreuz-Symbol zum abbrechen.</string>
+    <string name="dialog_hint_delete_lists">Wählen Sie Bildlisten aus, die Sie löschen wollen. Dann drücken Sie das Haken-Symbol zum Löschen, oder das Kreuz-Symbol zum abbrechen.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>

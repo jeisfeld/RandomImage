@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Basic application strings -->
     <string name="app_name">Überraschungsbild</string>
     <string name="app_name_short">Ü-Bild</string>
     <string name="mini_widget_name">Überraschungsbild-Widget</string>
     <string name="image_widget_name">Überraschungsbilderrahmen</string>
     <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
+    <string name="default_list_name">Bildliste</string>
+
+    <!-- Activity titles -->
     <string name="title_activity_display_image_details">Bildinformationen</string>
     <string name="title_activity_display_folder_details">Verzeichnisinformationen</string>
     <string name="title_activity_display_list_info">Listeninformationen</string>
     <string name="title_activity_display_nested_list_info">Unterlisteninformationen</string>
     <string name="title_activity_main_configuration">Bildlisten einrichten</string>
+    <string name="title_activity_main_configuration_backup">Sicherung von Bildlisten</string>
+    <string name="title_activity_main_configuration_restore">Wiederherstellung von Bildlisten</string>
+    <string name="title_activity_main_configuration_delete">Löschen von Bildlisten</string>
     <string name="title_icon_main_configuration">Ü-Bild Einrichtung</string>
     <string name="title_activity_configure_image_list">Bildliste einrichten</string>
     <string name="title_activity_display_images_from_folder">Bildverzeichnis anzeigen</string>
     <string name="title_activity_add_images">Bilder hinzufügen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_image_widget_configuration">Widget-Einstellungen</string>
-    <string name="text_initializing">Ladevorgang&#8230;</string>
-    <string name="text_loading">Bildliste wird geladen&#8230;</string>
-    <string name="text_no_image">Kein Bild verfügbar</string>
+
+    <!-- Button texts -->
     <string name="button_ok">OK</string>
     <string name="button_cancel">Abbrechen</string>
     <string name="button_delete">Löschen</string>
@@ -39,7 +45,11 @@
     <string name="button_delete_list">Liste löschen</string>
     <string name="button_backup_list">Liste sichern</string>
     <string name="button_restore_list">Liste wiederherstellen</string>
-    <string name="default_list_name">Bildliste</string>
+
+    <!-- Other texts -->
+    <string name="text_initializing">Ladevorgang&#8230;</string>
+    <string name="text_loading">Bildliste wird geladen&#8230;</string>
+    <string name="text_no_image">Kein Bild verfügbar</string>
     <string name="hint_search_path">Namen filtern</string>
 
     <!-- Strings for image info -->

@@ -289,7 +289,7 @@ public class DisplayRandomImageActivity extends Activity {
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 		if (savedInstanceState == null) {
-			DialogUtil.displayInfo(this, null, R.string.key_info_display_image, R.string.dialog_info_display_image);
+			DialogUtil.displayInfo(this, null, R.string.key_hint_display_image, R.string.dialog_hint_display_image);
 		}
 
 		test();

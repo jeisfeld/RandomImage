@@ -33,6 +33,9 @@
     <string name="toast_removed_multiple">%1$s have been removed from the list</string>
     <string name="toast_removed_single">%1$s has been removed from the list</string>
     <string name="toast_removed_no_image">There was no image selected for removal</string>
+    <string name="toast_backup_no_selection">No list was selected for backup</string>
+    <string name="toast_restore_no_selection">No list was selected for restore</string>
+    <string name="toast_delete_no_selection">No list was selected for deletion</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
     <string name="toast_failed_to_backup_list">Failed to backup list “%1$s”</string>
     <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
@@ -48,11 +51,14 @@
     <string name="toast_aborted_add_images_no_list">The addition of images was aborted, as no image list was found.</string>
 
     <!-- Messages of hint dialogs -->
-    <string name="dialog_info_new_list">Your surprise image list is empty. Please press the “+” symbol on top in order to add images or folders to the list.</string>
-    <string name="dialog_info_select_folder">Here you can select the image folder from which you want to add images to the list.\n\nYou can use the filter in order to search for folders.\n\nPress the hook symbol in order to select multiple folders.\n\nPress the folder symbol in order to browse the file system.</string>
-    <string name="dialog_info_add_images">Now you can either add the complete image folder to your Surprise Image List, or you can select individual images to add.\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>
-    <string name="dialog_info_display_image">You can zoom and move the image.\n\nFlip the image to see another one.\n\nDouble tap to go to the image list configuration.\n\nLong press for further options.</string>
-    <string name="dialog_info_delete_images">Select images that you want to remove from the list. Then press the minus icon to remove, or press the cross icon to abort.</string>
+    <string name="dialog_hint_new_list">Your surprise image list is empty. Please press the “+” symbol on top in order to add images or folders to the list.</string>
+    <string name="dialog_hint_select_folder">Here you can select the image folder from which you want to add images to the list.\n\nYou can use the filter in order to search for folders.\n\nPress the hook symbol in order to select multiple folders.\n\nPress the folder symbol in order to browse the file system.</string>
+    <string name="dialog_hint_add_images">Now you can either add the complete image folder to your Surprise Image List, or you can select individual images to add.\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>
+    <string name="dialog_hint_display_image">You can zoom and move the image.\n\nFlip the image to see another one.\n\nDouble tap to go to the image list configuration.\n\nLong press for further options.</string>
+    <string name="dialog_hint_delete_images">Select images and folders that you want to remove from the list. Then press the minus icon to remove, or press the cross icon to cancel.</string>
+    <string name="dialog_hint_backup_lists">Select image lists that you want to back up. Then press the hook icon to back up, or press the cross icon to cancel.</string>
+    <string name="dialog_hint_restore_lists">Select image lists that you want restore. Then press the hook icon to restore, or press the cross icon to cancel.</string>
+    <string name="dialog_hint_delete_lists">Select image lists that you want delete. Then press the hook icon to delete, or press the cross icon to cancel.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
@@ -107,10 +113,11 @@
     <string name="dummy_original_string" translatable="false">%1$s</string>
 
     <!-- Shared preference keys -->
-    <string name="key_info_new_list" translatable="false">info_new_list</string>
-    <string name="key_info_select_folder" translatable="false">info_select_folder_list</string>
-    <string name="key_info_add_images" translatable="false">info_add_images</string>
-    <string name="key_info_display_image" translatable="false">info_display_image</string>
-    <string name="key_info_delete_images" translatable="false">info_delete_images</string>
+    <string name="key_hint_new_list" translatable="false">hint_new_list</string>
+    <string name="key_hint_select_folder" translatable="false">hint_select_folder_list</string>
+    <string name="key_hint_add_images" translatable="false">hint_add_images</string>
+    <string name="key_hint_display_image" translatable="false">hint_display_image</string>
+    <string name="key_hint_delete_images" translatable="false">hint_delete_images</string>
+    <string name="key_hint_backup_restore_lists" translatable="false">hint_backup_restore_lists</string>
 
 </resources>

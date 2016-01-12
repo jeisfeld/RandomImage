@@ -16,6 +16,7 @@
         android:title="@string/menu_cancel"/>
     <item
         android:id="@+id/action_do_delete"
+        android:icon="@drawable/ic_action_okay"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/menu_delete"/>

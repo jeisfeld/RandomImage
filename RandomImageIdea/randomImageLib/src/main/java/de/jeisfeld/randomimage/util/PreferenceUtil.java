@@ -20,11 +20,11 @@ public final class PreferenceUtil {
 	 * The list of preferences used for switching on and off hints.
 	 */
 	private static final Integer[] INFO_PREFERENCES = {
-			R.string.key_info_add_images,
-			R.string.key_info_select_folder,
-			R.string.key_info_delete_images,
-			R.string.key_info_display_image,
-			R.string.key_info_new_list};
+			R.string.key_hint_add_images,
+			R.string.key_hint_select_folder,
+			R.string.key_hint_delete_images,
+			R.string.key_hint_display_image,
+			R.string.key_hint_new_list};
 
 	/**
 	 * Hide default constructor.
