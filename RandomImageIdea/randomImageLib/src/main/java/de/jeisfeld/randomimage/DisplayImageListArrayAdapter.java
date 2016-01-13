@@ -91,6 +91,16 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 */
 	private MarkingType mMarkingType = MarkingType.NONE;
 
+	/**
+	 * The highest position displayed by now.
+	 */
+	private int mMaxPosition = 0;
+	/**
+	 * The folders which wait to be added.
+	 */
+	private final List<String> mFoldersNotYetAdded = new ArrayList<>();
+
+
 	static {
 		// Set cache size in dependence of device memory.
 		int memoryClass = SystemUtil.getLargeMemoryClass();
@@ -210,15 +220,42 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			return;
 		}
 
-		mFolderNames.add(folderName);
-		add(folderName);
-
-		mViewCache.incrementMaxPosition();
-		notifyDataSetChanged();
+		if (mFolderNames.size() < mMaxPosition + PRELOAD_SIZE) {
+			mFolderNames.add(folderName);
+			add(folderName);
+			mViewCache.incrementMaxPosition(1);
+			notifyDataSetChanged();
+		}
+		else {
+			// Do not add folders if not yet required, as adding brings trouble to onClick behaviour.
+			synchronized (mFoldersNotYetAdded) {
+				mFoldersNotYetAdded.add(folderName);
+			}
+		}
 	}
+
+	/**
+	 * Add the folders waiting to be added.
+	 */
+	private void addFoldersNotYetAdded() {
+		synchronized (mFoldersNotYetAdded) {
+			if (mFoldersNotYetAdded.size() > 0) {
+				mFolderNames.addAll(mFoldersNotYetAdded);
+				addAll(mFoldersNotYetAdded);
+				mViewCache.incrementMaxPosition(mFoldersNotYetAdded.size());
+				mFoldersNotYetAdded.clear();
+				notifyDataSetChanged();
+			}
+		}
+	}
+
 
 	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {
+		if (position > mMaxPosition) {
+			mMaxPosition = position;
+			addFoldersNotYetAdded();
+		}
 		return mViewCache.get(position, parent);
 	}
 
@@ -561,10 +598,12 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		}
 
 		/**
-		 * Increment the max position by 1.
+		 * Increment the max position.
+		 *
+		 * @param increment The number to be incremented.
 		 */
-		private void incrementMaxPosition() {
-			mMaxPosition++;
+		private void incrementMaxPosition(final int increment) {
+			mMaxPosition += increment;
 		}
 
 		/**
