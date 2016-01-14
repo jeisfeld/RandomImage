@@ -205,15 +205,15 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_do_backup) {
-			backupImageLists(getAdapter().getSelectedNestedLists());
+			backupImageLists(getAdapter().getSelectedLists());
 			return true;
 		}
 		else if (menuId == R.id.action_do_restore) {
-			restoreImageLists(getAdapter().getSelectedNestedLists());
+			restoreImageLists(getAdapter().getSelectedLists());
 			return true;
 		}
 		else if (menuId == R.id.action_do_delete) {
-			deleteImageLists(getAdapter().getSelectedNestedLists());
+			deleteImageLists(getAdapter().getSelectedLists());
 			return true;
 		}
 		return false;
@@ -695,7 +695,11 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		/**
 		 * Restore list.
 		 */
-		RESTORE
+		RESTORE,
+		/**
+		 * Refresh the list display. (Used in different context.)
+		 */
+		REFRESH
 	}
 
 }

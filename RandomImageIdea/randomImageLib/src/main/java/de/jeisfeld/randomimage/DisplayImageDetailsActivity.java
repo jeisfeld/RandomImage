@@ -183,7 +183,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			final boolean isDirectory = new File(mFileName).isDirectory();
 
 			listMenu.addItem(
-					isDirectory ? R.string.menu_remove_folder_from_list : R.string.menu_remove_image_from_list,
+					R.string.menu_remove_from_list,
 					new OnClickListener() {
 						@Override
 						public void onClick(final View v) {

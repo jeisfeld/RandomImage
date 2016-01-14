@@ -47,9 +47,9 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	private final DisplayImageListActivity mActivity;
 
 	/**
-	 * The names of the nested lists.
+	 * The names of the lists.
 	 */
-	private List<String> mNestedListNames;
+	private List<String> mListNames;
 
 	/**
 	 * The names of the folders.
@@ -67,9 +67,9 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	private boolean mFixedThumbs;
 
 	/**
-	 * The set of nested list names selected for deletion.
+	 * The set of list names selected for deletion.
 	 */
-	private Set<String> mSelectedNestedListNames = new HashSet<>();
+	private Set<String> mSelectedListNames = new HashSet<>();
 
 	/**
 	 * The set of folder names selected for deletion.
@@ -127,7 +127,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		if (selectionMode == SelectionMode.ONE) {
 			mSelectedFolderNames.clear();
 			mSelectedFileNames.clear();
-			mSelectedNestedListNames.clear();
+			mSelectedListNames.clear();
 		}
 
 		mMarkingType = getMarkingTypeFromSelectionMode(selectionMode);
@@ -154,23 +154,23 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Constructor for the adapter.
 	 *
-	 * @param activity        The activity using the adapter.
-	 * @param nestedListNames The names of nested lists to be displayed.
-	 * @param folderNames     The names of folders to be displayed.
-	 * @param fileNames       The names of files to be displayed.
-	 * @param fixedThumbs     Flag indicating if fixed thumbnail images should be used (for performance reasons)
+	 * @param activity    The activity using the adapter.
+	 * @param listNames   The names of lists to be displayed.
+	 * @param folderNames The names of folders to be displayed.
+	 * @param fileNames   The names of files to be displayed.
+	 * @param fixedThumbs Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
 	public DisplayImageListAdapter(final DisplayImageListActivity activity,
-								   final List<String> nestedListNames, final List<String> folderNames,
+								   final List<String> listNames, final List<String> folderNames,
 								   final List<String> fileNames, final boolean fixedThumbs) {
 		this.mActivity = activity;
 		this.mFixedThumbs = fixedThumbs;
 
-		if (nestedListNames == null) {
-			this.mNestedListNames = new ArrayList<>();
+		if (listNames == null) {
+			this.mListNames = new ArrayList<>();
 		}
 		else {
-			this.mNestedListNames = new ArrayList<>(nestedListNames);
+			this.mListNames = new ArrayList<>(listNames);
 		}
 		if (folderNames == null) {
 			this.mFolderNames = new ArrayList<>();
@@ -186,7 +186,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		}
 		notifyDataSetChanged();
 
-		int totalSize = this.mFileNames.size() + this.mFolderNames.size() + this.mNestedListNames.size();
+		int totalSize = this.mFileNames.size() + this.mFolderNames.size() + this.mListNames.size();
 
 		this.mViewCache = new ViewCache(totalSize - 1, PRELOAD_SIZE);
 	}
@@ -244,19 +244,19 @@ public class DisplayImageListAdapter extends BaseAdapter {
 
 	@Override
 	public final int getCount() {
-		return mNestedListNames.size() + mFolderNames.size() + mFileNames.size();
+		return mListNames.size() + mFolderNames.size() + mFileNames.size();
 	}
 
 	@Override
 	public final String getItem(final int position) {
-		if (position < mNestedListNames.size()) {
-			return mNestedListNames.get(position);
+		if (position < mListNames.size()) {
+			return mListNames.get(position);
 		}
-		else if (position < mNestedListNames.size() + mFolderNames.size()) {
-			return mFolderNames.get(position - mNestedListNames.size());
+		else if (position < mListNames.size() + mFolderNames.size()) {
+			return mFolderNames.get(position - mListNames.size());
 		}
 		else {
-			return mFileNames.get(position - mNestedListNames.size() - mFolderNames.size());
+			return mFileNames.get(position - mListNames.size() - mFolderNames.size());
 		}
 	}
 
@@ -295,10 +295,10 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 */
 	private ThumbImageView createThumbImageView(final int position, final ViewGroup parent, final boolean sameThread) {
 		final ItemType itemType;
-		if (position < mNestedListNames.size()) {
+		if (position < mListNames.size()) {
 			itemType = ItemType.LIST;
 		}
-		else if (position < mNestedListNames.size() + mFolderNames.size()) {
+		else if (position < mListNames.size() + mFolderNames.size()) {
 			itemType = ItemType.FOLDER;
 		}
 		else {
@@ -314,7 +314,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 
 		switch (itemType) {
 		case LIST:
-			entryName = mNestedListNames.get(position);
+			entryName = mListNames.get(position);
 
 			if (mFixedThumbs) {
 				displayFileName = null;
@@ -333,11 +333,11 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			}
 
 			thumbImageView.initWithStyle(mActivity, ThumbStyle.LIST);
-			thumbImageView.setMarked(mSelectedNestedListNames.contains(entryName));
+			thumbImageView.setMarked(mSelectedListNames.contains(entryName));
 			thumbImageView.setFolderName(entryName);
 			break;
 		case FOLDER:
-			entryName = mFolderNames.get(position - mNestedListNames.size());
+			entryName = mFolderNames.get(position - mListNames.size());
 
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
@@ -363,7 +363,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			break;
 		case FILE:
 		default:
-			entryName = mFileNames.get(position - mNestedListNames.size() - mFolderNames.size());
+			entryName = mFileNames.get(position - mListNames.size() - mFolderNames.size());
 			displayFileName = new LoadableFileName(entryName);
 
 			thumbImageView.initWithStyle(mActivity, ThumbStyle.IMAGE);
@@ -376,7 +376,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		final Set<String> selectionList;
 		switch (itemType) {
 		case LIST:
-			selectionList = mSelectedNestedListNames;
+			selectionList = mSelectedListNames;
 			break;
 		case FOLDER:
 			selectionList = mSelectedFolderNames;
@@ -468,23 +468,23 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Get the list of selected nested lists.
+	 * Get the list of selected lists.
 	 *
-	 * @return The selected nested lists.
+	 * @return The selected lists.
 	 */
-	public final ArrayList<String> getSelectedNestedLists() {
-		return new ArrayList<>(mSelectedNestedListNames);
+	public final ArrayList<String> getSelectedLists() {
+		return new ArrayList<>(mSelectedListNames);
 	}
 
 	/**
-	 * Set the list of selected nested lists.
+	 * Set the list of selected lists.
 	 *
-	 * @param selectedNestedLists The names of the nested lists.
+	 * @param selectedLists The names of the lists.
 	 */
-	public final void setSelectedNestedLists(final List<String> selectedNestedLists) {
-		mSelectedNestedListNames.clear();
-		if (selectedNestedLists != null) {
-			mSelectedNestedListNames.addAll(selectedNestedLists);
+	public final void setSelectedLists(final List<String> selectedLists) {
+		mSelectedListNames.clear();
+		if (selectedLists != null) {
+			mSelectedListNames.addAll(selectedLists);
 		}
 	}
 
@@ -507,10 +507,10 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	public final boolean toggleSelectAll() {
 		if (mSelectionMode != SelectionMode.ONE) {
 			if (mSelectedFileNames.size() < mFileNames.size() || mSelectedFolderNames.size() < mFolderNames.size()
-					|| mSelectedNestedListNames.size() < mNestedListNames.size()) {
+					|| mSelectedListNames.size() < mListNames.size()) {
 				setSelectedFiles(mFileNames);
 				setSelectedFolders(mFolderNames);
-				setSelectedNestedLists(mNestedListNames);
+				setSelectedLists(mListNames);
 				for (ThumbImageView view : mViewCache.getCachedImages()) {
 					view.setMarked(true);
 				}
@@ -519,7 +519,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			else {
 				setSelectedFiles(null);
 				setSelectedFolders(null);
-				setSelectedNestedLists(null);
+				setSelectedLists(null);
 				for (ThumbImageView view : mViewCache.getCachedImages()) {
 					view.setMarked(false);
 				}
@@ -793,7 +793,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 */
 	public enum ItemType {
 		/**
-		 * A (nested) list.
+		 * A list.
 		 */
 		LIST,
 		/**

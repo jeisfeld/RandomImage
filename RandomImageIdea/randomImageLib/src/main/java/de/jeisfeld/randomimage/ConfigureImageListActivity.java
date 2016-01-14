@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
+import de.jeisfeld.randomimage.MainConfigurationActivity.ListAction;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
@@ -227,7 +228,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 								public void onDialogNegativeClick(final DialogFragment dialog) {
 									// do nothing
 								}
-							}, R.string.title_dialog_missing_images, R.string.button_remove_from_list, R.string.dialog_confirmation_missing_images,
+							}, R.string.title_dialog_missing_images, R.string.menu_remove_from_list, R.string.dialog_confirmation_missing_images,
 							mListName, missingImagesString);
 				}
 			});
@@ -255,6 +256,13 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 				MenuItem menuItemRemove = menu.findItem(R.id.action_select_images_for_removal);
 				menuItemRemove.setEnabled(false);
 				menuItemRemove.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_minus));
+			}
+
+			int folderSelectionMode = PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_folder_selection_mechanism,
+					R.string.pref_default_folder_selection_mechanism);
+
+			if (folderSelectionMode != 0) {
+				menu.findItem(R.id.action_include_other_list).setVisible(true);
 			}
 
 			return true;
@@ -334,7 +342,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			final ImageList imageList = ImageRegistry.getCurrentImageList(true);
 			final ArrayList<String> imagesToBeRemoved = getAdapter().getSelectedFiles();
 			final ArrayList<String> foldersToBeRemoved = getAdapter().getSelectedFolders();
-			final ArrayList<String> nestedListsToBeRemoved = getAdapter().getSelectedNestedLists();
+			final ArrayList<String> nestedListsToBeRemoved = getAdapter().getSelectedLists();
 			String imageFolderString =
 					DialogUtil.createFileFolderMessageString(nestedListsToBeRemoved, foldersToBeRemoved,
 							imagesToBeRemoved);
@@ -421,8 +429,8 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * Add images to the image list.
 	 */
 	private void addImagesToList() {
-		int folderSelectionMode = Integer.parseInt(PreferenceUtil.getSharedPreferenceString(R.string.key_pref_folder_selection_mechanism,
-				R.string.pref_default_folder_selection_mechanism));
+		int folderSelectionMode = PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_folder_selection_mechanism,
+				R.string.pref_default_folder_selection_mechanism);
 
 		switch (folderSelectionMode) {
 		case 0:
@@ -541,6 +549,12 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			break;
 		case DisplayImageDetailsActivity.REQUEST_CODE:
 			needsRefresh = DisplayImageDetailsActivity.getResultFileRemoved(resultCode, data);
+			if (needsRefresh) {
+				changeAction(CurrentAction.DISPLAY);
+			}
+			break;
+		case DisplayListInfoActivity.REQUEST_CODE:
+			needsRefresh = DisplayListInfoActivity.getResultListAction(resultCode, data) == ListAction.REFRESH;
 			if (needsRefresh) {
 				changeAction(CurrentAction.DISPLAY);
 			}

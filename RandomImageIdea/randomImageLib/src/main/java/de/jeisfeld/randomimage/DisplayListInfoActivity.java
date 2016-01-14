@@ -1,7 +1,10 @@
 package de.jeisfeld.randomimage;
 
+import java.util.Collections;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,8 +14,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import de.jeisfeld.randomimage.MainConfigurationActivity.ListAction;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
 
@@ -23,7 +29,7 @@ public class DisplayListInfoActivity extends Activity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */
-	public static final int REQUEST_CODE = 1;
+	public static final int REQUEST_CODE = 8;
 	/**
 	 * The resource key for the name of the list whose details should be displayed.
 	 */
@@ -109,6 +115,30 @@ public class DisplayListInfoActivity extends Activity {
 			return;
 		}
 
+		findViewById(R.id.buttonRemove).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				final String listString = DialogUtil.createFileFolderMessageString(Collections.singletonList(mListName), null, null);
+				DialogUtil.displayConfirmationMessage(DisplayListInfoActivity.this,
+						new ConfirmDialogListener() {
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog) {
+								imageList.removeNestedList(mListName);
+								NotificationUtil.notifyUpdatedList(DisplayListInfoActivity.this, parentListName, true,
+										Collections.singletonList(mListName), null, null);
+								imageList.update(true);
+								DialogUtil.displayToast(DisplayListInfoActivity.this, R.string.toast_removed_single, listString);
+								returnResult(ListAction.REFRESH);
+							}
+
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								returnResult(ListAction.NONE);
+							}
+						}, null, R.string.button_remove, R.string.dialog_confirmation_remove, parentListName, listString);
+			}
+		});
+
 		imageList.executeWhenReady(
 				new Runnable() {
 					@Override
@@ -180,28 +210,28 @@ public class DisplayListInfoActivity extends Activity {
 		findViewById(R.id.buttonDelete).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				sendResult(ListAction.DELETE);
+				returnResult(ListAction.DELETE);
 			}
 		});
 
 		findViewById(R.id.buttonRename).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				sendResult(ListAction.RENAME);
+				returnResult(ListAction.RENAME);
 			}
 		});
 
 		findViewById(R.id.buttonClone).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				sendResult(ListAction.CLONE);
+				returnResult(ListAction.CLONE);
 			}
 		});
 
 		findViewById(R.id.buttonBackup).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				sendResult(ListAction.BACKUP);
+				returnResult(ListAction.BACKUP);
 			}
 		});
 
@@ -210,7 +240,7 @@ public class DisplayListInfoActivity extends Activity {
 			buttonRestore.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					sendResult(ListAction.RESTORE);
+					returnResult(ListAction.RESTORE);
 				}
 			});
 			buttonRestore.setVisibility(View.VISIBLE);
@@ -278,7 +308,7 @@ public class DisplayListInfoActivity extends Activity {
 	 *
 	 * @param listAction the action to be done.
 	 */
-	private void sendResult(final ListAction listAction) {
+	private void returnResult(final ListAction listAction) {
 		Bundle resultData = new Bundle();
 		if (listAction != null) {
 			resultData.putSerializable(STRING_RESULT_LIST_ACTION, listAction);

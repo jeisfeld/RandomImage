@@ -1,10 +1,12 @@
 package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,8 +20,10 @@ import android.widget.TextView;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -47,11 +51,6 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private static final String STRING_RESULT_UPDATED = "de.jeisfeld.randomimage.UPDATED";
 
 	/**
-	 * The resource key for the flag to trigger SelectDirectoryActivity.
-	 */
-	private static final String STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY = "de.jeisfeld.randomimage.TRIGGER_SELECT_DIRECTORY_ACTIVITY";
-
-	/**
 	 * Recreate all thumbs every 12 weeks.
 	 */
 	private static final long THUMB_CREATION_FREQUENCY = DateUtils.WEEK_IN_MILLIS * 12;
@@ -70,6 +69,16 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * A list of all image folders to be displayed.
 	 */
 	private List<String> mAllImageFolders = null;
+
+	/**
+	 * A filtered list of image lists to be displayed.
+	 */
+	private List<String> mFilteredImageLists = new ArrayList<>();
+
+	/**
+	 * A list of all image lists to be displayed.
+	 */
+	private List<String> mAllImageLists = null;
 
 	/**
 	 * The current action within this activity.
@@ -142,14 +151,27 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 	@Override
 	public final void onItemClick(final ItemType itemType, final String name) {
-		// itemType is always folder.
-		DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true);
+		switch (itemType) {
+		case LIST:
+			addNestedList(name);
+			break;
+		case FOLDER:
+			DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
 	public final void onItemLongClick(final ItemType itemType, final String name) {
-		// itemType is always folder.
-		DisplayImageDetailsActivity.startActivity(this, name, null, true);
+		switch (itemType) {
+		case FOLDER:
+			DisplayImageDetailsActivity.startActivity(this, name, null, true);
+			break;
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -157,17 +179,22 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 */
 	private void fillListOfFolders() {
 		boolean firstStart = mAllImageFolders == null;
+		List<String> selectedLists = null;
 		List<String> selectedFolders = null;
 		if (getAdapter() != null) {
+			selectedLists = getAdapter().getSelectedLists();
 			selectedFolders = getAdapter().getSelectedFolders();
 			getAdapter().cleanupCache();
 		}
 
 		if (firstStart) {
 			mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
+			mAllImageLists = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
+			mAllImageLists.remove(mListName);
 		}
 
 		mFilteredImageFolders.clear();
+		mFilteredImageLists.clear();
 		String filterString = mEditTextFilter.getText().toString();
 
 		if (filterString.length() > 0) {
@@ -177,66 +204,113 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 					mFilteredImageFolders.add(name);
 				}
 			}
+			mFilteredImageLists = new ArrayList<>();
+			for (String name : mAllImageLists) {
+				if (matchesFilter(name, filterString)) {
+					mFilteredImageLists.add(name);
+				}
+			}
 		}
 		else {
 			mFilteredImageFolders = new ArrayList<>(mAllImageFolders);
+			mFilteredImageLists = new ArrayList<>(mAllImageLists);
 		}
 
-		setAdapter(null, mFilteredImageFolders, null, true);
+		setAdapter(mFilteredImageLists, mFilteredImageFolders, null, true);
 		changeAction(mCurrentAction);
 		if (selectedFolders != null) {
 			getAdapter().setSelectedFolders(selectedFolders);
 		}
+		if (selectedLists != null) {
+			getAdapter().setSelectedLists(selectedLists);
+		}
 
 		if (firstStart) {
-			ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
-
-				@Override
-				public void handleImageFolders(final ArrayList<String> imageFolders) {
-					// Every now and then, trigger thumbnail creation.
-					long lastThumbCreationTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_last_thumb_creation_time, -1);
-					if (System.currentTimeMillis() > lastThumbCreationTime + THUMB_CREATION_FREQUENCY) {
-						new Thread() {
-							@Override
-							public void run() {
-								for (String imageFolder : imageFolders) {
-									List<String> images = ImageUtil.getImagesInFolder(imageFolder);
-									if (images != null && images.size() > 0) {
-										MediaStoreUtil.getThumbnailFromPath(images.get(0), MediaStoreUtil.MINI_THUMB_SIZE);
-									}
-								}
-								PreferenceUtil.setSharedPreferenceLong(R.string.key_last_thumb_creation_time, System.currentTimeMillis());
-							}
-						}.start();
-					}
-				}
-
-				@Override
-				public void handleImageFolder(final String imageFolder) {
-					if (!mAllImageFolders.contains(imageFolder)) {
-						mAllImageFolders.add(imageFolder);
-						if (matchesFilter(imageFolder, mEditTextFilter.getText().toString())) {
-							mFilteredImageFolders.add(imageFolder);
-						}
-					}
-					if (mFilteredImageFolders.contains(imageFolder)) {
-						if (getAdapter() == null) {
-							ArrayList<String> folderNames = new ArrayList<>();
-							folderNames.add(imageFolder);
-
-							if (getAdapter() != null) {
-								getAdapter().cleanupCache();
-							}
-
-							setAdapter(null, folderNames, null, true);
-						}
-						else {
-							getAdapter().addFolder(imageFolder);
-						}
-					}
-				}
-			});
+			parseAllImageFolders();
 		}
+	}
+
+	/**
+	 * Add the given list as nested list after first querying.
+	 *
+	 * @param listName The list to be added.
+	 */
+	private void addNestedList(final String listName) {
+		DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						ImageList imageList = ImageRegistry.getImageListByName(mListName, false);
+						boolean success = imageList.addNestedList(listName);
+						if (success) {
+							String addedItemString = DialogUtil.createFileFolderMessageString(Collections.singletonList(listName), null, null);
+							DialogUtil.displayToast(SelectImageFolderActivity.this, R.string.toast_added_single, addedItemString);
+							NotificationUtil.notifyUpdatedList(SelectImageFolderActivity.this, mListName, false,
+									Collections.singletonList(listName), null, null);
+							imageList.update(true);
+							returnResult(true);
+						}
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing.
+					}
+				}, R.string.title_dialog_add_list, R.string.button_add_nested_list, R.string.dialog_confirmation_add_nested_list,
+				listName, mListName);
+	}
+
+
+	/**
+	 * Parse all image folders and add missing image folders to the adapter.
+	 */
+	private void parseAllImageFolders() {
+		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
+
+			@Override
+			public void handleImageFolders(final ArrayList<String> imageFolders) {
+				// Every now and then, trigger thumbnail creation.
+				long lastThumbCreationTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_last_thumb_creation_time, -1);
+				if (System.currentTimeMillis() > lastThumbCreationTime + THUMB_CREATION_FREQUENCY) {
+					new Thread() {
+						@Override
+						public void run() {
+							for (String imageFolder : imageFolders) {
+								List<String> images = ImageUtil.getImagesInFolder(imageFolder);
+								if (images != null && images.size() > 0) {
+									MediaStoreUtil.getThumbnailFromPath(images.get(0), MediaStoreUtil.MINI_THUMB_SIZE);
+								}
+							}
+							PreferenceUtil.setSharedPreferenceLong(R.string.key_last_thumb_creation_time, System.currentTimeMillis());
+						}
+					}.start();
+				}
+			}
+
+			@Override
+			public void handleImageFolder(final String imageFolder) {
+				if (!mAllImageFolders.contains(imageFolder)) {
+					mAllImageFolders.add(imageFolder);
+					if (matchesFilter(imageFolder, mEditTextFilter.getText().toString())) {
+						mFilteredImageFolders.add(imageFolder);
+					}
+				}
+				if (mFilteredImageFolders.contains(imageFolder)) {
+					if (getAdapter() == null) {
+						ArrayList<String> folderNames = new ArrayList<>();
+						folderNames.add(imageFolder);
+
+						if (getAdapter() != null) {
+							getAdapter().cleanupCache();
+						}
+
+						setAdapter(null, folderNames, null, true);
+					}
+					else {
+						getAdapter().addFolder(imageFolder);
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -249,7 +323,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private boolean matchesFilter(final String path, final String filterString) {
 		return filterString == null || filterString.length() == 0 // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
-				|| (getAdapter() != null && getAdapter().getSelectedFolders().contains(path));
+				|| (getAdapter() != null && (getAdapter().getSelectedFolders().contains(path) || getAdapter().getSelectedLists().contains(path)));
 	}
 
 	/**
@@ -336,24 +410,33 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 */
 	private boolean onOptionsItemSelectedSelect(final int menuId) {
 		if (menuId == R.id.action_add_folders) {
-			final ArrayList<String> foldersToBeAdded = getAdapter().getSelectedFolders();
-			if (foldersToBeAdded.size() > 0) {
+			final List<String> nestedListsToBeAdded = getAdapter().getSelectedLists();
+			final List<String> foldersToBeAdded = getAdapter().getSelectedFolders();
+			if (foldersToBeAdded.size() > 0 || nestedListsToBeAdded.size() > 0) {
 				ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 
-				ArrayList<String> addedFolders = new ArrayList<>();
+				List<String> addedFolders = new ArrayList<>();
 				for (String folderName : foldersToBeAdded) {
 					boolean isAdded = imageList.addFolder(folderName);
 					if (isAdded) {
 						addedFolders.add(folderName);
 					}
 				}
+				List<String> addedLists = new ArrayList<>();
+				for (String listName : nestedListsToBeAdded) {
+					boolean isAdded = imageList.addNestedList(listName);
+					if (isAdded) {
+						addedLists.add(listName);
+					}
+				}
 
-				String folderMessageString = DialogUtil.createFileFolderMessageString(null, addedFolders, null);
+				String folderMessageString = DialogUtil.createFileFolderMessageString(addedLists, addedFolders, null);
+				int totalAddedCount = addedLists.size() + addedFolders.size();
 				int messageId;
-				if (addedFolders.size() == 0) {
+				if (totalAddedCount == 0) {
 					messageId = R.string.toast_added_folders_none;
 				}
-				else if (addedFolders.size() == 1) {
+				else if (totalAddedCount == 1) {
 					messageId = R.string.toast_added_single;
 				}
 				else {
@@ -361,11 +444,12 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				}
 
 				DialogUtil.displayToast(SelectImageFolderActivity.this, messageId, folderMessageString);
-				if (addedFolders.size() > 0) {
-					NotificationUtil.notifyUpdatedList(SelectImageFolderActivity.this, mListName, false, null, addedFolders, null);
+				if (totalAddedCount > 0) {
+					imageList.update(true);
+					NotificationUtil.notifyUpdatedList(SelectImageFolderActivity.this, mListName, false, addedLists, addedFolders, null);
 				}
 
-				returnResult(addedFolders.size() > 0);
+				returnResult(totalAddedCount > 0);
 			}
 			else {
 				DialogUtil.displayToast(SelectImageFolderActivity.this, R.string.toast_add_no_folder_selected);
