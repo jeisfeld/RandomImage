@@ -553,9 +553,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		case SelectImageFolderActivity.REQUEST_CODE:
 			if (resultCode == RESULT_OK) {
 				needsRefresh = SelectImageFolderActivity.getUpdatedFlag(resultCode, data);
-				if (SelectImageFolderActivity.triggeredSelectDirectoryActivity(resultCode, data)) {
-					SelectDirectoryActivity.startActivity(this, mListName);
-				}
 			}
 			break;
 		case REQUEST_CODE_GALLERY:

@@ -316,8 +316,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 */
 	public final boolean onOptionsItemSelectedDisplay(final int menuId) {
 		if (menuId == R.id.action_browse_folders) {
-			triggerSelectDirectoryActivity();
-			finish();
+			SelectDirectoryActivity.startActivity(this, mListName);
 			return true;
 		}
 		else if (menuId == R.id.action_select_multiple) {
@@ -405,23 +404,6 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	/**
-	 * Static helper method to extract the flag indicating if SelectDirectoryActivity was triggered.
-	 *
-	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data       The activity response data.
-	 * @return the flag indicating if SelectDirectoryActivity was triggered.
-	 */
-	public static final boolean triggeredSelectDirectoryActivity(final int resultCode, final Intent data) {
-		if (resultCode == RESULT_OK) {
-			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY);
-		}
-		else {
-			return false;
-		}
-	}
-
-	/**
 	 * Helper method: Return the flag indicating that the list was updated.
 	 *
 	 * @param isUpdated The flag indicating that the list was updated.
@@ -429,18 +411,6 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	protected final void returnResult(final boolean isUpdated) {
 		Bundle resultData = new Bundle();
 		resultData.putBoolean(STRING_RESULT_UPDATED, isUpdated);
-		Intent intent = new Intent();
-		intent.putExtras(resultData);
-		setResult(RESULT_OK, intent);
-		finish();
-	}
-
-	/**
-	 * Helper method: Return to parent in order to trigger SelectDirectoryActivity.
-	 */
-	private void triggerSelectDirectoryActivity() {
-		Bundle resultData = new Bundle();
-		resultData.putBoolean(STRING_RESULT_TRIGGER_SELECT_DIRECTORY_ACTIVITY, true);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
@@ -459,7 +429,17 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		case DisplayImagesFromFolderActivity.REQUEST_CODE:
 			if (resultCode == RESULT_OK) {
 				boolean isUpdated = DisplayImagesFromFolderActivity.getResultFilesAdded(resultCode, data);
-				returnResult(isUpdated);
+				if (isUpdated) {
+					returnResult(true);
+				}
+			}
+			break;
+		case SelectDirectoryActivity.REQUEST_CODE:
+			if (resultCode == RESULT_OK) {
+				boolean isUpdated = SelectDirectoryActivity.getUpdatedFlag(resultCode, data);
+				if (isUpdated) {
+					returnResult(true);
+				}
 			}
 			break;
 		default:
