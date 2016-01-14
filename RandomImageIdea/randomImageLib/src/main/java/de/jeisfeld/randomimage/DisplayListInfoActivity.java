@@ -104,53 +104,73 @@ public class DisplayListInfoActivity extends Activity {
 	 */
 	private void displayNestedListInfo(final String parentListName) {
 		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(parentListName, true);
-		if (imageList == null || !imageList.isReady()) {
+		if (imageList == null) {
 			finish();
 			return;
 		}
-		((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
-				getString(R.string.info_nested_list_images, imageList.getNestedListImageCount(mListName)));
 
-		((TextView) findViewById(R.id.textViewWeight)).setText(
-				getString(R.string.info_nested_list_image_proportion, getPercentageString(imageList.getImagePercentage(mListName))));
-
-		final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
-		Double customNestedListWeight = imageList.getCustomNestedListWeight(mListName);
-		if (customNestedListWeight == null) {
-			double nestedListWeight = imageList.getNestedListWeight(mListName);
-			editTextViewFrequency.setHint(getPercentageString(nestedListWeight));
-		}
-		else {
-			editTextViewFrequency.setText(getPercentageString(customNestedListWeight));
-		}
-
-		ImageButton buttonSave = (ImageButton) findViewById(R.id.button_save);
-
-		buttonSave.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				String percentageString = editTextViewFrequency.getText().toString().replace(',', '.');
-
-				try {
-					Double weight = null;
-					if (percentageString.length() > 0) {
-						weight = Double.parseDouble(percentageString) / HUNDRED;
-						if (weight > 1) {
-							weight = 1.0;
-						}
-						if (weight < 0) {
-							weight = 0.0;
-						}
+		imageList.executeWhenReady(
+				new Runnable() {
+					@Override
+					public void run() {
+						((TextView) findViewById(R.id.textViewNumberOfImages)).setText(R.string.info_nested_list_images_loading);
 					}
+				},
+				new Runnable() {
+					@Override
+					public void run() {
+						((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
+								getString(R.string.info_nested_list_images, imageList.getNestedListImageCount(mListName)));
 
-					imageList.setCustomNestedListWeight(mListName, weight);
+						((TextView) findViewById(R.id.textViewWeight)).setText(
+								getString(R.string.info_nested_list_image_proportion, getPercentageString(imageList.getImagePercentage(mListName))));
+
+						final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
+						Double customNestedListWeight = imageList.getCustomNestedListWeight(mListName);
+						if (customNestedListWeight == null) {
+							double nestedListWeight = imageList.getNestedListWeight(mListName);
+							editTextViewFrequency.setHint(getPercentageString(nestedListWeight));
+						}
+						else {
+							editTextViewFrequency.setText(getPercentageString(customNestedListWeight));
+						}
+
+						ImageButton buttonSave = (ImageButton) findViewById(R.id.button_save);
+
+						buttonSave.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(final View v) {
+								String percentageString = editTextViewFrequency.getText().toString().replace(',', '.');
+
+								try {
+									Double weight = null;
+									if (percentageString.length() > 0) {
+										weight = Double.parseDouble(percentageString) / HUNDRED;
+										if (weight > 1) {
+											weight = 1.0;
+										}
+										if (weight < 0) {
+											weight = 0.0;
+										}
+									}
+
+									imageList.setCustomNestedListWeight(mListName, weight);
+								}
+								catch (NumberFormatException e) {
+									// do not change weight
+								}
+								finish();
+							}
+						});
+					}
+				},
+				new Runnable() {
+					@Override
+					public void run() {
+						finish();
+					}
 				}
-				catch (NumberFormatException e) {
-					// do not change weight
-				}
-				finish();
-			}
-		});
+		);
 	}
 
 	/**
@@ -197,6 +217,7 @@ public class DisplayListInfoActivity extends Activity {
 		}
 
 		final TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
+		textViewNumberOfImages.setText(R.string.info_nested_list_images_loading);
 		new Thread() {
 			@Override
 			public void run() {

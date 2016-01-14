@@ -72,6 +72,7 @@
 
     <!-- Strings for nested list info -->
     <string name="info_nested_list_images">Zahl der Bilder: %1$d</string>
+    <string name="info_nested_list_images_loading">Bestimme Zahl der Bilder...</string>
     <string name="info_nested_list_image_proportion">Anteil der Bilder: %1$s%%</string>
     <string name="info_nested_list_view_frequency">Anzeigehäufigkeit:</string>
 
