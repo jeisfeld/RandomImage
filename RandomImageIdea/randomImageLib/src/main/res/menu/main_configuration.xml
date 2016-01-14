@@ -4,14 +4,11 @@
 
     <item
         android:id="@+id/action_manage_lists"
-        android:icon="@drawable/ic_action_folder"
+        android:icon="@drawable/ic_action_checkbox"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/menu_manage_lists">
         <menu>
-            <item
-                android:id="@+id/action_create_list"
-                android:title="@string/menu_create_list"/>
             <item
                 android:id="@+id/action_backup_lists"
                 android:title="@string/menu_backup_lists"/>
@@ -24,10 +21,16 @@
         </menu>
     </item>
     <item
+        android:id="@+id/action_create_list"
+        android:icon="@drawable/ic_action_plus"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_create_list"/>
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_action_settings"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/menu_settings"/>
 
 </menu>
