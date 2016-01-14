@@ -8,6 +8,7 @@
     <dimen name="grid_folder_bottom_size">40sp</dimen>
     <dimen name="mini_grid_pictures_size">60dp</dimen>
     <dimen name="text_padding">6dp</dimen>
+    <dimen name="info_message_margin">6dp</dimen>
     <dimen name="widget_button_padding_narrow">2dp</dimen>
     <dimen name="widget_button_padding_wide">15dp</dimen>
     <dimen name="stack_image_widget_border_size">2dp</dimen>

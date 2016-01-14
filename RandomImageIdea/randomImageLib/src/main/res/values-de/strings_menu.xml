@@ -9,6 +9,7 @@
     <string name="menu_select_all_images">Alle Bilder auswählen</string>
     <string name="menu_select_all_folders">Alle Verzeichnisse auswählen</string>
     <string name="menu_select_multiple">Mehrere Verzeichnisse wählen</string>
+    <string name="menu_select_folder">Verzeichnis wählen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>
     <string name="menu_manage_lists">Bildlisten verwalten</string>

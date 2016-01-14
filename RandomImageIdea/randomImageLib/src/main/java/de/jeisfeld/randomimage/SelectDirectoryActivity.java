@@ -16,15 +16,15 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -93,21 +93,6 @@ public class SelectDirectoryActivity extends Activity {
 	private ArrayAdapter<String> mListAdapter = null;
 
 	/**
-	 * Button to cancel the activity.
-	 */
-	private Button mBtnCancel;
-
-	/**
-	 * Button to go to the selection of individual images.
-	 */
-	private Button mBtnSelectImages;
-
-	/**
-	 * Button to select the whole folder.
-	 */
-	private Button mBtnSelectFolder;
-
-	/**
 	 * The backstack of last browsed folders.
 	 */
 	private Stack<String> mBackStack = new Stack<>();
@@ -121,6 +106,11 @@ public class SelectDirectoryActivity extends Activity {
 	 * The name of the image list to which files should be added.
 	 */
 	private String mListName;
+
+	/**
+	 * Flag indicating if the current folder is an image folder.
+	 */
+	private boolean mIsImageFolder;
 
 	/**
 	 * Static helper method to start the activity.
@@ -169,53 +159,12 @@ public class SelectDirectoryActivity extends Activity {
 
 		mSubdirs = getDirectories(mCurrentFolder);
 
-		((TextView) findViewById(R.id.textViewMessage)).setText(R.string.dialog_select_image_folder_for_add);
 		mCurrentFolderView = (TextView) findViewById(R.id.textCurrentFolder);
 		mCurrentFolderView.setText(mCurrentFolder);
 		mListView = (ListView) findViewById(R.id.listViewSubfolders);
 		mListAdapter = createListAdapter(mSubdirs);
 		mListView.setAdapter(mListAdapter);
 		mGridView = (GridView) findViewById(R.id.gridViewImages);
-
-		mBtnCancel = (Button) findViewById(R.id.buttonCancel);
-		mBtnSelectImages = (Button) findViewById(R.id.buttonSelectImages);
-		mBtnSelectFolder = (Button) findViewById(R.id.buttonSelectFolder);
-
-		mBtnCancel.setText(R.string.button_cancel);
-		mBtnSelectImages.setText(R.string.button_add_images);
-		mBtnSelectFolder.setText(R.string.button_add_folder);
-
-		mBtnCancel.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				returnResult(false);
-			}
-		});
-		mBtnSelectImages.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-				DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, mListName, true);
-			}
-		});
-		mBtnSelectFolder.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-				final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
-				boolean success = imageList.addFolder(mCurrentFolder);
-				if (success) {
-					String addedFoldersString =
-							DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mCurrentFolder), null);
-					DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
-					NotificationUtil.notifyUpdatedList(SelectDirectoryActivity.this, mListName, false, null,
-							Collections.singletonList(mCurrentFolder), null);
-					imageList.update(true);
-					mUpdatedList = true;
-				}
-				returnResult(true);
-			}
-		});
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -369,20 +318,11 @@ public class SelectDirectoryActivity extends Activity {
 	private void fillGridView() {
 		ArrayList<String> imageFiles = ImageUtil.getImagesInFolder(mCurrentFolder);
 
-		enablePositiveButton(imageFiles.size() > 0);
+		mIsImageFolder = imageFiles.size() > 0;
+		invalidateOptionsMenu();
 
 		mGridView.setAdapter(new DisplayImagesAdapter(imageFiles));
 		mGridView.setVisibility(imageFiles.size() > 0 ? View.VISIBLE : View.GONE);
-	}
-
-	/**
-	 * Update the enablement status of the positive button.
-	 *
-	 * @param enabled The new enablement status.
-	 */
-	private void enablePositiveButton(final boolean enabled) {
-		mBtnSelectFolder.setEnabled(enabled);
-		mBtnSelectImages.setEnabled(enabled);
 	}
 
 	@Override
@@ -403,6 +343,52 @@ public class SelectDirectoryActivity extends Activity {
 			return super.onKeyDown(keyCode, event);
 		}
 	}
+
+	@Override
+	public final boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.select_directory, menu);
+
+		if (!mIsImageFolder) {
+			menu.findItem(R.id.action_select_folder).setEnabled(false);
+			menu.findItem(R.id.action_add_image_folder).setEnabled(false);
+		}
+		return true;
+	}
+
+	@Override
+	public final boolean onOptionsItemSelected(final MenuItem item) {
+		int menuId = item.getItemId();
+
+		if (menuId == R.id.action_cancel) {
+			returnResult(false);
+			return true;
+		}
+		else if (menuId == R.id.action_add_image_folder) {
+			PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
+			final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
+			boolean success = imageList.addFolder(mCurrentFolder);
+			if (success) {
+				String addedFoldersString =
+						DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mCurrentFolder), null);
+				DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
+				NotificationUtil.notifyUpdatedList(SelectDirectoryActivity.this, mListName, false, null,
+						Collections.singletonList(mCurrentFolder), null);
+				imageList.update(true);
+				mUpdatedList = true;
+			}
+			returnResult(true);
+			return true;
+		}
+		else if (menuId == R.id.action_select_folder) {
+			PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
+			DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, mListName, true);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 
 	@Override
 	public final void onSaveInstanceState(final Bundle outState) {
