@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -30,7 +30,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Array adapter class to display an eye photo pair in a list.
  */
-public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
+public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Number of views to be preloaded.
 	 */
@@ -160,10 +160,9 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 * @param fileNames       The names of files to be displayed.
 	 * @param fixedThumbs     Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
-	public DisplayImageListArrayAdapter(final DisplayImageListActivity activity,
-										final List<String> nestedListNames, final List<String> folderNames,
-										final List<String> fileNames, final boolean fixedThumbs) {
-		super(activity, R.layout.text_view_initializing);
+	public DisplayImageListAdapter(final DisplayImageListActivity activity,
+								   final List<String> nestedListNames, final List<String> folderNames,
+								   final List<String> fileNames, final boolean fixedThumbs) {
 		this.mActivity = activity;
 		this.mFixedThumbs = fixedThumbs;
 
@@ -172,22 +171,20 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		}
 		else {
 			this.mNestedListNames = new ArrayList<>(nestedListNames);
-			addAll(nestedListNames);
 		}
 		if (folderNames == null) {
 			this.mFolderNames = new ArrayList<>();
 		}
 		else {
 			this.mFolderNames = new ArrayList<>(folderNames);
-			addAll(folderNames);
 		}
 		if (fileNames == null) {
 			this.mFileNames = new ArrayList<>();
 		}
 		else {
 			this.mFileNames = new ArrayList<>(fileNames);
-			addAll(fileNames);
 		}
+		notifyDataSetChanged();
 
 		int totalSize = this.mFileNames.size() + this.mFolderNames.size() + this.mNestedListNames.size();
 
@@ -199,8 +196,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	 *
 	 * @param context The Context the view is running in.
 	 */
-	public DisplayImageListArrayAdapter(final Context context) {
-		super(context, R.layout.text_view_initializing);
+	public DisplayImageListAdapter(final Context context) {
 		this.mActivity = (DisplayImageListActivity) context;
 	}
 
@@ -212,7 +208,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	public final void addFolder(final String folderName) {
 		if (mFileNames.size() > 0) {
 			// only allowed if there are no files in the list
-			throw new UnsupportedOperationException("DisplayImageListArrayAdapter: added folderName after having fileNames");
+			throw new UnsupportedOperationException("DisplayImageListAdapter: added folderName after having fileNames");
 		}
 		if (mFolderNames.contains(folderName)) {
 			return;
@@ -220,7 +216,6 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 		if (mFolderNames.size() < mMaxReachedPosition + PRELOAD_SIZE) {
 			mFolderNames.add(folderName);
-			add(folderName);
 			mViewCache.incrementMaxPosition(1);
 			notifyDataSetChanged();
 		}
@@ -239,7 +234,6 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		synchronized (mFoldersNotYetAdded) {
 			if (mFoldersNotYetAdded.size() > 0) {
 				mFolderNames.addAll(mFoldersNotYetAdded);
-				addAll(mFoldersNotYetAdded);
 				mViewCache.incrementMaxPosition(mFoldersNotYetAdded.size());
 				mFoldersNotYetAdded.clear();
 				notifyDataSetChanged();
@@ -247,6 +241,40 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		}
 	}
 
+
+	@Override
+	public final int getCount() {
+		return mNestedListNames.size() + mFolderNames.size() + mFileNames.size();
+	}
+
+	@Override
+	public final String getItem(final int position) {
+		if (position < mNestedListNames.size()) {
+			return mNestedListNames.get(position);
+		}
+		else if (position < mNestedListNames.size() + mFolderNames.size()) {
+			return mFolderNames.get(position - mNestedListNames.size());
+		}
+		else {
+			return mFileNames.get(position - mNestedListNames.size() - mFolderNames.size());
+		}
+	}
+
+	@Override
+	public final long getItemId(final int position) {
+		return position;
+	}
+
+	@Override
+	public final int getItemViewType(final int position) {
+		return position;
+	}
+
+	@Override
+	public final int getViewTypeCount() {
+		int count = getCount();
+		return count == 0 ? 1 : count;
+	}
 
 	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {

@@ -17,8 +17,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
+import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
+import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;

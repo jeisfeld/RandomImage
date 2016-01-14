@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
 
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
+import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
+import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 import de.jeisfeld.randomimagelib.R;
@@ -43,9 +43,9 @@ public abstract class DisplayImageListActivity extends Activity {
 	/**
 	 * The adapter handling the list of images.
 	 */
-	private DisplayImageListArrayAdapter mAdapter;
+	private DisplayImageListAdapter mAdapter;
 
-	protected final DisplayImageListArrayAdapter getAdapter() {
+	protected final DisplayImageListAdapter getAdapter() {
 		return mAdapter;
 	}
 
@@ -80,7 +80,7 @@ public abstract class DisplayImageListActivity extends Activity {
 	 */
 	protected final void setAdapter(final List<String> nestedListNames, final List<String> folderNames,
 									final List<String> fileNames, final boolean fixedThumbs) {
-		DisplayImageListArrayAdapter adapter = new DisplayImageListArrayAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
+		DisplayImageListAdapter adapter = new DisplayImageListAdapter(this, nestedListNames, folderNames, fileNames, fixedThumbs);
 		if (mSelectedFiles != null || mSelectedFolders != null || mSelectedLists != null) {
 			adapter.setSelectedFiles(mSelectedFiles == null ? null : Arrays.asList(mSelectedFiles));
 			adapter.setSelectedFolders(mSelectedFolders == null ? null : Arrays.asList(mSelectedFolders));
@@ -110,7 +110,7 @@ public abstract class DisplayImageListActivity extends Activity {
 	 */
 	protected final void setSelectionMode(final SelectionMode selectionMode) {
 		getAdapter().setSelectionMode(selectionMode);
-		MarkingType markingType = DisplayImageListArrayAdapter.getMarkingTypeFromSelectionMode(selectionMode);
+		MarkingType markingType = DisplayImageListAdapter.getMarkingTypeFromSelectionMode(selectionMode);
 
 		for (int i = 0; i < getGridView().getChildCount(); i++) {
 			View imageView = getGridView().getChildAt(i);

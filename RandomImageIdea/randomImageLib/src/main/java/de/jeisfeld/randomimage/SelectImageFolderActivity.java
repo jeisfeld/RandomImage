@@ -15,8 +15,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
-import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
+import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
+import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
