@@ -68,6 +68,7 @@
     <string name="dialog_info_restore_of_list_single">Die Liste %1$s wurde wiederhergestellt.</string>
     <string name="dialog_info_delete_of_list_single">Die Liste %1$s wurde gelöscht.</string>
     <string name="dialog_info_no_images_in_folder">Das Verzeichnis „%1$s“ enthält keine Bilder.</string>
+    <string name="dialog_info_no_widget">Es ist kein Widget vorhanden - bitte platzieren Sie zunächst Widgets auf Ihrem Startbildschirm.</string>
     <string name="dialog_info_premium_thanks">Danke für den Kauf der Premium-Erweiterung! Sie können nun mehrere Bildlisten verwenden.</string>
     <string name="dialog_info_need_premium">Zur Nutzung von mehr als drei Bildlisten müssen Sie eine Premium-Erweiterung erwerben.</string>
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>

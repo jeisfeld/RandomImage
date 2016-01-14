@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
+import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -74,6 +77,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 		}
 
+		configureButtons();
+
 		changeAction(mCurrentAction);
 	}
 
@@ -99,6 +104,20 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		}
 		setAdapter(mListNames, null, null, false);
 		invalidateOptionsMenu();
+	}
+
+	/**
+	 * Configure the buttons for Widget and Notification setup.
+	 */
+	private void configureButtons() {
+		Button buttonWidgets = (Button) findViewById(R.id.buttonWidgets);
+
+		buttonWidgets.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				WidgetSettingsActivity.startActivity(MainConfigurationActivity.this);
+			}
+		});
 	}
 
 	/**

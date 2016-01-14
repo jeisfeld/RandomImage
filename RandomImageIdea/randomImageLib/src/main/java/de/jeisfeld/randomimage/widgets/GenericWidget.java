@@ -32,7 +32,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * The list of all widget types.
 	 */
-	private static final List<Class<? extends GenericWidget>> WIDGET_TYPES = new ArrayList<>();
+	protected static final List<Class<? extends GenericWidget>> WIDGET_TYPES = new ArrayList<>();
 
 	/**
 	 * Number of pixels per dip.
