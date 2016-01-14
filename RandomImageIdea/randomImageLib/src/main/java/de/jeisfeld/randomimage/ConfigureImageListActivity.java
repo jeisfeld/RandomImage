@@ -512,7 +512,19 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
-			setSelectionMode(action == CurrentAction.REMOVE ? SelectionMode.MULTIPLE_REMOVE : SelectionMode.ONE);
+
+			switch (action) {
+			case DISPLAY:
+				setTitle(R.string.title_activity_configure_image_list);
+				break;
+			case REMOVE:
+				setTitle(R.string.title_activity_remove_images);
+				break;
+			default:
+				break;
+			}
+
+			setSelectionMode(action == CurrentAction.REMOVE ? SelectionMode.MULTIPLE : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
 	}

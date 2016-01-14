@@ -105,8 +105,8 @@ public class ThumbImageView extends FrameLayout {
 		case FOLDER:
 			layoutId = R.layout.view_thumb_folder;
 			break;
-		case IMAGE_LIST:
-			layoutId = R.layout.view_thumb_image_list;
+		case LIST:
+			layoutId = R.layout.view_thumb_list;
 			break;
 		default:
 			break;
@@ -179,8 +179,6 @@ public class ThumbImageView extends FrameLayout {
 			setMarked(false);
 		}
 		mCheckBoxMarked.setVisibility(markingType == MarkingType.NONE ? View.INVISIBLE : View.VISIBLE);
-		mCheckBoxMarked.setButtonDrawable(markingType == MarkingType.CROSS ? R.drawable.checkbox_negative
-				: R.drawable.checkbox_positive);
 	}
 
 	/**
@@ -283,10 +281,6 @@ public class ThumbImageView extends FrameLayout {
 		 */
 		NONE,
 		/**
-		 * Marking with a red cross.
-		 */
-		CROSS,
-		/**
 		 * Marking with a green hook.
 		 */
 		HOOK
@@ -307,7 +301,7 @@ public class ThumbImageView extends FrameLayout {
 		/**
 		 * A thumb representing an image list.
 		 */
-		IMAGE_LIST
+		LIST
 	}
 
 }

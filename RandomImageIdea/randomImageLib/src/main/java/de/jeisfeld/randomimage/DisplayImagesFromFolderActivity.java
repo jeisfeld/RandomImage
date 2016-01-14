@@ -325,7 +325,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
-			setSelectionMode(action == CurrentAction.ADD ? SelectionMode.MULTIPLE_ADD : SelectionMode.ONE);
+			setSelectionMode(action == CurrentAction.ADD ? SelectionMode.MULTIPLE : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
 	}

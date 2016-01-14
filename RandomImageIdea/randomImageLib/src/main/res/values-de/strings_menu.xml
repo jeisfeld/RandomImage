@@ -6,7 +6,8 @@
     <string name="menu_remove_images">Gewählte Bilder entfernen</string>
     <string name="menu_add_folders">Gewählte Verzeichnisse hinzufügen</string>
     <string name="menu_cancel">Abbrechen</string>
-    <string name="menu_select_all">Alle Bilder auswählen</string>
+    <string name="menu_select_all_images">Alle Bilder auswählen</string>
+    <string name="menu_select_all_folders">Alle Verzeichnisse auswählen</string>
     <string name="menu_select_multiple">Mehrere Verzeichnisse wählen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>

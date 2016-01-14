@@ -94,7 +94,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 	/**
 	 * The highest position displayed by now.
 	 */
-	private int mMaxPosition = 0;
+	private int mMaxReachedPosition = 0;
 	/**
 	 * The folders which wait to be added.
 	 */
@@ -144,10 +144,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		switch (selectionMode) {
 		case ONE:
 			return MarkingType.NONE;
-		case MULTIPLE_ADD:
+		case MULTIPLE:
 			return MarkingType.HOOK;
-		case MULTIPLE_REMOVE:
-			return MarkingType.CROSS;
 		default:
 			return null;
 		}
@@ -220,7 +218,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 			return;
 		}
 
-		if (mFolderNames.size() < mMaxPosition + PRELOAD_SIZE) {
+		if (mFolderNames.size() < mMaxReachedPosition + PRELOAD_SIZE) {
 			mFolderNames.add(folderName);
 			add(folderName);
 			mViewCache.incrementMaxPosition(1);
@@ -252,8 +250,8 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 
 	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {
-		if (position > mMaxPosition) {
-			mMaxPosition = position;
+		if (position > mMaxReachedPosition) {
+			mMaxReachedPosition = position;
 			addFoldersNotYetAdded();
 		}
 		return mViewCache.get(position, parent);
@@ -306,7 +304,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				});
 			}
 
-			thumbImageView.initWithStyle(mActivity, ThumbStyle.IMAGE_LIST);
+			thumbImageView.initWithStyle(mActivity, ThumbStyle.LIST);
 			thumbImageView.setMarked(mSelectedNestedListNames.contains(entryName));
 			thumbImageView.setFolderName(entryName);
 			break;
@@ -369,8 +367,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 				case ONE:
 					mActivity.onItemClick(itemType, entryName);
 					break;
-				case MULTIPLE_ADD:
-				case MULTIPLE_REMOVE:
+				case MULTIPLE:
 					if (view.isMarked()) {
 						view.setMarked(false);
 						selectionList.remove(entryName);
@@ -522,11 +519,7 @@ public class DisplayImageListArrayAdapter extends ArrayAdapter<String> {
 		/**
 		 * Multiple files can be selected for adding.
 		 */
-		MULTIPLE_ADD,
-		/**
-		 * Multiple files can be selected for removal.
-		 */
-		MULTIPLE_REMOVE,
+		MULTIPLE,
 	}
 
 	/**

@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
-        android:button="@drawable/ic_checkbox_positive"
+        android:button="@drawable/checkbox"
         android:checked="false"
         android:clickable="false"
         android:visibility="invisible"/>

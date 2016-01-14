@@ -22,6 +22,8 @@
     <string name="title_activity_configure_image_list">Bildliste einrichten</string>
     <string name="title_activity_display_images_from_folder">Bildverzeichnis anzeigen</string>
     <string name="title_activity_add_images">Bilder hinzufügen</string>
+    <string name="title_activity_add_folders">Verzeichnisse hinzufügen</string>
+    <string name="title_activity_remove_images">Bilder entfernen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_image_widget_configuration">Widget-Einstellungen</string>
 

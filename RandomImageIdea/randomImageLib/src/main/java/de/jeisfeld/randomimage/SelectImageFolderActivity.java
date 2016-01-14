@@ -261,7 +261,19 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
-			setSelectionMode(action == CurrentAction.SELECT ? SelectionMode.MULTIPLE_ADD : SelectionMode.ONE);
+
+			switch (action) {
+			case DISPLAY:
+				setTitle(R.string.title_activity_add_images);
+				break;
+			case SELECT:
+				setTitle(R.string.title_activity_add_folders);
+				break;
+			default:
+				break;
+			}
+
+			setSelectionMode(action == CurrentAction.SELECT ? SelectionMode.MULTIPLE : SelectionMode.ONE);
 			invalidateOptionsMenu();
 		}
 	}

@@ -580,7 +580,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 				fillListOfBackups();
 			}
 			mCurrentAction = action;
-			setSelectionMode(action == CurrentAction.DISPLAY ? SelectionMode.ONE : SelectionMode.MULTIPLE_ADD);
+			setSelectionMode(action == CurrentAction.DISPLAY ? SelectionMode.ONE : SelectionMode.MULTIPLE);
 			invalidateOptionsMenu();
 		}
 	}

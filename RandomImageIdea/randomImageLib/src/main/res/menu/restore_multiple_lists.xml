@@ -4,10 +4,10 @@
 
     <item
         android:id="@+id/action_select_all"
-        android:icon="@drawable/ic_action_checkbox_hook"
+        android:icon="@drawable/ic_action_checkboxes"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_select_all"/>
+        android:title="@string/menu_select_all_images"/>
     <item
         android:id="@+id/action_cancel"
         android:icon="@drawable/ic_action_cancel"

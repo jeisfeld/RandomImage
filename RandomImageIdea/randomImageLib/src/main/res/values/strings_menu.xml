@@ -6,7 +6,8 @@
     <string name="menu_remove_images">Remove selected images</string>
     <string name="menu_add_folders">Add selected folders</string>
     <string name="menu_cancel">Cancel</string>
-    <string name="menu_select_all">Select all images</string>
+    <string name="menu_select_all_images">Select all images</string>
+    <string name="menu_select_all_folders">Select all folders</string>
     <string name="menu_select_multiple">Select multiple folders</string>
     <string name="menu_add_images">Add images</string>
     <string name="menu_add_image_folder">Add an image folder</string>

@@ -23,6 +23,8 @@
     <string name="title_activity_configure_image_list">Configure Image List</string>
     <string name="title_activity_display_images_from_folder">Display image folder</string>
     <string name="title_activity_add_images">Add images</string>
+    <string name="title_activity_add_folders">Add folders</string>
+    <string name="title_activity_remove_images">Remove images</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_image_widget_configuration">Widget Settings</string>
 
