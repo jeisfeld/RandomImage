@@ -32,4 +32,10 @@
         <item name="android:text"/>
     </style>
 
+    <style name="TextStyleGridHeading">
+        <item name="android:textColor">@android:color/holo_orange_light</item>
+        <item name="android:textSize">@dimen/text_size_grid_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

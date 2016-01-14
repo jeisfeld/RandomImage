@@ -35,8 +35,17 @@
             android:text="@string/button_notifications"
             android:textAppearance="?android:attr/textAppearanceButton"
             />
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        style="@style/TextStyleGridHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/info_message_margin"
+        android:layout_marginTop="@dimen/info_message_margin"
+        android:text="@string/text_info_image_lists"
+        />
 
     <GridView
         android:id="@+id/gridViewDisplayImages"

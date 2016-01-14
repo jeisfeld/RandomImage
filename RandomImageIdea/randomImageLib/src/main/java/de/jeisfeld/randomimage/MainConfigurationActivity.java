@@ -580,9 +580,11 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			}
 
 			if (mCurrentAction == CurrentAction.RESTORE) {
+				((TextView) findViewById(R.id.textViewTitle)).setText(R.string.text_info_image_lists);
 				fillListOfLists();
 			}
 			else if (action == CurrentAction.RESTORE) {
+				((TextView) findViewById(R.id.textViewTitle)).setText(R.string.text_info_image_list_backups);
 				fillListOfBackups();
 			}
 			mCurrentAction = action;

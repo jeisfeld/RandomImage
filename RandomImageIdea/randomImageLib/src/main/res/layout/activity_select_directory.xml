@@ -19,8 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/info_message_margin"
         android:layout_marginTop="@dimen/info_message_margin"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/holo_orange_light"/>
+        style="@style/TextStyleGridHeading"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

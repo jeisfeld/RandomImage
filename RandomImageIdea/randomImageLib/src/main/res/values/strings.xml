@@ -56,6 +56,8 @@
     <string name="text_info_select_lists_for_restore">Select the image lists that you want to restore.</string>
     <string name="text_info_select_lists_for_delete">Select the image lists that you want to delete.</string>
     <string name="text_info_select_images_for_remove">Select the folders and images that you want to remove from the image list.</string>
+    <string name="text_info_image_lists">Your image lists</string>
+    <string name="text_info_image_list_backups">Existing backups</string>
 
     <!-- Other texts -->
     <string name="text_initializing">Initializing&#8230;</string>

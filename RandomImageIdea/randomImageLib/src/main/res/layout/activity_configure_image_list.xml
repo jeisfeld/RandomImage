@@ -25,6 +25,7 @@
 
     <TextView
         android:id="@+id/textViewTitle"
+        style="@style/TextStyleGridHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/buttonShowMissing"
@@ -33,9 +34,7 @@
         android:layout_marginBottom="@dimen/info_message_margin"
         android:layout_marginTop="@dimen/info_message_margin"
         android:layout_toLeftOf="@id/buttonShowMissing"
-        android:textColor="@android:color/holo_orange_light"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        />
 
     <GridView
         android:id="@+id/gridViewDisplayImages"
