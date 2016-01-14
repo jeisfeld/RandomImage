@@ -120,6 +120,19 @@ public abstract class DisplayImageListActivity extends Activity {
 		}
 	}
 
+	/**
+	 * If in selection mode, select all images. If all images are selected, then deselect all images.
+	 */
+	protected final void toggleSelectAll() {
+		boolean markingStatus = getAdapter().toggleSelectAll();
+		for (int i = 0; i < getGridView().getChildCount(); i++) {
+			View imageView = getGridView().getChildAt(i);
+			if (imageView instanceof ThumbImageView) {
+				((ThumbImageView) imageView).setMarked(markingStatus);
+			}
+		}
+	}
+
 	// OVERRIDABLE
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {

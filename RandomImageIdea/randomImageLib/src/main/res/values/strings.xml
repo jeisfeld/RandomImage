@@ -49,6 +49,14 @@
     <string name="button_backup_list">Backup List</string>
     <string name="button_restore_list">Restore List</string>
 
+    <!-- Info texts shown in activities. -->
+    <string name="text_info_select_image_folder_for_add">Select the folder whose images you want to add to the image list.</string>
+    <string name="text_info_select_image_folders_for_add">Select the folders which you want to add to the image list.</string>
+    <string name="text_info_select_lists_for_backup">Select the image lists that you want to back up.</string>
+    <string name="text_info_select_lists_for_restore">Select the image lists that you want to restore.</string>
+    <string name="text_info_select_lists_for_delete">Select the image lists that you want to delete.</string>
+    <string name="text_info_select_images_for_remove">Select the folders and images that you want to remove from the image list.</string>
+
     <!-- Other texts -->
     <string name="text_initializing">Initializing&#8230;</string>
     <string name="text_loading">Loading image list&#8230;</string>

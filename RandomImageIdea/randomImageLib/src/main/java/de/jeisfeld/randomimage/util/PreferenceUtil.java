@@ -19,10 +19,9 @@ public final class PreferenceUtil {
 	/**
 	 * The list of preferences used for switching on and off hints.
 	 */
-	private static final Integer[] INFO_PREFERENCES = {
+	private static final Integer[] HINT_PREFERENCES = {
 			R.string.key_hint_add_images,
 			R.string.key_hint_select_folder,
-			R.string.key_hint_delete_images,
 			R.string.key_hint_display_image,
 			R.string.key_hint_new_list};
 
@@ -389,7 +388,7 @@ public final class PreferenceUtil {
 	 * @param value The value.
 	 */
 	public static void setAllHints(final boolean value) {
-		for (int preferenceId : Arrays.asList(INFO_PREFERENCES)) {
+		for (int preferenceId : Arrays.asList(HINT_PREFERENCES)) {
 			setSharedPreferenceBoolean(preferenceId, value);
 		}
 	}

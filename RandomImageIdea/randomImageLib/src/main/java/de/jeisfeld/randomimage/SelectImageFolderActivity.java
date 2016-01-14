@@ -12,8 +12,8 @@ import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
@@ -25,7 +25,6 @@ import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -261,13 +260,16 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
+			TextView textViewInfo = (TextView) findViewById(R.id.textViewMessage);
 
 			switch (action) {
 			case DISPLAY:
 				setTitle(R.string.title_activity_add_images);
+				textViewInfo.setText(R.string.text_info_select_image_folder_for_add);
 				break;
 			case SELECT:
 				setTitle(R.string.title_activity_add_folders);
+				textViewInfo.setText(R.string.text_info_select_image_folders_for_add);
 				break;
 			default:
 				break;
@@ -377,13 +379,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_select_all) {
-			boolean markingStatus = getAdapter().toggleSelectAll();
-			for (int i = 0; i < getGridView().getChildCount(); i++) {
-				View imageView = getGridView().getChildAt(i);
-				if (imageView instanceof ThumbImageView) {
-					((ThumbImageView) imageView).setMarked(markingStatus);
-				}
-			}
+			toggleSelectAll();
 			return true;
 		}
 		else {

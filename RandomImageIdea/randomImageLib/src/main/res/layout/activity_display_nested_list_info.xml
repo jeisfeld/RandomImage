@@ -2,7 +2,10 @@
     android:id="@+id/layout_display_nested_list_details"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin">
 
     <TableRow
         android:layout_width="match_parent"
@@ -14,7 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_span="4"
             android:layout_weight="1"
-            android:padding="@dimen/text_padding"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingTop="@dimen/text_padding"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
     </TableRow>
 
@@ -28,7 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_span="4"
             android:layout_weight="1"
-            android:padding="@dimen/text_padding"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingTop="@dimen/text_padding"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
     </TableRow>
 
@@ -42,7 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_span="4"
             android:layout_weight="1"
-            android:padding="@dimen/text_padding"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingTop="@dimen/text_padding"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
     </TableRow>
 
@@ -54,7 +60,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:padding="@dimen/text_padding"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingTop="@dimen/text_padding"
             android:text="@string/info_nested_list_view_frequency"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -71,7 +78,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="0px"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingRight="@dimen/text_padding"
+            android:paddingTop="@dimen/text_padding"
             android:text="@string/percent"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 

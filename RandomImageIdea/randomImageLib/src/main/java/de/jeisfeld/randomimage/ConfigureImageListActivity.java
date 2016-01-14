@@ -8,9 +8,6 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,10 +26,10 @@ import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -257,11 +254,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 				MenuItem menuItemRemove = menu.findItem(R.id.action_select_images_for_removal);
 				menuItemRemove.setEnabled(false);
-				Drawable icon =
-						new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_action_minus));
-				icon.setAlpha(128); // MAGIC_NUMBER
-				menuItemRemove.setIcon(icon);
+				menuItemRemove.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_minus));
 			}
 
 			return true;
@@ -311,7 +304,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
 		if (menuId == R.id.action_select_images_for_removal) {
 			changeAction(CurrentAction.REMOVE);
-			DialogUtil.displayInfo(this, null, R.string.key_hint_delete_images, R.string.dialog_hint_delete_images);
 			return true;
 		}
 		else if (menuId == R.id.action_add_images) {
@@ -417,13 +409,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_select_all) {
-			boolean markingStatus = getAdapter().toggleSelectAll();
-			for (int i = 0; i < getGridView().getChildCount(); i++) {
-				View imageView = getGridView().getChildAt(i);
-				if (imageView instanceof ThumbImageView) {
-					((ThumbImageView) imageView).setMarked(markingStatus);
-				}
-			}
+			toggleSelectAll();
 			return true;
 		}
 		else {
@@ -512,13 +498,16 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
+			TextView textViewInfo = (TextView) findViewById(R.id.textViewMessage);
 
 			switch (action) {
 			case DISPLAY:
 				setTitle(R.string.title_activity_configure_image_list);
+				textViewInfo.setVisibility(View.GONE);
 				break;
 			case REMOVE:
 				setTitle(R.string.title_activity_remove_images);
+				textViewInfo.setVisibility(View.VISIBLE);
 				break;
 			default:
 				break;

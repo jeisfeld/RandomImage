@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListArrayAdapter.SelectionMode;
@@ -24,7 +26,6 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
@@ -162,17 +163,14 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	private boolean onOptionsItemSelectedDisplay(final int menuId) {
 		if (menuId == R.id.action_backup_lists) {
 			changeAction(CurrentAction.BACKUP);
-			DialogUtil.displayInfo(this, null, R.string.key_hint_backup_restore_lists, R.string.dialog_hint_backup_lists);
 			return true;
 		}
 		else if (menuId == R.id.action_restore_lists) {
 			changeAction(CurrentAction.RESTORE);
-			DialogUtil.displayInfo(this, null, R.string.key_hint_backup_restore_lists, R.string.dialog_hint_restore_lists);
 			return true;
 		}
 		else if (menuId == R.id.action_delete_lists) {
 			changeAction(CurrentAction.DELETE);
-			DialogUtil.displayInfo(this, null, R.string.key_hint_backup_restore_lists, R.string.dialog_hint_delete_lists);
 			return true;
 		}
 		else if (menuId == R.id.action_create_list) {
@@ -203,13 +201,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_select_all) {
-			boolean markingStatus = getAdapter().toggleSelectAll();
-			for (int i = 0; i < getGridView().getChildCount(); i++) {
-				View imageView = getGridView().getChildAt(i);
-				if (imageView instanceof ThumbImageView) {
-					((ThumbImageView) imageView).setMarked(markingStatus);
-				}
-			}
+			toggleSelectAll();
 			return true;
 		}
 		else if (menuId == R.id.action_do_backup) {
@@ -556,18 +548,32 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	private void changeAction(final CurrentAction action) {
 		if (action != null && action != mCurrentAction) {
+			TextView textViewInfo = (TextView) findViewById(R.id.textViewMessage);
+			LinearLayout layoutButtons = (LinearLayout) findViewById(R.id.layoutButtons);
+
 			switch (action) {
 			case DISPLAY:
 				setTitle(R.string.title_activity_main_configuration);
+				textViewInfo.setVisibility(View.GONE);
+				layoutButtons.setVisibility(View.VISIBLE);
 				break;
 			case BACKUP:
 				setTitle(R.string.title_activity_main_configuration_backup);
+				textViewInfo.setText(R.string.text_info_select_lists_for_backup);
+				textViewInfo.setVisibility(View.VISIBLE);
+				layoutButtons.setVisibility(View.GONE);
 				break;
 			case RESTORE:
 				setTitle(R.string.title_activity_main_configuration_restore);
+				textViewInfo.setText(R.string.text_info_select_lists_for_restore);
+				textViewInfo.setVisibility(View.VISIBLE);
+				layoutButtons.setVisibility(View.GONE);
 				break;
 			case DELETE:
 				setTitle(R.string.title_activity_main_configuration_delete);
+				textViewInfo.setText(R.string.text_info_select_lists_for_delete);
+				textViewInfo.setVisibility(View.VISIBLE);
+				layoutButtons.setVisibility(View.GONE);
 				break;
 			default:
 				break;

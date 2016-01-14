@@ -12,6 +12,7 @@ import java.util.Locale;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,6 +23,8 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Handler;
@@ -373,7 +376,7 @@ public final class ImageUtil {
 	/**
 	 * Get all image folders on the device in a separate thread.
 	 *
-	 * @param listener     A listener handling the response via callback.
+	 * @param listener A listener handling the response via callback.
 	 */
 	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
 		final Handler handler = new Handler();
@@ -517,6 +520,19 @@ public final class ImageUtil {
 		Canvas canvas = new Canvas(colouredBitmap);
 		canvas.drawBitmap(sourceBitmap, 0, 0, paint);
 		return colouredBitmap;
+	}
+
+	/**
+	 * Get a transparent icon from a resource id.
+	 *
+	 * @param resourceId The resource id.
+	 * @return The transparent icon.
+	 */
+	public static Drawable getTransparentIcon(final int resourceId) {
+		Resources resources = Application.getAppContext().getResources();
+		Drawable icon = new BitmapDrawable(resources, BitmapFactory.decodeResource(resources, resourceId));
+		icon.setAlpha(128); // MAGIC_NUMBER
+		return icon;
 	}
 
 	/**

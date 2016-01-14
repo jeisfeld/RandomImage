@@ -48,6 +48,14 @@
     <string name="button_backup_list">Liste sichern</string>
     <string name="button_restore_list">Liste wiederherstellen</string>
 
+    <!-- Info texts shown in activities. -->
+    <string name="text_info_select_image_folder_for_add">Wählen Sie das Verzeichnis, dessen Bilder Sie zur Liste hinzufügen wollen.</string>
+    <string name="text_info_select_image_folders_for_add">Wählen Sie die Verzeichnisse, die Sie zur Liste hinzufügen wollen.</string>
+    <string name="text_info_select_lists_for_backup">Wählen Sie die Bildlisten, die Sie sichern wollen.</string>
+    <string name="text_info_select_lists_for_restore">Wählen Sie die Bildlisten, die Sie wiederherstellen wollen.</string>
+    <string name="text_info_select_lists_for_delete">Wählen Sie die Bildlisten, die Sie löschen wollen.</string>
+    <string name="text_info_select_images_for_remove">Wählen Sie die Verzeichnisse und Bilder, die Sie aus der Bildliste entfernen wollen.</string>
+
     <!-- Other texts -->
     <string name="text_initializing">Ladevorgang&#8230;</string>
     <string name="text_loading">Bildliste wird geladen&#8230;</string>

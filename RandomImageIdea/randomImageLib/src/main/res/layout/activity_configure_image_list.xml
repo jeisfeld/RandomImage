@@ -2,12 +2,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/info_message_margin"
+        android:layout_marginTop="@dimen/info_message_margin"
+        android:text="@string/text_info_select_images_for_remove"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
     <Button
         android:id="@+id/buttonShowMissing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/textViewMessage"
         android:text="@string/button_missing_images"
         android:textAppearance="?android:attr/textAppearanceButton"
         android:visibility="gone"
@@ -19,8 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/buttonShowMissing"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/textViewMessage"
+        android:layout_marginBottom="@dimen/info_message_margin"
+        android:layout_marginTop="@dimen/info_message_margin"
         android:layout_toLeftOf="@id/buttonShowMissing"
+        android:textColor="@android:color/holo_orange_light"
         android:textSize="20sp"
         android:textStyle="bold"/>
 

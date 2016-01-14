@@ -272,7 +272,7 @@ public class SelectDirectoryActivity extends Activity {
 	 * @return The list adapter.
 	 */
 	private ArrayAdapter<String> createListAdapter(final List<String> items) {
-		return new ArrayAdapter<String>(this, R.layout.adapter_list_names, android.R.id.text1, items) {
+		return new ArrayAdapter<String>(this, R.layout.adapter_directory_names, android.R.id.text1, items) {
 			@Override
 			public View getView(final int position, final View convertView, final ViewGroup parent) {
 				View v = super.getView(position, convertView, parent);
@@ -349,8 +349,14 @@ public class SelectDirectoryActivity extends Activity {
 		getMenuInflater().inflate(R.menu.select_directory, menu);
 
 		if (!mIsImageFolder) {
-			menu.findItem(R.id.action_select_folder).setEnabled(false);
-			menu.findItem(R.id.action_add_image_folder).setEnabled(false);
+			MenuItem menuItemOkay = menu.findItem(R.id.action_select_folder);
+			MenuItem menuItemAddFolder = menu.findItem(R.id.action_add_image_folder);
+
+			menuItemOkay.setEnabled(false);
+			menuItemAddFolder.setEnabled(false);
+
+			menuItemOkay.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_okay));
+			menuItemAddFolder.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_add_folder));
 		}
 		return true;
 	}
