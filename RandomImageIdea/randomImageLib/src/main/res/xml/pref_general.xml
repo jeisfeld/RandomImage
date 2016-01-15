@@ -44,6 +44,12 @@
         <EditTextPreference
             android:defaultValue=""
             android:inputType="text"
+            android:key="@string/key_pref_hidden_folders_pattern"
+            android:title="@string/pref_title_hidden_folders_pattern"/>
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:inputType="text"
             android:key="@string/key_pref_hidden_lists_pattern"
             android:title="@string/pref_title_hidden_lists_pattern"/>
 

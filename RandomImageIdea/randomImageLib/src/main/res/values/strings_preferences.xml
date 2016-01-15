@@ -7,6 +7,7 @@
     <string name="key_pref_folder_selection_mechanism" translatable="false">pref_folder_selection_mechanism</string>
     <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
     <string name="key_pref_hidden_lists_pattern" translatable="false">pref_hidden_lists_pattern</string>
+    <string name="key_pref_hidden_folders_pattern" translatable="false">pref_hidden_folders_pattern</string>
 
     <!-- Dummy keys only required as menu reference -->
 
@@ -56,6 +57,7 @@
     <string name="pref_title_language">Language</string>
     <string name="pref_title_folder_selection_mechanism">Folder selection via &#8230;</string>
     <string name="pref_title_hidden_lists_pattern">Hide lists (Regexp)</string>
+    <string name="pref_title_hidden_folders_pattern">Hide folders (Regexp)</string>
     <string name="pref_default_language" translatable="false">0</string>
     <string name="pref_default_folder_selection_mechanism" translatable="false">0</string>
 

@@ -70,6 +70,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
+		bindPreferenceSummaryToValue(R.string.key_pref_hidden_folders_pattern);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_lists_pattern);
 
 		addHintButtonListener(R.string.key_pref_show_info, false);

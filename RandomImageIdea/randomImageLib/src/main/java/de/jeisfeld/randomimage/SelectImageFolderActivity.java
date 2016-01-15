@@ -197,23 +197,17 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		mFilteredImageLists.clear();
 		String filterString = mEditTextFilter.getText().toString();
 
-		if (filterString.length() > 0) {
-			mFilteredImageFolders = new ArrayList<>();
-			for (String name : mAllImageFolders) {
-				if (matchesFilter(name, filterString)) {
-					mFilteredImageFolders.add(name);
-				}
-			}
-			mFilteredImageLists = new ArrayList<>();
-			for (String name : mAllImageLists) {
-				if (matchesFilter(name, filterString)) {
-					mFilteredImageLists.add(name);
-				}
+		mFilteredImageFolders = new ArrayList<>();
+		for (String name : mAllImageFolders) {
+			if (matchesFilter(name, filterString)) {
+				mFilteredImageFolders.add(name);
 			}
 		}
-		else {
-			mFilteredImageFolders = new ArrayList<>(mAllImageFolders);
-			mFilteredImageLists = new ArrayList<>(mAllImageLists);
+		mFilteredImageLists = new ArrayList<>();
+		for (String name : mAllImageLists) {
+			if (matchesFilter(name, filterString)) {
+				mFilteredImageLists.add(name);
+			}
 		}
 
 		setAdapter(mFilteredImageLists, mFilteredImageFolders, null, true);
@@ -321,9 +315,16 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * @return true if it matches.
 	 */
 	private boolean matchesFilter(final String path, final String filterString) {
-		return filterString == null || filterString.length() == 0 // BOOLEAN_EXPRESSION_COMPLEXITY
+		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+		return path != null  // BOOLEAN_EXPRESSION_COMPLEXITY
+				// Exclude if matches regexp filter
+				&& (hiddenFoldersPattern == null || hiddenFoldersPattern.length() == 0 || !path.matches(hiddenFoldersPattern))
+				// Include if there is no filter
+				&& (filterString == null || filterString.length() == 0
+				// Include if matches filter
 				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
-				|| (getAdapter() != null && (getAdapter().getSelectedFolders().contains(path) || getAdapter().getSelectedLists().contains(path)));
+				// Include if selected
+				|| (getAdapter() != null && (getAdapter().getSelectedFolders().contains(path) || getAdapter().getSelectedLists().contains(path))));
 	}
 
 	/**
