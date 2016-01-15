@@ -16,7 +16,7 @@
     <string name="key_widget_button_style" translatable="false">widget_button_style</string>
     <string name="key_widget_button_color" translatable="false">widget_button_color</string>
     <string name="key_widget_detail_scale_type" translatable="false">widget_detail_scale_type</string>
-    <string name="key_widget_current_file_name" translatable="false">current_file_name</string>
+    <string name="key_widget_current_file_name" translatable="false">widget_current_file_name</string>
 
     <!-- Strings related to Settings -->
 

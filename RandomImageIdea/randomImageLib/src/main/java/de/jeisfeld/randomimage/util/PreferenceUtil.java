@@ -252,7 +252,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @return The indexed preference key.
 	 */
-	private static String getIndexedPreferenceKey(final int preferenceId, final int index) {
+	private static String getIndexedPreferenceKey(final int preferenceId, final Object index) {
 		return Application.getAppContext().getString(preferenceId) + "[" + index + "]";
 	}
 
@@ -263,7 +263,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @return the corresponding preference value.
 	 */
-	public static String getIndexedSharedPreferenceString(final int preferenceId, final int index) {
+	public static String getIndexedSharedPreferenceString(final int preferenceId, final Object index) {
 		return getSharedPreferences().getString(getIndexedPreferenceKey(preferenceId, index), null);
 	}
 
@@ -274,7 +274,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @param s            the target value of the preference.
 	 */
-	public static void setIndexedSharedPreferenceString(final int preferenceId, final int index, final String s) {
+	public static void setIndexedSharedPreferenceString(final int preferenceId, final Object index, final String s) {
 		Editor editor = getSharedPreferences().edit();
 		editor.putString(getIndexedPreferenceKey(preferenceId, index), s);
 		editor.apply();
@@ -288,7 +288,7 @@ public final class PreferenceUtil {
 	 * @param defaultValue the default value of the shared preference.
 	 * @return the corresponding preference value.
 	 */
-	public static int getIndexedSharedPreferenceInt(final int preferenceId, final int index, final int defaultValue) {
+	public static int getIndexedSharedPreferenceInt(final int preferenceId, final Object index, final int defaultValue) {
 		return getSharedPreferences().getInt(getIndexedPreferenceKey(preferenceId, index), defaultValue);
 	}
 
@@ -299,7 +299,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @param i            the target value of the preference.
 	 */
-	public static void setIndexedSharedPreferenceInt(final int preferenceId, final int index, final int i) {
+	public static void setIndexedSharedPreferenceInt(final int preferenceId, final Object index, final int i) {
 		Editor editor = getSharedPreferences().edit();
 		editor.putInt(getIndexedPreferenceKey(preferenceId, index), i);
 		editor.apply();
@@ -313,7 +313,7 @@ public final class PreferenceUtil {
 	 * @param defaultValue the default value of the shared preference.
 	 * @return the corresponding preference value.
 	 */
-	public static long getIndexedSharedPreferenceLong(final int preferenceId, final int index, final long defaultValue) {
+	public static long getIndexedSharedPreferenceLong(final int preferenceId, final Object index, final long defaultValue) {
 		return getSharedPreferences().getLong(getIndexedPreferenceKey(preferenceId, index), defaultValue);
 	}
 
@@ -324,7 +324,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @param i            the target value of the preference.
 	 */
-	public static void setIndexedSharedPreferenceLong(final int preferenceId, final int index, final long i) {
+	public static void setIndexedSharedPreferenceLong(final int preferenceId, final Object index, final long i) {
 		Editor editor = getSharedPreferences().edit();
 		editor.putLong(getIndexedPreferenceKey(preferenceId, index), i);
 		editor.apply();
@@ -337,7 +337,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @return the corresponding preference value.
 	 */
-	public static ArrayList<String> getIndexedSharedPreferenceStringList(final int preferenceId, final int index) {
+	public static ArrayList<String> getIndexedSharedPreferenceStringList(final int preferenceId, final Object index) {
 		String restoreString = getIndexedSharedPreferenceString(preferenceId, index);
 		if (restoreString == null || restoreString.length() == 0) {
 			return new ArrayList<>();
@@ -354,7 +354,7 @@ public final class PreferenceUtil {
 	 * @param index        The index
 	 * @param stringList   the target value of the preference.
 	 */
-	public static void setIndexedSharedPreferenceStringList(final int preferenceId, final int index, final List<String> stringList) {
+	public static void setIndexedSharedPreferenceStringList(final int preferenceId, final Object index, final List<String> stringList) {
 		if (stringList == null || stringList.size() == 0) {
 			PreferenceUtil.removeIndexedSharedPreference(preferenceId, index);
 		}
@@ -376,7 +376,7 @@ public final class PreferenceUtil {
 	 * @param preferenceId the id of the shared preference.
 	 * @param index        The index
 	 */
-	public static void removeIndexedSharedPreference(final int preferenceId, final int index) {
+	public static void removeIndexedSharedPreference(final int preferenceId, final Object index) {
 		Editor editor = getSharedPreferences().edit();
 		editor.remove(getIndexedPreferenceKey(preferenceId, index));
 		editor.apply();

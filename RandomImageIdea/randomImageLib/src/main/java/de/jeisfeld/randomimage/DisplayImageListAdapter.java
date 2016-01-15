@@ -19,6 +19,7 @@ import android.widget.BaseAdapter;
 
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName;
@@ -317,7 +318,8 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			entryName = mListNames.get(position);
 
 			if (mFixedThumbs) {
-				displayFileName = null;
+				displayFileName = new LoadableFileName(PreferenceUtil.getIndexedSharedPreferenceString(
+						R.string.key_indexed_current_list_thumb, entryName));
 			}
 			else {
 				displayFileName = new LoadableFileName(new FileNameProvider() {
@@ -327,7 +329,9 @@ public class DisplayImageListAdapter extends BaseAdapter {
 						if (imageList == null) {
 							return null;
 						}
-						return imageList.getRandomFileName();
+						String fileName = imageList.getRandomFileName();
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_indexed_current_list_thumb, entryName, fileName);
+						return fileName;
 					}
 				});
 			}

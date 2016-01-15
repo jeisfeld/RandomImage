@@ -19,7 +19,7 @@
     <string name="key_pref_pro_app" translatable="false">pref_pro_app</string>
     <string name="key_pref_edit_list" translatable="false">pref_edit_list</string>
 
-    <!-- Keys for shared preferences -->
+    <!-- Keys for private shared preferences -->
 
     <string name="key_current_list_name" translatable="false">current_list_name</string>
     <string name="key_all_image_folders" translatable="false">all_image_folders</string>
@@ -28,6 +28,10 @@
     <string name="key_device_shut_down" translatable="false">device_shut_down</string>
     <string name="key_last_thumb_creation_time" translatable="false">last_thumb_creation_time</string>
     <string name="key_folder_selection_filter" translatable="false">folder_selection_filter</string>
+
+    <!-- Keys for indexed shared preferences -->
+
+    <string name="key_indexed_current_list_thumb" translatable="false">indexed_current_list_thumb</string>
 
     <!-- Keys for statistics -->
 
