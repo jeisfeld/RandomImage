@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
@@ -77,8 +78,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		LinearLayout preferenceLayout = (LinearLayout) super.onCreateView(inflater, container, savedInstanceState);
 
-		// Add cancel button
-		if (preferenceLayout != null) {
+		// Add finish button
+		if (preferenceLayout != null && !(getActivity() instanceof WidgetSettingsActivity)) {
 			Button btn = new Button(getActivity());
 			btn.setText(R.string.button_widget_configuration);
 			btn.setOnClickListener(new View.OnClickListener() {
@@ -218,6 +219,28 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		// Trigger the listener immediately with the preference's current value.
 		mOnPreferenceChangeListener.setSummary(preference, value);
 	}
+
+	/**
+	 * Get the alarm interval of a Widget as String.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @return The alarm interval as String.
+	 */
+	public static String getAlarmIntervalString(final int appWidgetId) {
+		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, -1);
+		if (alarmInterval <= 0) {
+			return null;
+		}
+		String[] timerDurations = Application.getAppContext().getResources().getStringArray(R.array.timer_durations);
+		String[] timerDurationNames = Application.getAppContext().getResources().getStringArray(R.array.timer_duration_names);
+		for (int i = 0; i < timerDurations.length; i++) {
+			if (Long.parseLong(timerDurations[i]) == alarmInterval) {
+				return timerDurationNames[i];
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * Set the onPreferenceChangeListener.

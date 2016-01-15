@@ -166,6 +166,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 
 			if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId, stringValue);
+				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
 				MiniWidget.configure(mAppWidgetId, stringValue);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {

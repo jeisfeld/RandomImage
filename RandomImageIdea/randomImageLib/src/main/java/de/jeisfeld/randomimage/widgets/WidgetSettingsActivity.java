@@ -90,22 +90,21 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 		int widgetNameResourceId = 0;
 		String fragmentString = null;
 		if (widgetClass.equals(MiniWidget.class)) {
-			widgetNameResourceId = R.string.mini_widget_name;
+			widgetNameResourceId = R.string.mini_widget_display_name;
 			fragmentString = "de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationFragment";
 		}
 		else if (widgetClass.equals(ImageWidget.class)) {
-			widgetNameResourceId = R.string.image_widget_name;
+			widgetNameResourceId = R.string.image_widget_display_name;
 			fragmentString = "de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationFragment";
 		}
 		else if (widgetClass.equals(StackedImageWidget.class)) {
-			widgetNameResourceId = R.string.stacked_image_widget_name;
+			widgetNameResourceId = R.string.stacked_image_widget_display_name;
 			fragmentString = "de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationFragment";
 		}
-		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
 
 		Header header = new Header();
 		header.title = getString(widgetNameResourceId) + " " + (index + 1);
-		header.summary = listName;
+		header.summary = getHeaderSummary(appWidgetId);
 		header.fragment = fragmentString;
 		header.id = appWidgetId;
 
@@ -130,15 +129,31 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	 * @param appWidgetId The app widget id of the entry.
 	 */
 	protected static void updateHeader(final int hashCode, final int appWidgetId) {
-		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
 		WidgetSettingsActivity activity = mActivityMap.get(hashCode);
 		if (activity != null) {
 			for (Header header : activity.mHeaders) {
 				if (header.id == appWidgetId) {
-					header.summary = listName;
+					header.summary = getHeaderSummary(appWidgetId);
 				}
 			}
 			activity.invalidateHeaders();
+		}
+	}
+
+	/**
+	 * Get the summary of the header entry for a widget.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @return The header summaryl
+	 */
+	private static String getHeaderSummary(final int appWidgetId) {
+		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
+		String timerString = GenericImageWidgetConfigurationFragment.getAlarmIntervalString(appWidgetId);
+		if (timerString == null) {
+			return listName;
+		}
+		else {
+			return listName + " (" + timerString + ")";
 		}
 	}
 }

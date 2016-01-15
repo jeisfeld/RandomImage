@@ -21,10 +21,12 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 
 				if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
 					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, getAppWidgetId(), stringValue);
+					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					StackedImageWidget.configure(getAppWidgetId(), stringValue, GenericWidget.UpdateType.NEW_LIST);
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_alarm_interval))) {
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
+					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					StackedImageWidget.updateTimers(getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {

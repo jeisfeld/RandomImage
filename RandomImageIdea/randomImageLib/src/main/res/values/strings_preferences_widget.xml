@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Display names for widgets -->
+
+    <string name="mini_widget_display_name">Mini Widget</string>
+    <string name="image_widget_display_name">Image Frame</string>
+    <string name="stacked_image_widget_display_name">Image Deck</string>
+
     <!-- Indexed keys -->
 
     <string name="key_widget_list_name" translatable="false">widget_list_name</string>

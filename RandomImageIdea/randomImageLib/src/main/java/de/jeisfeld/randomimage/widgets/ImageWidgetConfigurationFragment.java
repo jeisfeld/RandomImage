@@ -21,14 +21,12 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 
 				if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
 					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, getAppWidgetId(), stringValue);
-					if (getActivity() instanceof WidgetSettingsActivity) {
-						int hashCode = getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE);
-						WidgetSettingsActivity.updateHeader(hashCode, getAppWidgetId());
-					}
+					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					ImageWidget.configure(getAppWidgetId(), stringValue, UpdateType.NEW_LIST);
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_alarm_interval))) {
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
+					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					ImageWidget.updateTimers(getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {
