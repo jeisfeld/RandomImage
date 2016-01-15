@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +61,9 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	public final void onBuildHeaders(final List<Header> target) {
 		for (Class<? extends GenericWidget> widgetClass : GenericWidget.WIDGET_TYPES) {
 			int[] appWidgetIds = GenericWidget.getAllWidgetIds(widgetClass);
-			for (int appWidgetId : appWidgetIds) {
-				target.add(createHeaderForWidget(widgetClass, appWidgetId));
+			Arrays.sort(appWidgetIds);
+			for (int i = 0; i < appWidgetIds.length; i++) {
+				target.add(createHeaderForWidget(widgetClass, appWidgetIds[i], i));
 			}
 		}
 		mHeaders = target;
@@ -81,9 +83,10 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	 *
 	 * @param widgetClass The widget class.
 	 * @param appWidgetId The widget id.
+	 * @param index       The index of the widget of this type.
 	 * @return the preference header.
 	 */
-	private Header createHeaderForWidget(final Class<? extends GenericWidget> widgetClass, final int appWidgetId) {
+	private Header createHeaderForWidget(final Class<? extends GenericWidget> widgetClass, final int appWidgetId, final int index) {
 		int widgetNameResourceId = 0;
 		String fragmentString = null;
 		if (widgetClass.equals(MiniWidget.class)) {
@@ -101,7 +104,7 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
 
 		Header header = new Header();
-		header.title = getString(widgetNameResourceId);
+		header.title = getString(widgetNameResourceId) + " " + (index + 1);
 		header.summary = listName;
 		header.fragment = fragmentString;
 		header.id = appWidgetId;
