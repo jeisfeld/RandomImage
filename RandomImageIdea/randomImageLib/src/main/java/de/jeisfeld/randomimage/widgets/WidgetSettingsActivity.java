@@ -26,11 +26,6 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	public static final String STRING_HASH_CODE = "de.jeisfeld.randomimage.HASH_CODE";
 
 	/**
-	 * The headers that are displayed.
-	 */
-	private List<Header> mHeaders = null;
-
-	/**
 	 * A map allowing to get the activity from its hashCode.
 	 */
 	private static Map<Integer, WidgetSettingsActivity> mActivityMap = new HashMap<>();
@@ -66,7 +61,6 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 				target.add(createHeaderForWidget(widgetClass, appWidgetIds[i], i));
 			}
 		}
-		mHeaders = target;
 
 		if (target.size() == 0) {
 			DialogUtil.displayInfo(this, new MessageDialogListener() {
@@ -131,11 +125,11 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	protected static void updateHeader(final int hashCode, final int appWidgetId) {
 		WidgetSettingsActivity activity = mActivityMap.get(hashCode);
 		if (activity != null) {
-			for (Header header : activity.mHeaders) {
-				if (header.id == appWidgetId) {
-					header.summary = getHeaderSummary(appWidgetId);
-				}
-			}
+			//			for (Header header : activity.mHeaders) {
+			//				if (header.id == appWidgetId) {
+			//					header.summary = getHeaderSummary(appWidgetId);
+			//				}
+			//			}
 			activity.invalidateHeaders();
 		}
 	}
@@ -144,7 +138,7 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	 * Get the summary of the header entry for a widget.
 	 *
 	 * @param appWidgetId The widget id.
-	 * @return The header summaryl
+	 * @return The header summary
 	 */
 	private static String getHeaderSummary(final int appWidgetId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);

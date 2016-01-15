@@ -116,18 +116,16 @@
         <activity
             android:name="de.jeisfeld.randomimage.widgets.WidgetSettingsActivity"
             android:label="@string/title_activity_widget_settings">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
-            </intent-filter>
+        </activity>
+        <activity
+            android:name="de.jeisfeld.randomimage.notifications.NotificationSettingsActivity"
+            android:label="@string/title_activity_notification_settings">
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SettingsActivity"
             android:label="@string/title_activity_settings">
         </activity>
 
-        <receiver
-            android:name="de.jeisfeld.randomimage.util.NotificationBroadcastReceiver">
-        </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.MiniWidget"
             android:label="@string/mini_widget_name">
@@ -182,6 +180,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver"/>
+        <receiver android:name="de.jeisfeld.randomimage.notifications.NotificationBroadcastReceiver"/>
 
         <service
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetService"

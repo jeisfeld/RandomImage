@@ -19,6 +19,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;

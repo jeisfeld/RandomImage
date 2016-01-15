@@ -19,13 +19,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ListMenuView;

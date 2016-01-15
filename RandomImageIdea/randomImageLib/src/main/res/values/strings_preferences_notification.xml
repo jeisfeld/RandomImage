@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Non-indexed keys -->
+
+    <string name="key_notification_ids" translatable="false">notification_ids</string>
+    <string name="key_notification_max_id" translatable="false">notification_max_id</string>
+    <string name="key_dummy_cancel_notification" translatable="false">dummy_cancel_notification</string>
+
+    <!-- Indexed keys -->
+
+    <string name="key_notification_list_name" translatable="false">notification_list_name</string>
+    <string name="key_notification_frequency" translatable="false">notification_frequency</string>
+
+    <!-- Strings related to Notification settings -->
+
+    <string name="pref_heading_notifcation">Notification</string>
+    <string name="pref_heading_create_new_notifcation">Create new notification</string>
+    <string name="pref_title_notification_list_name">List Name</string>
+    <string name="pref_title_notification_frequency">Notification Frequency</string>
+    <string name="pref_default_notification_frequency" translatable="false">60000</string>
+    <string name="pref_title_cancel_notification">Cancel Notification</string>
+
+    <!-- String arrays -->
+    <string-array name="notification_frequency_names">
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>15 minutes</item>
+        <item>1 hour</item>
+        <item>4 hours</item>
+        <item>1 day</item>
+        <item>1 week</item>
+        <item>only on restart</item>
+    </string-array>
+    <string-array name="notification_frequency_values" translatable="false">
+        <item>60000</item>
+        <item>300000</item>
+        <item>900000</item>
+        <item>3600000</item>
+        <item>14400000</item>
+        <item>86400000</item>
+        <item>604800000</item>
+        <item>0</item>
+    </string-array>
+
+</resources>

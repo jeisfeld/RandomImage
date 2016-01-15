@@ -15,11 +15,11 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
 
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;

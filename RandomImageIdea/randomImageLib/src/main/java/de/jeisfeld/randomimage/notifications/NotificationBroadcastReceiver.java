@@ -1,4 +1,4 @@
-package de.jeisfeld.randomimage.util;
+package de.jeisfeld.randomimage.notifications;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

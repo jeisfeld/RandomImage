@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
+import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
@@ -111,11 +112,18 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	private void configureButtons() {
 		Button buttonWidgets = (Button) findViewById(R.id.buttonWidgets);
-
 		buttonWidgets.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				WidgetSettingsActivity.startActivity(MainConfigurationActivity.this);
+			}
+		});
+
+		Button buttonNotifications = (Button) findViewById(R.id.buttonNotifications);
+		buttonNotifications.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
 			}
 		});
 	}

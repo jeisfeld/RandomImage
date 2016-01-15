@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="@string/key_notification_list_name"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_notification_list_name"/>
+    <Preference
+        android:key="@string/key_pref_edit_list"
+        android:title="@string/menu_edit_list"/>
+    <ListPreference
+        android:entries="@array/notification_frequency_names"
+        android:entryValues="@array/notification_frequency_values"
+        android:key="@string/key_notification_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_notification_frequency"/>
+    <Preference
+        android:key="@string/key_dummy_cancel_notification"
+        android:title="@string/pref_title_cancel_notification"/>
+
+</PreferenceScreen>

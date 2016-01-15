@@ -12,11 +12,11 @@ import android.widget.RemoteViewsService;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;

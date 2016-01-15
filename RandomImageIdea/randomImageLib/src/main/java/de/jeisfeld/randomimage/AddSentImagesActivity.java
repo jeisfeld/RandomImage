@@ -12,10 +12,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
 

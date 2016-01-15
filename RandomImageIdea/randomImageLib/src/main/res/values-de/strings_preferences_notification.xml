@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_heading_notifcation">Benachrichtigung</string>
+    <string name="pref_heading_create_new_notifcation">Neue Benachrichtigung erstellen</string>
+    <string name="pref_title_notification_list_name">Listenname</string>
+    <string name="pref_title_notification_frequency">Häufigkeit der Benachrichtigung</string>
+    <string name="pref_title_cancel_notification">Benachrichtigung abbrechen</string>
+
+    <!-- String arrays -->
+    <string-array name="notification_frequency_names">
+        <item>1 Minute</item>
+        <item>5 Minuten</item>
+        <item>15 Minuten</item>
+        <item>1 Stunde</item>
+        <item>4 Stunden</item>
+        <item>1 Tag</item>
+        <item>1 Woche</item>
+        <item>Nur bei Neustart</item>
+    </string-array>
+
+</resources>

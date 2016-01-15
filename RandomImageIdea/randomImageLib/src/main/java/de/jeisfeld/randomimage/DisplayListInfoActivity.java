@@ -14,11 +14,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import de.jeisfeld.randomimage.MainConfigurationActivity.ListAction;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
 

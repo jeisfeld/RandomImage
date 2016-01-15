@@ -26,6 +26,7 @@
     <string name="title_activity_remove_images">Bilder entfernen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_widget_settings">Widget-Einstellungen</string>
+    <string name="title_activity_notification_settings">Benachrichtigungs-Einstellungen</string>
 
     <!-- Button texts -->
     <string name="button_ok">OK</string>

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
@@ -27,7 +28,6 @@ import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.ImageUtil.OnImageFoldersFoundListener;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
-import de.jeisfeld.randomimage.util.NotificationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 

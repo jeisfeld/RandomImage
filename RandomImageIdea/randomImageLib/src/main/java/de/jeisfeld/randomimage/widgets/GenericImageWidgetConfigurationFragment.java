@@ -3,7 +3,6 @@ package de.jeisfeld.randomimage.widgets;
 import java.util.ArrayList;
 
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -57,7 +56,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
 		mReconfigureWidget = getArguments().getBoolean(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, false);
 
-		boolean isUpdated = setDefaultValues(getActivity(), mAppWidgetId);
+		boolean isUpdated = setDefaultValues();
 		if (isUpdated) {
 			mOnPreferenceChangeListener.updateWidget(null);
 		}
@@ -116,40 +115,38 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	/**
 	 * Set the default values of preferences if not yet given.
 	 *
-	 * @param context     The context in which this method is called.
-	 * @param appWidgetId The app widget id.
 	 * @return true if some value needed to be set.
 	 */
-	protected static boolean setDefaultValues(final Context context, final int appWidgetId) {
+	protected final boolean setDefaultValues() {
 		boolean isUpdated = false;
-		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, -1);
+		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1);
 		if (alarmInterval == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId,
-					Long.parseLong(context.getString(R.string.pref_default_widget_alarm_interval)));
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId,
+					Long.parseLong(getActivity().getString(R.string.pref_default_widget_alarm_interval)));
 		}
-		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId, -1);
+		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1);
 		if (backgroundStyle == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_background_style, R.string.pref_default_widget_background_style));
 		}
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId, -1);
+		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1);
 		if (buttonStyle == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_style, R.string.pref_default_widget_button_style));
 		}
-		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId, -1);
+		int buttonColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1);
 		if (buttonColor == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, appWidgetId,
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_color, R.string.pref_default_widget_button_color));
 		}
-		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId, -1);
+		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1);
 		if (detailScaleType == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId,
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
 							R.string.pref_default_widget_detail_scale_type));
 		}

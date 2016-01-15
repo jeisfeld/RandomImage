@@ -1,4 +1,4 @@
-package de.jeisfeld.randomimage.util;
+package de.jeisfeld.randomimage.notifications;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +16,11 @@ import android.content.Context;
 import android.content.Intent;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.FileUtil;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**

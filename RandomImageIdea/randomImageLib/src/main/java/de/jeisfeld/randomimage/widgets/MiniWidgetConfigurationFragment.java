@@ -3,7 +3,6 @@ package de.jeisfeld.randomimage.widgets;
 import java.util.ArrayList;
 
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -40,7 +39,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		super.onCreate(savedInstanceState);
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
 
-		setDefaultValues(getActivity(), mAppWidgetId);
+		setDefaultValues();
 		setNonIndexedValues();
 
 		addPreferencesFromResource(R.xml.pref_widget_mini);
@@ -89,16 +88,14 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	/**
 	 * Set the default values of preferences if not yet given.
 	 *
-	 * @param context     The context in which this method is called.
-	 * @param appWidgetId The app widget id.
 	 * @return true if some value needed to be set.
 	 */
-	protected static boolean setDefaultValues(final Context context, final int appWidgetId) {
+	protected final boolean setDefaultValues() {
 		boolean isUpdated = false;
-		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId, -1);
+		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1);
 		if (detailScaleType == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId,
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
 							R.string.pref_default_widget_detail_scale_type));
 		}
