@@ -199,13 +199,13 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 		mFilteredImageFolders = new ArrayList<>();
 		for (String name : mAllImageFolders) {
-			if (matchesFilter(name, filterString)) {
+			if (matchesFilter(name, filterString, false)) {
 				mFilteredImageFolders.add(name);
 			}
 		}
 		mFilteredImageLists = new ArrayList<>();
 		for (String name : mAllImageLists) {
-			if (matchesFilter(name, filterString)) {
+			if (matchesFilter(name, filterString, true)) {
 				mFilteredImageLists.add(name);
 			}
 		}
@@ -284,7 +284,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			public void handleImageFolder(final String imageFolder) {
 				if (!mAllImageFolders.contains(imageFolder)) {
 					mAllImageFolders.add(imageFolder);
-					if (matchesFilter(imageFolder, mEditTextFilter.getText().toString())) {
+					if (matchesFilter(imageFolder, mEditTextFilter.getText().toString(), false)) {
 						mFilteredImageFolders.add(imageFolder);
 					}
 				}
@@ -312,19 +312,21 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 *
 	 * @param path         The file path.
 	 * @param filterString The filter string.
+	 * @param isList       true if the path represents a list instead of a folder.
 	 * @return true if it matches.
 	 */
-	private boolean matchesFilter(final String path, final String filterString) {
+	private boolean matchesFilter(final String path, final String filterString, final boolean isList) {
 		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
 		return path != null  // BOOLEAN_EXPRESSION_COMPLEXITY
-				// Exclude if matches regexp filter
-				&& (hiddenFoldersPattern == null || hiddenFoldersPattern.length() == 0 || !path.matches(hiddenFoldersPattern))
+				// Exclude if folder path matches regexp filter
+				&& (isList || hiddenFoldersPattern == null || hiddenFoldersPattern.length() == 0 || !path.matches(hiddenFoldersPattern))
 				// Include if there is no filter
 				&& (filterString == null || filterString.length() == 0
 				// Include if matches filter
 				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
 				// Include if selected
-				|| (getAdapter() != null && (getAdapter().getSelectedFolders().contains(path) || getAdapter().getSelectedLists().contains(path))));
+				|| !isList && getAdapter() != null && getAdapter().getSelectedFolders().contains(path)
+				|| isList && getAdapter() != null && getAdapter().getSelectedLists().contains(path));
 	}
 
 	/**

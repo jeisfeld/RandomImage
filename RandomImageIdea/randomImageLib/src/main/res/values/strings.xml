@@ -8,7 +8,7 @@
     <string name="mini_widget_name">Surprise Image Widget</string>
     <string name="image_widget_name">Surprise Image Frame</string>
     <string name="stacked_image_widget_name">Surprise Image Deck</string>
-    <string name="default_list_name">Image List</string>
+    <string name="default_list_name">My first Image List</string>
 
     <!-- Activity titles -->
     <string name="title_activity_display_image_details">Image Details</string>
@@ -56,7 +56,7 @@
     <string name="text_info_select_lists_for_restore">Select the image lists that you want to restore.</string>
     <string name="text_info_select_lists_for_delete">Select the image lists that you want to delete.</string>
     <string name="text_info_select_images_for_remove">Select the folders and images that you want to remove from the image list.</string>
-    <string name="text_info_image_lists">Your image lists</string>
+    <string name="text_info_image_lists">My image lists</string>
     <string name="text_info_image_list_backups">Existing backups</string>
 
     <!-- Other texts -->

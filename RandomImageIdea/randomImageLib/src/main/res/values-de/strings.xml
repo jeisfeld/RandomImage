@@ -7,7 +7,7 @@
     <string name="mini_widget_name">Überraschungsbild-Widget</string>
     <string name="image_widget_name">Überraschungsbilderrahmen</string>
     <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
-    <string name="default_list_name">Bildliste</string>
+    <string name="default_list_name">Meine erste Bildliste</string>
 
     <!-- Activity titles -->
     <string name="title_activity_display_image_details">Bildinformationen</string>
@@ -55,7 +55,7 @@
     <string name="text_info_select_lists_for_restore">Wählen Sie die Bildlisten, die Sie wiederherstellen wollen.</string>
     <string name="text_info_select_lists_for_delete">Wählen Sie die Bildlisten, die Sie löschen wollen.</string>
     <string name="text_info_select_images_for_remove">Wählen Sie die Verzeichnisse und Bilder, die Sie aus der Bildliste entfernen wollen.</string>
-    <string name="text_info_image_lists">Ihre Bildlisten</string>
+    <string name="text_info_image_lists">Meine Bildlisten</string>
     <string name="text_info_image_list_backups">Vorhandene Sicherungkopien</string>
 
     <!-- Other texts -->
