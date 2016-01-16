@@ -60,7 +60,7 @@ public final class ImageUtil {
 	 * The file endings considered as image files.
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
-			"JPG", "JPEG", "PNG", "BMP", "TIF", "TIFF", "GIF");
+			"JPG", "JPEG", "PNG", "BMP", "GIF");
 
 	/**
 	 * Hide default constructor.
