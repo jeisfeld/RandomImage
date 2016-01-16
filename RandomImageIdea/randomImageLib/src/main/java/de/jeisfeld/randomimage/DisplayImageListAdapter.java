@@ -267,17 +267,6 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public final int getItemViewType(final int position) {
-		return position;
-	}
-
-	@Override
-	public final int getViewTypeCount() {
-		int count = getCount();
-		return count == 0 ? 1 : count;
-	}
-
-	@Override
 	public final View getView(final int position, final View convertView, final ViewGroup parent) {
 		if (position > mMaxReachedPosition) {
 			mMaxReachedPosition = position;

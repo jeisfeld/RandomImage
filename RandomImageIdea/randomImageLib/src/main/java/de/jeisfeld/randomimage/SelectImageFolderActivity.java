@@ -61,14 +61,9 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private EditText mEditTextFilter;
 
 	/**
-	 * A filtered list of image folders to be displayed.
-	 */
-	private List<String> mFilteredImageFolders = new ArrayList<>();
-
-	/**
 	 * A list of all image folders to be displayed.
 	 */
-	private List<String> mAllImageFolders = null;
+	private final List<String> mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
 
 	/**
 	 * A filtered list of image lists to be displayed.
@@ -89,6 +84,11 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * The name of the image list to which folders should be added.
 	 */
 	private String mListName;
+
+	/**
+	 * The thread queue filling the list of folders.
+	 */
+	private final List<Thread> mFillListThreads = new ArrayList<>();
 
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
@@ -124,12 +124,12 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		}
 
 		// This step initializes the adapter.
-		fillListOfFolders();
+		fillListOfFoldersAsync();
 
 		mEditTextFilter.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-				fillListOfFolders();
+				fillListOfFoldersAsync();
 				PreferenceUtil.setSharedPreferenceString(R.string.key_folder_selection_filter, s.toString());
 			}
 
@@ -175,32 +175,71 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	/**
+	 * Fill the view with the list of all image folders, via background thread.
+	 */
+	private void fillListOfFoldersAsync() {
+		Thread fillListThread = new Thread() {
+			@Override
+			public void run() {
+				fillListOfFolders();
+				synchronized (mFillListThreads) {
+					mFillListThreads.remove(Thread.currentThread());
+					if (mFillListThreads.size() > 0) {
+						mFillListThreads.get(0).start();
+					}
+				}
+			}
+		};
+
+		synchronized (mFillListThreads) {
+			if (mFillListThreads.size() > 1) {
+				mFillListThreads.remove(1);
+			}
+			mFillListThreads.add(fillListThread);
+			if (mFillListThreads.size() == 1) {
+				fillListThread.start();
+			}
+			else {
+				mFillListThreads.get(0).interrupt();
+			}
+		}
+	}
+
+
+	/**
 	 * Fill the view with the list of all image folders.
 	 */
 	private void fillListOfFolders() {
-		boolean firstStart = mAllImageFolders == null;
-		List<String> selectedLists = null;
-		List<String> selectedFolders = null;
+		final boolean firstStart = mAllImageLists == null;
+		final List<String> selectedLists;
+		final List<String> selectedFolders;
 		if (getAdapter() != null) {
 			selectedLists = getAdapter().getSelectedLists();
 			selectedFolders = getAdapter().getSelectedFolders();
-			getAdapter().cleanupCache();
+		}
+		else {
+			selectedLists = null;
+			selectedFolders = null;
 		}
 
 		if (firstStart) {
-			mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
 			mAllImageLists = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
 			mAllImageLists.remove(mListName);
 		}
 
-		mFilteredImageFolders.clear();
 		mFilteredImageLists.clear();
 		String filterString = mEditTextFilter.getText().toString();
 
-		mFilteredImageFolders = new ArrayList<>();
-		for (String name : mAllImageFolders) {
-			if (matchesFilter(name, filterString, false)) {
-				mFilteredImageFolders.add(name);
+		final List<String> filteredImageFolders = new ArrayList<>();
+
+		synchronized (mAllImageFolders) {
+			for (String name : mAllImageFolders) {
+				if (matchesFilter(name, filterString, false)) {
+					filteredImageFolders.add(name);
+				}
+				if (Thread.interrupted()) {
+					return;
+				}
 			}
 		}
 		mFilteredImageLists = new ArrayList<>();
@@ -210,18 +249,20 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			}
 		}
 
-		setAdapter(mFilteredImageLists, mFilteredImageFolders, null, true);
-		changeAction(mCurrentAction);
-		if (selectedFolders != null) {
-			getAdapter().setSelectedFolders(selectedFolders);
-		}
-		if (selectedLists != null) {
-			getAdapter().setSelectedLists(selectedLists);
-		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (getAdapter() != null) {
+					getAdapter().cleanupCache();
+				}
+				setAdapter(mFilteredImageLists, filteredImageFolders, null, true, selectedLists, selectedFolders, null);
+				changeAction(mCurrentAction);
 
-		if (firstStart) {
-			parseAllImageFolders();
-		}
+				if (firstStart) {
+					parseAllImageFolders();
+				}
+			}
+		});
 	}
 
 	/**
@@ -283,24 +324,16 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			@Override
 			public void handleImageFolder(final String imageFolder) {
 				if (!mAllImageFolders.contains(imageFolder)) {
-					mAllImageFolders.add(imageFolder);
+					synchronized (mAllImageFolders) {
+						mAllImageFolders.add(imageFolder);
+					}
 					if (matchesFilter(imageFolder, mEditTextFilter.getText().toString(), false)) {
-						mFilteredImageFolders.add(imageFolder);
-					}
-				}
-				if (mFilteredImageFolders.contains(imageFolder)) {
-					if (getAdapter() == null) {
-						ArrayList<String> folderNames = new ArrayList<>();
-						folderNames.add(imageFolder);
-
-						if (getAdapter() != null) {
-							getAdapter().cleanupCache();
+						if (getAdapter() == null) {
+							setAdapter(null, Collections.singletonList(imageFolder), null, true);
 						}
-
-						setAdapter(null, folderNames, null, true);
-					}
-					else {
-						getAdapter().addFolder(imageFolder);
+						else {
+							getAdapter().addFolder(imageFolder);
+						}
 					}
 				}
 			}
