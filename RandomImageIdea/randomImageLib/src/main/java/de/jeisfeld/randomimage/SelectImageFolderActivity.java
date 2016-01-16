@@ -73,7 +73,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * A list of all image lists to be displayed.
 	 */
-	private List<String> mAllImageLists = null;
+	private ArrayList<String> mAllImageLists = null;
 
 	/**
 	 * The current action within this activity.

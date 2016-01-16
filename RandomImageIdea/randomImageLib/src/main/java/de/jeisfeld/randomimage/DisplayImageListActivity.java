@@ -107,7 +107,7 @@ public abstract class DisplayImageListActivity extends Activity {
 			adapter.setSelectedLists(selectedLists);
 		}
 		mAdapter = adapter;
-		getGridView().setAdapter(mAdapter);
+		mGridView.setAdapter(mAdapter);
 	}
 
 	// OVERRIDABLE
@@ -132,6 +132,8 @@ public abstract class DisplayImageListActivity extends Activity {
 			View imageView = getGridView().getChildAt(i);
 			if (imageView instanceof ThumbImageView) {
 				((ThumbImageView) imageView).setMarkable(markingType);
+				imageView.invalidate();
+				imageView.forceLayout();
 			}
 		}
 	}

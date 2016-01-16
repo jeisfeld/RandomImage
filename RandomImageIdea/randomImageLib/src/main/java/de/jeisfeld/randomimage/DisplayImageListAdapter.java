@@ -36,6 +36,10 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 * Number of views to be preloaded.
 	 */
 	private static final int PRELOAD_SIZE;
+	/**
+	 * Viewtype count - determines automatic reuse of views by GridView (which should be prevented due to issues when switching mode).
+	 */
+	private static final int VIEWTYPE_COUNT = 100;
 
 	/**
 	 * The cache where views of the displays are stored for smoother scrolling.
@@ -264,6 +268,29 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	@Override
 	public final long getItemId(final int position) {
 		return position;
+	}
+
+	@Override
+	public final int getItemViewType(final int position) {
+		// Ensure that views are not reused by GridView framework
+		return position == 0 ? 0 : 1;
+		//		if (mActivity instanceof SelectImageFolderActivity) {
+		//			return position == 0 ? VIEWTYPE_COUNT : position % VIEWTYPE_COUNT;
+		//		}
+		//		else {
+		//			return position;
+		//		}
+	}
+
+	@Override
+	public final int getViewTypeCount() {
+		return 2;
+		//		if (mActivity instanceof SelectImageFolderActivity) {
+		//			return VIEWTYPE_COUNT + 1;
+		//		}
+		//		else {
+		//			return Math.max(1, mListNames.size() + mFolderNames.size() + mFileNames.size());
+		//		}
 	}
 
 	@Override
