@@ -63,7 +63,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * A list of all image folders to be displayed.
 	 */
-	private final ArrayList<String> mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
+	private final ArrayList<String> mAllImageFolders = ImageUtil.getAllStoredImageFolders();
 
 	/**
 	 * A list of all image lists to be displayed.
@@ -234,7 +234,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 		synchronized (mAllImageFolders) {
 			for (String name : mAllImageFolders) {
-				if (matchesFilter(name, filterString, false)) {
+				if (matchesFolderFilter(name, filterString)) {
 					filteredImageFolders.add(name);
 				}
 				if (Thread.interrupted()) {
@@ -244,7 +244,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		}
 		final List<String> filteredImageLists = new ArrayList<>();
 		for (String name : mAllImageLists) {
-			if (matchesFilter(name, filterString, true)) {
+			if (matchesListFilter(name, filterString)) {
 				filteredImageLists.add(name);
 			}
 		}
@@ -327,7 +327,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 					synchronized (mAllImageFolders) {
 						mAllImageFolders.add(imageFolder);
 					}
-					if (matchesFilter(imageFolder, mEditTextFilter.getText().toString(), false)) {
+					if (matchesFolderFilter(imageFolder, mEditTextFilter.getText().toString())) {
 						if (getAdapter() == null) {
 							setAdapter(null, Collections.singletonList(imageFolder), null, true);
 						}
@@ -345,21 +345,39 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 *
 	 * @param path         The file path.
 	 * @param filterString The filter string.
-	 * @param isList       true if the path represents a list instead of a folder.
 	 * @return true if it matches.
 	 */
-	private boolean matchesFilter(final String path, final String filterString, final boolean isList) {
-		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+	private boolean matchesFolderFilter(final String path, final String filterString) {
+		ImageList imageList = ImageRegistry.getCurrentImageList(false);
 		return path != null  // BOOLEAN_EXPRESSION_COMPLEXITY
-				// Exclude if folder path matches regexp filter
-				&& (isList || hiddenFoldersPattern == null || hiddenFoldersPattern.length() == 0 || !path.matches(hiddenFoldersPattern))
+				// Exclude if already contained
+				&& !(imageList.getListName().equals(mListName) && imageList.contains(path))
 				// Include if there is no filter
 				&& (filterString == null || filterString.length() == 0
 				// Include if matches filter
 				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
 				// Include if selected
-				|| !isList && getAdapter() != null && getAdapter().getSelectedFolders().contains(path)
-				|| isList && getAdapter() != null && getAdapter().getSelectedLists().contains(path));
+				|| getAdapter() != null && getAdapter().getSelectedFolders().contains(path));
+	}
+
+	/**
+	 * Check if a list name matches a filter string.
+	 *
+	 * @param listName     The list name.
+	 * @param filterString The filter string.
+	 * @return true if it matches.
+	 */
+	private boolean matchesListFilter(final String listName, final String filterString) {
+		ImageList imageList = ImageRegistry.getCurrentImageList(false);
+		return listName != null  // BOOLEAN_EXPRESSION_COMPLEXITY
+				// Exclude if already contained
+				&& !(imageList.getListName().equals(mListName) && imageList.containsNestedList(listName, false))
+				// Include if there is no filter
+				&& (filterString == null || filterString.length() == 0
+				// Include if matches filter
+				|| listName.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
+				// Include if selected
+				|| getAdapter() != null && getAdapter().getSelectedLists().contains(listName));
 	}
 
 	/**

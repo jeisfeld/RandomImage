@@ -406,6 +406,25 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Get the list of all image folders from previously retrieved list.
+	 *
+	 * @return The list of all image folders, filtered by regexp.
+	 */
+	public static ArrayList<String> getAllStoredImageFolders() {
+		final List<String> allImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
+		final ArrayList<String> filteredImageFolders = new ArrayList<>();
+		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+
+		for (String path : allImageFolders) {
+			if (hiddenFoldersPattern == null || hiddenFoldersPattern.length() == 0 || !path.matches(hiddenFoldersPattern)) {
+				filteredImageFolders.add(path);
+			}
+		}
+		return filteredImageFolders;
+	}
+
+
+	/**
 	 * Get all image folders below one parent folder.
 	 *
 	 * @param parentFolder the folder where to look for image sub folders

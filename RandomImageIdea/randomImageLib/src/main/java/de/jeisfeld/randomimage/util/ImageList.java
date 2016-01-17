@@ -179,19 +179,23 @@ public abstract class ImageList extends RandomFileProvider {
 	}
 
 	/**
-	 * Check if the list contains the other list either directly or in some deeper nesting.
+	 * Check if the list contains the other list.
 	 *
-	 * @param listName The list to be checked.
+	 * @param listName            The list to be checked.
+	 * @param includeDeepNestings flag indicating if recursive nestings should be considered.
 	 * @return true if it is contained in some way.
 	 */
-	public final boolean containsNestedList(final String listName) {
+	public final boolean containsNestedList(final String listName, final boolean includeDeepNestings) {
 		if (mNestedListNames.contains(listName)) {
 			return true;
+		}
+		else if (!includeDeepNestings) {
+			return false;
 		}
 
 		for (String nestedListName : mNestedListNames) {
 			ImageList nestedList = ImageRegistry.getImageListByName(nestedListName, true);
-			if (nestedList != null && nestedList.containsNestedList(listName)) {
+			if (nestedList != null && nestedList.containsNestedList(listName, true)) {
 				return true;
 			}
 		}
@@ -673,7 +677,7 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 
 		ImageList otherImageList = ImageRegistry.getImageListByName(nestedListName, true);
-		if (otherImageList == null || otherImageList.containsNestedList(getListName())) {
+		if (otherImageList == null || otherImageList.containsNestedList(getListName(), true)) {
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_cyclic_nesting, nestedListName);
 			return false;
 		}
