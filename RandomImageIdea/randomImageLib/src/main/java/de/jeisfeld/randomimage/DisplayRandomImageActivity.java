@@ -15,6 +15,7 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
 
+import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
@@ -54,6 +55,11 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The resource key for the id of the widget triggering this activity.
 	 */
 	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
+	/**
+	 * The resource key to pass that a notification should be triggered - the content is the notification id.
+	 */
+	public static final String STRING_EXTRA_NOTIFICATION_TRIGGER = "de.jeisfeld.randomimage.NOTIFICATION_TRIGGER";
+
 	/**
 	 * The resource key for the flag if the parent activity should be refreshed.
 	 */
@@ -286,6 +292,13 @@ public class DisplayRandomImageActivity extends Activity {
 				}
 			}
 		}
+
+		// Ensure that notification alarm is set again in case of click on notification
+		int notificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_TRIGGER, -1);
+		if (notificationId != -1) {
+			NotificationAlarmReceiver.setAlarm(this, notificationId);
+		}
+
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 		if (savedInstanceState == null) {

@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
+import de.jeisfeld.randomimage.widgets.StackedImageWidget;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -22,6 +24,7 @@ public class SdMountReceiver extends BroadcastReceiver {
 		if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, false);
 			ImageWidget.updateTimers();
+			StackedImageWidget.updateTimers();
 		}
 
 		if (action.equals(Intent.ACTION_SHUTDOWN)) {
@@ -33,6 +36,7 @@ public class SdMountReceiver extends BroadcastReceiver {
 				|| action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 			ImageRegistry.getCurrentImageList(false).load(false);
 			GenericWidget.updateAllInstances();
+			NotificationAlarmReceiver.createAllNotificationAlarms();
 		}
 
 	}

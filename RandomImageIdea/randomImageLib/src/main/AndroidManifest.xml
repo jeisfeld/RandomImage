@@ -180,6 +180,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver"/>
+        <receiver android:name="de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver"/>
         <receiver android:name="de.jeisfeld.randomimage.notifications.NotificationBroadcastReceiver"/>
 
         <service

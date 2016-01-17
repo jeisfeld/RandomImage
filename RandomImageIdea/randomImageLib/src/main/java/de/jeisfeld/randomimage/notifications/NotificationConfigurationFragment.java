@@ -80,7 +80,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_frequency, mNotificationId);
 				NotificationSettingsActivity.removeNotificationId(mNotificationId);
 
-				// TODO: cancel the notification
+				NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId);
 
 				updateHeader();
 
@@ -119,7 +119,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setSharedPreferenceInt(R.string.key_notification_max_id, mNotificationId);
 			}
 
-			// TODO: trigger the notifications.
+			NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId,
+					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId, -1));
 
 			updateHeader();
 
@@ -218,12 +219,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_list_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId, stringValue);
 				updateHeader();
-				// TODO: update the notification
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_frequency))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId, Long.parseLong(stringValue));
 				updateHeader();
-				// TODO: update the notification
+				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, Long.parseLong(stringValue));
 			}
 
 			return true;

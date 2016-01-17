@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
 import de.jeisfeld.randomimage.SdMountReceiver;
+import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 
 /**
@@ -48,8 +49,8 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * Sets a repeating alarm that runs once a day at the given interval. When the alarm fires, the app broadcasts an
-	 * Intent to this WakefulBroadcastReceiver.
+	 * Sets a repeating alarm that runs at the given interval. When the alarm fires, the app broadcasts an
+	 * Intent to this WidgetAlarmReceiver.
 	 *
 	 * @param context     The context in which the alarm is set.
 	 * @param appWidgetId the widget id.
@@ -115,7 +116,8 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 		alarmMgr.cancel(alarmIntent);
 
 		ArrayList<Integer> allWidgetIds = GenericWidget.getAllWidgetIds();
-		if (allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId) {
+		if ((allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId)
+				&& NotificationSettingsActivity.getNotificationIds().size() == 0) {
 			ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
 			PackageManager pm = context.getPackageManager();
 

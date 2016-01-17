@@ -14,12 +14,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.FileUtil;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -28,29 +33,34 @@ import de.jeisfeld.randomimagelib.R;
  */
 public final class NotificationUtil {
 	/**
-	 * Notification tag for update of an image list.
+	 * Notification id for update of an image list.
 	 */
 	protected static final int ID_UPDATED_LIST = 1;
 
 	/**
-	 * Notification tag for errors when loading an image list.
+	 * Notification id for errors when loading an image list.
 	 */
 	public static final int ID_ERROR_LOADING_LIST = 2;
 
 	/**
-	 * Notification tag for errors when saving an image list.
+	 * Notification id for errors when saving an image list.
 	 */
 	public static final int ID_ERROR_SAVING_LIST = 3;
 
 	/**
-	 * Notification tag for missing files when loading an image list.
+	 * Notification id for missing files when loading an image list.
 	 */
 	protected static final int ID_MISSING_FILES = 4;
 
 	/**
-	 * Notification tag for unmounted paths when loading an image list.
+	 * Notification id for unmounted paths when loading an image list.
 	 */
 	protected static final int ID_UNMOUNTED_PATH = 5;
+
+	/**
+	 * Notification id for a random image notification.
+	 */
+	protected static final int ID_RANDOM_IMAGE = 6;
 
 	/**
 	 * Prefix used before a list name.
@@ -73,9 +83,9 @@ public final class NotificationUtil {
 	public static final String EXTRA_NOTIFICATION_ID = "de.jeisfeld.randomimage.NOTIFICATION_ID";
 
 	/**
-	 * Key for the notification tag (list name) within intent.
+	 * Key for the notification tag within intent.
 	 */
-	public static final String EXTRA_LIST_NAME = "de.jeisfeld.randomimage.NOTIFICATION_TAG";
+	public static final String EXTRA_NOTIFICATION_TAG = "de.jeisfeld.randomimage.NOTIFICATION_TAG";
 
 	/**
 	 * A map storing information on mounting issues while loading image lists.
@@ -124,28 +134,76 @@ public final class NotificationUtil {
 				|| notificationId == ID_ERROR_LOADING_LIST || notificationId == ID_ERROR_SAVING_LIST) {
 			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag);
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-			int uniqueId = notificationTag.hashCode();
+			int uniqueId = notificationId + notificationTag.hashCode();
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notificationBuilder.setContentIntent(pendingIntent);
 		}
 
 		if (notificationId == ID_UPDATED_LIST || notificationId == ID_UNMOUNTED_PATH) {
-			Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
-			dismissalIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-			int uniqueId = 0;
-			if (notificationTag != null) {
-				dismissalIntent.putExtra(EXTRA_LIST_NAME, notificationTag);
-				uniqueId = notificationTag.hashCode();
-			}
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), uniqueId,
-					dismissalIntent, PendingIntent.FLAG_ONE_SHOT);
-			notificationBuilder.setDeleteIntent(pendingIntent);
+			notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationId, notificationTag));
 		}
 
-		NotificationManager notificationManager =
-				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		notificationManager.notify(notificationTag, notificationId, notificationBuilder.build());
+	}
+
+	/**
+	 * Display a Random Image notification for a certain image list.
+	 *
+	 * @param context           the current activity or context
+	 * @param appNotificationId the id of the configured notification.
+	 */
+	public static void displayRandomImageNotification(final Context context, final int appNotificationId) {
+		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, appNotificationId);
+		String notificationTag = Integer.toString(appNotificationId);
+		ImageList imageList = ImageRegistry.getImageListByName(listName, false);
+		if (imageList == null) {
+			return;
+		}
+
+		String fileName = imageList.getRandomFileName();
+		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+
+		Notification.Builder notificationBuilder =
+				new Notification.Builder(context)
+						.setSmallIcon(R.drawable.ic_launcher)
+						.setContentTitle(listName)
+						.setLargeIcon(bitmap)
+						.setAutoCancel(true)
+						.setStyle(new Notification.BigPictureStyle().bigPicture(bitmap));
+
+		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null);
+		actionIntent.putExtra(DisplayRandomImageActivity.STRING_EXTRA_NOTIFICATION_TRIGGER, appNotificationId);
+		int uniqueId = ID_RANDOM_IMAGE + notificationTag.hashCode();
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		notificationBuilder.setContentIntent(pendingIntent);
+
+		notificationBuilder.setDeleteIntent(createDismissalIntent(context, ID_RANDOM_IMAGE, notificationTag));
+
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		notificationManager.notify(listName, ID_RANDOM_IMAGE, notificationBuilder.build());
+	}
+
+	/**
+	 * Create a dismissal intent for a notification.
+	 *
+	 * @param context         the current activity or context
+	 * @param notificationTag the tag for the notification, which is also used in the title. Typically the list name.
+	 * @param notificationId  the unique id of the notification.
+	 * @return The dismissal intent.
+	 */
+	private static PendingIntent createDismissalIntent(final Context context, final int notificationId, final String notificationTag) {
+		Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
+		dismissalIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+		int uniqueId = notificationId;
+		if (notificationTag != null) {
+			dismissalIntent.putExtra(EXTRA_NOTIFICATION_TAG, notificationTag);
+			uniqueId += notificationTag.hashCode();
+		}
+		return PendingIntent.getBroadcast(context.getApplicationContext(), uniqueId,
+				dismissalIntent, PendingIntent.FLAG_ONE_SHOT);
 	}
 
 	/**

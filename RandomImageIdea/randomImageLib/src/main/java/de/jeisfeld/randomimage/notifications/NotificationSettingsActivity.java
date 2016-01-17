@@ -84,7 +84,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 *
 	 * @return The notification ids.
 	 */
-	protected static final List<Integer> getNotificationIds() {
+	public static final List<Integer> getNotificationIds() {
 		List<String> notificationIdStrings = PreferenceUtil.getSharedPreferenceStringList(R.string.key_notification_ids);
 		List<Integer> notificationIds = new ArrayList<>();
 		for (String idString : notificationIdStrings) {
@@ -172,11 +172,6 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	protected static void updateHeader(final int hashCode, final int notificationId) {
 		NotificationSettingsActivity activity = mActivityMap.get(hashCode);
 		if (activity != null) {
-			//			for (Header header : activity.mHeaders) {
-			//				if (header.id == notificationId) {
-			//					header.summary = getHeaderSummary(notificationId);
-			//				}
-			//			}
 			activity.mUpdatedNotificationId = notificationId;
 			activity.invalidateHeaders();
 		}

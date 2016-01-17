@@ -125,11 +125,6 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	protected static void updateHeader(final int hashCode, final int appWidgetId) {
 		WidgetSettingsActivity activity = mActivityMap.get(hashCode);
 		if (activity != null) {
-			//			for (Header header : activity.mHeaders) {
-			//				if (header.id == appWidgetId) {
-			//					header.summary = getHeaderSummary(appWidgetId);
-			//				}
-			//			}
 			activity.invalidateHeaders();
 		}
 	}

@@ -11,13 +11,17 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
 		int notificationId = intent.getIntExtra(NotificationUtil.EXTRA_NOTIFICATION_ID, -1);
-		String listName = intent.getStringExtra(NotificationUtil.EXTRA_LIST_NAME);
+		String notificationTag = intent.getStringExtra(NotificationUtil.EXTRA_NOTIFICATION_TAG);
 
 		if (notificationId == NotificationUtil.ID_UPDATED_LIST) {
-			NotificationUtil.cancelNotification(context, listName, notificationId);
+			NotificationUtil.cancelNotification(context, notificationTag, notificationId);
 		}
 		else if (notificationId == NotificationUtil.ID_UNMOUNTED_PATH) {
 			NotificationUtil.cleanupMountingIssues();
+		}
+		else if (notificationId == NotificationUtil.ID_RANDOM_IMAGE) {
+			int appNotificationId = Integer.parseInt(notificationTag);
+			NotificationAlarmReceiver.setAlarm(context, appNotificationId);
 		}
 	}
 }
