@@ -274,23 +274,11 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	public final int getItemViewType(final int position) {
 		// Ensure that views are not reused by GridView framework
 		return position == 0 ? 0 : 1;
-		//		if (mActivity instanceof SelectImageFolderActivity) {
-		//			return position == 0 ? VIEWTYPE_COUNT : position % VIEWTYPE_COUNT;
-		//		}
-		//		else {
-		//			return position;
-		//		}
 	}
 
 	@Override
 	public final int getViewTypeCount() {
 		return 2;
-		//		if (mActivity instanceof SelectImageFolderActivity) {
-		//			return VIEWTYPE_COUNT + 1;
-		//		}
-		//		else {
-		//			return Math.max(1, mListNames.size() + mFolderNames.size() + mFileNames.size());
-		//		}
 	}
 
 	@Override
