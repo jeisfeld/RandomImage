@@ -36,10 +36,6 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 * Number of views to be preloaded.
 	 */
 	private static final int PRELOAD_SIZE;
-	/**
-	 * Viewtype count - determines automatic reuse of views by GridView (which should be prevented due to issues when switching mode).
-	 */
-	private static final int VIEWTYPE_COUNT = 100;
 
 	/**
 	 * The cache where views of the displays are stored for smoother scrolling.

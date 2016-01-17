@@ -63,12 +63,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	/**
 	 * A list of all image folders to be displayed.
 	 */
-	private final List<String> mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
-
-	/**
-	 * A filtered list of image lists to be displayed.
-	 */
-	private List<String> mFilteredImageLists = new ArrayList<>();
+	private final ArrayList<String> mAllImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
 
 	/**
 	 * A list of all image lists to be displayed.
@@ -121,6 +116,12 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		}
 		if (savedInstanceState != null) {
 			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
+			mAllImageLists = savedInstanceState.getStringArrayList("allImageLists");
+			List<String> allImageFolders = savedInstanceState.getStringArrayList("allImageFolders");
+			if (allImageFolders != null) {
+				mAllImageFolders.clear();
+				mAllImageFolders.addAll(allImageFolders);
+			}
 		}
 
 		// This step initializes the adapter.
@@ -227,7 +228,6 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			mAllImageLists.remove(mListName);
 		}
 
-		mFilteredImageLists.clear();
 		String filterString = mEditTextFilter.getText().toString();
 
 		final List<String> filteredImageFolders = new ArrayList<>();
@@ -242,10 +242,10 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				}
 			}
 		}
-		mFilteredImageLists = new ArrayList<>();
+		final List<String> filteredImageLists = new ArrayList<>();
 		for (String name : mAllImageLists) {
 			if (matchesFilter(name, filterString, true)) {
-				mFilteredImageLists.add(name);
+				filteredImageLists.add(name);
 			}
 		}
 
@@ -255,7 +255,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				if (getAdapter() != null) {
 					getAdapter().cleanupCache();
 				}
-				setAdapter(mFilteredImageLists, filteredImageFolders, null, true, selectedLists, selectedFolders, null);
+				setAdapter(filteredImageLists, filteredImageFolders, null, true, selectedLists, selectedFolders, null);
 				changeAction(mCurrentAction);
 
 				if (firstStart) {
@@ -541,6 +541,8 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	protected final void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable("currentAction", mCurrentAction);
+		outState.putStringArrayList("allImageLists", mAllImageLists);
+		outState.putStringArrayList("allImageFolders", mAllImageFolders);
 	}
 
 	@Override
