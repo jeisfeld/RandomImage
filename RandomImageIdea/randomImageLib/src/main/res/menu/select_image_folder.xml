@@ -9,6 +9,12 @@
         android:showAsAction="ifRoom"
         android:title="@string/menu_select_all_images"/>
     <item
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_action_cancel"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_cancel"/>
+    <item
         android:id="@+id/action_browse_folders"
         android:icon="@drawable/ic_action_folder"
         android:orderInCategory="100"

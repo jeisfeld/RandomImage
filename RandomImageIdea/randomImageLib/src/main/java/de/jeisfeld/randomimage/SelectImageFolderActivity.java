@@ -409,6 +409,16 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	public final void onBackPressed() {
+		if (mCurrentAction == CurrentAction.SELECT) {
+			changeAction(CurrentAction.DISPLAY);
+		}
+		else {
+			super.onBackPressed();
+		}
+	}
+
+	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
 		case DISPLAY:
@@ -449,6 +459,10 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		}
 		else if (menuId == R.id.action_select_multiple) {
 			changeAction(CurrentAction.SELECT);
+			return true;
+		}
+		else if (menuId == R.id.action_cancel) {
+			finish();
 			return true;
 		}
 		else {
@@ -552,7 +566,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
-		finish();
+		//finish();
 	}
 
 	@Override

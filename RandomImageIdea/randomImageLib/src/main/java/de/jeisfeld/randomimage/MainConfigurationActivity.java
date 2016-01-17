@@ -141,6 +141,16 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	public final void onBackPressed() {
+		if (mCurrentAction == CurrentAction.DISPLAY) {
+			super.onBackPressed();
+		}
+		else {
+			changeAction(CurrentAction.DISPLAY);
+		}
+	}
+
+	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
 		case DISPLAY:

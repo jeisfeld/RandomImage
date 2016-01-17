@@ -247,6 +247,16 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	public final void onBackPressed() {
+		if (mCurrentAction == CurrentAction.REMOVE) {
+			changeAction(CurrentAction.DISPLAY);
+		}
+		else {
+			super.onBackPressed();
+		}
+	}
+
+	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
 		case DISPLAY:
