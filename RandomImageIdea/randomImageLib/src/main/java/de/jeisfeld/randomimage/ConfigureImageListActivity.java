@@ -162,7 +162,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			break;
 		case FILE:
 		default:
-			startActivityForResult(DisplayRandomImageActivity.createIntent(this, null, name, true, null),
+			startActivityForResult(DisplayRandomImageActivity.createIntent(this, null, name, true, null, null),
 					DisplayRandomImageActivity.REQUEST_CODE);
 			break;
 		}

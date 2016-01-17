@@ -173,8 +173,7 @@ public final class NotificationUtil {
 						.setAutoCancel(true)
 						.setStyle(new Notification.BigPictureStyle().bigPicture(bitmap));
 
-		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null);
-		actionIntent.putExtra(DisplayRandomImageActivity.STRING_EXTRA_NOTIFICATION_TRIGGER, appNotificationId);
+		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null, appNotificationId);
 		int uniqueId = ID_RANDOM_IMAGE + notificationTag.hashCode();
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		notificationBuilder.setContentIntent(pendingIntent);

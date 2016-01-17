@@ -58,7 +58,7 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The resource key to pass that a notification should be triggered - the content is the notification id.
 	 */
-	public static final String STRING_EXTRA_NOTIFICATION_TRIGGER = "de.jeisfeld.randomimage.NOTIFICATION_TRIGGER";
+	private static final String STRING_EXTRA_NOTIFICATION_TRIGGER = "de.jeisfeld.randomimage.NOTIFICATION_TRIGGER";
 
 	/**
 	 * The resource key for the flag if the parent activity should be refreshed.
@@ -158,10 +158,11 @@ public class DisplayRandomImageActivity extends Activity {
 	 * @param fileName          the image file name which should be displayed first.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 * @param appWidgetId       the id of the widget triggering this activity.
+	 * @param notificationId    the id of the notification triggering this activity.
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName,
-											final boolean preventDisplayAll, final Integer appWidgetId) {
+											final boolean preventDisplayAll, final Integer appWidgetId, final Integer notificationId) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -180,6 +181,9 @@ public class DisplayRandomImageActivity extends Activity {
 
 		if (appWidgetId != null) {
 			intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
+		}
+		if (notificationId != null) {
+			intent.putExtra(STRING_EXTRA_NOTIFICATION_TRIGGER, notificationId);
 		}
 
 		return intent;

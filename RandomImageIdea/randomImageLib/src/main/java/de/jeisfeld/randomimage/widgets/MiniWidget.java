@@ -22,7 +22,7 @@ public class MiniWidget extends GenericWidget {
 
 		remoteViews.setTextViewText(R.id.textViewWidget, listName);
 
-		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, false, appWidgetId);
+		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, false, appWidgetId, null);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
