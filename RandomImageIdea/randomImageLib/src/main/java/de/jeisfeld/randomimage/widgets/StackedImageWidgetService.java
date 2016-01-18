@@ -13,6 +13,7 @@ import android.widget.RemoteViewsService;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
+import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -101,12 +102,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget creation");
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
-				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
+				NotificationUtil.displayNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 				mFileNames = new ArrayList<>();
 			}
 			else {
-				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST);
 				mFileNames = imageList.getShuffledFileNames();
 			}
 		}
@@ -185,12 +186,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget data change");
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
-				NotificationUtil.displayNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
+				NotificationUtil.displayNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 				mFileNames = new ArrayList<>();
 			}
 			else {
-				NotificationUtil.cancelNotification(mContext, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST);
 				mFileNames = imageList.getShuffledFileNames();
 			}
 		}

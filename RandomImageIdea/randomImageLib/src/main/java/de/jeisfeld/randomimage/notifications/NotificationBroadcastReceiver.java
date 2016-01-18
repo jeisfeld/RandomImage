@@ -4,24 +4,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
+
 /**
  * Broadcase receiver that handles actions on notifications.
  */
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
-		int notificationId = intent.getIntExtra(NotificationUtil.EXTRA_NOTIFICATION_ID, -1);
+		NotificationType notificationType = (NotificationType) intent.getSerializableExtra(NotificationUtil.EXTRA_NOTIFICATION_TYPE);
 		String notificationTag = intent.getStringExtra(NotificationUtil.EXTRA_NOTIFICATION_TAG);
 
-		if (notificationId == NotificationUtil.ID_UPDATED_LIST) {
-			NotificationUtil.cancelNotification(context, notificationTag, notificationId);
+		if (notificationType == NotificationType.UPDATED_LIST) {
+			NotificationUtil.cancelNotification(context, notificationTag, notificationType);
 		}
-		else if (notificationId == NotificationUtil.ID_UNMOUNTED_PATH) {
+		else if (notificationType == NotificationType.UNMOUNTED_PATH) {
 			NotificationUtil.cleanupMountingIssues();
 		}
-		else if (notificationId == NotificationUtil.ID_RANDOM_IMAGE) {
-			int appNotificationId = Integer.parseInt(notificationTag);
-			NotificationAlarmReceiver.setAlarm(context, appNotificationId);
+		else if (notificationType == NotificationType.RANDOM_IMAGE) {
+			int notificationId = Integer.parseInt(notificationTag);
+			NotificationAlarmReceiver.setAlarm(context, notificationId);
 		}
 	}
 }

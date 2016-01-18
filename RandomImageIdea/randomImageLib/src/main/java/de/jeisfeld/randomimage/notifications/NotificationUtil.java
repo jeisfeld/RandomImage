@@ -33,36 +33,6 @@ import de.jeisfeld.randomimagelib.R;
  */
 public final class NotificationUtil {
 	/**
-	 * Notification id for update of an image list.
-	 */
-	protected static final int ID_UPDATED_LIST = 1;
-
-	/**
-	 * Notification id for errors when loading an image list.
-	 */
-	public static final int ID_ERROR_LOADING_LIST = 2;
-
-	/**
-	 * Notification id for errors when saving an image list.
-	 */
-	public static final int ID_ERROR_SAVING_LIST = 3;
-
-	/**
-	 * Notification id for missing files when loading an image list.
-	 */
-	protected static final int ID_MISSING_FILES = 4;
-
-	/**
-	 * Notification id for unmounted paths when loading an image list.
-	 */
-	protected static final int ID_UNMOUNTED_PATH = 5;
-
-	/**
-	 * Notification id for a random image notification.
-	 */
-	protected static final int ID_RANDOM_IMAGE = 6;
-
-	/**
 	 * Prefix used before a list name.
 	 */
 	private static final String LIST_PREFIX = "L";
@@ -80,7 +50,7 @@ public final class NotificationUtil {
 	/**
 	 * Key for the notification id within intent.
 	 */
-	public static final String EXTRA_NOTIFICATION_ID = "de.jeisfeld.randomimage.NOTIFICATION_ID";
+	public static final String EXTRA_NOTIFICATION_TYPE = "de.jeisfeld.randomimage.NOTIFICATION_TYPE";
 
 	/**
 	 * Key for the notification tag within intent.
@@ -111,14 +81,14 @@ public final class NotificationUtil {
 	/**
 	 * Display a notification.
 	 *
-	 * @param context         the current activity or context
-	 * @param notificationTag the tag for the notification, which is also used in the title. Typically the list name.
-	 * @param notificationId  the unique id of the notification.
-	 * @param titleResource   the title resource
-	 * @param messageResource the message resource
-	 * @param args            arguments for the error message
+	 * @param context          the current activity or context
+	 * @param notificationTag  the tag for the notification, which is also used in the title. Typically the list name.
+	 * @param notificationType the type of the notification.
+	 * @param titleResource    the title resource
+	 * @param messageResource  the message resource
+	 * @param args             arguments for the error message
 	 */
-	public static void displayNotification(final Context context, final String notificationTag, final int notificationId,
+	public static void displayNotification(final Context context, final String notificationTag, final NotificationType notificationType,
 										   final int titleResource, final int messageResource, final Object... args) {
 		String message = DialogUtil.capitalizeFirst(context.getString(messageResource, args));
 		String title = context.getString(titleResource, notificationTag);
@@ -130,39 +100,63 @@ public final class NotificationUtil {
 						.setContentText(message)
 						.setStyle(new Notification.BigTextStyle().bigText(message));
 
-		if (notificationId == ID_MISSING_FILES || notificationId == ID_UPDATED_LIST
-				|| notificationId == ID_ERROR_LOADING_LIST || notificationId == ID_ERROR_SAVING_LIST) {
+		if (notificationType == NotificationType.MISSING_FILES || notificationType == NotificationType.UPDATED_LIST
+				|| notificationType == NotificationType.ERROR_LOADING_LIST || notificationType == NotificationType.ERROR_SAVING_LIST) {
 			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag);
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-			int uniqueId = notificationId + notificationTag.hashCode();
+			int uniqueId = getUniqueId(notificationTag, notificationType);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notificationBuilder.setContentIntent(pendingIntent);
 		}
 
-		if (notificationId == ID_UPDATED_LIST || notificationId == ID_UNMOUNTED_PATH) {
-			notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationId, notificationTag));
+		if (notificationType == NotificationType.UPDATED_LIST || notificationType == NotificationType.UNMOUNTED_PATH) {
+			notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
 		}
 
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		notificationManager.notify(notificationTag, notificationId, notificationBuilder.build());
+		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
+	}
+
+	/**
+	 * Get a unique id of a notification instance.
+	 *
+	 * @param notificationTag  the tag for the notification, which is also used in the title. Typically the list name.
+	 * @param notificationType the type of the notification.
+	 * @return The unique id.
+	 */
+	private static int getUniqueId(final String notificationTag, final NotificationType notificationType) {
+		if (notificationTag == null) {
+			return notificationType.intValue();
+		}
+		else {
+			return (notificationTag + notificationType.toString()).hashCode();
+		}
 	}
 
 	/**
 	 * Display a Random Image notification for a certain image list.
 	 *
-	 * @param context           the current activity or context
-	 * @param appNotificationId the id of the configured notification.
+	 * @param context        the current activity or context
+	 * @param notificationId the id of the configured notification.
 	 */
-	public static void displayRandomImageNotification(final Context context, final int appNotificationId) {
-		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, appNotificationId);
-		String notificationTag = Integer.toString(appNotificationId);
+	public static void displayRandomImageNotification(final Context context, final int notificationId) {
+		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
+		String notificationTag = Integer.toString(notificationId);
+		NotificationType notificationType = NotificationType.RANDOM_IMAGE;
 		ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 		if (imageList == null) {
+			// Fatal error - it does not make sense to re-create the alarm.
 			return;
 		}
 
 		String fileName = imageList.getRandomFileName();
+		if (fileName == null) {
+			// This is typically a temporary error - therefore re-create the alarm.
+			NotificationAlarmReceiver.setAlarm(context, notificationId);
+			return;
+		}
+
 		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
 
 		Notification.Builder notificationBuilder =
@@ -173,30 +167,30 @@ public final class NotificationUtil {
 						.setAutoCancel(true)
 						.setStyle(new Notification.BigPictureStyle().bigPicture(bitmap));
 
-		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null, appNotificationId);
-		int uniqueId = ID_RANDOM_IMAGE + notificationTag.hashCode();
+		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null, notificationId);
+		int uniqueId = getUniqueId(notificationTag, notificationType);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		notificationBuilder.setContentIntent(pendingIntent);
 
-		notificationBuilder.setDeleteIntent(createDismissalIntent(context, ID_RANDOM_IMAGE, notificationTag));
+		notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
 
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		notificationManager.notify(listName, ID_RANDOM_IMAGE, notificationBuilder.build());
+		notificationManager.notify(listName, notificationType.intValue(), notificationBuilder.build());
 	}
 
 	/**
 	 * Create a dismissal intent for a notification.
 	 *
-	 * @param context         the current activity or context
-	 * @param notificationTag the tag for the notification, which is also used in the title. Typically the list name.
-	 * @param notificationId  the unique id of the notification.
+	 * @param context          the current activity or context
+	 * @param notificationTag  the tag for the notification, which is also used in the title. Typically the list name.
+	 * @param notificationType the type of the notification.
 	 * @return The dismissal intent.
 	 */
-	private static PendingIntent createDismissalIntent(final Context context, final int notificationId, final String notificationTag) {
+	private static PendingIntent createDismissalIntent(final Context context, final NotificationType notificationType, final String notificationTag) {
 		Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
-		dismissalIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-		int uniqueId = notificationId;
+		dismissalIntent.putExtra(EXTRA_NOTIFICATION_TYPE, notificationType);
+		int uniqueId = getUniqueId(notificationTag, notificationType);
 		if (notificationTag != null) {
 			dismissalIntent.putExtra(EXTRA_NOTIFICATION_TAG, notificationTag);
 			uniqueId += notificationTag.hashCode();
@@ -208,19 +202,19 @@ public final class NotificationUtil {
 	/**
 	 * Cancel a notification.
 	 *
-	 * @param context         the current activity or context
-	 * @param notificationTag the tag for the notification, which is also used in the title. Typically the list name.
-	 * @param notificationId  the unique id of the notification.
+	 * @param context          the current activity or context
+	 * @param notificationTag  the tag for the notification, which is also used in the title. Typically the list name.
+	 * @param notificationType the type of the notification.
 	 */
-	public static void cancelNotification(final Context context, final String notificationTag, final int notificationId) {
+	public static void cancelNotification(final Context context, final String notificationTag, final NotificationType notificationType) {
 		NotificationManager notificationManager =
 				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		if (notificationId == ID_UPDATED_LIST) {
+		if (notificationType == NotificationType.UPDATED_LIST) {
 			mListUpdateInfo.remove(notificationTag);
 		}
 
-		notificationManager.cancel(notificationTag, notificationId);
+		notificationManager.cancel(notificationTag, notificationType.intValue());
 	}
 
 	/**
@@ -274,7 +268,7 @@ public final class NotificationUtil {
 		}
 
 		if (totalAdded == 0 && totalRemoved == 0) {
-			cancelNotification(context, listName, ID_UPDATED_LIST);
+			cancelNotification(context, listName, NotificationType.UPDATED_LIST);
 		}
 		else {
 			StringBuilder message = new StringBuilder();
@@ -284,7 +278,7 @@ public final class NotificationUtil {
 			if (totalRemoved > 0) {
 				message.append(removedFileFolderMessageString).append("\n");
 			}
-			displayNotification(context, listName, ID_UPDATED_LIST, R.string.title_notification_updated_list,
+			displayNotification(context, listName, NotificationType.UPDATED_LIST, R.string.title_notification_updated_list,
 					R.string.dummy_original_string, message.toString());
 		}
 
@@ -322,7 +316,7 @@ public final class NotificationUtil {
 				}
 			}
 			if (notFoundFilesCount > 0) {
-				NotificationUtil.displayNotification(context, listName, NotificationUtil.ID_MISSING_FILES,
+				NotificationUtil.displayNotification(context, listName, NotificationType.MISSING_FILES,
 						R.string.title_notification_missing_files,
 						notFoundFilesCount == 1 ? R.string.toast_failed_to_load_files_single : R.string.toast_failed_to_load_files,
 						listName, notFoundFilesCount);
@@ -332,7 +326,7 @@ public final class NotificationUtil {
 			}
 		}
 		else {
-			NotificationUtil.cancelNotification(context, listName, NotificationUtil.ID_MISSING_FILES);
+			NotificationUtil.cancelNotification(context, listName, NotificationType.MISSING_FILES);
 			mMountingIssues.remove(listName);
 		}
 		saveMountingIssues();
@@ -368,7 +362,7 @@ public final class NotificationUtil {
 				}
 				affectedListString.append(context.getString(R.string.partial_quoted_string, listName));
 			}
-			NotificationUtil.displayNotification(context, missingMount, ID_UNMOUNTED_PATH, R.string.title_notification_unmounted_paths,
+			NotificationUtil.displayNotification(context, missingMount, NotificationType.UNMOUNTED_PATH, R.string.title_notification_unmounted_paths,
 					R.string.notification_unmounted_path, missingMount, affectedListString.toString());
 		}
 
@@ -376,7 +370,7 @@ public final class NotificationUtil {
 		if (previousMissingMounts != null) {
 			for (String previousMissingMount : previousMissingMounts) {
 				if (!missingMountReverseMap.keySet().contains(previousMissingMount)) {
-					NotificationUtil.cancelNotification(context, previousMissingMount, ID_UNMOUNTED_PATH);
+					NotificationUtil.cancelNotification(context, previousMissingMount, NotificationType.UNMOUNTED_PATH);
 				}
 			}
 		}
@@ -518,6 +512,65 @@ public final class NotificationUtil {
 			}
 		}
 
+	}
+
+	/**
+	 * Types of notifications.
+	 */
+	public enum NotificationType {
+		/**
+		 * Notification type for update of an image list.
+		 */
+		UPDATED_LIST,
+
+		/**
+		 * Notification type for errors when loading an image list.
+		 */
+		ERROR_LOADING_LIST,
+
+		/**
+		 * Notification type for errors when saving an image list.
+		 */
+		ERROR_SAVING_LIST,
+
+		/**
+		 * Notification type for missing files when loading an image list.
+		 */
+		MISSING_FILES,
+
+		/**
+		 * Notification type for unmounted paths when loading an image list.
+		 */
+		UNMOUNTED_PATH,
+
+		/**
+		 * Notification type for a random image notification.
+		 */
+		RANDOM_IMAGE;
+
+		/**
+		 * Get the value used as "notificationId" in the Android notification framework.
+		 *
+		 * @return the notificationId.
+		 */
+		private int intValue() {
+			switch (this) {
+			case UPDATED_LIST:
+				return 1;
+			case ERROR_LOADING_LIST:
+				return 2;
+			case ERROR_SAVING_LIST:
+				return 3; // MAGIC_NUMBER
+			case MISSING_FILES:
+				return 4; // MAGIC_NUMBER
+			case UNMOUNTED_PATH:
+				return 5; // MAGIC_NUMBER
+			case RANDOM_IMAGE:
+				return 6; // MAGIC_NUMBER
+			default:
+				return 0;
+			}
+		}
 	}
 
 }

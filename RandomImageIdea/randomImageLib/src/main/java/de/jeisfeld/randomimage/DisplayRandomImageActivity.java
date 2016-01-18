@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
+import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -270,11 +271,11 @@ public class DisplayRandomImageActivity extends Activity {
 				if (!foundList) {
 					Log.e(Application.TAG, "Could not load image list");
 					DialogUtil.displayToast(this, R.string.toast_error_while_loading, mListName);
-					NotificationUtil.displayNotification(this, mListName, NotificationUtil.ID_ERROR_LOADING_LIST,
+					NotificationUtil.displayNotification(this, mListName, NotificationType.ERROR_LOADING_LIST,
 							R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
 					return;
 				}
-				NotificationUtil.cancelNotification(this, mListName, NotificationUtil.ID_ERROR_LOADING_LIST);
+				NotificationUtil.cancelNotification(this, mListName, NotificationType.ERROR_LOADING_LIST);
 				imageList = ImageRegistry.getCurrentImageList(false);
 			}
 

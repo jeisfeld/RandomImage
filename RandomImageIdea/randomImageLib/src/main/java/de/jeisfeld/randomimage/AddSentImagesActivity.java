@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
+import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -69,11 +70,11 @@ public class AddSentImagesActivity extends Activity {
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list");
 			DialogUtil.displayToast(this, R.string.toast_error_while_loading, listName);
-			NotificationUtil.displayNotification(this, listName, NotificationUtil.ID_ERROR_LOADING_LIST,
+			NotificationUtil.displayNotification(this, listName, NotificationType.ERROR_LOADING_LIST,
 					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 			return;
 		}
-		NotificationUtil.cancelNotification(this, listName, NotificationUtil.ID_ERROR_LOADING_LIST);
+		NotificationUtil.cancelNotification(this, listName, NotificationType.ERROR_LOADING_LIST);
 
 		Intent intent = getIntent();
 

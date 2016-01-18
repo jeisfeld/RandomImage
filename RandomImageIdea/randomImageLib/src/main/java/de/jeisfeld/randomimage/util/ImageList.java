@@ -20,6 +20,7 @@ import android.util.SparseArray;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
+import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
@@ -154,7 +155,7 @@ public abstract class ImageList extends RandomFileProvider {
 		else {
 			Log.e(Application.TAG, "Error while saving the image list.");
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_error_while_saving, getListName());
-			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_ERROR_SAVING_LIST,
+			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationType.ERROR_SAVING_LIST,
 					R.string.title_notification_failed_saving, R.string.toast_failed_to_save_list, getListName());
 			return false;
 		}
@@ -395,7 +396,7 @@ public abstract class ImageList extends RandomFileProvider {
 			if (!success) {
 				Log.e(Application.TAG, "Could not backup config file to " + backupFile.getAbsolutePath());
 				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
-				NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_ERROR_SAVING_LIST,
+				NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationType.ERROR_SAVING_LIST,
 						R.string.title_notification_failed_saving, R.string.toast_failed_to_save_list, getListName());
 				return false;
 			}
@@ -458,7 +459,7 @@ public abstract class ImageList extends RandomFileProvider {
 		catch (IOException e) {
 			Log.e(Application.TAG, "Could not store configuration to file " + mConfigFile.getAbsolutePath(), e);
 			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_save_list, getListName());
-			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_ERROR_SAVING_LIST,
+			NotificationUtil.displayNotification(Application.getAppContext(), getListName(), NotificationType.ERROR_SAVING_LIST,
 					R.string.title_notification_failed_saving, R.string.toast_failed_to_save_list, getListName());
 			return false;
 		}
@@ -467,7 +468,7 @@ public abstract class ImageList extends RandomFileProvider {
 				writer.close();
 			}
 		}
-		NotificationUtil.cancelNotification(Application.getAppContext(), getListName(), NotificationUtil.ID_ERROR_SAVING_LIST);
+		NotificationUtil.cancelNotification(Application.getAppContext(), getListName(), NotificationType.ERROR_SAVING_LIST);
 		return true;
 	}
 

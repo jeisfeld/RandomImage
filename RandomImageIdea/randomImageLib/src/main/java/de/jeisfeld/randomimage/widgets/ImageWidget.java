@@ -14,6 +14,7 @@ import android.widget.RemoteViews;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
+import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -57,7 +58,7 @@ public class ImageWidget extends GenericImageWidget {
 			if (imageList == null) {
 				Log.e(Application.TAG, "Could not load image list " + listName + "for ImageWidget update");
 				DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-				NotificationUtil.displayNotification(context, listName, NotificationUtil.ID_ERROR_LOADING_LIST,
+				NotificationUtil.displayNotification(context, listName, NotificationType.ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 
 				// Put view in good state again.
@@ -66,7 +67,7 @@ public class ImageWidget extends GenericImageWidget {
 				appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 			}
 			else {
-				NotificationUtil.cancelNotification(context, listName, NotificationUtil.ID_ERROR_LOADING_LIST);
+				NotificationUtil.cancelNotification(context, listName, NotificationType.ERROR_LOADING_LIST);
 				setImageAsynchronously(context, appWidgetManager, imageList, appWidgetId, listName, isVisibleToUser);
 			}
 		}
@@ -88,11 +89,11 @@ public class ImageWidget extends GenericImageWidget {
 		if (imageList == null) {
 			Log.e(Application.TAG, "Could not load image list " + listName + " for ImageWidget option change");
 			DialogUtil.displayToast(context, R.string.toast_error_while_loading, listName);
-			NotificationUtil.displayNotification(context, listName, NotificationUtil.ID_ERROR_LOADING_LIST,
+			NotificationUtil.displayNotification(context, listName, NotificationType.ERROR_LOADING_LIST,
 					R.string.title_notification_failed_loading, R.string.toast_error_while_loading, listName);
 		}
 		else {
-			NotificationUtil.cancelNotification(context, listName, NotificationUtil.ID_ERROR_LOADING_LIST);
+			NotificationUtil.cancelNotification(context, listName, NotificationType.ERROR_LOADING_LIST);
 		}
 
 		String fileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId);
