@@ -14,6 +14,7 @@ import android.preference.PreferenceActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -38,6 +39,24 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	public static final void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, WidgetSettingsActivity.class);
 		activity.startActivity(intent);
+	}
+
+	/**
+	 * Update the list name in all widgets.
+	 *
+	 * @param oldName The old name.
+	 * @param newName The new name.
+	 */
+	public static void updateListName(final String oldName, final String newName) {
+		for (Class<? extends GenericWidget> widgetClass : GenericWidget.WIDGET_TYPES) {
+			int[] appWidgetIds = GenericWidget.getAllWidgetIds(widgetClass);
+			for (int appWidgetId : appWidgetIds) {
+				if (oldName.equals(GenericWidget.getListName(appWidgetId))) {
+					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, newName);
+					GenericWidget.updateInstances(widgetClass, UpdateType.NEW_LIST, appWidgetId);
+				}
+			}
+		}
 	}
 
 	@Override

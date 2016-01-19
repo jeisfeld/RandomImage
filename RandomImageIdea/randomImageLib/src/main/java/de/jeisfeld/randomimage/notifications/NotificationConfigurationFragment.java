@@ -86,18 +86,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		cancelNotificationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_list_name, mNotificationId);
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_frequency, mNotificationId);
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, mNotificationId);
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, mNotificationId);
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, mNotificationId);
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, mNotificationId);
-				NotificationSettingsActivity.removeNotificationId(mNotificationId);
-
-				NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId);
-
+				NotificationSettingsActivity.cancelNotification(mNotificationId);
 				updateHeader();
-
 				getActivity().finish();
 				return true;
 			}

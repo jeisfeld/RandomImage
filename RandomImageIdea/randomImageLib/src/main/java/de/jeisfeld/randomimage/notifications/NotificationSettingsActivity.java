@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -207,4 +208,53 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 			return listName + " (" + frequencyString + ")";
 		}
 	}
+
+	/**
+	 * Update the list name in all notifications.
+	 *
+	 * @param oldName The old name.
+	 * @param newName The new name.
+	 */
+	public static void updateListName(final String oldName, final String newName) {
+		List<Integer> notificationIds = getNotificationIds();
+		for (int notificationId : notificationIds) {
+			String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
+			if (oldName.equals(listName)) {
+				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId, newName);
+			}
+		}
+	}
+
+	/**
+	 * Delete all notifications of a certain list name.
+	 *
+	 * @param listName The deleted list name.
+	 */
+	public static void deleteListName(final String listName) {
+		List<Integer> notificationIds = getNotificationIds();
+		for (int notificationId : notificationIds) {
+			if (listName.equals(PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId))) {
+				cancelNotification(notificationId);
+			}
+		}
+	}
+
+	/**
+	 * Cancel a certain notification.
+	 *
+	 * @param notificationId The id of the notification to be canceled.
+	 */
+	protected static void cancelNotification(final int notificationId) {
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_list_name, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_frequency, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, notificationId);
+		NotificationSettingsActivity.removeNotificationId(notificationId);
+
+		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId);
+		NotificationUtil.cancelRandomImageNotification(Application.getAppContext(), notificationId);
+	}
+
 }

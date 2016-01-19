@@ -135,7 +135,7 @@ public final class NotificationUtil {
 	}
 
 	/**
-	 * Display a Random Image notification for a certain image list.
+	 * Display a Random Image notification.
 	 *
 	 * @param context        the current activity or context
 	 * @param notificationId the id of the configured notification.
@@ -176,7 +176,7 @@ public final class NotificationUtil {
 
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		notificationManager.notify(listName, notificationType.intValue(), notificationBuilder.build());
+		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
 	}
 
 	/**
@@ -207,14 +207,23 @@ public final class NotificationUtil {
 	 * @param notificationType the type of the notification.
 	 */
 	public static void cancelNotification(final Context context, final String notificationTag, final NotificationType notificationType) {
-		NotificationManager notificationManager =
-				(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		if (notificationType == NotificationType.UPDATED_LIST) {
 			mListUpdateInfo.remove(notificationTag);
 		}
 
 		notificationManager.cancel(notificationTag, notificationType.intValue());
+	}
+
+	/**
+	 * Cancel a Random Image notification.
+	 *
+	 * @param context        the current activity or context
+	 * @param notificationId the id of the configured notification.
+	 */
+	public static void cancelRandomImageNotification(final Context context, final int notificationId) {
+		cancelNotification(context, Integer.toString(notificationId), NotificationType.RANDOM_IMAGE);
 	}
 
 	/**

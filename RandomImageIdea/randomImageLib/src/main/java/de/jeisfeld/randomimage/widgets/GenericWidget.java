@@ -16,7 +16,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -43,11 +42,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * Intent flag to indicate the type of widget update.
 	 */
 	protected static final String EXTRA_UPDATE_TYPE = "de.jeisfeld.randomimage.UPDATE_TYPE";
-
-	/**
-	 * The names of the image lists associated to any widget.
-	 */
-	private static SparseArray<String> mListNames = new SparseArray<>();
 
 	/**
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
@@ -111,7 +105,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		super.onDeleted(context, appWidgetIds);
 		for (int appWidgetId : appWidgetIds) {
 			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
-			mListNames.remove(appWidgetId);
 
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
@@ -125,13 +118,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @return The list name.
 	 */
 	protected static final String getListName(final int appWidgetId) {
-		String listName = mListNames.get(appWidgetId);
-		if (listName == null) {
-			listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
-			if (listName == null || listName.length() == 0) {
-				listName = ImageRegistry.getCurrentListName();
-			}
-			mListNames.put(appWidgetId, listName);
+		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
+		if (listName == null || listName.length() == 0) {
+			listName = ImageRegistry.getCurrentListName();
 		}
 		return listName;
 	}
@@ -145,7 +134,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	public static final void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
-		mListNames.put(appWidgetId, listName);
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
 		if (interval > 0) {
@@ -286,26 +274,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		}
 
 		return widgetIdsForName;
-	}
-
-	/**
-	 * Update the list name in all widgets.
-	 *
-	 * @param oldName The old name.
-	 * @param newName The new name.
-	 */
-	public static void updateListName(final String oldName, final String newName) {
-		for (Class<? extends GenericWidget> widgetClass : WIDGET_TYPES) {
-			int[] appWidgetIds = getAllWidgetIds(widgetClass);
-			for (int appWidgetId : appWidgetIds) {
-				if (oldName.equals(getListName(appWidgetId))) {
-					PreferenceUtil
-							.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, newName);
-					mListNames.put(appWidgetId, newName);
-					updateInstances(widgetClass, UpdateType.NEW_LIST, appWidgetId);
-				}
-			}
-		}
 	}
 
 	/**

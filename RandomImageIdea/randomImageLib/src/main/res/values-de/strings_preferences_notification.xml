@@ -15,6 +15,7 @@
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
+        <item>alle zwei Stunden</item>
         <item>viermal täglich</item>
         <item>zweimal täglich</item>
         <item>täglich</item>

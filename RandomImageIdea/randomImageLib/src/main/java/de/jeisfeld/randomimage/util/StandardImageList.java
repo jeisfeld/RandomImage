@@ -113,7 +113,7 @@ public final class StandardImageList extends ImageList {
 		String nestedList = getRandomNestedList();
 
 		if (nestedList == null) {
-			Log.w(Application.TAG, "Did not get a random nested list.");
+			Log.i(Application.TAG, "Did not get a random nested list.");
 			return getRandomFileNameFromAllFiles();
 		}
 

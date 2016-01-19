@@ -44,14 +44,28 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * Sets a repeating alarm that runs at the given interval. When the alarm fires, the app broadcasts an
 	 * Intent to this NotificationAlarmReceiver.
 	 *
-	 * @param context The context in which the alarm is set.
-	 * @param notificationId the notification id.
+	 * @param context          The context in which the alarm is set.
+	 * @param notificationId   the notification id.
 	 * @param useLastAlarmTime flag indicating if the last existing alarm time should be re-used.
 	 */
 	public static final void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
 		int frequency = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_frequency, notificationId, 0);
 		if (frequency == 0) {
 			return;
+		}
+		int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, notificationId, -1);
+		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, notificationId, -1);
+
+		// Positive frequencies: expected numer of days
+		double expectedDaysUntilAlarm = frequency;
+		if (frequency < 0) {
+			// Negative frequencies: portions of days
+			expectedDaysUntilAlarm = -1.0 / frequency;
+
+			if (frequency < -4) { // MAGIC_NUMBER
+				// refer to hours rather than days
+				expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
+			}
 		}
 
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -68,7 +82,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 				else {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
 					// Take a random alarm time between 5 and 15 minutes after startup.
-					long newAlarmTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5) // MAGIC_NUMBER
+					long newAlarmTime = expectedDaysUntilAlarm < 0.1 ? System.currentTimeMillis() // MAGIC_NUMBER
+							: System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5) // MAGIC_NUMBER
 							+ (long) (TimeUnit.MINUTES.toMillis(10) * random.nextDouble()); // MAGIC_NUMBER
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
@@ -83,10 +98,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
 		int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, notificationId, -1);
 
-		double expectedDaysUntilAlarm = frequency;
-		if (frequency < 0) {
-			expectedDaysUntilAlarm = -1.0 / frequency;
-		}
 		double daysUntilAlarm;
 
 		switch (timerVariance) {
@@ -104,10 +115,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 
 		// Determine how much of "notification time" is already elapsed today.
-		int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, notificationId, -1);
-		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(// STORE_PROPERTY
-				R.string.key_notification_daily_end_time, notificationId, -1);
-
 		Calendar currentTimeCalendar = Calendar.getInstance();
 		Calendar startOfDayCalendar = Calendar.getInstance();
 		startOfDayCalendar.setTimeInMillis(currentTimeCalendar.getTimeInMillis());
@@ -169,7 +176,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Cancels the alarm.
 	 *
-	 * @param context The context in which the alarm is set.
+	 * @param context        The context in which the alarm is set.
 	 * @param notificationId the notification id.
 	 */
 	public static final void cancelAlarm(final Context context, final int notificationId) {
@@ -194,7 +201,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Create a PendingIntent which can be used for creating or cancelling an alarm for a notification.
 	 *
-	 * @param context The context in which the alarm is set.
+	 * @param context        The context in which the alarm is set.
 	 * @param notificationId the notification id.
 	 * @return The PendingIntent.
 	 */

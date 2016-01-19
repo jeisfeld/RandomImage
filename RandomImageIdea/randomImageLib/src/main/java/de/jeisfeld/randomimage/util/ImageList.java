@@ -19,10 +19,11 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
-import de.jeisfeld.randomimage.widgets.GenericWidget;
+import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -549,7 +550,8 @@ public abstract class ImageList extends RandomFileProvider {
 			if (!success) {
 				Log.e(Application.TAG, "Could not delete old config file " + oldConfigFile.getAbsolutePath());
 			}
-			GenericWidget.updateListName(oldListName, listName);
+			WidgetSettingsActivity.updateListName(oldListName, listName);
+			NotificationSettingsActivity.updateListName(oldListName, listName);
 			return success;
 		}
 		else {

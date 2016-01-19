@@ -351,6 +351,13 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 								if (GenericWidget.getWidgetIdsForName(listName).size() > 0) {
 									DialogUtil.displayInfo(MainConfigurationActivity.this, R.string.dialog_info_delete_widgets, listName);
 								}
+								NotificationSettingsActivity.deleteListName(listName);
+								if (listName.equals(ImageRegistry.getCurrentListName())) {
+									List<String> remainingListNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
+									if (remainingListNames.size() > 0) {
+										ImageRegistry.switchToImageList(remainingListNames.get(0), CreationStyle.NONE, false);
+									}
+								}
 							}
 							else {
 								DialogUtil.displayToast(MainConfigurationActivity.this, R.string.toast_failed_to_delete_list, listName);
