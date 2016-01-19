@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage.notifications;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -26,6 +27,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	protected static final String STRING_NOTIFICATION_ID = "de.eisfeldj.randomimage.NOTIFICATION_ID";
 
 	/**
+	 * The number of hours per day.
+	 */
+	private static final int HOURS_PER_DAY = (int) TimeUnit.DAYS.toHours(1);
+
+	/**
 	 * The notification id.
 	 */
 	private int mNotificationId;
@@ -47,6 +53,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_notification_frequency);
+		bindPreferenceSummaryToValue(R.string.key_notification_timer_variance);
+		bindPreferenceSummaryToValue(R.string.key_notification_daily_start_time);
+		bindPreferenceSummaryToValue(R.string.key_notification_daily_end_time);
+		bindPreferenceSummaryToValue(R.string.key_notification_detail_scale_type);
 		addEditListListener();
 		addCancelNotificationListener();
 	}
@@ -78,6 +88,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			public boolean onPreferenceClick(final Preference preference) {
 				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_list_name, mNotificationId);
 				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_frequency, mNotificationId);
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, mNotificationId);
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, mNotificationId);
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, mNotificationId);
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, mNotificationId);
 				NotificationSettingsActivity.removeNotificationId(mNotificationId);
 
 				NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId);
@@ -105,13 +119,42 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId, currentListName);
 			}
 		}
-		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId, -1);
-		if (alarmInterval == -1) {
+		int frequency = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_frequency, mNotificationId, 0);
+		if (frequency == 0) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId,
-					Long.parseLong(getActivity().getString(R.string.pref_default_notification_frequency)));
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_frequency, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_frequency, R.string.pref_default_notification_frequency));
+		}
+		int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, mNotificationId, -1);
+		if (timerVariance == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_timer_variance,
+							R.string.pref_default_notification_timer_variance));
+		}
+		int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, -1);
+		if (dailyStartTime == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_daily_start_time,
+							R.string.pref_default_notification_daily_start_time));
+		}
+		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, -1);
+		if (dailyEndTime == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_daily_end_time,
+							R.string.pref_default_notification_daily_end_time));
+		}
+		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1);
+		if (detailScaleType == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_detail_scale_type,
+							R.string.pref_default_notification_detail_scale_type));
 		}
 
+		// Handle initial triggering of the notification
 		if (!NotificationSettingsActivity.getNotificationIds().contains(mNotificationId)) {
 			NotificationSettingsActivity.addNotificationId(mNotificationId);
 			int maxNotificationId = PreferenceUtil.getSharedPreferenceInt(R.string.key_notification_max_id, -1);
@@ -119,8 +162,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setSharedPreferenceInt(R.string.key_notification_max_id, mNotificationId);
 			}
 
-			NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId,
-					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId, -1));
+			NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
 
 			updateHeader();
 
@@ -136,7 +178,15 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_list_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_frequency,
-				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId, -1)));
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_frequency, mNotificationId, 0)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_timer_variance,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, mNotificationId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_daily_start_time,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_daily_end_time,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_detail_scale_type,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1)));
 	}
 
 	/**
@@ -168,8 +218,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		String value;
-		if (preferenceKey == R.string.key_notification_frequency) {
-			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mNotificationId, -1));
+		if (preferenceKey == R.string.key_notification_frequency // BOOLEAN_EXPRESSION_COMPLEXITY
+				|| preferenceKey == R.string.key_notification_timer_variance
+				|| preferenceKey == R.string.key_notification_daily_start_time
+				|| preferenceKey == R.string.key_notification_daily_end_time
+				|| preferenceKey == R.string.key_notification_detail_scale_type) {
+			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mNotificationId, -1));
 		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mNotificationId);
@@ -193,14 +247,14 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	 * @return The frequency as String.
 	 */
 	public static String getNotificationFrequencyString(final int notificationId) {
-		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_frequency, notificationId, -1);
-		if (frequency <= 0) {
+		int frequency = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_frequency, notificationId, 0);
+		if (frequency == 0) {
 			return null;
 		}
 		String[] frequencyValues = Application.getAppContext().getResources().getStringArray(R.array.notification_frequency_values);
 		String[] frequencyNames = Application.getAppContext().getResources().getStringArray(R.array.notification_frequency_names);
 		for (int i = 0; i < frequencyValues.length; i++) {
-			if (Long.parseLong(frequencyValues[i]) == frequency) {
+			if (Integer.parseInt(frequencyValues[i]) == frequency) {
 				return frequencyNames[i];
 			}
 		}
@@ -221,9 +275,48 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				updateHeader();
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_frequency))) {
-				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_frequency, mNotificationId, Long.parseLong(stringValue));
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_frequency, mNotificationId, Integer.parseInt(stringValue));
 				updateHeader();
-				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, Long.parseLong(stringValue));
+				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_timer_variance))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, mNotificationId,
+						Integer.parseInt(stringValue));
+				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_daily_start_time))) {
+				int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, -1);
+				int dailyStartTime = Integer.parseInt(stringValue);
+				if (dailyEndTime - dailyStartTime > HOURS_PER_DAY) {
+					dailyEndTime = HOURS_PER_DAY;
+					String endTimeValue = Integer.toString(dailyEndTime);
+					ListPreference endTimePreference = (ListPreference) findPreference(getString(R.string.key_notification_daily_end_time));
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, dailyEndTime);
+					endTimePreference.setValue(endTimeValue);
+					setSummary(endTimePreference, endTimeValue);
+				}
+
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, dailyStartTime);
+				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_daily_end_time))) {
+				int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, -1);
+				int dailyEndTime = Integer.parseInt(stringValue);
+				if (dailyEndTime - dailyStartTime > HOURS_PER_DAY) {
+					dailyEndTime = dailyStartTime + HOURS_PER_DAY;
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, dailyEndTime);
+					String newValue = Integer.toString(dailyEndTime);
+					((ListPreference) preference).setValue(newValue);
+					setSummary(preference, newValue);
+					// do not update, as it is anyway overridden.
+					return false;
+				}
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, dailyEndTime);
+				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_scale_type))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
+						Integer.parseInt(stringValue));
 			}
 
 			return true;

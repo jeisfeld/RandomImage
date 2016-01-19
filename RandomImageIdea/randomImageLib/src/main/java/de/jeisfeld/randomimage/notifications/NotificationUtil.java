@@ -153,7 +153,7 @@ public final class NotificationUtil {
 		String fileName = imageList.getRandomFileName();
 		if (fileName == null) {
 			// This is typically a temporary error - therefore re-create the alarm.
-			NotificationAlarmReceiver.setAlarm(context, notificationId);
+			NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 			return;
 		}
 

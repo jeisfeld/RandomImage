@@ -11,6 +11,11 @@
 
     <string name="key_notification_list_name" translatable="false">notification_list_name</string>
     <string name="key_notification_frequency" translatable="false">notification_frequency</string>
+    <string name="key_notification_timer_variance" translatable="false">notification_timer_variance</string>
+    <string name="key_notification_daily_start_time" translatable="false">notification_daily_start_time</string>
+    <string name="key_notification_daily_end_time" translatable="false">notification_daily_end_time</string>
+    <string name="key_notification_detail_scale_type" translatable="false">notification_detail_scale_type</string>
+    <string name="key_notification_current_alarm_timestamp" translatable="false">notification_current_alarm_timestamp</string>
 
     <!-- Strings related to Notification settings -->
 
@@ -18,29 +23,85 @@
     <string name="pref_heading_create_new_notifcation">Create new notification</string>
     <string name="pref_title_notification_list_name">List Name</string>
     <string name="pref_title_notification_frequency">Notification Frequency</string>
-    <string name="pref_default_notification_frequency" translatable="false">60000</string>
+    <string name="pref_default_notification_frequency" translatable="false">0</string>
+    <string name="pref_title_notification_timer_variance">Notification variability</string>
+    <string name="pref_default_notification_timer_variance" translatable="false">0</string>
+    <string name="pref_title_notification_daily_start_time">Start hour for notifications</string>
+    <string name="pref_default_notification_daily_start_time" translatable="false">0</string>
+    <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
+    <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
+    <string name="pref_title_notification_detail_scale_type">Scaling when showing details</string>
+    <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
     <string name="pref_title_cancel_notification">Cancel Notification</string>
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>15 minutes</item>
-        <item>1 hour</item>
-        <item>4 hours</item>
-        <item>1 day</item>
-        <item>1 week</item>
-        <item>only on restart</item>
+        <item>four times a day</item>
+        <item>twice a day</item>
+        <item>daily</item>
+        <item>twice a week</item>
+        <item>weekly</item>
+        <item>every two weeks</item>
+        <item>monthly</item>
+        <item>every three months</item>
+        <item>twice a year</item>
+        <item>every minute (for testing)</item>
     </string-array>
     <string-array name="notification_frequency_values" translatable="false">
-        <item>60000</item>
-        <item>300000</item>
-        <item>900000</item>
-        <item>3600000</item>
-        <item>14400000</item>
-        <item>86400000</item>
-        <item>604800000</item>
+        <item>-4</item>
+        <item>-2</item>
+        <item>1</item>
+        <item>3</item>
+        <item>7</item>
+        <item>14</item>
+        <item>30</item>
+        <item>90</item>
+        <item>180</item>
+        <item>-1440</item>
+    </string-array>
+    <string-array name="notification_timer_variance_names">
+        <item>little variation</item>
+        <item>big variation</item>
+    </string-array>
+    <string-array name="notification_timer_variance_values" translatable="false">
         <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="notification_daily_start_time_names">
+        <item>12 am</item>
+        <item>5 am</item>
+        <item>6 am</item>
+        <item>7 am</item>
+        <item>8 am</item>
+        <item>9 am</item>
+        <item>10 am</item>
+    </string-array>
+    <string-array name="notification_daily_start_time_values" translatable="false">
+        <item>0</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="notification_daily_end_time_names">
+        <item>8 pm</item>
+        <item>9 pm</item>
+        <item>10 pm</item>
+        <item>11 pm</item>
+        <item>12 am</item>
+        <item>1 am</item>
+        <item>2 am</item>
+    </string-array>
+    <string-array name="notification_daily_end_time_values" translatable="false">
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
     </string-array>
 
 </resources>

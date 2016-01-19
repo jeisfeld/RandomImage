@@ -39,6 +39,11 @@ public class SdMountReceiver extends BroadcastReceiver {
 			NotificationAlarmReceiver.createAllNotificationAlarms();
 		}
 
+		if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+			ImageWidget.updateTimers();
+			StackedImageWidget.updateTimers();
+			NotificationAlarmReceiver.createAllNotificationAlarms();
+		}
 	}
 
 }

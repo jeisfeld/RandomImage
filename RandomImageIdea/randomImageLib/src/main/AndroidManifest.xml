@@ -169,6 +169,9 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
             </intent-filter>
             <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
 
                 <data android:scheme="file"/>

@@ -57,9 +57,9 @@ public class DisplayRandomImageActivity extends Activity {
 	 */
 	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
 	/**
-	 * The resource key to pass that a notification should be triggered - the content is the notification id.
+	 * The resource key for the id of the notification triggering this activity.
 	 */
-	private static final String STRING_EXTRA_NOTIFICATION_TRIGGER = "de.jeisfeld.randomimage.NOTIFICATION_TRIGGER";
+	private static final String STRING_EXTRA_NOTIFICATION_ID = "de.jeisfeld.randomimage.NOTIFICATION_ID";
 
 	/**
 	 * The resource key for the flag if the parent activity should be refreshed.
@@ -139,7 +139,12 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * The id of the widget triggering this activity.
 	 */
-	private Integer mAppWidgetId;
+	private Integer mAppWidgetId = null;
+
+	/**
+	 * The id of the notification triggering this activity.
+	 */
+	private Integer mNotificationId = null;
 
 	/**
 	 * The way in which the image gets initially scaled.
@@ -184,7 +189,7 @@ public class DisplayRandomImageActivity extends Activity {
 			intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
 		}
 		if (notificationId != null) {
-			intent.putExtra(STRING_EXTRA_NOTIFICATION_TRIGGER, notificationId);
+			intent.putExtra(STRING_EXTRA_NOTIFICATION_ID, notificationId);
 		}
 
 		return intent;
@@ -236,6 +241,17 @@ public class DisplayRandomImageActivity extends Activity {
 		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			mAppWidgetId = null;
+			mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
+			if (mNotificationId == -1) {
+				mNotificationId = null;
+			}
+			else {
+				mScaleType = ScaleType.fromResourceScaleType(
+						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
+
+				// Ensure that notification alarm is set again in case of click on notification
+				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
+			}
 		}
 		else {
 			mScaleType = ScaleType.fromResourceScaleType(
@@ -297,13 +313,6 @@ public class DisplayRandomImageActivity extends Activity {
 				}
 			}
 		}
-
-		// Ensure that notification alarm is set again in case of click on notification
-		int notificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_TRIGGER, -1);
-		if (notificationId != -1) {
-			NotificationAlarmReceiver.setAlarm(this, notificationId);
-		}
-
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 		if (savedInstanceState == null) {

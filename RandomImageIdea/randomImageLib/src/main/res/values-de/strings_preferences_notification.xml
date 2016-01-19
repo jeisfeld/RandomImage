@@ -7,18 +7,46 @@
     <string name="pref_heading_create_new_notifcation">Neue Benachrichtigung erstellen</string>
     <string name="pref_title_notification_list_name">Listenname</string>
     <string name="pref_title_notification_frequency">Häufigkeit der Benachrichtigung</string>
+    <string name="pref_title_notification_timer_variance">Variabilität der Benachrichtigung</string>
+    <string name="pref_title_notification_daily_start_time">Startzeit für Benachrichtigungen</string>
+    <string name="pref_title_notification_daily_end_time">Endzeit für Benachrichtigungen</string>
+    <string name="pref_title_notification_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_cancel_notification">Benachrichtigung abbrechen</string>
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
-        <item>1 Minute</item>
-        <item>5 Minuten</item>
-        <item>15 Minuten</item>
-        <item>1 Stunde</item>
-        <item>4 Stunden</item>
-        <item>1 Tag</item>
-        <item>1 Woche</item>
-        <item>Nur bei Neustart</item>
+        <item>viermal täglich</item>
+        <item>zweimal täglich</item>
+        <item>täglich</item>
+        <item>zweimal wöchentlich</item>
+        <item>wöchentlich</item>
+        <item>alle zwei Wochen</item>
+        <item>monatlich</item>
+        <item>vierteljährlich</item>
+        <item>halbjährlich</item>
+        <item>minütlich (zum Testen)</item>
+    </string-array>
+    <string-array name="notification_timer_variance_names">
+        <item>geringe Variation</item>
+        <item>große Variation</item>
+    </string-array>
+    <string-array name="notification_daily_start_time_names">
+        <item>0:00</item>
+        <item>5:00</item>
+        <item>6:00</item>
+        <item>7:00</item>
+        <item>8:00</item>
+        <item>9:00</item>
+        <item>10:00</item>
+    </string-array>
+    <string-array name="notification_daily_end_time_names">
+        <item>20:00</item>
+        <item>21:00</item>
+        <item>22:00</item>
+        <item>23:00</item>
+        <item>0:00</item>
+        <item>1:00</item>
+        <item>2:00</item>
     </string-array>
 
 </resources>
