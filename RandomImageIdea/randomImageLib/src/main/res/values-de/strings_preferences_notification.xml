@@ -25,7 +25,7 @@
         <item>monatlich</item>
         <item>vierteljährlich</item>
         <item>halbjährlich</item>
-        <item>minütlich (zum Testen)</item>
+        <item>nach 6 Sekunden (zum Testen)</item>
     </string-array>
     <string-array name="notification_timer_variance_names">
         <item>geringe Variation</item>

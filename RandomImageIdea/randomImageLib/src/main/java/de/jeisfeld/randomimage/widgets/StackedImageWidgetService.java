@@ -133,10 +133,10 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			else {
 				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
 
+				int bitmapSize = Math.min(ImageUtil.MAX_BITMAP_SIZE, mImageSize);
 				remoteViews.setImageViewBitmap(
 						R.id.imageViewWidget,
-						ImageUtil.getBitmapOfExactSize(currentFileName, Math.min(ImageUtil.MAX_BITMAP_SIZE, mImageSize),
-								stretchToFit ? -1 : IMAGE_BORDER_SIZE));
+						ImageUtil.getBitmapOfExactSize(currentFileName, bitmapSize, bitmapSize, stretchToFit ? -1 : IMAGE_BORDER_SIZE));
 			}
 
 			GenericImageWidget.configureBackground(mContext, remoteViews, AppWidgetManager.getInstance(mContext), mAppWidgetId);

@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -67,8 +68,23 @@ public final class NotificationUtil {
 	 */
 	private static Map<String, ListUpdateInfo> mListUpdateInfo = new HashMap<>();
 
+	/**
+	 * The height of notification large icons.
+	 */
+	private static final int NOTIFICATION_LARGE_ICON_HEIGHT;
+
+	/**
+	 * The width of notification large icons.
+	 */
+	private static final int NOTIFICATION_LARGE_ICON_WIDTH;
+
 	static {
 		restoreMountingIssues();
+
+		NOTIFICATION_LARGE_ICON_HEIGHT =
+				Application.getAppContext().getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
+		NOTIFICATION_LARGE_ICON_WIDTH =
+				Application.getAppContext().getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
 	}
 
 	/**
@@ -158,12 +174,13 @@ public final class NotificationUtil {
 		}
 
 		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+		Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName, NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
 
 		Notification.Builder notificationBuilder =
 				new Notification.Builder(context)
 						.setSmallIcon(R.drawable.ic_launcher)
 						.setContentTitle(listName)
-						.setLargeIcon(bitmap)
+						.setLargeIcon(iconBitmap)
 						.setAutoCancel(true)
 						.setStyle(new Notification.BigPictureStyle().bigPicture(bitmap));
 

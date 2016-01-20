@@ -138,20 +138,36 @@ public final class ImageUtil {
 	 * @return the bitmap.
 	 */
 	public static Bitmap getImageBitmap(final String path, final int maxSize) {
-		Bitmap bitmap = null;
+		return getImageBitmap(path, maxSize, maxSize);
+	}
 
-		if (maxSize <= 0) {
+	/**
+	 * Return a bitmap of this photo.
+	 *
+	 * @param path    The file path of the image.
+	 * @param maxWidth The maximum width of this bitmap. If bigger, it will be resized.
+	 * @param maxHeight The maximum height of this bitmap. If bigger, it will be resized.
+	 * @return the bitmap.
+	 */
+	public static Bitmap getImageBitmap(final String path, final int maxWidth, final int maxHeight) {
+		Bitmap bitmap = null;
+		boolean foundThumbInMediaStore = false;
+
+		if (maxWidth <= 0 || maxHeight <= 0) {
 			bitmap = BitmapFactory.decodeFile(path);
 		}
 		else {
 
-			if (maxSize <= MediaStoreUtil.MINI_THUMB_SIZE) {
-				bitmap = MediaStoreUtil.getThumbnailFromPath(path, maxSize);
+			if (maxWidth <= MediaStoreUtil.MINI_THUMB_SIZE && maxHeight <= MediaStoreUtil.MINI_THUMB_SIZE) {
+				bitmap = MediaStoreUtil.getThumbnailFromPath(path, Math.max(maxWidth, maxHeight));
+				if (bitmap != null) {
+					foundThumbInMediaStore = true;
+				}
 			}
 
 			if (bitmap == null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = getBitmapFactor(path, maxSize);
+				options.inSampleSize = getBitmapFactor(path, maxWidth, maxHeight);
 				// options.inPurgeable = true;
 				bitmap = BitmapFactory.decodeFile(path, options);
 				if (bitmap == null) {
@@ -175,19 +191,18 @@ public final class ImageUtil {
 				return bitmap;
 			}
 
-			if (bitmap.getWidth() > maxSize || bitmap.getHeight() > maxSize
-					|| maxSize <= MediaStoreUtil.MINI_THUMB_SIZE) {
+			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore) {
 				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
-				if (bitmap.getWidth() > bitmap.getHeight()) {
+				if (bitmap.getWidth() * maxHeight > bitmap.getHeight() * maxWidth) {
 					//noinspection UnnecessaryLocalVariable
-					int targetWidth = maxSize;
-					int targetHeight = bitmap.getHeight() * maxSize / bitmap.getWidth();
+					int targetWidth = maxWidth;
+					int targetHeight = bitmap.getHeight() * maxWidth / bitmap.getWidth();
 					bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 				}
 				else {
-					int targetWidth = bitmap.getWidth() * maxSize / bitmap.getHeight();
+					int targetWidth = bitmap.getWidth() * maxHeight / bitmap.getHeight();
 					//noinspection UnnecessaryLocalVariable
-					int targetHeight = maxSize;
+					int targetHeight = maxHeight;
 					bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 				}
 			}
@@ -207,25 +222,31 @@ public final class ImageUtil {
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given size.
 	 *
 	 * @param path   The file path of the image.
-	 * @param size   The size of the target bitmap.
+	 * @param width   The width of the target bitmap.
+	 * @param height   The height of the target bitmap.
 	 * @param border The size of the border around the image. If negative, the image will be stretched to fill the bitmap.
 	 * @return the bitmap.
 	 */
-	public static Bitmap getBitmapOfExactSize(final String path, final int size, final int border) {
-		Bitmap baseBitmap = getImageBitmap(path, size - 2 * border);
-		Bitmap targetBitmap = Bitmap.createBitmap(size, size, baseBitmap.getConfig());
+	public static Bitmap getBitmapOfExactSize(final String path, final int width, final int height, final int border) {
+		Bitmap baseBitmap = getImageBitmap(path, width - 2 * border, height - 2 * border);
+		Bitmap targetBitmap = Bitmap.createBitmap(width, height, baseBitmap.getConfig());
 		Paint paint = new Paint();
 		Canvas canvas = new Canvas(targetBitmap);
 
 		if (border >= 0) {
-			canvas.drawBitmap(baseBitmap, (size - baseBitmap.getWidth()) / 2, (size - baseBitmap.getHeight()) / 2, paint);
+			canvas.drawBitmap(baseBitmap, (width - baseBitmap.getWidth()) / 2, (height - baseBitmap.getHeight()) / 2, paint);
 		}
 		else {
-			int baseBitmapMinSize = Math.min(baseBitmap.getWidth(), baseBitmap.getHeight());
-			int leftPadding = (baseBitmap.getWidth() - baseBitmapMinSize) / 2;
-			int topPadding = (baseBitmap.getHeight() - baseBitmapMinSize) / 2;
-			Rect srcRect = new Rect(leftPadding, topPadding, leftPadding + baseBitmapMinSize, topPadding + baseBitmapMinSize);
-			canvas.drawBitmap(baseBitmap, srcRect, new Rect(0, 0, size, size), paint);
+			if (baseBitmap.getWidth() * height >= baseBitmap.getHeight() * width) {
+				int horizontalPadding = (baseBitmap.getWidth() - baseBitmap.getHeight() * width / height) / 2;
+				Rect srcRect = new Rect(horizontalPadding, 0, horizontalPadding + baseBitmap.getHeight() * width / height, baseBitmap.getHeight());
+				canvas.drawBitmap(baseBitmap, srcRect, new Rect(0, 0, width, height), paint);
+			}
+			else {
+				int verticalPadding = (baseBitmap.getHeight() - baseBitmap.getWidth() * height / width) / 2;
+				Rect srcRect = new Rect(0, verticalPadding, baseBitmap.getWidth(), verticalPadding + baseBitmap.getWidth() * height / width);
+				canvas.drawBitmap(baseBitmap, srcRect, new Rect(0, 0, width, height), paint);
+			}
 		}
 		return targetBitmap;
 	}
@@ -253,15 +274,15 @@ public final class ImageUtil {
 	 * Utility to retrieve the sample size for BitmapFactory.decodeFile.
 	 *
 	 * @param filepath   the path of the bitmap.
-	 * @param targetSize the target size of the bitmap
+	 * @param targetWidth the target width of the bitmap
+	 * @param targetHeight the target height of the bitmap
 	 * @return the sample size to be used.
 	 */
-	private static int getBitmapFactor(final String filepath, final int targetSize) {
+	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(filepath, options);
-		int size = Math.max(options.outWidth, options.outWidth);
-		return size / targetSize;
+		return Math.min(options.outWidth / targetWidth, options.outHeight / targetHeight);
 	}
 
 	/**
