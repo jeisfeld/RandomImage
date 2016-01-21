@@ -174,93 +174,110 @@ public final class NotificationUtil {
 	 * @param notificationId the id of the configured notification.
 	 */
 	public static void displayRandomImageNotification(final Context context, final int notificationId) {
-		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
-		ImageList imageList = ImageRegistry.getImageListByName(listName, false);
+		final String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
+		final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 		if (imageList == null) {
 			// Fatal error - it does not make sense to re-create the alarm.
 			return;
 		}
 
-		String fileName = imageList.getRandomFileName();
-		if (fileName == null) {
-			// This is typically a temporary error - therefore re-create the alarm.
-			NotificationAlarmReceiver.setAlarm(context, notificationId, false);
-			return;
-		}
-		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
-		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
-		if (notificationStyle == NOTIFICATION_STYLE_START_ACTIVITY) {
-			// open activity instead of notification
-			context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId));
-			if (vibrate) {
-				Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-				vibrator.vibrate(VIBRATION_PATTERN, -1);
-			}
-			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+		imageList.executeWhenReady(null,
+				new Runnable() {
+					@Override
+					public void run() {
+						String fileName = imageList.getRandomFileName();
+						if (fileName == null) {
+							// This is typically a temporary error - therefore re-create the alarm.
+							NotificationAlarmReceiver.setAlarm(context, notificationId, false);
+							return;
+						}
+						int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
+						boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
+								notificationId, false);
+						if (notificationStyle == NOTIFICATION_STYLE_START_ACTIVITY) {
+							// open activity instead of notification
+							context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId));
+							if (vibrate) {
+								Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+								vibrator.vibrate(VIBRATION_PATTERN, -1);
+							}
+							NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
 
-			return;
-		}
+							return;
+						}
 
-		boolean coloredIcon = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon, notificationId, false);
-		Builder notificationBuilder = new Builder(context)
-				.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
-				.setAutoCancel(true);
+						boolean coloredIcon = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon,
+								notificationId, false);
+						Builder notificationBuilder = new Builder(context)
+								.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+								.setAutoCancel(true);
 
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-			notificationBuilder.setShowWhen(false);
-		}
+						if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+							notificationBuilder.setShowWhen(false);
+						}
 
-		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-			notificationBuilder.setCategory(Notification.CATEGORY_ALARM);
-		}
+						if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+							notificationBuilder.setCategory(Notification.CATEGORY_ALARM);
+						}
 
-		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
-		String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
-		if (title == null || title.length() == 0) {
-			title = listName;
-		}
+						Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+						String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
+						if (title == null || title.length() == 0) {
+							title = listName;
+						}
 
-		if (notificationStyle == 1) {
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
-			remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
+						if (notificationStyle == 1) {
+							RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
+							remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
 
-			notificationBuilder.setContent(remoteViews);
-		}
-		else {
-			Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName, NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
+							notificationBuilder.setContent(remoteViews);
+						}
+						else {
+							Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
+									NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
 
-			notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
-		}
+							notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
+						}
 
-		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-			Notification publicNotification = new Builder(context)
-					.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
-					.setShowWhen(false).setContentTitle(title).build();
-			notificationBuilder.setPublicVersion(publicNotification);
-		}
+						if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+							Notification publicNotification = new Builder(context)
+									.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+									.setShowWhen(false).setContentTitle(title).build();
+							notificationBuilder.setPublicVersion(publicNotification);
+						}
 
-		String notificationTag = Integer.toString(notificationId);
-		NotificationType notificationType = NotificationType.RANDOM_IMAGE;
-		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId);
-		int uniqueId = getUniqueId(notificationTag, notificationType);
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-		notificationBuilder.setContentIntent(pendingIntent);
+						String notificationTag = Integer.toString(notificationId);
+						NotificationType notificationType = NotificationType.RANDOM_IMAGE;
+						Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId);
+						int uniqueId = getUniqueId(notificationTag, notificationType);
+						PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+						notificationBuilder.setContentIntent(pendingIntent);
 
-		notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
+						notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
 
-		int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, 0);
-		if (ledColor > 0) {
-			notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
-		}
+						int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, 0);
+						if (ledColor > 0) {
+							notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
+						}
 
-		if (vibrate) {
-			notificationBuilder.setVibrate(VIBRATION_PATTERN);
-		}
+						if (vibrate) {
+							notificationBuilder.setVibrate(VIBRATION_PATTERN);
+						}
 
-		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
+						NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+						notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
 
-		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+						NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+
+					}
+				},
+				new Runnable() {
+					@Override
+					public void run() {
+						NotificationAlarmReceiver.setAlarm(context, notificationId, false);
+					}
+				});
+
 	}
 
 	/**

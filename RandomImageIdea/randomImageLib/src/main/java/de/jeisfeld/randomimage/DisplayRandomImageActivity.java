@@ -164,6 +164,11 @@ public class DisplayRandomImageActivity extends Activity {
 	private boolean mSavingInstanceState = false;
 
 	/**
+	 * Flag helping to detect if the user puts the activity into the background.
+	 */
+	private boolean mUserIsLeaving = false;
+
+	/**
 	 * The imageList used by the activity.
 	 */
 	private RandomFileProvider mRandomFileProvider;
@@ -363,7 +368,7 @@ public class DisplayRandomImageActivity extends Activity {
 		super.onDestroy();
 		if (mNotificationId != null) {
 			NOTIFICATION_MAP.remove(mNotificationId);
-			if (!mSavingInstanceState) {
+			if (mUserIsLeaving || !mSavingInstanceState) {
 				NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
 			}
@@ -373,8 +378,23 @@ public class DisplayRandomImageActivity extends Activity {
 	@Override
 	protected final void onUserLeaveHint() {
 		if (mNotificationId != null) {
+			mUserIsLeaving = true;
+		}
+	}
+
+	@Override
+	protected final void onStop() {
+		super.onStop();
+		if (mUserIsLeaving) {
 			finish();
 		}
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		mUserIsLeaving = false;
+		mSavingInstanceState = false;
 	}
 
 	/**
