@@ -23,12 +23,7 @@ public class StackedImageWidget extends GenericImageWidget {
 	public static final String STRING_EXTRA_ITEM = "de.jeisfeld.randomimage.ITEM";
 
 	/**
-	 * The resource key for the input folder.
-	 */
-	public static final String STRING_EXTRA_WIDTH = "de.jeisfeld.randomimage.WIDTH";
-
-	/**
-	 * The resource key for the input folder.
+	 * The resource key for the list name.
 	 */
 	public static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 
@@ -41,13 +36,10 @@ public class StackedImageWidget extends GenericImageWidget {
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
-		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
-		if (width > 0) {
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, width);
-		}
+		determineWidgetDimensions(appWidgetManager, appWidgetId);
 
-		intent.putExtra(STRING_EXTRA_WIDTH, width);
+		determineWidgetDimensions(appWidgetManager, appWidgetId);
+
 		intent.putExtra(STRING_EXTRA_LISTNAME, getListName(appWidgetId));
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 
@@ -86,7 +78,25 @@ public class StackedImageWidget extends GenericImageWidget {
 
 		configureButtons(context, appWidgetManager, appWidgetId, false);
 
+		determineWidgetDimensions(appWidgetManager, appWidgetId);
+
 		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
+	}
+
+	/**
+	 * Determine and store the widget dimensions.
+	 *
+	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
+	 * @param appWidgetId      The appWidgetId for which an update is needed.
+	 */
+	private void determineWidgetDimensions(final AppWidgetManager appWidgetManager, final int appWidgetId) {
+		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
+		int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
+		if (width > 0) {
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, width);
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_height, appWidgetId, height);
+		}
 	}
 
 	/**

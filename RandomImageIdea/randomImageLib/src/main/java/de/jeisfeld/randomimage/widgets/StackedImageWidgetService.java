@@ -17,7 +17,6 @@ import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
@@ -27,9 +26,18 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class StackedImageWidgetService extends RemoteViewsService {
 	/**
-	 * Factor by which the image sizes are reduced compared to allowed size.
+	 * Factor by which the image sizes are reduced compared to allowed size in square view.
 	 */
-	private static final float IMAGE_SCALE_FACTOR = 0.6f;
+	private static final float SQUARE_IMAGE_SCALE_FACTOR = 0.6f;
+	/**
+	 * Factor by which the image sizes are reduced compared to allowed size in stretched view.
+	 */
+	private static final float STRETCHED_IMAGE_SCALE_FACTOR = 0.95f;
+	/**
+	 * The maximum aspect ratio of the image view.
+	 */
+	private static final float MAX_ASPECT_RATIO = 16.0f / 9;
+
 	/**
 	 * The size of the border around the image.
 	 */
@@ -39,16 +47,6 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
 		return new StackRemoteViewsFactory(this.getApplicationContext(), intent);
-	}
-
-	/**
-	 * Calculate the planned image size out of the view width.
-	 *
-	 * @param viewWidth The view width.
-	 * @return The planned image size.
-	 */
-	private static int calculateImageSize(final int viewWidth) {
-		return Math.max((int) Math.ceil(IMAGE_SCALE_FACTOR * viewWidth), MediaStoreUtil.MINI_THUMB_SIZE);
 	}
 
 	/**
@@ -71,9 +69,13 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		private int mAppWidgetId;
 
 		/**
-		 * The size to which the images are scaled.
+		 * The width to which the images are scaled.
 		 */
-		private int mImageSize;
+		private int mImageWidth;
+		/**
+		 * The height to which the images are scaled.
+		 */
+		private int mImageHeight;
 
 		/**
 		 * The name of the imageList to be displayed.
@@ -90,9 +92,40 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			this.mContext = context;
 			mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-			int viewWidth = intent.getIntExtra(StackedImageWidget.STRING_EXTRA_WIDTH, MediaStoreUtil.MINI_THUMB_SIZE);
-			mImageSize = calculateImageSize(viewWidth);
+			determineImageDimensions();
+
 			mListName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
+		}
+
+		/**
+		 * Determine the dimensions of the images.
+		 */
+		private void determineImageDimensions() {
+			int viewWidth = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
+			int viewHeight = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_height, mAppWidgetId, 0);
+
+			double targetWidth = SQUARE_IMAGE_SCALE_FACTOR * viewWidth;
+			double targetHeight = SQUARE_IMAGE_SCALE_FACTOR * viewHeight;
+
+			if (targetWidth > MAX_ASPECT_RATIO * targetHeight) {
+				double correctionFactor = Math.sqrt(targetWidth / targetHeight / MAX_ASPECT_RATIO);
+				targetWidth /= correctionFactor;
+				targetHeight *= correctionFactor;
+				if (targetHeight > viewHeight * STRETCHED_IMAGE_SCALE_FACTOR) {
+					targetHeight = viewHeight * STRETCHED_IMAGE_SCALE_FACTOR;
+				}
+			}
+			else if (targetHeight > MAX_ASPECT_RATIO * targetWidth) {
+				double correctionFactor = Math.sqrt(targetHeight / targetWidth / MAX_ASPECT_RATIO);
+				targetHeight /= correctionFactor;
+				targetWidth *= correctionFactor;
+				if (targetWidth > viewWidth * STRETCHED_IMAGE_SCALE_FACTOR) {
+					targetWidth = viewWidth * STRETCHED_IMAGE_SCALE_FACTOR;
+				}
+			}
+
+			mImageWidth = Math.min(ImageUtil.MAX_BITMAP_SIZE, (int) Math.ceil(targetWidth));
+			mImageHeight = Math.min(ImageUtil.MAX_BITMAP_SIZE, (int) Math.ceil(targetHeight));
 		}
 
 		@Override
@@ -132,11 +165,9 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			}
 			else {
 				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
-
-				int bitmapSize = Math.min(ImageUtil.MAX_BITMAP_SIZE, mImageSize);
 				remoteViews.setImageViewBitmap(
 						R.id.imageViewWidget,
-						ImageUtil.getBitmapOfExactSize(currentFileName, bitmapSize, bitmapSize, stretchToFit ? -1 : IMAGE_BORDER_SIZE));
+						ImageUtil.getBitmapOfExactSize(currentFileName, mImageWidth, mImageHeight, stretchToFit ? -1 : IMAGE_BORDER_SIZE));
 			}
 
 			GenericImageWidget.configureBackground(mContext, remoteViews, AppWidgetManager.getInstance(mContext), mAppWidgetId);
@@ -175,11 +206,10 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onDataSetChanged() {
-			// update image size
-			int viewWidth = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
+			// update image dimensions
+			determineImageDimensions();
 			// Update the list name
 			mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
-			mImageSize = calculateImageSize(viewWidth);
 
 			// create new image list
 			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);

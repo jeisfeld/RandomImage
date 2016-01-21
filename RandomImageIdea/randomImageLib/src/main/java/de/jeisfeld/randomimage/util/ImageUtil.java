@@ -144,14 +144,15 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path    The file path of the image.
-	 * @param maxWidth The maximum width of this bitmap. If bigger, it will be resized.
+	 * @param path      The file path of the image.
+	 * @param maxWidth  The maximum width of this bitmap. If bigger, it will be resized.
 	 * @param maxHeight The maximum height of this bitmap. If bigger, it will be resized.
 	 * @return the bitmap.
 	 */
 	public static Bitmap getImageBitmap(final String path, final int maxWidth, final int maxHeight) {
 		Bitmap bitmap = null;
 		boolean foundThumbInMediaStore = false;
+		int rotation = getExifRotation(path);
 
 		if (maxWidth <= 0 || maxHeight <= 0) {
 			bitmap = BitmapFactory.decodeFile(path);
@@ -167,7 +168,7 @@ public final class ImageUtil {
 
 			if (bitmap == null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = getBitmapFactor(path, maxWidth, maxHeight);
+				options.inSampleSize = getBitmapFactor(path, maxWidth, maxHeight, rotation == ROTATION_90 || rotation == ROTATION_270);
 				// options.inPurgeable = true;
 				bitmap = BitmapFactory.decodeFile(path, options);
 				if (bitmap == null) {
@@ -190,6 +191,9 @@ public final class ImageUtil {
 			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
 				return bitmap;
 			}
+			if (rotation != 0) {
+				bitmap = rotateBitmap(bitmap, rotation);
+			}
 
 			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore) {
 				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
@@ -209,11 +213,6 @@ public final class ImageUtil {
 
 		}
 
-		int rotation = getExifRotation(path);
-		if (rotation != 0) {
-			bitmap = rotateBitmap(bitmap, rotation);
-		}
-
 		return bitmap;
 	}
 
@@ -222,8 +221,8 @@ public final class ImageUtil {
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given size.
 	 *
 	 * @param path   The file path of the image.
-	 * @param width   The width of the target bitmap.
-	 * @param height   The height of the target bitmap.
+	 * @param width  The width of the target bitmap.
+	 * @param height The height of the target bitmap.
 	 * @param border The size of the border around the image. If negative, the image will be stretched to fill the bitmap.
 	 * @return the bitmap.
 	 */
@@ -273,16 +272,23 @@ public final class ImageUtil {
 	/**
 	 * Utility to retrieve the sample size for BitmapFactory.decodeFile.
 	 *
-	 * @param filepath   the path of the bitmap.
-	 * @param targetWidth the target width of the bitmap
+	 * @param filepath     the path of the bitmap.
+	 * @param targetWidth  the target width of the bitmap
 	 * @param targetHeight the target height of the bitmap
+	 * @param rotate       flag indicating if the bitmap should be 90 degrees rotated.
 	 * @return the sample size to be used.
 	 */
-	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight) {
+	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight, final boolean rotate) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(filepath, options);
-		return Math.min(options.outWidth / targetWidth, options.outHeight / targetHeight);
+
+		if (rotate) {
+			return Math.min(options.outHeight / targetWidth, options.outWidth / targetHeight);
+		}
+		else {
+			return Math.min(options.outWidth / targetWidth, options.outHeight / targetHeight);
+		}
 	}
 
 	/**

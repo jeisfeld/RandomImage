@@ -47,6 +47,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_width, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_view_height, appWidgetId);
 		}
 	}
 
