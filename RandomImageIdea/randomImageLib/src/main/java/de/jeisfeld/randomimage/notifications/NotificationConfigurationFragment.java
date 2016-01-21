@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage.notifications;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.preference.PreferenceFragment;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
+import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -99,6 +101,17 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				return true;
 			}
 		});
+
+		// allow to display next timer occurrence
+		// TODO: remove after debug phase
+		boolean showTimer = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_show_list_notification);
+		if (showTimer) {
+			long nextTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, mNotificationId, -1);
+			if (nextTime >= 0) {
+				Date date = new Date(nextTime);
+				cancelNotificationPreference.setSummary(DateUtil.format(date));
+			}
+		}
 	}
 
 	/**
