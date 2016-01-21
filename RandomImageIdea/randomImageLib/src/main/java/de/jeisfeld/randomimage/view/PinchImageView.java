@@ -185,8 +185,7 @@ public class PinchImageView extends ImageView {
 	 */
 	public final void setImage(final String pathName, final Activity activity, final int cacheIndex) {
 		// retrieve bitmap from cache if possible
-		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(),
-				cacheIndex);
+		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(), cacheIndex);
 		if (!pathName.equals(retainFragment.getPathName())) {
 			retainFragment.setBitmap(null);
 			retainFragment.setPathName(pathName);
@@ -694,7 +693,7 @@ public class PinchImageView extends ImageView {
 			RetainFragment fragment = (RetainFragment) fm.findFragmentByTag(TAG + index);
 			if (fragment == null) {
 				fragment = new RetainFragment();
-				fm.beginTransaction().add(fragment, TAG + index).commit();
+				fm.beginTransaction().add(fragment, TAG + index).commitAllowingStateLoss();
 			}
 			return fragment;
 		}

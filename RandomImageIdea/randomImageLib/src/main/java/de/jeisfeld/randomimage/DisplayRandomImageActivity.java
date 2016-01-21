@@ -341,55 +341,55 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Display a random image.
 	 */
 	private void displayRandomImage() {
-		mRandomFileProvider.executeWhenReady(new Runnable() {
-
-			@Override
-			public void run() {
-				setContentView(R.layout.text_view_loading);
-			}
-		}, new Runnable() {
-			@Override
-			public void run() {
-				int tempCacheIndex = 0;
-				mPreviousFileName = mCurrentFileName;
-				if (mDoPreload) {
-					mPreviousImageView = mCurrentImageView;
-					tempCacheIndex = mPreviousCacheIndex;
-					mPreviousCacheIndex = mCurrentCacheIndex;
-				}
-				if (mNextImageView == null) {
-					mCurrentFileName = mRandomFileProvider.getRandomFileName();
-					if (mDoPreload) {
-						mCurrentCacheIndex = tempCacheIndex;
+		mRandomFileProvider.executeWhenReady(
+				new Runnable() {
+					@Override
+					public void run() {
+						setContentView(R.layout.text_view_loading);
 					}
-					if (mCurrentFileName == null) {
-						// Handle the case where the provider does not return any image.
-						if (mListName != null) {
-							ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName);
+				},
+				new Runnable() {
+					@Override
+					public void run() {
+						int tempCacheIndex = 0;
+						mPreviousFileName = mCurrentFileName;
+						if (mDoPreload) {
+							mPreviousImageView = mCurrentImageView;
+							tempCacheIndex = mPreviousCacheIndex;
+							mPreviousCacheIndex = mCurrentCacheIndex;
 						}
-						finish();
-						return;
+						if (mNextImageView == null) {
+							mCurrentFileName = mRandomFileProvider.getRandomFileName();
+							if (mDoPreload) {
+								mCurrentCacheIndex = tempCacheIndex;
+							}
+							if (mCurrentFileName == null) {
+								// Handle the case where the provider does not return any image.
+								if (mListName != null) {
+									ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName);
+								}
+								finish();
+								return;
+							}
+							mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
+						}
+						else {
+							mCurrentFileName = mNextFileName;
+							mCurrentImageView = mNextImageView;
+							if (mDoPreload) {
+								mCurrentCacheIndex = mNextCacheIndex;
+								mNextCacheIndex = tempCacheIndex;
+							}
+						}
+						setContentView(mCurrentImageView);
+
+						if (mDoPreload) {
+							mNextFileName = mRandomFileProvider.getRandomFileName();
+							mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
+						}
+
 					}
-					mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
-				}
-				else {
-					mCurrentFileName = mNextFileName;
-					mCurrentImageView = mNextImageView;
-					if (mDoPreload) {
-						mCurrentCacheIndex = mNextCacheIndex;
-						mNextCacheIndex = tempCacheIndex;
-					}
-				}
-
-				setContentView(mCurrentImageView);
-
-				if (mDoPreload) {
-					mNextFileName = mRandomFileProvider.getRandomFileName();
-					mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
-				}
-
-			}
-		}, null);
+				}, null);
 
 	}
 
