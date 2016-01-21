@@ -235,7 +235,7 @@ public final class NotificationUtil {
 
 		String notificationTag = Integer.toString(notificationId);
 		NotificationType notificationType = NotificationType.RANDOM_IMAGE;
-		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null, notificationId);
+		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId);
 		int uniqueId = getUniqueId(notificationTag, notificationType);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		notificationBuilder.setContentIntent(pendingIntent);

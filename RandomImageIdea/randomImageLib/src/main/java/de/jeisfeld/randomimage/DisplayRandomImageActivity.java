@@ -1,6 +1,8 @@
 package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import android.app.Activity;
@@ -65,6 +67,11 @@ public class DisplayRandomImageActivity extends Activity {
 	 * The resource key for the flag if the parent activity should be refreshed.
 	 */
 	private static final String STRING_RESULT_REFRESH_PARENT = "de.jeisfeld.randomimage.REFRESH_PARENT";
+
+	/**
+	 * Map storing the activities triggered by notifications.
+	 */
+	private static final Map<Integer, DisplayRandomImageActivity> NOTIFICATION_MAP = new HashMap<>();
 
 	/**
 	 * The name of the used image list.
@@ -178,8 +185,12 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 		intent.putExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, allowDisplayMultiple);
 
-		if (allowDisplayMultiple) {
+		if (notificationId != null) {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+			finishActivity(context, notificationId);
+		}
+		else if (allowDisplayMultiple) {
+			intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		}
 		else {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -193,6 +204,20 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 
 		return intent;
+	}
+
+	/**
+	 * Finish the activity started from a certain notification.
+	 *
+	 * @param context        The context.
+	 * @param notificationId The notificationId that has triggered the activity.
+	 */
+	public static final void finishActivity(final Context context, final int notificationId) {
+		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
+		if (activity != null) {
+			activity.finish();
+			NOTIFICATION_MAP.remove(notificationId);
+		}
 	}
 
 	/**
@@ -244,6 +269,8 @@ public class DisplayRandomImageActivity extends Activity {
 				mNotificationId = null;
 			}
 			else {
+				NOTIFICATION_MAP.put(mNotificationId, this);
+
 				mScaleType = ScaleType.fromResourceScaleType(
 						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
 
@@ -255,6 +282,7 @@ public class DisplayRandomImageActivity extends Activity {
 			mScaleType = ScaleType.fromResourceScaleType(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 		}
+
 		if (mScaleType == ScaleType.TURN_FIT || mScaleType == ScaleType.TURN_STRETCH) {
 			int orientation = getResources().getConfiguration().orientation;
 			setRequestedOrientation(orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -320,6 +348,14 @@ public class DisplayRandomImageActivity extends Activity {
 		}
 
 		test();
+	}
+
+	@Override
+	protected final void onDestroy() {
+		super.onDestroy();
+		if (mNotificationId != null) {
+			NOTIFICATION_MAP.remove(mNotificationId);
+		}
 	}
 
 	/**
