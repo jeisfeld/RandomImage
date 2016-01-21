@@ -24,6 +24,15 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class NotificationAlarmReceiver extends BroadcastReceiver {
 	/**
+	 * The resource key for the notification id.
+	 */
+	private static final String STRING_NOTIFICATION_ID = "de.eisfeldj.randomimage.NOTIFICATION_ID";
+	/**
+	 * The resource key for the flag indicating a cancellation.
+	 */
+	private static final String STRING_IS_CANCELLATION = "de.eisfeldj.randomimage.IS_CANCELLATION";
+
+	/**
 	 * The maximum number of days for a notification.
 	 */
 	private static final double MAX_ALARM_DAYS = 730;
@@ -34,15 +43,25 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
-		int notificationId = intent.getIntExtra(NotificationConfigurationFragment.STRING_NOTIFICATION_ID, -1);
+		int notificationId = intent.getIntExtra(STRING_NOTIFICATION_ID, -1);
 		if (notificationId != -1) {
-			NotificationUtil.displayRandomImageNotification(context, notificationId);
+			boolean isCancellation = intent.getBooleanExtra(STRING_IS_CANCELLATION, false);
+			if (isCancellation) {
+				// Cancel the existing and trigger a new notification.
+				NotificationUtil.cancelRandomImageNotification(context, notificationId);
+				setAlarm(context, notificationId, false);
+			}
+			else {
+				// Display the notification.
+				cancelAlarm(context, notificationId, true);
+				NotificationUtil.displayRandomImageNotification(context, notificationId);
+			}
 		}
 	}
 
 	/**
-	 * Sets a repeating alarm that runs at the given interval. When the alarm fires, the app broadcasts an
-	 * Intent to this NotificationAlarmReceiver.
+	 * Sets an alarm that runs at the given interval in order to trigger a notification. When the alarm fires, the app broadcasts an
+	 * Intent to this NotificationAlarmReceiver. The alarm policies are determined by the notification properties.
 	 *
 	 * @param context          The context in which the alarm is set.
 	 * @param notificationId   the notification id.
@@ -53,6 +72,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		if (frequency == 0) {
 			return;
 		}
+
 		int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, notificationId, -1);
 		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, notificationId, -1);
 
@@ -69,7 +89,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		PendingIntent alarmIntent = createAlarmIntent(context, notificationId);
+		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, false);
 		Random random = new Random();
 
 		if (useLastAlarmTime) {
@@ -174,27 +194,48 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * Cancels the alarm.
+	 * Sets an alarm that runs at the given interval in order to cancel a notification. When the alarm fires, the app broadcasts an
+	 * Intent to this NotificationAlarmReceiver. The alarm policies are determined by the notification properties.
 	 *
 	 * @param context        The context in which the alarm is set.
 	 * @param notificationId the notification id.
 	 */
-	public static final void cancelAlarm(final Context context, final int notificationId) {
-		PendingIntent alarmIntent = createAlarmIntent(context, notificationId);
+	public static final void setCancellationAlarm(final Context context, final int notificationId) {
+		int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
+		if (duration == 0) {
+			return;
+		}
 
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true);
+		long alarmTimeMillis = System.currentTimeMillis() + 60000 * duration; // MAGIC_NUMBER - duration is in minutes.
 
-		alarmMgr.cancel(alarmIntent);
+		alarmMgr.set(AlarmManager.RTC, alarmTimeMillis, alarmIntent);
+	}
 
-		List<Integer> allNotificationIds = NotificationSettingsActivity.getNotificationIds();
-		if ((allNotificationIds.size() == 0 || allNotificationIds.size() == 1 && allNotificationIds.get(0) == notificationId)
-				&& GenericWidget.getAllWidgetIds().size() == 0) {
-			ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
-			PackageManager pm = context.getPackageManager();
+	/**
+	 * Cancels the alarms for a notification.
+	 *
+	 * @param context             The context in which the alarm is set.
+	 * @param notificationId      the notification id.
+	 * @param isCancellationAlarm flag indicating if the regular alarm or the cancellation alarm shoud be cancelled.
+	 */
+	public static final void cancelAlarm(final Context context, final int notificationId, final boolean isCancellationAlarm) {
+		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-			pm.setComponentEnabledSetting(receiver,
-					PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-					PackageManager.DONT_KILL_APP);
+		alarmMgr.cancel(createAlarmIntent(context, notificationId, isCancellationAlarm));
+
+		if (!isCancellationAlarm) {
+			List<Integer> allNotificationIds = NotificationSettingsActivity.getNotificationIds();
+			if ((allNotificationIds.size() == 0 || allNotificationIds.size() == 1 && allNotificationIds.get(0) == notificationId)
+					&& GenericWidget.getAllWidgetIds().size() == 0) {
+				ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
+				PackageManager pm = context.getPackageManager();
+
+				pm.setComponentEnabledSetting(receiver,
+						PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+						PackageManager.DONT_KILL_APP);
+			}
 		}
 	}
 
@@ -203,12 +244,17 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 *
 	 * @param context        The context in which the alarm is set.
 	 * @param notificationId the notification id.
+	 * @param isCancellation flag indicating if the alarm should cancel the notification.
 	 * @return The PendingIntent.
 	 */
-	private static PendingIntent createAlarmIntent(final Context context, final int notificationId) {
+	private static PendingIntent createAlarmIntent(final Context context, final int notificationId, final boolean isCancellation) {
 		Intent intent = new Intent(context, NotificationAlarmReceiver.class);
-		intent.putExtra(NotificationConfigurationFragment.STRING_NOTIFICATION_ID, notificationId);
-		return PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		intent.putExtra(STRING_NOTIFICATION_ID, notificationId);
+		if (isCancellation) {
+			intent.putExtra(STRING_IS_CANCELLATION, true);
+		}
+		int uniqueId = isCancellation ? -notificationId : notificationId;
+		return PendingIntent.getBroadcast(context, uniqueId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	}
 
 	/**

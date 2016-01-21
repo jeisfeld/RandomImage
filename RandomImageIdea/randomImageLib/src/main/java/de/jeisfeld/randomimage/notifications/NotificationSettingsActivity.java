@@ -251,6 +251,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_duration, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_style, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_led_color, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_vibration, notificationId);
@@ -260,7 +261,8 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_flip_behavior, notificationId);
 		NotificationSettingsActivity.removeNotificationId(notificationId);
 
-		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId);
+		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId, false);
+		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId, true);
 		NotificationUtil.cancelRandomImageNotification(Application.getAppContext(), notificationId);
 	}
 

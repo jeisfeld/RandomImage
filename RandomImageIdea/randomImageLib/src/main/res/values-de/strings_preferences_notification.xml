@@ -14,6 +14,7 @@
     <string name="pref_title_notification_timer_variance">Variabilität der Benachrichtigung</string>
     <string name="pref_title_notification_daily_start_time">Startzeit für Benachrichtigungen</string>
     <string name="pref_title_notification_daily_end_time">Endzeit für Benachrichtigungen</string>
+    <string name="pref_title_notification_duration">Anzeigedauer</string>
     <string name="pref_title_notification_style">Benachrichtigungs-Stil</string>
     <string name="pref_title_notification_led_color">LED-Farbe</string>
     <string name="pref_title_notification_vibration">Vibration</string>
@@ -59,6 +60,14 @@
         <item>0:00</item>
         <item>1:00</item>
         <item>2:00</item>
+    </string-array>
+    <string-array name="notification_duration_names">
+        <item>Unbefristet</item>
+        <item>Eine Minute</item>
+        <item>Fünf Minuten</item>
+        <item>Eine Viertelstunde</item>
+        <item>Eine Stunde</item>
+        <item>Ein Tag</item>
     </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>

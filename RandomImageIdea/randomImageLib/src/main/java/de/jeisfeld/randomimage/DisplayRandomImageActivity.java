@@ -159,6 +159,11 @@ public class DisplayRandomImageActivity extends Activity {
 	private ScaleType mScaleType = ScaleType.FIT;
 
 	/**
+	 * Flag helping to detect if a destroy is final or only temporary.
+	 */
+	private boolean mSavingInstanceState = false;
+
+	/**
 	 * The imageList used by the activity.
 	 */
 	private RandomFileProvider mRandomFileProvider;
@@ -240,6 +245,7 @@ public class DisplayRandomImageActivity extends Activity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mSavingInstanceState = false;
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -270,12 +276,14 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 			else {
 				NOTIFICATION_MAP.put(mNotificationId, this);
-
 				mScaleType = ScaleType.fromResourceScaleType(
 						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
 
-				// Ensure that notification alarm is set again in case of click on notification
-				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
+				if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1)
+						!= NotificationUtil.NOTIFICATION_STYLE_START_ACTIVITY) {
+					// Stop auto-cancellation if the notification has been actively clicked
+					NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
+				}
 			}
 		}
 		else {
@@ -355,6 +363,17 @@ public class DisplayRandomImageActivity extends Activity {
 		super.onDestroy();
 		if (mNotificationId != null) {
 			NOTIFICATION_MAP.remove(mNotificationId);
+			if (!mSavingInstanceState) {
+				NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
+				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
+			}
+		}
+	}
+
+	@Override
+	protected final void onUserLeaveHint() {
+		if (mNotificationId != null) {
+			finish();
 		}
 	}
 
@@ -528,6 +547,7 @@ public class DisplayRandomImageActivity extends Activity {
 	@Override
 	protected final void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
+		mSavingInstanceState = true;
 		if (mCurrentFileName != null) {
 			outState.putString("currentFileName", mCurrentFileName);
 			outState.putString("listName", mListName);

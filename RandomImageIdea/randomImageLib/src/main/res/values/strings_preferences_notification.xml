@@ -14,6 +14,7 @@
     <string name="key_notification_timer_variance" translatable="false">notification_timer_variance</string>
     <string name="key_notification_daily_start_time" translatable="false">notification_daily_start_time</string>
     <string name="key_notification_daily_end_time" translatable="false">notification_daily_end_time</string>
+    <string name="key_notification_duration" translatable="false">notification_duration</string>
     <string name="key_notification_style" translatable="false">notification_style</string>
     <string name="key_notification_led_color" translatable="false">notification_led_color</string>
     <string name="key_notification_vibration" translatable="false">notification_vibration</string>
@@ -40,6 +41,8 @@
     <string name="pref_default_notification_daily_start_time" translatable="false">0</string>
     <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
     <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
+    <string name="pref_title_notification_duration">Duration</string>
+    <string name="pref_default_notification_duration" translatable="false">0</string>
     <string name="pref_title_notification_style">Notification Style</string>
     <string name="pref_default_notification_style" translatable="false">0</string>
     <string name="pref_title_notification_led_color">LED color</string>
@@ -125,6 +128,22 @@
         <item>24</item>
         <item>25</item>
         <item>26</item>
+    </string-array>
+    <string-array name="notification_duration_names">
+        <item>Unlimited</item>
+        <item>One minute</item>
+        <item>Five minutes</item>
+        <item>Fifteen minutes</item>
+        <item>One hour</item>
+        <item>One day</item>
+    </string-array>
+    <string-array name="notification_duration_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>5</item>
+        <item>15</item>
+        <item>60</item>
+        <item>1440</item>
     </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>

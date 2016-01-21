@@ -90,6 +90,11 @@ public final class NotificationUtil {
 	 */
 	private static final int NOTIFICATION_LARGE_ICON_WIDTH;
 
+	/**
+	 * The notification style that triggers DisplayRandomImageActivity instead of a notification.
+	 */
+	public static final int NOTIFICATION_STYLE_START_ACTIVITY = 2;
+
 	static {
 		restoreMountingIssues();
 
@@ -184,13 +189,14 @@ public final class NotificationUtil {
 		}
 		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
 		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
-		if (notificationStyle == 2) {
+		if (notificationStyle == NOTIFICATION_STYLE_START_ACTIVITY) {
 			// open activity instead of notification
 			context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId));
 			if (vibrate) {
 				Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 				vibrator.vibrate(VIBRATION_PATTERN, -1);
 			}
+			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
 
 			return;
 		}
@@ -252,8 +258,9 @@ public final class NotificationUtil {
 		}
 
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
 		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
+
+		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
 	}
 
 	/**
@@ -300,7 +307,9 @@ public final class NotificationUtil {
 	 * @param notificationId the id of the configured notification.
 	 */
 	public static void cancelRandomImageNotification(final Context context, final int notificationId) {
+		// Cancel both the normal notification and the triggered activity.
 		cancelNotification(context, Integer.toString(notificationId), NotificationType.RANDOM_IMAGE);
+		DisplayRandomImageActivity.finishActivity(context, notificationId);
 	}
 
 	/**

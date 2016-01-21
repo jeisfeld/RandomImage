@@ -23,6 +23,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 		}
 		else if (notificationType == NotificationType.RANDOM_IMAGE) {
 			int notificationId = Integer.parseInt(notificationTag);
+			NotificationAlarmReceiver.cancelAlarm(context, notificationId, true);
 			NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 		}
 	}

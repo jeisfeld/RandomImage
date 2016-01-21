@@ -39,6 +39,13 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_daily_end_time"/>
+        <ListPreference
+            android:entries="@array/notification_duration_names"
+            android:entryValues="@array/notification_duration_values"
+            android:key="@string/key_notification_duration"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_notification_duration"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_group_title_appearance">
         <ListPreference
