@@ -70,6 +70,13 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_detail_scale_type"/>
+        <ListPreference
+            android:entries="@array/notification_detail_flip_behavior_names"
+            android:entryValues="@array/notification_detail_flip_behavior_values"
+            android:key="@string/key_notification_detail_flip_behavior"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_notification_detail_flip_behavior"/>
         <Preference
             android:key="@string/key_dummy_cancel_notification"
             android:title="@string/pref_title_cancel_notification"/>

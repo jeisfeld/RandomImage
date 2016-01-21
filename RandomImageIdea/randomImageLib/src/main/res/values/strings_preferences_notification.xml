@@ -19,6 +19,7 @@
     <string name="key_notification_vibration" translatable="false">notification_vibration</string>
     <string name="key_notification_colored_icon" translatable="false">notification_colored_icon</string>
     <string name="key_notification_detail_scale_type" translatable="false">notification_detail_scale_type</string>
+    <string name="key_notification_detail_flip_behavior" translatable="false">notification_detail_flip_behavior</string>
     <string name="key_notification_current_alarm_timestamp" translatable="false">notification_current_alarm_timestamp</string>
 
     <!-- Strings related to Notification settings -->
@@ -46,6 +47,8 @@
     <string name="pref_title_notification_colored_icon">Colored icon</string>
     <string name="pref_title_notification_detail_scale_type">Scaling when showing details</string>
     <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
+    <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
+    <string name="pref_default_notification_detail_flip_behavior" translatable="false">0</string>
     <string name="pref_title_cancel_notification">Cancel Notification</string>
 
     <!-- String arrays -->
@@ -150,6 +153,16 @@
         <item>5</item>
         <item>6</item>
         <item>7</item>
+    </string-array>
+    <string-array name="notification_detail_flip_behavior_names">
+        <item>Change image (Standard)</item>
+        <item>No change</item>
+        <item>Close screen</item>
+    </string-array>
+    <string-array name="notification_detail_flip_behavior_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 
 </resources>

@@ -186,7 +186,7 @@ public final class NotificationUtil {
 		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
 		if (notificationStyle == 2) {
 			// open activity instead of notification
-			context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, false, null, notificationId));
+			context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId));
 			if (vibrate) {
 				Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 				vibrator.vibrate(VIBRATION_PATTERN, -1);

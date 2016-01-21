@@ -49,9 +49,9 @@ public class DisplayRandomImageActivity extends Activity {
 	 */
 	public static final String STRING_EXTRA_FILENAME = "de.jeisfeld.randomimage.FILENAME";
 	/**
-	 * The resource key for the flat indicating if it should be prevented to trigger the ConfigureImageListActivity.
+	 * The resource key for the flat indicating if the activity can be opened on top of existing activities.
 	 */
-	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
+	private static final String STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE = "de.jeisfeld.randomimage.ALLOW_DISPLAY_MULTIPLE";
 	/**
 	 * The resource key for the id of the widget triggering this activity.
 	 */
@@ -159,16 +159,16 @@ public class DisplayRandomImageActivity extends Activity {
 	/**
 	 * Static helper method to create an intent for this activity.
 	 *
-	 * @param context           The context in which this activity is started.
-	 * @param listName          the image list which should be taken.
-	 * @param fileName          the image file name which should be displayed first.
-	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
-	 * @param appWidgetId       the id of the widget triggering this activity.
-	 * @param notificationId    the id of the notification triggering this activity.
+	 * @param context              The context in which this activity is started.
+	 * @param listName             the image list which should be taken.
+	 * @param fileName             the image file name which should be displayed first.
+	 * @param allowDisplayMultiple flag indicating if the activity can be opened on top of existing activities.
+	 * @param appWidgetId          the id of the widget triggering this activity.
+	 * @param notificationId       the id of the notification triggering this activity.
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName,
-											final boolean preventDisplayAll, final Integer appWidgetId, final Integer notificationId) {
+											final boolean allowDisplayMultiple, final Integer appWidgetId, final Integer notificationId) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -176,10 +176,10 @@ public class DisplayRandomImageActivity extends Activity {
 		if (fileName != null) {
 			intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		}
-		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, preventDisplayAll);
+		intent.putExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, allowDisplayMultiple);
 
-		if (preventDisplayAll) {
-			intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		if (allowDisplayMultiple) {
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		}
 		else {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -208,15 +208,13 @@ public class DisplayRandomImageActivity extends Activity {
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
-		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, true);
+		intent.putExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, true);
 		context.startActivity(intent);
 	}
 
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		createGestureDetector();
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -236,7 +234,7 @@ public class DisplayRandomImageActivity extends Activity {
 			mCurrentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		}
 
-		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
+		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false) || mListName == null;
 
 		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -262,6 +260,8 @@ public class DisplayRandomImageActivity extends Activity {
 			setRequestedOrientation(orientation == Configuration.ORIENTATION_LANDSCAPE
 					? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
+
+		createGestureDetector();
 
 		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
@@ -397,6 +397,14 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Create the gesture detector handling flinging and double tapping.
 	 */
 	private void createGestureDetector() {
+		final int flingType;
+		if (mNotificationId == null) {
+			flingType = 0;
+		}
+		else {
+			flingType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, 0);
+		}
+
 		mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 			/**
 			 * The speed which is accepted as fling.
@@ -417,12 +425,19 @@ public class DisplayRandomImageActivity extends Activity {
 			}
 
 			@Override
-			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
-								   final float velocityY) {
+			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
+				if (flingType == 1) {
+					return false;
+				}
+
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
 					Runnable runnable = new Runnable() {
 						@Override
 						public void run() {
+							if (flingType == 2) {
+								finish();
+								return;
+							}
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null) {
 								String tempFileName = mCurrentFileName;
