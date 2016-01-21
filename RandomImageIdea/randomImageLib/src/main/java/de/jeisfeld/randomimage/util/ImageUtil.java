@@ -441,9 +441,11 @@ public final class ImageUtil {
 		final List<String> allImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
 		final ArrayList<String> filteredImageFolders = new ArrayList<>();
 		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+		boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
+				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
 
 		for (String path : allImageFolders) {
-			if (hiddenFoldersPattern == null || hiddenFoldersPattern.length() == 0 || !path.matches(hiddenFoldersPattern)) {
+			if (!useRegexp || !path.matches(hiddenFoldersPattern)) {
 				filteredImageFolders.add(path);
 			}
 		}

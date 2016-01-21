@@ -267,6 +267,11 @@ public final class NotificationUtil {
 	 */
 	public static void notifyUpdatedList(final Context context, final String listName, final boolean isRemove,
 										 final List<String> nestedLists, final List<String> folders, final List<String> files) {
+		// Do not show notification if globally disabled.
+		boolean showNotification = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_show_list_notification);
+		if (!showNotification) {
+			return;
+		}
 
 		ListUpdateInfo listUpdateInfo = mListUpdateInfo.get(listName);
 		if (listUpdateInfo == null) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.appwidget.AppWidgetManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -190,7 +191,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 			}
-			else {
+			else if (!(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(value);

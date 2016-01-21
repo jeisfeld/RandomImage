@@ -2,9 +2,11 @@ package de.jeisfeld.randomimage;
 
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -70,6 +72,8 @@ public class SettingsFragment extends PreferenceFragment {
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
+		bindPreferenceSummaryToValue(R.string.key_pref_show_list_notification);
+		bindPreferenceSummaryToValue(R.string.key_pref_use_regex_filter);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_folders_pattern);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_lists_pattern);
 
@@ -79,6 +83,7 @@ public class SettingsFragment extends PreferenceFragment {
 		addDonationListener();
 		addDeveloperContactListener();
 		addProAppButtonListener();
+		updateRegexpPreferences(getActivity());
 
 		mPrefCategoryPremium = (PreferenceCategory) findPreference(getString(R.string.key_pref_category_premium));
 
@@ -194,8 +199,10 @@ public class SettingsFragment extends PreferenceFragment {
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		// Trigger the listener immediately with the preference's current value.
-		mOnPreferenceChangeListener.setSummary(preference, PreferenceManager
-				.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
+		if (!(preference instanceof CheckBoxPreference)) {
+			mOnPreferenceChangeListener.setSummary(preference, PreferenceManager
+					.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
+		}
 	}
 
 	/**
@@ -266,6 +273,18 @@ public class SettingsFragment extends PreferenceFragment {
 		}
 	};
 
+
+	/**
+	 * Update the enabling of the regexp preferences.
+	 *
+	 * @param context The context.
+	 */
+	private void updateRegexpPreferences(final Context context) {
+		boolean booleanValue = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter);
+		findPreference(context.getString(R.string.key_pref_hidden_folders_pattern)).setEnabled(booleanValue);
+		findPreference(context.getString(R.string.key_pref_hidden_lists_pattern)).setEnabled(booleanValue);
+	}
+
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
@@ -285,9 +304,14 @@ public class SettingsFragment extends PreferenceFragment {
 					System.exit(0);
 				}
 			}
-
+			// show/hide regex preferences in dependence of main setting
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_use_regex_filter))) {
+				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_use_regex_filter, (Boolean) value);
+				updateRegexpPreferences(preference.getContext());
+				ImageRegistry.parseConfigFiles();
+			}
 			// In case of switch of hidden lists pattern, refresh
-			if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
 				if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(value)) {
 					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
 					ImageRegistry.parseConfigFiles();
@@ -315,7 +339,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 			}
-			else {
+			else if (!(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(value);

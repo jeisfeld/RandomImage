@@ -146,9 +146,11 @@ public final class ImageRegistry {
 			return nameList;
 		case HIDE_BY_REGEXP:
 			String hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
+			boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
+					&& hiddenListsPattern != null && hiddenListsPattern.length() > 0;
 			ArrayList<String> filteredList = new ArrayList<>();
 			for (String name : nameList) {
-				if (hiddenListsPattern == null || hiddenListsPattern.length() == 0 || !name.matches(hiddenListsPattern)) {
+				if (!useRegexp || !name.matches(hiddenListsPattern)) {
 					filteredList.add(name);
 				}
 			}

@@ -6,6 +6,8 @@
     <string name="key_pref_language" translatable="false">pref_language</string>
     <string name="key_pref_folder_selection_mechanism" translatable="false">pref_folder_selection_mechanism</string>
     <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
+    <string name="key_pref_show_list_notification" translatable="false">pref_show_list_notification</string>
+    <string name="key_pref_use_regex_filter" translatable="false">pref_use_regex_filter</string>
     <string name="key_pref_hidden_lists_pattern" translatable="false">pref_hidden_lists_pattern</string>
     <string name="key_pref_hidden_folders_pattern" translatable="false">pref_hidden_folders_pattern</string>
 
@@ -56,6 +58,8 @@
     <string name="pref_category_other">Other settings</string>
     <string name="pref_title_language">Language</string>
     <string name="pref_title_folder_selection_mechanism">Folder selection via &#8230;</string>
+    <string name="pref_title_show_list_notification">Notify on list change</string>
+    <string name="pref_title_use_regex_filter">Use regexp filter</string>
     <string name="pref_title_hidden_lists_pattern">Hide lists (Regexp)</string>
     <string name="pref_title_hidden_folders_pattern">Hide folders (Regexp)</string>
     <string name="pref_default_language" translatable="false">0</string>

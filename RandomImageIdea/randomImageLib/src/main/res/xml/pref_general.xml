@@ -41,12 +41,20 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_language"/>
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_pref_show_list_notification"
+            android:title="@string/pref_title_show_list_notification"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_pref_use_regex_filter"
+            android:title="@string/pref_title_use_regex_filter"/>
+
         <EditTextPreference
             android:defaultValue=""
             android:inputType="text"
             android:key="@string/key_pref_hidden_folders_pattern"
             android:title="@string/pref_title_hidden_folders_pattern"/>
-
         <EditTextPreference
             android:defaultValue=""
             android:inputType="text"

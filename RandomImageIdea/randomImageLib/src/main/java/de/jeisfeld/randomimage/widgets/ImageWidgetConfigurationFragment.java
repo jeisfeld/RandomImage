@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 
@@ -61,7 +62,7 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 
 					preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 				}
-				else {
+				else if (!(preference instanceof CheckBoxPreference)) {
 					// For all other preferences, set the summary to the value's
 					// simple string representation.
 					preference.setSummary(value);
