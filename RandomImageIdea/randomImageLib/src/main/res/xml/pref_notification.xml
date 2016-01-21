@@ -63,6 +63,9 @@
             android:title="@string/pref_title_notification_colored_icon"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_group_title_other">
+        <EditTextPreference
+            android:key="@string/key_notification_display_name"
+            android:title="@string/pref_title_notification_display_name"/>
         <ListPreference
             android:entries="@array/detail_scale_type_names"
             android:entryValues="@array/detail_scale_type_values"

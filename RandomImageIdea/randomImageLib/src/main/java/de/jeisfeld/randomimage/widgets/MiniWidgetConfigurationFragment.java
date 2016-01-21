@@ -46,6 +46,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		addPreferencesFromResource(R.xml.pref_widget_mini);
 
 		configureListNameProperty();
+		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		addEditListListener();
 	}
@@ -109,6 +110,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	private void setNonIndexedValues() {
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_list_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
+				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
 	}
@@ -166,6 +169,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId, stringValue);
 				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
 				MiniWidget.configure(mAppWidgetId, stringValue);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_display_name))) {
+				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId, stringValue);
+				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,

@@ -107,6 +107,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
 
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_display_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
 		}
 	}

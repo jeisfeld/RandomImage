@@ -115,8 +115,13 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 			fragmentString = "de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationFragment";
 		}
 
+		String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, appWidgetId);
+		if (title == null || title.length() == 0) {
+			title = getString(widgetNameResourceId) + " " + (index + 1);
+		}
+
 		Header header = new Header();
-		header.title = getString(widgetNameResourceId) + " " + (index + 1);
+		header.title = title;
 		header.summary = getHeaderSummary(appWidgetId);
 		header.fragment = fragmentString;
 		header.id = appWidgetId;

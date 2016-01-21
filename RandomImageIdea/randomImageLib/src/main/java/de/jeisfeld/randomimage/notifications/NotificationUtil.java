@@ -209,6 +209,10 @@ public final class NotificationUtil {
 		}
 
 		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+		String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
+		if (title == null || title.length() == 0) {
+			title = listName;
+		}
 
 		if (notificationStyle == 1) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
@@ -219,7 +223,14 @@ public final class NotificationUtil {
 		else {
 			Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName, NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
 
-			notificationBuilder.setContentTitle(listName).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
+			notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			Notification publicNotification = new Builder(context)
+					.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+					.setShowWhen(false).setContentTitle(title).build();
+			notificationBuilder.setPublicVersion(publicNotification);
 		}
 
 		String notificationTag = Integer.toString(notificationId);

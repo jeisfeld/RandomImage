@@ -18,6 +18,7 @@
     <string name="pref_title_notification_led_color">LED-Farbe</string>
     <string name="pref_title_notification_vibration">Vibration</string>
     <string name="pref_title_notification_colored_icon">Farbiges Symbol</string>
+    <string name="pref_title_notification_display_name">Name der Benachrichtigung</string>
     <string name="pref_title_notification_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_notification_detail_flip_behavior">Verhalten beim Schnippen</string>
     <string name="pref_title_cancel_notification">Benachrichtigung abbrechen</string>

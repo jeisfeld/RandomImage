@@ -158,7 +158,8 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 			header.title = getString(R.string.pref_heading_create_new_notifcation);
 		}
 		else {
-			header.title = getString(R.string.pref_heading_notifcation) + " " + (index + 1);
+			String notificationName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
+			header.title = notificationName == null ? getString(R.string.pref_heading_notifcation) + " " + (index + 1) : notificationName;
 			header.summary = getHeaderSummary(notificationId);
 		}
 		return header;
@@ -254,6 +255,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_led_color, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_vibration, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_colored_icon, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_display_name, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_flip_behavior, notificationId);
 		NotificationSettingsActivity.removeNotificationId(notificationId);

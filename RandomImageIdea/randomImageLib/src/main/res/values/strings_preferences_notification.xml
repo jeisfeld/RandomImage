@@ -18,6 +18,7 @@
     <string name="key_notification_led_color" translatable="false">notification_led_color</string>
     <string name="key_notification_vibration" translatable="false">notification_vibration</string>
     <string name="key_notification_colored_icon" translatable="false">notification_colored_icon</string>
+    <string name="key_notification_display_name" translatable="false">notification_display_name</string>
     <string name="key_notification_detail_scale_type" translatable="false">notification_detail_scale_type</string>
     <string name="key_notification_detail_flip_behavior" translatable="false">notification_detail_flip_behavior</string>
     <string name="key_notification_current_alarm_timestamp" translatable="false">notification_current_alarm_timestamp</string>
@@ -45,6 +46,7 @@
     <string name="pref_default_notification_led_color" translatable="false">0</string>
     <string name="pref_title_notification_vibration">Vibration</string>
     <string name="pref_title_notification_colored_icon">Colored icon</string>
+    <string name="pref_title_notification_display_name">Notification name</string>
     <string name="pref_title_notification_detail_scale_type">Scaling when showing details</string>
     <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>

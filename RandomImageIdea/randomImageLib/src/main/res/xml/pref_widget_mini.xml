@@ -8,6 +8,9 @@
     <Preference
         android:key="@string/key_pref_edit_list"
         android:title="@string/menu_edit_list"/>
+    <EditTextPreference
+        android:key="@string/key_widget_display_name"
+        android:title="@string/pref_title_widget_display_name"/>
     <ListPreference
         android:entries="@array/detail_scale_type_names"
         android:entryValues="@array/detail_scale_type_values"

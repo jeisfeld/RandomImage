@@ -69,6 +69,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_background_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_color);
+		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		addEditListListener();
 	}
@@ -167,6 +168,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1)));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_color,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
+				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
 	}

@@ -43,6 +43,10 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, getAppWidgetId(), Integer.parseInt(stringValue));
 					ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
 				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_display_name))) {
+					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_display_name, getAppWidgetId(), stringValue);
+					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
+				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, getAppWidgetId(),
 							Integer.parseInt(stringValue));
