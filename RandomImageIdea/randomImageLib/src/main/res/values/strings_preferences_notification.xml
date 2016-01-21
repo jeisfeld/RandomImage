@@ -14,6 +14,9 @@
     <string name="key_notification_timer_variance" translatable="false">notification_timer_variance</string>
     <string name="key_notification_daily_start_time" translatable="false">notification_daily_start_time</string>
     <string name="key_notification_daily_end_time" translatable="false">notification_daily_end_time</string>
+    <string name="key_notification_led_color" translatable="false">notification_led_color</string>
+    <string name="key_notification_vibration" translatable="false">notification_vibration</string>
+    <string name="key_notification_colored_icon" translatable="false">notification_colored_icon</string>
     <string name="key_notification_detail_scale_type" translatable="false">notification_detail_scale_type</string>
     <string name="key_notification_current_alarm_timestamp" translatable="false">notification_current_alarm_timestamp</string>
 
@@ -21,21 +24,30 @@
 
     <string name="pref_heading_notifcation">Notification</string>
     <string name="pref_heading_create_new_notifcation">Create new notification</string>
+    <string name="pref_group_title_image_list">Image List</string>
+    <string name="pref_group_title_timing">Notification Timing</string>
+    <string name="pref_group_title_appearance">Notification Appearance</string>
+    <string name="pref_group_title_other">Other Settings</string>
     <string name="pref_title_notification_list_name">List Name</string>
     <string name="pref_title_notification_frequency">Notification Frequency</string>
-    <string name="pref_default_notification_frequency" translatable="false">0</string>
+    <string name="pref_default_notification_frequency" translatable="false">1</string>
     <string name="pref_title_notification_timer_variance">Notification variability</string>
     <string name="pref_default_notification_timer_variance" translatable="false">0</string>
     <string name="pref_title_notification_daily_start_time">Start hour for notifications</string>
     <string name="pref_default_notification_daily_start_time" translatable="false">0</string>
     <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
     <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
+    <string name="pref_title_notification_led_color">LED color</string>
+    <string name="pref_default_notification_led_color" translatable="false">0</string>
+    <string name="pref_title_notification_vibration">Vibration</string>
+    <string name="pref_title_notification_colored_icon">Colored icon</string>
     <string name="pref_title_notification_detail_scale_type">Scaling when showing details</string>
     <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
     <string name="pref_title_cancel_notification">Cancel Notification</string>
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
+        <item>hourly</item>
         <item>every two hours</item>
         <item>four times a day</item>
         <item>twice a day</item>
@@ -49,6 +61,7 @@
         <item>after 6 sec (for testing)</item>
     </string-array>
     <string-array name="notification_frequency_values" translatable="false">
+        <item>-24</item>
         <item>-12</item>
         <item>-4</item>
         <item>-2</item>
@@ -104,6 +117,26 @@
         <item>24</item>
         <item>25</item>
         <item>26</item>
+    </string-array>
+    <string-array name="notification_led_color_names">
+        <item>Off</item>
+        <item>Faint</item>
+        <item>Red</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Red-Green</item>
+        <item>Green-Blue</item>
+        <item>Blue-Red</item>
+    </string-array>
+    <string-array name="notification_led_color_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
     </string-array>
 
 </resources>

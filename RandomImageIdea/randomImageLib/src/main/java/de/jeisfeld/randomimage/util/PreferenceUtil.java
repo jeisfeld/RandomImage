@@ -281,6 +281,31 @@ public final class PreferenceUtil {
 	}
 
 	/**
+	 * Retrieve an indexed boolean shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param index        The index
+	 * @param defaultValue the default value of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static boolean getIndexedSharedPreferenceBoolean(final int preferenceId, final Object index, final boolean defaultValue) {
+		return getSharedPreferences().getBoolean(getIndexedPreferenceKey(preferenceId, index), defaultValue);
+	}
+
+	/**
+	 * Set an indexed boolean shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param index        The index
+	 * @param b            the target value of the preference.
+	 */
+	public static void setIndexedSharedPreferenceBoolean(final int preferenceId, final Object index, final boolean b) {
+		Editor editor = getSharedPreferences().edit();
+		editor.putBoolean(getIndexedPreferenceKey(preferenceId, index), b);
+		editor.apply();
+	}
+
+	/**
 	 * Retrieve an indexed int shared preference.
 	 *
 	 * @param preferenceId the id of the shared preference.

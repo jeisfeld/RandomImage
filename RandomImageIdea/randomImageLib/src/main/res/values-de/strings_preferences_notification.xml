@@ -5,16 +5,24 @@
 
     <string name="pref_heading_notifcation">Benachrichtigung</string>
     <string name="pref_heading_create_new_notifcation">Neue Benachrichtigung erstellen</string>
+    <string name="pref_group_title_image_list">Bildliste</string>
+    <string name="pref_group_title_timing">Benachrichtigungszeiten</string>
+    <string name="pref_group_title_appearance">Erscheinungsbild</string>
+    <string name="pref_group_title_other">Andere Einstellungen</string>
     <string name="pref_title_notification_list_name">Listenname</string>
     <string name="pref_title_notification_frequency">Häufigkeit der Benachrichtigung</string>
     <string name="pref_title_notification_timer_variance">Variabilität der Benachrichtigung</string>
     <string name="pref_title_notification_daily_start_time">Startzeit für Benachrichtigungen</string>
     <string name="pref_title_notification_daily_end_time">Endzeit für Benachrichtigungen</string>
+    <string name="pref_title_notification_led_color">LED-Farbe</string>
+    <string name="pref_title_notification_vibration">Vibration</string>
+    <string name="pref_title_notification_colored_icon">Farbiges Symbol</string>
     <string name="pref_title_notification_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_cancel_notification">Benachrichtigung abbrechen</string>
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
+        <item>stündlich</item>
         <item>alle zwei Stunden</item>
         <item>viermal täglich</item>
         <item>zweimal täglich</item>
@@ -48,6 +56,16 @@
         <item>0:00</item>
         <item>1:00</item>
         <item>2:00</item>
+    </string-array>
+    <string-array name="notification_led_color_names">
+        <item>Aus</item>
+        <item>Schwach</item>
+        <item>Rot</item>
+        <item>Grün</item>
+        <item>Blau</item>
+        <item>Rot-Grün</item>
+        <item>Grün-Blau</item>
+        <item>Blau-Rot</item>
     </string-array>
 
 </resources>

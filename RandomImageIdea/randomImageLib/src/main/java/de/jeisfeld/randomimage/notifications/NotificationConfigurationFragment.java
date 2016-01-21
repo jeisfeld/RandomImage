@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -56,6 +57,9 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_timer_variance);
 		bindPreferenceSummaryToValue(R.string.key_notification_daily_start_time);
 		bindPreferenceSummaryToValue(R.string.key_notification_daily_end_time);
+		bindPreferenceSummaryToValue(R.string.key_notification_led_color);
+		bindPreferenceSummaryToValue(R.string.key_notification_vibration);
+		bindPreferenceSummaryToValue(R.string.key_notification_colored_icon);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_scale_type);
 		addEditListListener();
 		addCancelNotificationListener();
@@ -136,6 +140,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_daily_end_time,
 							R.string.pref_default_notification_daily_end_time));
 		}
+		int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, mNotificationId, -1);
+		if (ledColor == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_led_color, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_led_color, R.string.pref_default_notification_led_color));
+		}
 		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1);
 		if (detailScaleType == -1) {
 			isUpdated = true;
@@ -175,6 +185,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, -1)));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_daily_end_time,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_led_color,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, mNotificationId, -1)));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_vibration,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, mNotificationId, false));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_colored_icon,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon, mNotificationId, false));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_detail_scale_type,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1)));
 	}
@@ -212,8 +228,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_notification_timer_variance
 				|| preferenceKey == R.string.key_notification_daily_start_time
 				|| preferenceKey == R.string.key_notification_daily_end_time
+				|| preferenceKey == R.string.key_notification_led_color
 				|| preferenceKey == R.string.key_notification_detail_scale_type) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mNotificationId, -1));
+		}
+		else if (preferenceKey == R.string.key_notification_vibration || preferenceKey == R.string.key_notification_colored_icon) {
+			value = "";
 		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mNotificationId);
@@ -304,6 +324,17 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, dailyEndTime);
 				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
 			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_led_color))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_led_color, mNotificationId, Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_vibration))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, mNotificationId,
+						Boolean.parseBoolean(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_colored_icon))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon, mNotificationId,
+						Boolean.parseBoolean(stringValue));
+			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
 						Integer.parseInt(stringValue));
@@ -328,7 +359,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 			}
-			else {
+			else if (!(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(value);

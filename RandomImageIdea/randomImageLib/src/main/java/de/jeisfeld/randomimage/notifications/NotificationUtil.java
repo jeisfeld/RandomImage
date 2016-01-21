@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
@@ -175,10 +176,11 @@ public final class NotificationUtil {
 
 		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
 		Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName, NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
+		boolean coloredIcon = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon, notificationId, false);
 
 		Notification.Builder notificationBuilder =
 				new Notification.Builder(context)
-						.setSmallIcon(R.drawable.ic_launcher)
+						.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
 						.setContentTitle(listName)
 						.setLargeIcon(iconBitmap)
 						.setAutoCancel(true)
@@ -190,6 +192,16 @@ public final class NotificationUtil {
 		notificationBuilder.setContentIntent(pendingIntent);
 
 		notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
+
+		int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, 0);
+		if (ledColor > 0) {
+			notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
+		}
+
+		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
+		if (vibrate) {
+			notificationBuilder.setVibrate(new long[] {0, 100, 200, 100, 200, 100, 200, 1000}); // MAGIC_NUMBER
+		}
 
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -593,6 +605,45 @@ public final class NotificationUtil {
 				return 5; // MAGIC_NUMBER
 			case RANDOM_IMAGE:
 				return 6; // MAGIC_NUMBER
+			default:
+				return 0;
+			}
+		}
+	}
+
+	/**
+	 * Helper class containing constants for LED colors.
+	 */
+	private static class LedColor {
+		// JAVADOC:OFF
+		private static final int FAINT = Color.parseColor("#0F0707");
+		private static final int RED_GREEN = Color.parseColor("#7F3F0F");
+		private static final int GREEN_BLUE = Color.parseColor("#0F7F3F");
+		private static final int BLUE_RED = Color.parseColor("#3F1F7F");
+		// JAVADOC:ON
+
+		/**
+		 * Get the LED color value from the resource value.
+		 *
+		 * @param resourceValue The value from the resource array.
+		 * @return The color.
+		 */
+		private static int getLedColor(final int resourceValue) {
+			switch (resourceValue) {
+			case 1:
+				return FAINT;
+			case 2:
+				return Color.RED;
+			case 3: // MAGIC_NUMBER
+				return Color.GREEN;
+			case 4: // MAGIC_NUMBER
+				return Color.BLUE;
+			case 5: // MAGIC_NUMBER
+				return RED_GREEN;
+			case 6: // MAGIC_NUMBER
+				return GREEN_BLUE;
+			case 7: // MAGIC_NUMBER
+				return BLUE_RED;
 			default:
 				return 0;
 			}
