@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -17,6 +18,7 @@ import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
@@ -165,9 +167,14 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			}
 			else {
 				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
-				remoteViews.setImageViewBitmap(
-						R.id.imageViewWidget,
-						ImageUtil.getBitmapOfExactSize(currentFileName, mImageWidth, mImageHeight, stretchToFit ? -1 : IMAGE_BORDER_SIZE));
+				Bitmap bitmap;
+				if (mImageWidth > 0 && mImageHeight > 0) {
+					bitmap = ImageUtil.getBitmapOfExactSize(currentFileName, mImageWidth, mImageHeight, stretchToFit ? -1 : IMAGE_BORDER_SIZE);
+				}
+				else {
+					bitmap = ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE);
+				}
+				remoteViews.setImageViewBitmap(R.id.imageViewWidget, bitmap);
 			}
 
 			GenericImageWidget.configureBackground(mContext, remoteViews, AppWidgetManager.getInstance(mContext), mAppWidgetId);

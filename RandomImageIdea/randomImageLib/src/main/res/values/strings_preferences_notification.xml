@@ -14,6 +14,7 @@
     <string name="key_notification_timer_variance" translatable="false">notification_timer_variance</string>
     <string name="key_notification_daily_start_time" translatable="false">notification_daily_start_time</string>
     <string name="key_notification_daily_end_time" translatable="false">notification_daily_end_time</string>
+    <string name="key_notification_style" translatable="false">notification_style</string>
     <string name="key_notification_led_color" translatable="false">notification_led_color</string>
     <string name="key_notification_vibration" translatable="false">notification_vibration</string>
     <string name="key_notification_colored_icon" translatable="false">notification_colored_icon</string>
@@ -37,6 +38,8 @@
     <string name="pref_default_notification_daily_start_time" translatable="false">0</string>
     <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
     <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
+    <string name="pref_title_notification_style">Notification Style</string>
+    <string name="pref_default_notification_style" translatable="false">0</string>
     <string name="pref_title_notification_led_color">LED color</string>
     <string name="pref_default_notification_led_color" translatable="false">0</string>
     <string name="pref_title_notification_vibration">Vibration</string>
@@ -58,7 +61,7 @@
         <item>monthly</item>
         <item>every three months</item>
         <item>twice a year</item>
-        <item>after 6 sec (for testing)</item>
+        <item>every minute (for testing)</item>
     </string-array>
     <string-array name="notification_frequency_values" translatable="false">
         <item>-24</item>
@@ -72,7 +75,7 @@
         <item>30</item>
         <item>90</item>
         <item>180</item>
-        <item>-14400</item>
+        <item>-1440</item>
     </string-array>
     <string-array name="notification_timer_variance_names">
         <item>little variation</item>
@@ -117,6 +120,16 @@
         <item>24</item>
         <item>25</item>
         <item>26</item>
+    </string-array>
+    <string-array name="notification_style_names">
+        <item>Standard</item>
+        <item>Special</item>
+        <item>Full Screen</item>
+    </string-array>
+    <string-array name="notification_style_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
     <string-array name="notification_led_color_names">
         <item>Off</item>

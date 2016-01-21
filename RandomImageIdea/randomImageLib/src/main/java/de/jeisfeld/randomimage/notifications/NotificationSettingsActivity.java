@@ -250,6 +250,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_style, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_led_color, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_vibration, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_colored_icon, notificationId);

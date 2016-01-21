@@ -42,6 +42,13 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_group_title_appearance">
         <ListPreference
+            android:entries="@array/notification_style_names"
+            android:entryValues="@array/notification_style_values"
+            android:key="@string/key_notification_style"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_notification_style"/>
+        <ListPreference
             android:entries="@array/notification_led_color_names"
             android:entryValues="@array/notification_led_color_values"
             android:key="@string/key_notification_led_color"
