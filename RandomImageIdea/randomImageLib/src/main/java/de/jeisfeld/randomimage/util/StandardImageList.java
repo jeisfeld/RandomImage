@@ -113,7 +113,7 @@ public final class StandardImageList extends ImageList {
 		String nestedList = getRandomNestedList();
 
 		if (nestedList == null) {
-			Log.i(Application.TAG, "Did not get a random nested list.");
+			Log.w(Application.TAG, "Tried to get random file before list was fully loaded.");
 			return getRandomFileNameFromAllFiles();
 		}
 
@@ -169,6 +169,11 @@ public final class StandardImageList extends ImageList {
 	@Override
 	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
 		mAsyncLoader.executeWhenReady(whileLoading, afterLoading, ifError);
+	}
+
+	@Override
+	public void waitUntilReady() {
+		mAsyncLoader.waitUntilReady();
 	}
 
 	@Override

@@ -22,6 +22,14 @@ public abstract class RandomFileProvider {
 	}
 
 	/**
+	 * Wait until the provider is ready.
+	 */
+	// OVERRIDABLE
+	public void waitUntilReady() {
+	}
+
+
+	/**
 	 * Execute actions when provider is ready.
 	 *
 	 * @param whileLoading Actions to be done if not yet ready to inform the user about the loading.

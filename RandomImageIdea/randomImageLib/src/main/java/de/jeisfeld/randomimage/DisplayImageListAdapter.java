@@ -329,6 +329,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 						if (imageList == null) {
 							return null;
 						}
+						imageList.waitUntilReady();
 						String fileName = imageList.getRandomFileName();
 						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_indexed_current_list_thumb, entryName, fileName);
 						return fileName;
