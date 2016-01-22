@@ -92,9 +92,14 @@ public final class NotificationUtil {
 	private static final int NOTIFICATION_LARGE_ICON_WIDTH;
 
 	/**
+	 * The notification style that triggers DisplayMicroImageActivity instead of a notification.
+	 */
+	public static final int NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY = 2;
+
+	/**
 	 * The notification style that triggers DisplayRandomImageActivity instead of a notification.
 	 */
-	public static final int NOTIFICATION_STYLE_START_ACTIVITY = 2;
+	public static final int NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY = 3;
 
 	static {
 		restoreMountingIssues();
@@ -195,9 +200,16 @@ public final class NotificationUtil {
 						int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
 						boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
 								notificationId, false);
-						if (notificationStyle == NOTIFICATION_STYLE_START_ACTIVITY) {
+						if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
+								|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY) {
 							// open activity instead of notification
-							context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId));
+							if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
+								context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
+										notificationId));
+							}
+							else {
+								context.startActivity(DisplayMicroImageActivity.createIntent(context, listName, fileName, notificationId));
+							}
 							if (vibrate) {
 								AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 								if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
@@ -233,8 +245,12 @@ public final class NotificationUtil {
 						if (notificationStyle == 1) {
 							RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
 							remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
-
 							notificationBuilder.setContent(remoteViews);
+
+							// Dummy intent will enable heads-up notifications if available
+							Intent intent = DisplayMicroImageActivity.createIntent(context, null, null, null);
+							PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+							notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
 						}
 						else {
 							Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
@@ -331,6 +347,7 @@ public final class NotificationUtil {
 		// Cancel both the normal notification and the triggered activity.
 		cancelNotification(context, Integer.toString(notificationId), NotificationType.RANDOM_IMAGE);
 		DisplayRandomImageActivity.finishActivity(context, notificationId);
+		DisplayMicroImageActivity.finishActivity(context, notificationId);
 	}
 
 	/**

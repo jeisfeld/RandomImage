@@ -162,7 +162,6 @@ public class DisplayRandomImageActivity extends Activity {
 	 * Flag helping to detect if a destroy is final or only temporary.
 	 */
 	private boolean mSavingInstanceState = false;
-
 	/**
 	 * Flag helping to detect if the user puts the activity into the background.
 	 */
@@ -250,7 +249,6 @@ public class DisplayRandomImageActivity extends Activity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mSavingInstanceState = false;
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -285,7 +283,7 @@ public class DisplayRandomImageActivity extends Activity {
 						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
 
 				if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1)
-						!= NotificationUtil.NOTIFICATION_STYLE_START_ACTIVITY) {
+						!= NotificationUtil.NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
 					// Stop auto-cancellation if the notification has been actively clicked
 					NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				}
