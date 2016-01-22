@@ -56,6 +56,7 @@
     <string name="dialog_hint_select_folder">Here you can select the image folder from which you want to add images to the list.\n\nYou can use the filter in order to search for folders.\n\nPress the hook symbol in order to select multiple folders.\n\nPress the folder symbol in order to browse the file system.</string>
     <string name="dialog_hint_add_images">Now you can either add the complete image folder to your Surprise Image List, or you can select individual images to add.\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>
     <string name="dialog_hint_display_image">You can zoom and move the image.\n\nFlip the image to see another one.\n\nDouble tap to go to the image list configuration.\n\nLong press for further options.</string>
+    <string name="dialog_hint_main_configuration">This is the main configuration page of the app. Here you can either select an image list for editing, or you may configure widgets or notifications.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
@@ -115,5 +116,6 @@
     <string name="key_hint_select_folder" translatable="false">hint_select_folder_list</string>
     <string name="key_hint_add_images" translatable="false">hint_add_images</string>
     <string name="key_hint_display_image" translatable="false">hint_display_image</string>
+    <string name="key_hint_main_configuration" translatable="false">hint_main_configuration</string>
 
 </resources>

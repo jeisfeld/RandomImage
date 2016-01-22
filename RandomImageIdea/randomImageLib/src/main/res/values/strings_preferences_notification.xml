@@ -34,7 +34,7 @@
     <string name="pref_group_title_appearance">Notification Appearance</string>
     <string name="pref_group_title_other">Other Settings</string>
     <string name="pref_title_notification_list_name">List Name</string>
-    <string name="pref_title_notification_frequency">Notification Frequency</string>
+    <string name="pref_title_notification_frequency">Notification frequency</string>
     <string name="pref_default_notification_frequency" translatable="false">1</string>
     <string name="pref_title_notification_timer_variance">Notification variability</string>
     <string name="pref_default_notification_timer_variance" translatable="false">0</string>
@@ -44,7 +44,7 @@
     <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
     <string name="pref_title_notification_duration">Duration</string>
     <string name="pref_default_notification_duration" translatable="false">0</string>
-    <string name="pref_title_notification_style">Notification Style</string>
+    <string name="pref_title_notification_style">Notification style</string>
     <string name="pref_default_notification_style" translatable="false">0</string>
     <string name="pref_title_notification_led_color">LED color</string>
     <string name="pref_default_notification_led_color" translatable="false">0</string>
@@ -55,7 +55,7 @@
     <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
     <string name="pref_default_notification_detail_flip_behavior" translatable="false">0</string>
-    <string name="pref_title_cancel_notification">Cancel Notification</string>
+    <string name="pref_title_cancel_notification">Remove Notification</string>
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">

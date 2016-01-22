@@ -22,7 +22,7 @@
     <string name="pref_title_notification_display_name">Name der Benachrichtigung</string>
     <string name="pref_title_notification_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_notification_detail_flip_behavior">Verhalten beim Schnippen</string>
-    <string name="pref_title_cancel_notification">Benachrichtigung abbrechen</string>
+    <string name="pref_title_cancel_notification">Benachrichtigung entfernen</string>
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">

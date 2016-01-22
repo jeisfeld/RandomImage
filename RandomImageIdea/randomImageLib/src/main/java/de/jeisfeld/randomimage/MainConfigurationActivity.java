@@ -81,6 +81,10 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		configureButtons();
 
 		changeAction(mCurrentAction);
+
+		if (savedInstanceState == null) {
+			DialogUtil.displayInfo(this, null, R.string.key_hint_main_configuration, R.string.dialog_hint_main_configuration);
+		}
 	}
 
 	@Override
