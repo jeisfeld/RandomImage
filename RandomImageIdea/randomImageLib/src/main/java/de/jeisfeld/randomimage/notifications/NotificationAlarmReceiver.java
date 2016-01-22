@@ -31,11 +31,14 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * The resource key for the flag indicating a cancellation.
 	 */
 	private static final String STRING_IS_CANCELLATION = "de.eisfeldj.randomimage.IS_CANCELLATION";
-
 	/**
 	 * The maximum number of days for a notification.
 	 */
 	private static final double MAX_ALARM_DAYS = 730;
+	/**
+	 * Time to wait with the alarm after boot.
+	 */
+	private static final int ALARM_WAIT_SECONDS = 60;
 	/**
 	 * The number of hours per day.
 	 */
@@ -83,7 +86,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 			expectedDaysUntilAlarm = -1.0 / frequency;
 
 			if (frequency < -4) { // MAGIC_NUMBER
-				// refer to hours rather than days
+				// refer to hours rather than days if we are below quarter-day
 				expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
 			}
 		}
@@ -101,17 +104,19 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 				}
 				else {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
-					// Take a random alarm time between 5 and 15 minutes after startup.
-					long newAlarmTime = expectedDaysUntilAlarm < 0.1 ? System.currentTimeMillis() // MAGIC_NUMBER
-							: System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5) // MAGIC_NUMBER
-							+ (long) (TimeUnit.MINUTES.toMillis(10) * random.nextDouble()); // MAGIC_NUMBER
+					long newAlarmTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ALARM_WAIT_SECONDS);
+
+					// For alarms bigger than hourly, add some random minutes.
+					if (frequency > -HOURS_PER_DAY) {
+						newAlarmTime += random.nextDouble() * TimeUnit.MINUTES.toMillis(10); // MAGIC_NUMBER
+					}
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
 					alarmMgr.set(AlarmManager.RTC, newAlarmTime, alarmIntent);
 				}
 				return;
 			}
-			// in case of non-existing old alarm time, continue to generate a new alarm time.
+			// in case of non-existing old alarm time, continue to generate a new alarm time based on notification configuration.
 		}
 
 		// Set the alarm

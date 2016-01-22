@@ -21,29 +21,36 @@ public class SdMountReceiver extends BroadcastReceiver {
 	public final void onReceive(final Context context, final Intent intent) {
 		String action = intent.getAction();
 
-		if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, false);
-			ImageWidget.updateTimers();
-			StackedImageWidget.updateTimers();
-		}
-
+		// Keep track of shutdown/startup period.
 		if (action.equals(Intent.ACTION_SHUTDOWN)) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, true);
 		}
 
+		// Re-create all timers after boot or installation.
+		if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, false);
+			triggerAllTimers();
+		}
+		if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+			triggerAllTimers();
+		}
+
+		// Update widgets after changes in SD card availability.
 		if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
 				|| action.equals(Intent.ACTION_MEDIA_UNMOUNTED)
 				|| action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 			ImageRegistry.getCurrentImageList(false).load(false);
 			GenericWidget.updateAllInstances();
-			NotificationAlarmReceiver.createAllNotificationAlarms();
 		}
+	}
 
-		if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
-			ImageWidget.updateTimers();
-			StackedImageWidget.updateTimers();
-			NotificationAlarmReceiver.createAllNotificationAlarms();
-		}
+	/**
+	 * Trigger all widget or notification timers.
+	 */
+	private static void triggerAllTimers() {
+		ImageWidget.updateTimers();
+		StackedImageWidget.updateTimers();
+		NotificationAlarmReceiver.createAllNotificationAlarms();
 	}
 
 }
