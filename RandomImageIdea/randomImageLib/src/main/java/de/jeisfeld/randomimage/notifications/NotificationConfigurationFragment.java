@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
@@ -62,13 +65,20 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_duration);
 		bindPreferenceSummaryToValue(R.string.key_notification_style);
 		bindPreferenceSummaryToValue(R.string.key_notification_led_color);
-		bindPreferenceSummaryToValue(R.string.key_notification_vibration);
 		bindPreferenceSummaryToValue(R.string.key_notification_colored_icon);
 		bindPreferenceSummaryToValue(R.string.key_notification_display_name);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
 		addEditListListener();
 		addCancelNotificationListener();
+
+		if (((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator()) {
+			bindPreferenceSummaryToValue(R.string.key_notification_vibration);
+		}
+		else {
+			((PreferenceGroup) findPreference(getString(R.string.key_dummy_pref_group_appearance)))
+					.removePreference(findPreference(getString(R.string.key_notification_vibration)));
+		}
 	}
 
 	/**

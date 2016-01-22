@@ -47,7 +47,9 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_duration"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_group_title_appearance">
+    <PreferenceCategory
+        android:key="@string/key_dummy_pref_group_appearance"
+        android:title="@string/pref_group_title_appearance">
         <ListPreference
             android:entries="@array/notification_style_names"
             android:entryValues="@array/notification_style_values"

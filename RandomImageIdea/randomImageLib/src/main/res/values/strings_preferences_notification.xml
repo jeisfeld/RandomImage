@@ -6,6 +6,7 @@
     <string name="key_notification_ids" translatable="false">notification_ids</string>
     <string name="key_notification_max_id" translatable="false">notification_max_id</string>
     <string name="key_dummy_cancel_notification" translatable="false">dummy_cancel_notification</string>
+    <string name="key_dummy_pref_group_appearance" translatable="false">dummy_dummy_pref_group_appearance</string>
 
     <!-- Indexed keys -->
 

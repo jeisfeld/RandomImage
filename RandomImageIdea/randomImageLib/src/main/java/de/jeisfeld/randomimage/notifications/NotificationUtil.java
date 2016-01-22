@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Vibrator;
@@ -198,8 +199,11 @@ public final class NotificationUtil {
 							// open activity instead of notification
 							context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId));
 							if (vibrate) {
-								Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-								vibrator.vibrate(VIBRATION_PATTERN, -1);
+								AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+								if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+									Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+									vibrator.vibrate(VIBRATION_PATTERN, -1);
+								}
 							}
 							NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
 
