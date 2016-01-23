@@ -191,104 +191,13 @@ public final class NotificationUtil {
 				new Runnable() {
 					@Override
 					public void run() {
-						String fileName = imageList.getRandomFileName();
-						if (fileName == null) {
-							// This is typically a temporary error - therefore re-create the alarm.
+						try {
+							doDisplayRandomImageNotification(context, notificationId, listName, imageList);
+						}
+						catch (Exception e) {
+							// In case of error, trigger new alarm.
 							NotificationAlarmReceiver.setAlarm(context, notificationId, false);
-							return;
 						}
-						int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
-						boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
-								notificationId, false);
-						if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
-								|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY) {
-							// open activity instead of notification
-							if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
-								context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
-										notificationId));
-							}
-							else {
-								context.startActivity(DisplayMicroImageActivity.createIntent(context, listName, fileName, notificationId));
-							}
-							if (vibrate) {
-								AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-								if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-									Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-									vibrator.vibrate(VIBRATION_PATTERN, -1);
-								}
-							}
-							NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
-
-							return;
-						}
-
-						boolean coloredIcon = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon,
-								notificationId, false);
-						Builder notificationBuilder = new Builder(context)
-								.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
-								.setAutoCancel(true);
-
-						if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-							notificationBuilder.setShowWhen(false);
-						}
-
-						if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-							notificationBuilder.setCategory(Notification.CATEGORY_ALARM);
-						}
-
-						Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
-						String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
-						if (title == null || title.length() == 0) {
-							title = listName;
-						}
-
-						if (notificationStyle == 1) {
-							RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
-							remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
-							notificationBuilder.setContent(remoteViews);
-
-							// Dummy intent will enable heads-up notifications if available
-							Intent intent = DisplayMicroImageActivity.createIntent(context, null, null, null);
-							PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-							notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
-						}
-						else {
-							Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
-									NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
-
-							notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
-						}
-
-						if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-							Notification publicNotification = new Builder(context)
-									.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
-									.setShowWhen(false).setContentTitle(title).build();
-							notificationBuilder.setPublicVersion(publicNotification);
-						}
-
-						String notificationTag = Integer.toString(notificationId);
-						NotificationType notificationType = NotificationType.RANDOM_IMAGE;
-						Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId);
-						int uniqueId = getUniqueId(notificationTag, notificationType);
-						PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-						notificationBuilder.setContentIntent(pendingIntent);
-
-						notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
-
-						int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, 0);
-						if (ledColor > 0) {
-							notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
-						}
-
-						if (vibrate) {
-							notificationBuilder.setVibrate(VIBRATION_PATTERN);
-						}
-
-						NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-						notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
-
-						NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
-
 					}
 				},
 				new Runnable() {
@@ -298,6 +207,115 @@ public final class NotificationUtil {
 					}
 				});
 
+	}
+
+	/**
+	 * Display a Random Image notification - internal helper method.
+	 *
+	 * @param context        the current activity or context
+	 * @param notificationId the id of the configured notification.
+	 * @param listName       the name of the image list
+	 * @param imageList      the image list
+	 */
+	private static void doDisplayRandomImageNotification(final Context context, final int notificationId,
+														 final String listName, final ImageList imageList) {
+		String fileName = imageList.getRandomFileName();
+		if (fileName == null) {
+			// This is typically a temporary error - therefore re-create the alarm.
+			NotificationAlarmReceiver.setAlarm(context, notificationId, false);
+			return;
+		}
+		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
+		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
+				notificationId, false);
+		if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
+				|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY) {
+			// open activity instead of notification
+			if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
+				context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
+						notificationId));
+			}
+			else {
+				context.startActivity(DisplayMicroImageActivity.createIntent(context, listName, fileName, notificationId));
+			}
+			if (vibrate) {
+				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+				if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+					Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+					vibrator.vibrate(VIBRATION_PATTERN, -1);
+				}
+			}
+			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+
+			return;
+		}
+
+		boolean coloredIcon = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon,
+				notificationId, false);
+		Builder notificationBuilder = new Builder(context)
+				.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+				.setAutoCancel(true);
+
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+			notificationBuilder.setShowWhen(false);
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			notificationBuilder.setCategory(Notification.CATEGORY_ALARM);
+		}
+
+		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
+		String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
+		if (title == null || title.length() == 0) {
+			title = listName;
+		}
+
+		if (notificationStyle == 1) {
+			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
+			remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
+			notificationBuilder.setContent(remoteViews);
+
+			// Dummy intent will enable heads-up notifications if available
+			Intent intent = DisplayMicroImageActivity.createIntent(context, null, null, null);
+			PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
+		}
+		else {
+			Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
+					NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
+
+			notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			Notification publicNotification = new Builder(context)
+					.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+					.setShowWhen(false).setContentTitle(title).build();
+			notificationBuilder.setPublicVersion(publicNotification);
+		}
+
+		String notificationTag = Integer.toString(notificationId);
+		NotificationType notificationType = NotificationType.RANDOM_IMAGE;
+		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId);
+		int uniqueId = getUniqueId(notificationTag, notificationType);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		notificationBuilder.setContentIntent(pendingIntent);
+
+		notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
+
+		int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, 0);
+		if (ledColor > 0) {
+			notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
+		}
+
+		if (vibrate) {
+			notificationBuilder.setVibrate(VIBRATION_PATTERN);
+		}
+
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
+
+		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
 	}
 
 	/**

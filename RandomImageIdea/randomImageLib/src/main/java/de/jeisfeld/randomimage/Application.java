@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -12,6 +13,7 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -39,6 +41,7 @@ public class Application extends android.app.Application {
 		super.onCreate();
 		Application.mContext = getApplicationContext();
 		setLanguage();
+		setExceptionHandler();
 
 		// Set statistics
 		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);
@@ -52,6 +55,31 @@ public class Application extends android.app.Application {
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
+	}
+
+	/**
+	 * Define custom ExceptionHandler which ensures that notification alarms are not lost in case of error.
+	 */
+	private void setExceptionHandler() {
+		final UncaughtExceptionHandler defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+		UncaughtExceptionHandler customExceptionHandler =
+				new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(final Thread thread, final Throwable ex) {
+						try {
+							NotificationAlarmReceiver.createAllNotificationAlarms();
+						}
+						catch (Exception e) {
+							Log.e(TAG, "Failed to trigger notifications in exception case ", e);
+						}
+
+						// re-throw critical exception further to the os
+						defaultExceptionHandler.uncaughtException(thread, ex);
+					}
+				};
+
+		Thread.setDefaultUncaughtExceptionHandler(customExceptionHandler);
 	}
 
 	/**
