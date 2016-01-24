@@ -3,7 +3,6 @@ package de.jeisfeld.randomimage;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
@@ -17,7 +16,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display a list of images from a folder.
  */
-public abstract class DisplayImageListActivity extends Activity {
+public abstract class DisplayImageListActivity extends PermissionsActivity {
 	/**
 	 * Temporary storage for selected files.
 	 */

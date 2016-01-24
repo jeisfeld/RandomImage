@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Display a random image.
  */
-public class DisplayRandomImageActivity extends Activity {
+public class DisplayRandomImageActivity extends PermissionsActivity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */
