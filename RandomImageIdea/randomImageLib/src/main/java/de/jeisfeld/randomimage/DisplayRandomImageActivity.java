@@ -267,7 +267,7 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 			mCurrentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		}
 
-		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false) || mListName == null;
+		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
 
 		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {

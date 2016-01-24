@@ -66,6 +66,7 @@
     <string name="dialog_info_backup_of_lists">Made backup of the lists %1$s to the folder “%2$s”.</string>
     <string name="dialog_info_restore_of_lists">The lists %1$s have been restored.</string>
     <string name="dialog_info_delete_of_lists">The lists %1$s have been deleted.</string>
+    <string name="dialog_info_not_allowed_to_delete_all_lists">It is not permitted to delete all lists. Please ensure that at least one list is kept.</string>
     <string name="dialog_info_backup_of_list_single">Made backup of the list %1$s to the folder “%2$s”.</string>
     <string name="dialog_info_restore_of_list_single">The list %1$s has been restored.</string>
     <string name="dialog_info_delete_of_list_single">The list %1$s has been deleted.</string>

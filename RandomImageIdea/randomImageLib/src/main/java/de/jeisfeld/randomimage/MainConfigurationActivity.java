@@ -343,6 +343,10 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			changeAction(CurrentAction.DISPLAY);
 			return;
 		}
+		if (listNames.size() == ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP).size()) {
+			DialogUtil.displayInfo(this, R.string.dialog_info_not_allowed_to_delete_all_lists);
+			return;
+		}
 		DialogUtil.displayConfirmationMessage(MainConfigurationActivity.this,
 				new ConfirmDialogListener() {
 					@Override

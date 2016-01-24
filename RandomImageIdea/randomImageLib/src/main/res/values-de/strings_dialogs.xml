@@ -66,6 +66,7 @@
     <string name="dialog_info_backup_of_lists">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s“.</string>
     <string name="dialog_info_restore_of_lists">Die Listen %1$s wurden wiederhergestellt.</string>
     <string name="dialog_info_delete_of_lists">Die Listen %1$s wurden gelöscht.</string>
+    <string name="dialog_info_not_allowed_to_delete_all_lists">Es ist nicht erlaubt, alle Listen zu löschen. Bitte stellen Sie sicher, dass mindestens eine Liste erhalten bleibt.</string>
     <string name="dialog_info_backup_of_list_single">Die Liste %1$s wurde gesichert im Verzeichnis „%2$s“.</string>
     <string name="dialog_info_restore_of_list_single">Die Liste %1$s wurde wiederhergestellt.</string>
     <string name="dialog_info_delete_of_list_single">Die Liste %1$s wurde gelöscht.</string>
