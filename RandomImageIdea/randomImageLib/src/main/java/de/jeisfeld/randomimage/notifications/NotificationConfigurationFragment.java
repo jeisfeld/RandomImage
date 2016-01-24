@@ -120,7 +120,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			long nextTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, mNotificationId, -1);
 			if (nextTime >= 0) {
 				Date date = new Date(nextTime);
-				cancelNotificationPreference.setSummary(DateUtil.format(date));
+				cancelNotificationPreference.setSummary(DateUtil.format(date, "yyyy-MM-dd HH:mm:ss"));
 			}
 		}
 	}

@@ -128,7 +128,7 @@
             android:label="@string/title_activity_settings">
         </activity>
         <activity
-            android:name="de.jeisfeld.randomimage.notifications.DisplayMicroImageActivity"
+            android:name="de.jeisfeld.randomimage.notifications.DisplayImagePopupActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
 

@@ -17,9 +17,9 @@ import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
- * An activity which is intended as a small popup with an image. Used in special notifications.
+ * An activity which is intended as a popup with an image. Used in notifications.
  */
-public class DisplayMicroImageActivity extends Activity {
+public class DisplayImagePopupActivity extends Activity {
 	/**
 	 * The resource key for the image list.
 	 */
@@ -36,7 +36,7 @@ public class DisplayMicroImageActivity extends Activity {
 	/**
 	 * Map storing the activities triggered by notifications.
 	 */
-	private static final Map<Integer, DisplayMicroImageActivity> NOTIFICATION_MAP = new HashMap<>();
+	private static final Map<Integer, DisplayImagePopupActivity> NOTIFICATION_MAP = new HashMap<>();
 
 	/**
 	 * Flag helping to detect if a destroy is final or only temporary.
@@ -63,7 +63,7 @@ public class DisplayMicroImageActivity extends Activity {
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName, final Integer notificationId) {
-		Intent intent = new Intent(context, DisplayMicroImageActivity.class);
+		Intent intent = new Intent(context, DisplayImagePopupActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
 		}
@@ -81,7 +81,7 @@ public class DisplayMicroImageActivity extends Activity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_micro_image);
+		setContentView(R.layout.activity_display_image_popup);
 
 		final String fileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		final String listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
@@ -100,7 +100,7 @@ public class DisplayMicroImageActivity extends Activity {
 		imageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				Intent intent = DisplayRandomImageActivity.createIntent(DisplayMicroImageActivity.this, listName, fileName, true, null,
+				Intent intent = DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this, listName, fileName, true, null,
 						mNotificationId);
 				startActivity(intent);
 				finish();
@@ -153,7 +153,7 @@ public class DisplayMicroImageActivity extends Activity {
 	 * @param notificationId The notificationId that has triggered the activity.
 	 */
 	public static final void finishActivity(final Context context, final int notificationId) {
-		DisplayMicroImageActivity activity = NOTIFICATION_MAP.get(notificationId);
+		DisplayImagePopupActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
 			activity.finish();
 			NOTIFICATION_MAP.remove(notificationId);

@@ -22,6 +22,7 @@ import android.media.AudioManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Vibrator;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
@@ -92,7 +93,7 @@ public final class NotificationUtil {
 	private static final int NOTIFICATION_LARGE_ICON_WIDTH;
 
 	/**
-	 * The notification style that triggers DisplayMicroImageActivity instead of a notification.
+	 * The notification style that triggers DisplayImagePopupActivity instead of a notification.
 	 */
 	public static final int NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY = 2;
 
@@ -196,6 +197,7 @@ public final class NotificationUtil {
 						}
 						catch (Exception e) {
 							// In case of error, trigger new alarm.
+							Log.e(Application.TAG, "Failed to publich notification for list " + listName, e);
 							NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 						}
 					}
@@ -236,7 +238,7 @@ public final class NotificationUtil {
 						notificationId));
 			}
 			else {
-				context.startActivity(DisplayMicroImageActivity.createIntent(context, listName, fileName, notificationId));
+				context.startActivity(DisplayImagePopupActivity.createIntent(context, listName, fileName, notificationId));
 			}
 			if (vibrate) {
 				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -276,7 +278,7 @@ public final class NotificationUtil {
 			notificationBuilder.setContent(remoteViews);
 
 			// Dummy intent will enable heads-up notifications if available
-			Intent intent = DisplayMicroImageActivity.createIntent(context, null, null, null);
+			Intent intent = DisplayImagePopupActivity.createIntent(context, null, null, null);
 			PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
 		}
@@ -365,7 +367,7 @@ public final class NotificationUtil {
 		// Cancel both the normal notification and the triggered activity.
 		cancelNotification(context, Integer.toString(notificationId), NotificationType.RANDOM_IMAGE);
 		DisplayRandomImageActivity.finishActivity(context, notificationId);
-		DisplayMicroImageActivity.finishActivity(context, notificationId);
+		DisplayImagePopupActivity.finishActivity(context, notificationId);
 	}
 
 	/**
