@@ -99,10 +99,13 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 			long oldAlarmTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, -1);
 
 			if (oldAlarmTime >= 0) {
+				int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
+				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.MINUTES.toMillis(duration);
+
 				if (oldAlarmTime > System.currentTimeMillis()) {
 					alarmMgr.set(AlarmManager.RTC, oldAlarmTime, alarmIntent);
 				}
-				else {
+				else if (duration <= 0 || oldAlarmExpirationTime > System.currentTimeMillis()) {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
 					long newAlarmTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ALARM_WAIT_SECONDS);
 
@@ -116,7 +119,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 				}
 				return;
 			}
-			// in case of non-existing old alarm time, continue to generate a new alarm time based on notification configuration.
+			// in case of non-existing old alarm time or if old notification is already expired,
+			// continue to generate a new alarm time based on notification configuration.
 		}
 
 		// Set the alarm
@@ -213,7 +217,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true);
-		long alarmTimeMillis = System.currentTimeMillis() + 60000 * duration; // MAGIC_NUMBER - duration is in minutes.
+		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(duration);
 
 		alarmMgr.set(AlarmManager.RTC, alarmTimeMillis, alarmIntent);
 	}
