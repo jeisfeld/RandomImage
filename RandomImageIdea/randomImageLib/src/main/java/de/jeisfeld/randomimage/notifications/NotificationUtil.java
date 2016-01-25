@@ -96,7 +96,6 @@ public final class NotificationUtil {
 	 * The notification style that triggers DisplayImagePopupActivity instead of a notification.
 	 */
 	public static final int NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY = 2;
-
 	/**
 	 * The notification style that triggers DisplayRandomImageActivity instead of a notification.
 	 */
@@ -230,8 +229,7 @@ public final class NotificationUtil {
 		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
 		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
 				notificationId, false);
-		if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
-				|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY) {
+		if (isActivityNotificationStyle(notificationStyle)) {
 			// open activity instead of notification
 			if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
 				context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
@@ -323,6 +321,17 @@ public final class NotificationUtil {
 		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
 
 		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+	}
+
+	/**
+	 * Get information if a notificationStyle value leads to the start of an activity rather than to a notification.
+	 *
+	 * @param notificationStyle The notificationStyle value.
+	 * @return True if this style leads to an activity.
+	 */
+	protected static boolean isActivityNotificationStyle(final int notificationStyle) {
+		return notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
+				|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY;
 	}
 
 	/**
