@@ -281,19 +281,24 @@ public final class NotificationUtil {
 			Intent intent = DisplayImagePopupActivity.createIntent(context, null, null, null);
 			PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
+
+			if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+				Notification publicNotification = new Builder(context).setContent(remoteViews).build();
+				notificationBuilder.setPublicVersion(publicNotification);
+			}
 		}
 		else {
 			Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
 					NOTIFICATION_LARGE_ICON_WIDTH, NOTIFICATION_LARGE_ICON_HEIGHT, 0);
 
 			notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
-		}
 
-		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-			Notification publicNotification = new Builder(context)
-					.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
-					.setShowWhen(false).setContentTitle(title).build();
-			notificationBuilder.setPublicVersion(publicNotification);
+			if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+				Notification publicNotification = new Builder(context)
+						.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+						.setShowWhen(false).setContentTitle(title).build();
+				notificationBuilder.setPublicVersion(publicNotification);
+			}
 		}
 
 		String notificationTag = Integer.toString(notificationId);
