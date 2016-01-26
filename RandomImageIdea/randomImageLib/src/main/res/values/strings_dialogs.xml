@@ -82,6 +82,7 @@
     <string name="dialog_select_list_for_backup">Please select the image list which you want to backup.</string>
     <string name="dialog_select_list_for_restore">Please select the image list which you want to restore.</string>
     <string name="dialog_select_list_for_widget">Please select the image list which you want to associate to this widget.</string>
+    <string name="dialog_select_list_for_notification">Please select the image list which you want to associate to this notification.</string>
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
     <string name="dialog_select_list_for_inclusion">Please select the image list that you want to include in the current list.</string>
     <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>

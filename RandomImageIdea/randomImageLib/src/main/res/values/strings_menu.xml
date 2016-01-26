@@ -29,6 +29,7 @@
     <string name="menu_browse_folders">Browse in file manager</string>
     <string name="menu_title_pro_app">Surprise Image Pro</string>
     <string name="menu_detail_pro_app">An alternative to the premium add-on</string>
+    <string name="menu_finish_configuration">Finish configuration</string>
 
     <!-- Entries related to buttons in the settings -->
 

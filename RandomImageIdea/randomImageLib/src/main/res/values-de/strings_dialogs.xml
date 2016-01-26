@@ -82,6 +82,7 @@
     <string name="dialog_select_list_for_backup">Bitte wählen Sie die Bildliste, die Sie sichern wollen.</string>
     <string name="dialog_select_list_for_restore">Bitte wählen Sie die Bildliste, die Sie wiederherstellen wollen.</string>
     <string name="dialog_select_list_for_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
+    <string name="dialog_select_list_for_notification">Bitte wählen Sie die Bildliste, die Sie dieser Benachrichtigung zuordnen wollen.</string>
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
     <string name="dialog_select_list_for_inclusion">Bitte wählen Sie die Bildliste, die Sie zur aktuellen Liste hinzufügen wollen.</string>
     <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>

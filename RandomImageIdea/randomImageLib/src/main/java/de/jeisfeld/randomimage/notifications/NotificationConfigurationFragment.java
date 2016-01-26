@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -17,6 +18,8 @@ import android.preference.PreferenceGroup;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.DateUtil;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -50,12 +53,13 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		addPreferencesFromResource(R.xml.pref_notification);
+
 		mNotificationId = getArguments().getInt(STRING_NOTIFICATION_ID);
 
+		handleNotificationCreation();
 		setDefaultValues();
 		setNonIndexedValues();
-
-		addPreferencesFromResource(R.xml.pref_notification);
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_notification_frequency);
@@ -191,22 +195,65 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 							R.string.pref_default_notification_detail_flip_behavior));
 		}
 
-		// Handle initial triggering of the notification
-		if (!NotificationSettingsActivity.getNotificationIds().contains(mNotificationId)) {
-			NotificationSettingsActivity.addNotificationId(mNotificationId);
-			int maxNotificationId = PreferenceUtil.getSharedPreferenceInt(R.string.key_notification_max_id, -1);
-			if (mNotificationId > maxNotificationId) {
-				PreferenceUtil.setSharedPreferenceInt(R.string.key_notification_max_id, mNotificationId);
-			}
-
-			NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
-
-			updateHeader();
-
-			isUpdated = true;
-		}
 		return isUpdated;
 	}
+
+	/**
+	 * Handle the initial triggering of a new notification, including the query for a list name.
+	 */
+	private void handleNotificationCreation() {
+		if (!NotificationSettingsActivity.getNotificationIds().contains(mNotificationId)) {
+			ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
+
+			if (listNames.size() == 0) {
+				// On first startup need to create default list.
+				ImageRegistry.getCurrentImageListRefreshed(true);
+				String listName = ImageRegistry.getCurrentListName();
+
+				ConfigureImageListActivity.startActivity(getActivity(), listName);
+				getActivity().finish();
+			}
+			else if (listNames.size() == 1) {
+				doAddNewNotification(listNames.get(0));
+			}
+			else {
+				DialogUtil.displayListSelectionDialog(getActivity(), new SelectFromListDialogListener() {
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId, text);
+						findPreference(getString(R.string.key_notification_list_name)).setSummary(text);
+						doAddNewNotification(text);
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						NotificationSettingsActivity.cancelNotification(mNotificationId);
+						updateHeader();
+						getActivity().finish();
+					}
+				}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_notification);
+			}
+		}
+	}
+
+	/**
+	 * Add the new notification.
+	 *
+	 * @param listName The list name to be used for the notification.
+	 */
+	private void doAddNewNotification(final String listName) {
+		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId, listName);
+		findPreference(getString(R.string.key_notification_list_name)).setSummary(listName);
+
+		NotificationSettingsActivity.addNotificationId(mNotificationId);
+		int maxNotificationId = PreferenceUtil.getSharedPreferenceInt(R.string.key_notification_max_id, -1);
+		if (mNotificationId > maxNotificationId) {
+			PreferenceUtil.setSharedPreferenceInt(R.string.key_notification_max_id, mNotificationId);
+		}
+		NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+		updateHeader();
+	}
+
 
 	/**
 	 * Set the non-indexed preferences to the same values as the indexed ones, so that the views behave well.

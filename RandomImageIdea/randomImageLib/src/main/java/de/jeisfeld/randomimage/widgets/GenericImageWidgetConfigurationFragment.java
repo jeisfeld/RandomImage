@@ -81,7 +81,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		// Add finish button
 		if (preferenceLayout != null && !(getActivity() instanceof WidgetSettingsActivity)) {
 			Button btn = new Button(getActivity());
-			btn.setText(R.string.button_widget_configuration);
+			btn.setText(R.string.button_finish_widget_configuration);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
@@ -240,7 +240,6 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		}
 		return null;
 	}
-
 
 	/**
 	 * Set the onPreferenceChangeListener.

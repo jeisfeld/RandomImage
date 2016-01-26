@@ -29,6 +29,7 @@
     <string name="menu_browse_folders">Im Dateimanager suchen</string>
     <string name="menu_title_pro_app">Überraschungsbild Pro</string>
     <string name="menu_detail_pro_app">Eine Alternative zur Premium-Erweiterung</string>
+    <string name="menu_finish_configuration">Konfiguration beenden</string>
 
     <!-- Entries related to buttons in the settings -->
 

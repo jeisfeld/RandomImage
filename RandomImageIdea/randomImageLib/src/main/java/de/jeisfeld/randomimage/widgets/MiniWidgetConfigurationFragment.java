@@ -58,7 +58,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		// Add cancel button
 		if (preferenceLayout != null) {
 			Button btn = new Button(getActivity());
-			btn.setText(R.string.button_widget_configuration);
+			btn.setText(R.string.button_finish_widget_configuration);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {

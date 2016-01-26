@@ -1,7 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -68,9 +67,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 			startConfigurationPage(appWidgetId, true);
 		}
 		else {
-			List<String> imageListNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-
-			if (imageListNames.size() == 0) {
+			if (listNames.size() == 0) {
 				// On first startup need to create default list.
 				ImageRegistry.getCurrentImageListRefreshed(true);
 				String listName = ImageRegistry.getCurrentListName();
@@ -78,8 +75,8 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 				initialize(savedInstanceState, appWidgetId, listName);
 				ConfigureImageListActivity.startActivity(this, listName);
 			}
-			else if (imageListNames.size() == 1) {
-				initialize(savedInstanceState, appWidgetId, imageListNames.get(0));
+			else if (listNames.size() == 1) {
+				initialize(savedInstanceState, appWidgetId, listNames.get(0));
 			}
 			else {
 				DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {

@@ -39,7 +39,7 @@
     <string name="button_add_folder">Add folder</string>
     <string name="button_add_nested_list">Add nested list</string>
     <string name="button_purchased_item">%1$s (bought)</string>
-    <string name="button_widget_configuration">Finish Widget Configuration</string>
+    <string name="button_finish_widget_configuration">Finish Widget Configuration</string>
     <string name="button_missing_images">Missing images</string>
     <string name="button_widgets">Surprise Image Widgets</string>
     <string name="button_notifications">Surprise Image Notifications</string>

@@ -38,7 +38,7 @@
     <string name="button_add_folder">Ordner hinzufügen</string>
     <string name="button_add_nested_list">Liste hinzufügen</string>
     <string name="button_purchased_item">%1$s (gekauft)</string>
-    <string name="button_widget_configuration">Widget-Konfiguration beenden</string>
+    <string name="button_finish_widget_configuration">Widget-Konfiguration beenden</string>
     <string name="button_missing_images">Fehlende Bilder</string>
     <string name="button_widgets">Überraschungsbild-Widgets</string>
     <string name="button_notifications">Überraschungsbild-Benachrichtigungen</string>
