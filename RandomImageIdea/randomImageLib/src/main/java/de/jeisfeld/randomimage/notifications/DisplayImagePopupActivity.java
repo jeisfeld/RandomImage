@@ -87,6 +87,7 @@ public class DisplayImagePopupActivity extends Activity {
 		final String listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
 		if (fileName == null || mNotificationId == -1) {
+			mNotificationId = null;
 			finish();
 			return;
 		}

@@ -9,8 +9,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -266,24 +264,6 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId, false);
 		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId, true);
 		NotificationUtil.cancelRandomImageNotification(Application.getAppContext(), notificationId);
-	}
-
-	@Override
-	public final boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.configuration_only_ok, menu);
-		return true;
-	}
-
-	@Override
-	public final boolean onOptionsItemSelected(final MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_ok) {
-			finish();
-			return true;
-		}
-		else {
-			return super.onOptionsItemSelected(item);
-		}
 	}
 
 }

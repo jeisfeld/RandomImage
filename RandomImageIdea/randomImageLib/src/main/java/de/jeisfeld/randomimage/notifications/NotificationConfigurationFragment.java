@@ -96,7 +96,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mNotificationId));
+						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId));
 				return true;
 			}
 		});
