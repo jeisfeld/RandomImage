@@ -6,14 +6,10 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
 
-import de.jeisfeld.randomimage.DisplayRandomImageActivity;
-import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.view.PinchImageView;
+import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -93,20 +89,9 @@ public class DisplayImagePopupActivity extends Activity {
 		}
 		NOTIFICATION_MAP.put(mNotificationId, this);
 
-		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, ImageUtil.MAX_BITMAP_SIZE);
-		ImageView imageView = (ImageView) findViewById(R.id.imageViewMicroImage);
-
-		imageView.setImageBitmap(bitmap);
-
-		imageView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				Intent intent = DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this, listName, fileName, true, null,
-						mNotificationId);
-				startActivity(intent);
-				finish();
-			}
-		});
+		PinchImageView imageView = (PinchImageView) findViewById(R.id.imageViewMicroImage);
+		imageView.setScaleType(ScaleType.HALF_SIZE);
+		imageView.setImage(fileName, this, 0);
 	}
 
 	@Override

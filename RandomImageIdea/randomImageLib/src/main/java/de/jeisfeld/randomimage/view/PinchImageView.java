@@ -21,7 +21,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 
-import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
@@ -137,7 +136,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * The initial scale type to be used.
 	 */
-	private DisplayRandomImageActivity.ScaleType mScaleType = DisplayRandomImageActivity.ScaleType.FIT;
+	private ScaleType mScaleType = ScaleType.FIT;
 
 	/**
 	 * Standard constructor to be implemented for all views.
@@ -171,7 +170,7 @@ public class PinchImageView extends ImageView {
 	 */
 	public PinchImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setScaleType(ScaleType.MATRIX);
+		setScaleType(ImageView.ScaleType.MATRIX);
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 	}
 
@@ -233,12 +232,24 @@ public class PinchImageView extends ImageView {
 		float widthFactor = 1f * getWidth() / mBitmap.getWidth();
 
 		switch (mScaleType) {
-		case FIT:
-		case TURN_FIT:
-			return Math.min(widthFactor, heightFactor);
 		case STRETCH:
 		case TURN_STRETCH:
 			return Math.max(widthFactor, heightFactor);
+		case HALF_SIZE:
+			if (SystemUtil.isTablet()) {
+				return Math.min(
+						Math.min(widthFactor, heightFactor) * 0.6f, // MAGIC_NUMBER - ensure 20% border even on the bigger side.
+						Math.max(widthFactor, heightFactor) * 0.4f // MAGIC_NUMBER - ensure that one dimension is only 40% of the page.
+				);
+			}
+			else {
+				return Math.min(
+						Math.min(widthFactor, heightFactor) * 0.9f, // MAGIC_NUMBER - ensure 5% border even on the bigger side.
+						Math.max(widthFactor, heightFactor) * 0.6f // MAGIC_NUMBER - ensure that one dimension is only 60% of the page.
+				);
+			}
+		case FIT:
+		case TURN_FIT:
 		default:
 			return Math.min(widthFactor, heightFactor);
 		}
@@ -285,8 +296,8 @@ public class PinchImageView extends ImageView {
 	 * Rotate the bitmap if requested and if it fits better into the view.
 	 */
 	private void rotateIfRequired() {
-		if (mScaleType == DisplayRandomImageActivity.ScaleType.TURN_FIT
-				|| mScaleType == DisplayRandomImageActivity.ScaleType.TURN_STRETCH) {
+		if (mScaleType == ScaleType.TURN_FIT
+				|| mScaleType == ScaleType.TURN_STRETCH) {
 			int rotationAngle = getRotationAngle();
 			if (rotationAngle != 0) {
 				Matrix matrix = new Matrix();
@@ -320,7 +331,7 @@ public class PinchImageView extends ImageView {
 	 *
 	 * @param scaleType The scaletype, as defined in the preference resource array.
 	 */
-	public final void setScaleType(final DisplayRandomImageActivity.ScaleType scaleType) {
+	public final void setScaleType(final ScaleType scaleType) {
 		mScaleType = scaleType;
 	}
 
@@ -702,6 +713,53 @@ public class PinchImageView extends ImageView {
 		public final void onCreate(final Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			setRetainInstance(true);
+		}
+	}
+
+	/**
+	 * The way in which the image is initially scaled.
+	 */
+	public enum ScaleType {
+		/**
+		 * Fit into window, keeping orientation.
+		 */
+		FIT,
+		/**
+		 * Stretch to fill window, keeping orientation.
+		 */
+		STRETCH,
+		/**
+		 * Fit into window, optimizing orientation.
+		 */
+		TURN_FIT,
+		/**
+		 * Stretch to fill window, optimizing orientation.
+		 */
+		TURN_STRETCH,
+		/**
+		 * Put it at random position within the view at half the possible size.
+		 */
+		HALF_SIZE;
+
+		/**
+		 * Get the scale type from the scaleType value as defined in the preference resource array.
+		 *
+		 * @param resourceScaleType The scale type, as defined in the preference resource array.
+		 * @return The corresponding ScaleType.
+		 */
+		public static final ScaleType fromResourceScaleType(final int resourceScaleType) {
+			switch (resourceScaleType) {
+			case 0:
+				return FIT;
+			case 1:
+				return STRETCH;
+			case 2:
+				return TURN_FIT;
+			case 3: // MAGIC_NUMBER
+				return TURN_STRETCH;
+			default:
+				return FIT;
+			}
 		}
 	}
 }

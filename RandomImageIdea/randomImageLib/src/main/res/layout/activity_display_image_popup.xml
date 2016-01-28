@@ -5,14 +5,12 @@
              android:background="#7FFFFFFF"
     >
 
-    <ImageView
+    <de.jeisfeld.randomimage.view.PinchImageView
         android:id="@+id/imageViewMicroImage"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:padding="@dimen/micro_image_activity_padding"
         >
 
-    </ImageView>
+    </de.jeisfeld.randomimage.view.PinchImageView>
 </FrameLayout>

@@ -27,6 +27,7 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.PinchImageView;
+import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -739,49 +740,6 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 			}
 			double angleDiff = Math.abs(getAngle() - otherDirection.getAngle());
 			return angleDiff > Math.PI / 2 && angleDiff < 3 * Math.PI / 2; // MAGIC_NUMBER
-		}
-	}
-
-	/**
-	 * The way in which the image is initially scaled.
-	 */
-	public enum ScaleType {
-		/**
-		 * Fit into window, keeping orientation.
-		 */
-		FIT,
-		/**
-		 * Stretch to fill window, keeping orientation.
-		 */
-		STRETCH,
-		/**
-		 * Fit into window, optimizing orientation.
-		 */
-		TURN_FIT,
-		/**
-		 * Stretch to fill window, optimizing orientation.
-		 */
-		TURN_STRETCH;
-
-		/**
-		 * Get the scale type from the scaleType value as defined in the preference resource array.
-		 *
-		 * @param resourceScaleType The scale type, as defined in the preference resource array.
-		 * @return The corresponding ScaleType.
-		 */
-		public static final ScaleType fromResourceScaleType(final int resourceScaleType) {
-			switch (resourceScaleType) {
-			case 0:
-				return FIT;
-			case 1:
-				return STRETCH;
-			case 2:
-				return TURN_FIT;
-			case 3: // MAGIC_NUMBER
-				return TURN_STRETCH;
-			default:
-				return FIT;
-			}
 		}
 	}
 
