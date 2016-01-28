@@ -69,6 +69,11 @@ public class PinchImageView extends ImageView {
 	private boolean mHasMoved = false;
 
 	/**
+	 * Field used to check if the view was touched - only if touched, the size will be maintained later.
+	 */
+	private boolean mWasTouched = false;
+
+	/**
 	 * These are the relative positions of the Bitmap which are displayed in center of the screen. Range: [0,1]
 	 */
 	private float mPosX, mPosY;
@@ -270,7 +275,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Scale the image to fit into the view, if not yet scaled before.
 	 */
-	protected final void doInitialScaling() {
+	public final void doInitialScaling() {
 		if (mIsBitmapSet && !mInitialized) {
 			doScalingToFit();
 		}
@@ -443,8 +448,14 @@ public class PinchImageView extends ImageView {
 	@Override
 	protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		if (mIsBitmapSet && !mInitialized) {
-			doInitialScaling();
+		if (mIsBitmapSet) {
+			if (mInitialized) {
+				requestLayout();
+				invalidate();
+			}
+			else {
+				doInitialScaling();
+			}
 		}
 	}
 
@@ -465,11 +476,11 @@ public class PinchImageView extends ImageView {
 		final int action = ev.getActionMasked();
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			startPointerMove(ev);
 			mHasMoved = false;
 			mLastTouchX = ev.getX();
 			mLastTouchY = ev.getY();
 			mActivePointerId = ev.getPointerId(0);
+			mWasTouched = true;
 			break;
 
 		case MotionEvent.ACTION_POINTER_DOWN:
@@ -495,7 +506,6 @@ public class PinchImageView extends ImageView {
 			mHasMoved = false;
 			mActivePointerId = INVALID_POINTER_ID;
 			mActivePointerId2 = INVALID_POINTER_ID;
-			finishPointerMove(ev);
 			break;
 
 		case MotionEvent.ACTION_POINTER_UP:
@@ -530,24 +540,6 @@ public class PinchImageView extends ImageView {
 	@Override
 	public final boolean performLongClick() {
 		return mHasMoved || super.performLongClick();
-	}
-
-	/**
-	 * Utility method to allow actions after starting the pointer move.
-	 *
-	 * @param ev The motion event.
-	 */
-	protected final void startPointerMove(final MotionEvent ev) {
-		// do nothing
-	}
-
-	/**
-	 * Utility method to do the refresh after finishing the pointer move.
-	 *
-	 * @param ev The motion event.
-	 */
-	protected final void finishPointerMove(final MotionEvent ev) {
-		// do nothing
 	}
 
 	/**
@@ -620,12 +612,13 @@ public class PinchImageView extends ImageView {
 	protected final Parcelable onSaveInstanceState() {
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("instanceState", super.onSaveInstanceState());
-		bundle.putFloat("mScaleFactor", this.mScaleFactor);
-		bundle.putFloat("mPosX", this.mPosX);
-		bundle.putFloat("mPosY", this.mPosY);
-		bundle.putString("mPathName", this.mPathName);
-		bundle.putInt("mImageResource", this.mImageResource);
+		bundle.putFloat("mScaleFactor", mScaleFactor);
+		bundle.putFloat("mPosX", mPosX);
+		bundle.putFloat("mPosY", mPosY);
+		bundle.putString("mPathName", mPathName);
+		bundle.putInt("mImageResource", mImageResource);
 		bundle.putBoolean("mInitialized", mInitialized);
+		bundle.putBoolean("mWasTouched", mWasTouched);
 		return bundle;
 	}
 
@@ -634,12 +627,16 @@ public class PinchImageView extends ImageView {
 		Parcelable enhancedState = state;
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
-			this.mScaleFactor = bundle.getFloat("mScaleFactor");
-			this.mPosX = bundle.getFloat("mPosX");
-			this.mPosY = bundle.getFloat("mPosY");
-			this.mPathName = bundle.getString("mPathName");
-			this.mImageResource = bundle.getInt("mImageResource");
-			this.mInitialized = bundle.getBoolean("mInitialized");
+			mPathName = bundle.getString("mPathName");
+			mImageResource = bundle.getInt("mImageResource");
+			mWasTouched = bundle.getBoolean("mWasTouched");
+			if (mWasTouched) {
+				mInitialized = bundle.getBoolean("mInitialized");
+				mScaleFactor = bundle.getFloat("mScaleFactor");
+				mLastScaleFactor = bundle.getFloat("mScaleFactor");
+				mPosX = bundle.getFloat("mPosX");
+				mPosY = bundle.getFloat("mPosY");
+			}
 			enhancedState = bundle.getParcelable("instanceState");
 		}
 		super.onRestoreInstanceState(enhancedState);

@@ -80,7 +80,6 @@ public class DisplayImagePopupActivity extends Activity {
 		setContentView(R.layout.activity_display_image_popup);
 
 		final String fileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
-		final String listName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
 		if (fileName == null || mNotificationId == -1) {
 			mNotificationId = null;

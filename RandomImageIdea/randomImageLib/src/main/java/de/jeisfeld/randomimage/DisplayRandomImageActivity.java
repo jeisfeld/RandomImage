@@ -404,6 +404,7 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 	 */
 	private PinchImageView createImageView(final String fileName, final int cacheIndex) {
 		PinchImageView imageView = new PinchImageView(this);
+		imageView.setId(cacheIndex);
 		imageView.setGestureDetector(mGestureDetector);
 		imageView.setScaleType(mScaleType);
 		imageView.setImage(fileName, this, cacheIndex);
