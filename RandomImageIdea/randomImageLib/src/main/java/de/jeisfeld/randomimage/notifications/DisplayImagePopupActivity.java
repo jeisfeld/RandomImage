@@ -7,7 +7,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimagelib.R;
@@ -48,6 +52,20 @@ public class DisplayImagePopupActivity extends Activity {
 	 */
 	private Integer mNotificationId = null;
 
+	/**
+	 * The view where the image is displayed.
+	 */
+	private PinchImageView mImageView;
+
+	/**
+	 * The file to be displayed.
+	 */
+	private String mFileName;
+	/**
+	 * The list being displayed.
+	 */
+	private String mListName;
+
 
 	/**
 	 * Static helper method to create an intent for this activity.
@@ -79,19 +97,67 @@ public class DisplayImagePopupActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_image_popup);
 
-		final String fileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
-		if (fileName == null || mNotificationId == -1) {
+		if (mFileName == null || mNotificationId == -1) {
 			mNotificationId = null;
 			finish();
 			return;
 		}
 		NOTIFICATION_MAP.put(mNotificationId, this);
 
-		PinchImageView imageView = (PinchImageView) findViewById(R.id.imageViewMicroImage);
-		imageView.setScaleType(ScaleType.HALF_SIZE);
-		imageView.setImage(fileName, this, 0);
+		mImageView = (PinchImageView) findViewById(R.id.imageViewMicroImage);
+		mImageView.setScaleType(ScaleType.HALF_SIZE);
+		mImageView.setImage(mFileName, this, 0);
+		mImageView.setGestureDetector(getGestureDetector());
 	}
+
+	/**
+	 * Create the gesture detector handling flinging.
+	 *
+	 * @return the gesture detector.
+	 */
+	private GestureDetector getGestureDetector() {
+		final int flingType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, 0);
+
+		return new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+			/**
+			 * The speed which is accepted as fling.
+			 */
+			private static final int FLING_SPEED = 3000;
+
+			@Override
+			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
+				if (flingType == 1) {
+					return false;
+				}
+
+				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
+					Runnable runnable = new Runnable() {
+						@Override
+						public void run() {
+							if (flingType == 0) {
+								DisplayImagePopupActivity.this.startActivity(
+										DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
+												mListName, mFileName, true, null, mNotificationId));
+							}
+							finish();
+						}
+					};
+
+					mImageView.animateOut(velocityX, velocityY, runnable);
+
+					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		});
+	}
+
 
 	@Override
 	protected final void onDestroy() {

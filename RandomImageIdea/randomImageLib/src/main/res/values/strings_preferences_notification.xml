@@ -54,7 +54,7 @@
     <string name="pref_title_notification_detail_scale_type">Scaling when showing details</string>
     <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
-    <string name="pref_default_notification_detail_flip_behavior" translatable="false">0</string>
+    <string name="pref_default_notification_detail_flip_behavior" translatable="false">2</string>
     <string name="pref_title_cancel_notification">Remove Notification</string>
 
     <!-- String arrays -->

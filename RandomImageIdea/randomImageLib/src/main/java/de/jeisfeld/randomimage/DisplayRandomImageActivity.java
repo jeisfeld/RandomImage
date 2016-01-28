@@ -683,7 +683,7 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 	/**
 	 * A class holding the direction of a fling movement.
 	 */
-	private final class FlingDirection {
+	private static final class FlingDirection {
 		/**
 		 * The x velocity of the movement.
 		 */
