@@ -232,7 +232,7 @@ public class PinchImageView extends ImageView {
 	 *
 	 * @return The natural scale factor fitting the image into the view.
 	 */
-	protected final float getNaturalScaleFactor() {
+	private float getNaturalScaleFactor() {
 		float heightFactor = 1f * getHeight() / mBitmap.getHeight();
 		float widthFactor = 1f * getWidth() / mBitmap.getWidth();
 
@@ -241,18 +241,10 @@ public class PinchImageView extends ImageView {
 		case TURN_STRETCH:
 			return Math.max(widthFactor, heightFactor);
 		case HALF_SIZE:
-			if (SystemUtil.isTablet()) {
-				return Math.min(
-						Math.min(widthFactor, heightFactor) * 0.6f, // MAGIC_NUMBER - ensure 20% border even on the bigger side.
-						Math.max(widthFactor, heightFactor) * 0.4f // MAGIC_NUMBER - ensure that one dimension is only 40% of the page.
-				);
-			}
-			else {
-				return Math.min(
-						Math.min(widthFactor, heightFactor) * 0.9f, // MAGIC_NUMBER - ensure 5% border even on the bigger side.
-						Math.max(widthFactor, heightFactor) * 0.6f // MAGIC_NUMBER - ensure that one dimension is only 60% of the page.
-				);
-			}
+			return Math.min(
+					Math.min(widthFactor, heightFactor) * 0.9f, // MAGIC_NUMBER - ensure 5% border even on the bigger side.
+					Math.max(widthFactor, heightFactor) * 0.6f // MAGIC_NUMBER - ensure that one dimension is only 60% of the page.
+			);
 		case FIT:
 		case TURN_FIT:
 		default:
@@ -465,12 +457,13 @@ public class PinchImageView extends ImageView {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public final boolean onTouchEvent(final MotionEvent ev) {
+		boolean isProcessed = false;
 		// Let the ScaleGestureDetector inspect all events.
 		mScaleDetector.onTouchEvent(ev);
 
 		// If available, do the same for the Gesture Detector.
 		if (mGestureDetector != null) {
-			mGestureDetector.onTouchEvent(ev);
+			isProcessed = mGestureDetector.onTouchEvent(ev);
 		}
 
 		final int action = ev.getActionMasked();
@@ -503,6 +496,9 @@ public class PinchImageView extends ImageView {
 
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
+			if (!mHasMoved && !isProcessed) {
+				isProcessed = super.performClick();
+			}
 			mHasMoved = false;
 			mActivePointerId = INVALID_POINTER_ID;
 			mActivePointerId2 = INVALID_POINTER_ID;
@@ -531,7 +527,7 @@ public class PinchImageView extends ImageView {
 
 		}
 
-		return !isLongClickable() || super.onTouchEvent(ev);
+		return isProcessed || !isLongClickable() || super.onTouchEvent(ev);
 	}
 
 	/*

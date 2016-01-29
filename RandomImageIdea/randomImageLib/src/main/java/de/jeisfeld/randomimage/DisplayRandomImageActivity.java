@@ -556,8 +556,7 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName,
-						mPreventDisplayAll);
+				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName, mPreventDisplayAll);
 			}
 
 		});
