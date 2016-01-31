@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
@@ -28,7 +29,6 @@ import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.SystemUtil;
-import de.jeisfeld.randomimage.view.ListMenuView;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -115,13 +115,9 @@ public class DisplayImageDetailsActivity extends Activity {
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
-		ListMenuView listMenu = (ListMenuView) findViewById(R.id.listViewImageDetailsMenu);
-
 		// put the textView into the listView, so that it scrolls with the list.
-		TextView textView =
-				(TextView) getLayoutInflater().inflate(R.layout.listview_display_image_details_header, null);
+		TextView textView = (TextView) findViewById(R.id.textViewImageDetails);
 		textView.setText(getImageInfo());
-		listMenu.addHeaderView(textView, null, false);
 
 		final String galleryFileName;
 		File file = new File(mFileName);
@@ -142,7 +138,9 @@ public class DisplayImageDetailsActivity extends Activity {
 			galleryFileName = null;
 		}
 		if (galleryFileName != null) {
-			listMenu.addItem(R.string.menu_view_in_gallery, new OnClickListener() {
+			Button btnViewInGallery = (Button) findViewById(R.id.buttonViewInGallery);
+			btnViewInGallery.setVisibility(View.VISIBLE);
+			btnViewInGallery.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, galleryFileName);
@@ -152,7 +150,9 @@ public class DisplayImageDetailsActivity extends Activity {
 		}
 
 		if (file.isFile()) {
-			listMenu.addItem(R.string.menu_send_to, new OnClickListener() {
+			Button btnSendTo = (Button) findViewById(R.id.buttonSendTo);
+			btnSendTo.setVisibility(View.VISIBLE);
+			btnSendTo.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					Intent intent = new Intent(Intent.ACTION_SEND);
@@ -165,67 +165,64 @@ public class DisplayImageDetailsActivity extends Activity {
 		}
 
 		if (mListName != null) {
-			addButtonsForImageList(listMenu);
+			configureButtonsForImageList();
 		}
-
-		// Adapter must be set after header, so better set it in the and.
-		listMenu.setAdapter();
 	}
 
 	/**
-	 * Add the buttons related to the image list.
-	 *
-	 * @param listMenu The menu where to add the buttons.
+	 * Configure the buttons related to the image list.
 	 */
-	private void addButtonsForImageList(final ListMenuView listMenu) {
+	private void configureButtonsForImageList() {
 		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 		if (imageList != null && imageList.contains(mFileName)) {
 			final boolean isDirectory = new File(mFileName).isDirectory();
 
-			listMenu.addItem(
-					R.string.menu_remove_from_list,
-					new OnClickListener() {
-						@Override
-						public void onClick(final View v) {
-							final String filesString;
-							if (isDirectory) {
-								filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
-							}
-							else {
-								filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
-							}
+			Button btnRemoveFromList = (Button) findViewById(R.id.buttonRemoveFromList);
+			btnRemoveFromList.setVisibility(View.VISIBLE);
+			btnRemoveFromList.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					final String filesString;
+					if (isDirectory) {
+						filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
+					}
+					else {
+						filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
+					}
 
-							DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
-									new ConfirmDialogListener() {
-										@Override
-										public void onDialogPositiveClick(final DialogFragment dialog) {
-											if (isDirectory) {
-												imageList.removeFolder(mFileName);
-												NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
-														null, Collections.singletonList(mFileName), null);
-											}
-											else {
-												imageList.removeFile(mFileName);
-												NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
-														null, null, Collections.singletonList(mFileName));
-											}
-											imageList.update(true);
-											DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_removed_single, filesString);
-											returnResult(mPreventDisplayAll, true);
-										}
+					DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
+							new ConfirmDialogListener() {
+								@Override
+								public void onDialogPositiveClick(final DialogFragment dialog) {
+									if (isDirectory) {
+										imageList.removeFolder(mFileName);
+										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+												null, Collections.singletonList(mFileName), null);
+									}
+									else {
+										imageList.removeFile(mFileName);
+										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+												null, null, Collections.singletonList(mFileName));
+									}
+									imageList.update(true);
+									DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_removed_single, filesString);
+									returnResult(mPreventDisplayAll, true);
+								}
 
-										@Override
-										public void onDialogNegativeClick(final DialogFragment dialog) {
-											returnResult(false, false);
-										}
-									}, null, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
-									filesString);
-						}
-					});
+								@Override
+								public void onDialogNegativeClick(final DialogFragment dialog) {
+									returnResult(false, false);
+								}
+							}, null, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
+							filesString);
+				}
+			});
 		}
 
 		if (mListName != null && !mPreventDisplayAll) {
-			listMenu.addItem(R.string.menu_edit_list, new OnClickListener() {
+			Button btnEditList = (Button) findViewById(R.id.buttonEditList);
+			btnEditList.setVisibility(View.VISIBLE);
+			btnEditList.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName);

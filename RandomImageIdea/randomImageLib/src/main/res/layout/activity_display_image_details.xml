@@ -1,12 +1,54 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="0px"
+    android:orientation="vertical"
+    android:padding="0px">
 
-    <de.jeisfeld.randomimage.view.ListMenuView
-        android:id="@+id/listViewImageDetailsMenu"
-        style="?android:attr/listViewStyle"
+    <TextView
+        android:id="@+id/textViewImageDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
+
+    <Button
+        android:id="@+id/buttonViewInGallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/text_padding"
+        android:text="@string/button_view_in_gallery"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/buttonSendTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/text_padding"
+        android:text="@string/button_send_to"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/buttonRemoveFromList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/text_padding"
+        android:text="@string/menu_remove_from_list"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/buttonEditList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/text_padding"
+        android:text="@string/menu_edit_list"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
 
 </LinearLayout>
