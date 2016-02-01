@@ -69,17 +69,11 @@
     <string name="hint_search_path">Filter name</string>
 
     <!-- Strings for image info -->
-    <string name="info_file_name">File name:</string>
-    <string name="info_folder_name">Folder name:</string>
-    <string name="info_file_location">Folder:</string>
-    <string name="info_folder_location">Parent folder:</string>
-    <string name="info_file_date">Date:</string>
-    <string name="info_image_count">Number of images:</string>
-
-    <!-- Strings for nested list info -->
-    <string name="info_nested_list_images">Number of images: %1$d</string>
-    <string name="info_nested_list_images_loading">Determining number of images...</string>
-    <string name="info_nested_list_image_proportion">Image Proportion: %1$s%%</string>
+    <string name="info_parent_folder"><![CDATA[<b>Location:</b> %1$s]]></string>
+    <string name="info_file_date"><![CDATA[<b>Date:</b> %1$s]]></string>
+    <string name="info_number_of_images"><![CDATA[<b>Number of images:</b> %1$s]]></string>
+    <string name="info_number_of_images_loading">Determining the number of images&#8230;</string>
+    <string name="info_number_of_images_and_proportion"><![CDATA[<b>Number of images:</b> %1$d (%2$s%%)]]></string>
     <string name="info_nested_list_view_frequency">View Frequency:</string>
     <string name="percent" translatable="false">%</string>
 

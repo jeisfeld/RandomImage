@@ -7,18 +7,51 @@
     android:padding="0px">
 
     <TextView
-        android:id="@+id/textViewImageDetails"
+        android:id="@+id/textViewFileName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="false"
+        android:paddingBottom="@dimen/text_padding"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
+        android:paddingTop="@dimen/text_padding"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/textViewParentFolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_padding"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/text_padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/textViewImageDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_padding"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/text_padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/textViewNumberOfImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_padding"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/text_padding"
+        android:text="@string/info_number_of_images_loading"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <Button
         android:id="@+id/buttonViewInGallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_padding"
         android:padding="@dimen/text_padding"
         android:text="@string/button_view_in_gallery"
         android:textAppearance="?android:attr/textAppearanceMedium"

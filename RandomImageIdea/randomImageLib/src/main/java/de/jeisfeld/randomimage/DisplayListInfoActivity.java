@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 
 import android.annotation.SuppressLint;
@@ -7,6 +8,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -140,20 +142,14 @@ public class DisplayListInfoActivity extends Activity {
 		});
 
 		imageList.executeWhenReady(
-				new Runnable() {
-					@Override
-					public void run() {
-						((TextView) findViewById(R.id.textViewNumberOfImages)).setText(R.string.info_nested_list_images_loading);
-					}
-				},
+				null,
 				new Runnable() {
 					@Override
 					public void run() {
 						((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
-								getString(R.string.info_nested_list_images, imageList.getNestedListImageCount(mListName)));
-
-						((TextView) findViewById(R.id.textViewWeight)).setText(
-								getString(R.string.info_nested_list_image_proportion, getPercentageString(imageList.getImagePercentage(mListName))));
+								Html.fromHtml(getString(R.string.info_number_of_images_and_proportion,
+										imageList.getNestedListImageCount(mListName),
+										getPercentageString(imageList.getImagePercentage(mListName)))));
 
 						final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
 						Double customNestedListWeight = imageList.getCustomNestedListWeight(mListName);
@@ -246,8 +242,6 @@ public class DisplayListInfoActivity extends Activity {
 			buttonRestore.setVisibility(View.VISIBLE);
 		}
 
-		final TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
-		textViewNumberOfImages.setText(R.string.info_nested_list_images_loading);
 		new Thread() {
 			@Override
 			public void run() {
@@ -255,7 +249,8 @@ public class DisplayListInfoActivity extends Activity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						textViewNumberOfImages.setText(getString(R.string.info_nested_list_images, numberOfImages));
+						TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
+						textViewNumberOfImages.setText(Html.fromHtml(getString(R.string.info_number_of_images, numberOfImages)));
 					}
 				});
 			}
@@ -270,7 +265,7 @@ public class DisplayListInfoActivity extends Activity {
 	 */
 	public static final String getPercentageString(final double probability) {
 		if (probability >= 0.1) { // MAGIC_NUMBER
-			return String.format("%1$,.1f", probability * HUNDRED);
+			return new DecimalFormat("###.#").format(probability * HUNDRED);
 		}
 		else {
 			return String.format("%1$,.2G", probability * HUNDRED);

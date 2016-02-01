@@ -25,12 +25,14 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/text_padding"
+        android:text="@string/info_number_of_images_loading"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <Button
         android:id="@+id/buttonClone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_padding"
         android:padding="@dimen/text_padding"
         android:text="@string/button_clone_list"
         android:textAppearance="?android:attr/textAppearanceMedium"/>

@@ -6,13 +6,11 @@ import java.util.Collections;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -28,7 +26,6 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
-import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -116,8 +113,7 @@ public class DisplayImageDetailsActivity extends Activity {
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
 		// put the textView into the listView, so that it scrolls with the list.
-		TextView textView = (TextView) findViewById(R.id.textViewImageDetails);
-		textView.setText(getImageInfo());
+		displayImageInfo();
 
 		final String galleryFileName;
 		File file = new File(mFileName);
@@ -285,24 +281,27 @@ public class DisplayImageDetailsActivity extends Activity {
 	}
 
 	/**
-	 * Get the image information.
-	 *
-	 * @return The image information.
+	 * Display the image information.
 	 */
-	private CharSequence getImageInfo() {
-		StringBuilder imageInfo = new StringBuilder();
+	private void displayImageInfo() {
 		File file = new File(mFileName);
 
-		imageInfo.append(formatImageInfoLine(this,
-				file.isDirectory() ? R.string.info_folder_name : R.string.info_file_name, file.getName()));
-		imageInfo.append(formatImageInfoLine(this,
-				file.isDirectory() ? R.string.info_folder_location : R.string.info_file_location, file.getParent()));
+		TextView textViewFileName = (TextView) findViewById(R.id.textViewFileName);
+		textViewFileName.setText(file.getName());
 
+		TextView textViewParentFolder = (TextView) findViewById(R.id.textViewParentFolder);
+		textViewParentFolder.setText(Html.fromHtml(getString(R.string.info_parent_folder, file.getParent())));
+
+		TextView textViewImageDate = (TextView) findViewById(R.id.textViewImageDate);
 		Date imageDate = ImageUtil.getExifDate(mFileName);
-		if (imageDate != null) {
-			imageInfo.append(formatImageInfoLine(this, R.string.info_file_date, DateUtil.format(imageDate)));
+		if (imageDate == null) {
+			textViewImageDate.setVisibility(View.GONE);
+		}
+		else {
+			textViewImageDate.setText(Html.fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
 		}
 
+		TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
 		if (file.isDirectory()) {
 			int imageCount = ImageUtil.getImagesInFolder(mFileName).size();
 			double probability = -1;
@@ -313,37 +312,10 @@ public class DisplayImageDetailsActivity extends Activity {
 			if (probability > 0) {
 				probabilityString = " (" + DisplayListInfoActivity.getPercentageString(probability) + "%)";
 			}
-			imageInfo.append(formatImageInfoLine(this, R.string.info_image_count, Integer.toString(imageCount) + probabilityString));
-		}
-
-
-		return Html.fromHtml(imageInfo.toString());
-	}
-
-	/**
-	 * Format one line of the image display.
-	 *
-	 * @param activity the triggering activity.
-	 * @param resource The resource containing the label of the line.
-	 * @param value    The value of the parameter.
-	 * @return The formatted line.
-	 */
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	private static String formatImageInfoLine(final Activity activity, final int resource, final String value) {
-		StringBuilder line = new StringBuilder("<br><b>");
-		line.append(activity.getString(resource));
-		line.append("</b><br>");
-
-		if (SystemUtil.isAtLeastVersion(Build.VERSION_CODES.JELLY_BEAN)) {
-			// Workaround to escape html, but transfer line breaks to HTML
-			line.append(Html.escapeHtml(value.replace("\n", "|||LINEBREAK|||")).replace("|||LINEBREAK|||", "<br>"));
+			textViewNumberOfImages.setText(Html.fromHtml(getString(R.string.info_number_of_images, imageCount + probabilityString)));
 		}
 		else {
-			line.append(value.replace("&", "&amp;").replace("\n", "<br>").replace("<", "&lt;").replace(">", "&gt;"));
+			textViewNumberOfImages.setVisibility(View.GONE);
 		}
-		line.append("<br>");
-
-		return line.toString();
 	}
-
 }

@@ -67,18 +67,12 @@
     <string name="text_no_image">Kein Bild verfügbar</string>
     <string name="hint_search_path">Namen filtern</string>
 
-    <!-- Strings for image info -->
-    <string name="info_file_name">Dateiname:</string>
-    <string name="info_folder_name">Verzeichnisname:</string>
-    <string name="info_file_location">Verzeichnis:</string>
-    <string name="info_folder_location">Verzeichnisort:</string>
-    <string name="info_file_date">Datum:</string>
-    <string name="info_image_count">Anzahl der Bilder:</string>
-
-    <!-- Strings for nested list info -->
-    <string name="info_nested_list_images">Zahl der Bilder: %1$d</string>
-    <string name="info_nested_list_images_loading">Bestimme Zahl der Bilder...</string>
-    <string name="info_nested_list_image_proportion">Anteil der Bilder: %1$s%%</string>
+    <!-- Strings for image or list info -->
+    <string name="info_parent_folder"><![CDATA[<b>Ort:</b> %1$s]]></string>
+    <string name="info_file_date"><![CDATA[<b>Datum:</b> %1$s]]></string>
+    <string name="info_number_of_images"><![CDATA[<b>Zahl der Bilder:</b> %1$s]]></string>
+    <string name="info_number_of_images_loading">Bestimme die Zahl der Bilder&#8230;</string>
+    <string name="info_number_of_images_and_proportion"><![CDATA[<b>Zahl der Bilder:</b> %1$d (%2$s%%)]]></string>
     <string name="info_nested_list_view_frequency">Anzeigehäufigkeit:</string>
 
 </resources>
