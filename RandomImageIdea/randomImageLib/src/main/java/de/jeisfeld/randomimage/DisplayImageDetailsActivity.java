@@ -10,9 +10,12 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -58,6 +61,12 @@ public class DisplayImageDetailsActivity extends Activity {
 	private static final String STRING_RESULT_FILE_REMOVED = "de.jeisfeld.randomimage.FILE_REMOVED";
 
 	/**
+	 * The size of the image in the heading.
+	 */
+	private static final int HEADING_IMAGE_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32,
+			Application.getAppContext().getResources().getDisplayMetrics());
+
+	/**
 	 * The name of the file whose details should be displayed.
 	 */
 	private String mFileName;
@@ -99,18 +108,24 @@ public class DisplayImageDetailsActivity extends Activity {
 		// Ensure that this activity can be shown in Landscape mode, even if the parent activity is forced to Portrait.
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
+		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
+
 		// Enable icon
 		final TextView title = (TextView) findViewById(android.R.id.title);
 		if (title != null) {
 			int horizontalMargin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
 			title.setPadding(horizontalMargin * 9 / 10, 0, 0, 0); // MAGIC_NUMBER
 			title.setCompoundDrawablePadding(horizontalMargin * 2 / 3); // MAGIC_NUMBER
-			title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_title_info, 0, 0, 0);
+			if (mFileName != null && new File(mFileName).isFile()) {
+				Drawable drawable = new BitmapDrawable(getResources(), ImageUtil.getImageBitmap(mFileName, HEADING_IMAGE_SIZE));
+				title.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+			}
+			else {
+				title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_title_info, 0, 0, 0);
+			}
 		}
-
-		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
-		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
-		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
 		// put the textView into the listView, so that it scrolls with the list.
 		displayImageInfo();
