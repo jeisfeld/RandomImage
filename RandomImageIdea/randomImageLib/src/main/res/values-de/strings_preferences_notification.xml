@@ -26,6 +26,7 @@
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
+        <item>minütlich (zum Testen)</item>
         <item>halbstündlich</item>
         <item>stündlich</item>
         <item>alle zwei Stunden</item>
@@ -38,7 +39,7 @@
         <item>monatlich</item>
         <item>vierteljährlich</item>
         <item>halbjährlich</item>
-        <item>minütlich (zum Testen)</item>
+        <item>nie</item>
     </string-array>
     <string-array name="notification_timer_variance_names">
         <item>geringe Variation</item>

@@ -73,6 +73,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	public static final void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
 		int frequency = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_frequency, notificationId, 0);
 		if (frequency == 0) {
+			cancelAlarm(context, notificationId, false);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
 			return;
 		}
 

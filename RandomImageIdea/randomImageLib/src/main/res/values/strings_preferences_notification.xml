@@ -59,6 +59,7 @@
 
     <!-- String arrays -->
     <string-array name="notification_frequency_names">
+        <item>every minute (for testing)</item>
         <item>twice per hour</item>
         <item>hourly</item>
         <item>every two hours</item>
@@ -71,9 +72,10 @@
         <item>monthly</item>
         <item>every three months</item>
         <item>twice a year</item>
-        <item>every minute (for testing)</item>
+        <item>never</item>
     </string-array>
     <string-array name="notification_frequency_values" translatable="false">
+        <item>-1440</item>
         <item>-48</item>
         <item>-24</item>
         <item>-12</item>
@@ -86,7 +88,7 @@
         <item>30</item>
         <item>90</item>
         <item>180</item>
-        <item>-1440</item>
+        <item>0</item>
     </string-array>
     <string-array name="notification_timer_variance_names">
         <item>little variation</item>
