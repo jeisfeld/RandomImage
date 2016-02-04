@@ -53,13 +53,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.pref_notification);
-
 		mNotificationId = getArguments().getInt(STRING_NOTIFICATION_ID);
 
 		handleNotificationCreation();
 		setDefaultValues();
 		setNonIndexedValues();
+		addPreferencesFromResource(R.xml.pref_notification);
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_notification_frequency);
