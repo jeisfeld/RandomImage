@@ -16,11 +16,13 @@ import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageAnalyzer;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
+import de.jeisfeld.randomimage.widgets.GenericImageWidget.BackgroundColor;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -175,6 +177,11 @@ public class StackedImageWidgetService extends RemoteViewsService {
 					bitmap = ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE);
 				}
 				remoteViews.setImageViewBitmap(R.id.imageViewWidget, bitmap);
+
+				BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(mAppWidgetId);
+				if (backgroundColor == BackgroundColor.FROM_IMAGE) {
+					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(bitmap));
+				}
 			}
 
 			GenericImageWidget.configureBackground(mContext, remoteViews, AppWidgetManager.getInstance(mContext), mAppWidgetId);

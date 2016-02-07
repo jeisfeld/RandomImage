@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,7 @@ import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageAnalyzer;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
@@ -192,10 +194,13 @@ public class ImageWidget extends GenericImageWidget {
 			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, appWidgetId, fileName);
 			remoteViews.setViewVisibility(R.id.textViewWidgetEmpty, View.GONE);
 
-			remoteViews.setImageViewBitmap(
-					R.id.imageViewWidget,
-					ImageUtil.getImageBitmap(fileName,
-							Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height))));
+			Bitmap bitmap = ImageUtil.getImageBitmap(fileName, Math.min(ImageUtil.MAX_BITMAP_SIZE, Math.max(width, height)));
+			remoteViews.setImageViewBitmap(R.id.imageViewWidget, bitmap);
+
+			BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(appWidgetId);
+			if (backgroundColor == BackgroundColor.FROM_IMAGE) {
+				remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(bitmap));
+			}
 		}
 
 		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, appWidgetId, null);

@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.widget.RemoteViews;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -25,7 +26,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 	/**
 	 * Method name to set the background color.
 	 */
-	private static final String SET_BACKGROUND_COLOR = "setBackgroundColor";
+	protected static final String SET_BACKGROUND_COLOR = "setBackgroundColor";
 
 	/**
 	 * Method name to set the background resource.
@@ -150,9 +151,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 */
 	protected static final void configureBackground(final Context context, final RemoteViews remoteViews, final AppWidgetManager appWidgetManager,
 													final int appWidgetId) {
-		BackgroundColor backgroundColor = BackgroundColor.fromResourceValue(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
-						Integer.parseInt(context.getString(R.string.pref_default_widget_background_style))));
+		BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(appWidgetId);
 
 		switch (backgroundColor) {
 		case WHITE_SHADOW:
@@ -160,6 +159,9 @@ public abstract class GenericImageWidget extends GenericWidget {
 			break;
 		case BLACK_SHADOW:
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
+			break;
+		case FROM_IMAGE:
+			// background can be set only after image is loaded.
 			break;
 		default:
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, backgroundColor.getColorValue());
@@ -185,7 +187,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 	/**
 	 * Helper class containing constants for background colors.
 	 */
-	private enum BackgroundColor {
+	protected enum BackgroundColor {
 
 		// JAVADOC:OFF
 		FILL_FRAME(0),
@@ -201,7 +203,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 		CYAN(10),
 		MAGENTA(11),
 		RANDOM(12),
-		RANDOM_TRANSPARENT(13);
+		RANDOM_TRANSPARENT(13),
+		FROM_IMAGE(14);
 		// JAVADOC:ON
 
 		/**
@@ -233,10 +236,23 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * Get the color from its resource value.
 		 *
 		 * @param resourceValue The resource value.
-		 * @return The corresponding color.
+		 * @return The corresponding BackgroundColor.
 		 */
 		private static BackgroundColor fromResourceValue(final int resourceValue) {
 			return BACKGROUND_COLOR_MAP.get(resourceValue);
+		}
+
+		/**
+		 * Get the background color style of a widget.
+		 *
+		 * @param appWidgetId The widget id.
+		 * @return The BackgroundColor value of the widget.
+		 */
+		protected static BackgroundColor fromWidgetId(final int appWidgetId) {
+			return fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
+							Integer.parseInt(Application.getAppContext().getString(R.string.pref_default_widget_background_style))));
+
 		}
 
 		/**
@@ -244,7 +260,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 *
 		 * @return The color value.
 		 */
-		private int getColorValue() {
+		protected int getColorValue() {
 			Random random = new Random();
 
 			if (this == FILL_FRAME || this == NO_BACKGROUND || this == WHITE_SHADOW || this == BLACK_SHADOW) {
@@ -365,7 +381,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * Get the color from its resource value.
 		 *
 		 * @param resourceValue The resource value.
-		 * @return The corresponding color.
+		 * @return The corresponding ButtonColor.
 		 */
 		private static ButtonColor fromResourceValue(final int resourceValue) {
 			return BUTTON_COLOR_MAP.get(resourceValue);
