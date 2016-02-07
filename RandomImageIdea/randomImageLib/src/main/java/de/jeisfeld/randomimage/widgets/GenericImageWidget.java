@@ -37,6 +37,16 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 */
 	private static final String SET_IMAGE_BITMAP = "setImageBitmap";
 
+	/**
+	 * The minimum saturation used for non-grey backgrounds.
+	 */
+	private static final int MIN_BACKGROUND_SATURATION = 64;
+
+	/**
+	 * Maximum difference of the color hue - value 0.5 just ensures that color boundaries do not overlap.
+	 */
+	private static final double MAX_HUE_DIFFERENCE = 0.3;
+
 
 	@Override
 	public final void onDeleted(final Context context, final int[] appWidgetIds) {
@@ -182,26 +192,22 @@ public abstract class GenericImageWidget extends GenericWidget {
 		NO_BACKGROUND(1),
 		WHITE_SHADOW(2),
 		BLACK_SHADOW(3),
-		LIGHT_GREY(4, "#DFDFDF"),
-		DARK_GREY(5, "#1F1F1F"),
-		BLUE(6, "#8EC4FA"),
-		RED(7, "#8D001A"),
-		GREEN(8, "#ADD295"),
-		YELLOW(9, "#FDF092"),
-		BROWN(10, "#5B3C1A"),
-		RANDOM(11),
-		RANDOM_TRANSPARENT(12);
+		LIGHT_GREY(4),
+		DARK_GREY(5),
+		BLUE(6),
+		RED(7),
+		GREEN(8),
+		YELLOW(9),
+		CYAN(10),
+		MAGENTA(11),
+		RANDOM(12),
+		RANDOM_TRANSPARENT(13);
 		// JAVADOC:ON
 
 		/**
 		 * The value by which the color is specified in the resources.
 		 */
 		private final int mResourceValue;
-
-		/**
-		 * The value of the color.
-		 */
-		private final int mColorValue;
 
 		/**
 		 * A map from the resourceValue to the color.
@@ -215,24 +221,12 @@ public abstract class GenericImageWidget extends GenericWidget {
 		}
 
 		/**
-		 * Constructor giving the resourceValue and the color value.
-		 *
-		 * @param resourceValue The resource value.
-		 * @param colorString   The color value.
-		 */
-		BackgroundColor(final int resourceValue, final String colorString) {
-			mResourceValue = resourceValue;
-			mColorValue = Color.parseColor(colorString);
-		}
-
-		/**
 		 * Constructor giving only the resourceValue (for random colors).
 		 *
 		 * @param resourceValue The resource value.
 		 */
 		BackgroundColor(final int resourceValue) {
 			mResourceValue = resourceValue;
-			mColorValue = Color.TRANSPARENT;
 		}
 
 		/**
@@ -251,16 +245,57 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * @return The color value.
 		 */
 		private int getColorValue() {
+			Random random = new Random();
+
+			if (this == FILL_FRAME || this == NO_BACKGROUND || this == WHITE_SHADOW || this == BLACK_SHADOW) {
+				return Color.TRANSPARENT;
+			}
+
+			int saturation;
+			if (this == LIGHT_GREY || this == DARK_GREY) {
+				saturation = 160; // MAGIC_NUMBER - difference between light grey and dark grey
+			}
+			else {
+				saturation = MIN_BACKGROUND_SATURATION + random.nextInt(256 - MIN_BACKGROUND_SATURATION); // MAGIC_NUMBER
+			}
+
+			int valueMin = random.nextInt(256 - saturation); // MAGIC_NUMBER
+			int valueMax = valueMin + saturation;
+
+			int diff1 = 0;
+			int diff2 = 0;
+			if (random.nextBoolean()) {
+				diff1 = random.nextInt((int) (MAX_HUE_DIFFERENCE * saturation));
+			}
+			else {
+				diff2 = random.nextInt((int) (MAX_HUE_DIFFERENCE * saturation));
+			}
+
+			// generate RGB values based on valueMin, valueMax and the diff values.
 			switch (this) {
+			case LIGHT_GREY:
+				return Color.rgb(valueMax, valueMax, valueMax);
+			case DARK_GREY:
+				return Color.rgb(valueMin, valueMin, valueMin);
+			case BLUE:
+				return Color.rgb(valueMin + diff1, valueMin + diff2, valueMax);
+			case RED:
+				return Color.rgb(valueMax, valueMin + diff1, valueMin + diff2);
+			case GREEN:
+				return Color.rgb(valueMin + diff1, valueMax, valueMin + diff2);
+			case YELLOW:
+				return Color.rgb(valueMax - diff1, valueMax - diff2, valueMin);
+			case CYAN:
+				return Color.rgb(valueMin, valueMax - diff1, valueMax - diff2);
+			case MAGENTA:
+				return Color.rgb(valueMax - diff1, valueMin, valueMax - diff2);
 			case RANDOM:
-				Random random = new Random();
 				return Color.rgb(random.nextInt(0x100), random.nextInt(0x100), random.nextInt(0x100)); // MAGIC_NUMBER
 			case RANDOM_TRANSPARENT:
-				Random random2 = new Random();
-				return Color.argb(0x10 + random2.nextInt(0xE0), // MAGIC_NUMBER
-						random2.nextInt(0x100), random2.nextInt(0x100), random2.nextInt(0x100)); // MAGIC_NUMBER
+				return Color.argb(0x10 + random.nextInt(0xE0), // MAGIC_NUMBER
+						random.nextInt(0x100), random.nextInt(0x100), random.nextInt(0x100)); // MAGIC_NUMBER
 			default:
-				return mColorValue;
+				return Color.TRANSPARENT;
 			}
 		}
 	}

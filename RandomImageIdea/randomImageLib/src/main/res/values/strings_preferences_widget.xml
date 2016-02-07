@@ -67,7 +67,8 @@
         <item>Red</item>
         <item>Green</item>
         <item>Yellow</item>
-        <item>Brown</item>
+        <item>Cyan</item>
+        <item>Magenta</item>
         <item>Random</item>
         <item>Random (transparent)</item>
     </string-array>
@@ -85,6 +86,7 @@
         <item>10</item>
         <item>11</item>
         <item>12</item>
+        <item>13</item>
     </string-array>
     <string-array name="button_style_names">
         <item>Always visible, bottom</item>
