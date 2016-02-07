@@ -180,7 +180,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 				BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(mAppWidgetId);
 				if (backgroundColor == BackgroundColor.FROM_IMAGE) {
-					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(bitmap));
+					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(
+							ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
 				}
 			}
 
