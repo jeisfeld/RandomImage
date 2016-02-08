@@ -13,6 +13,10 @@ import android.graphics.Color;
  */
 public final class ImageAnalyzer {
 	/**
+	 * The size to which the bitmap is shrunk before analyzing it.
+	 */
+	private static final int ANALYZED_BITMAP_SIZE = 100;
+	/**
 	 * The thickness of the rectangles at the border of the image from which the colors are taken.
 	 */
 	private static final double BOUNDARY_THICKNESS = 0.1;
@@ -24,6 +28,10 @@ public final class ImageAnalyzer {
 	 * The starting points of the rectangles at the border of the image from which the colors are taken.
 	 */
 	private static final double[] SLICE_STARTS = {0, 0.3, 0.6};
+	/**
+	 * The variance threshold - rectangles with a lower variance are always considered when determining the color.
+	 */
+	private static final int VARIANCE_THRESHOLD = 500;
 
 	/**
 	 * Hide default constructor.
@@ -39,14 +47,16 @@ public final class ImageAnalyzer {
 	 * @return The color from this image.
 	 */
 	public static int getColorFromImage(final Bitmap imageBitmap) {
+		Bitmap shrinkedBitmap = Bitmap.createScaledBitmap(imageBitmap, ANALYZED_BITMAP_SIZE, ANALYZED_BITMAP_SIZE, true);
+
 		// Take regions around the boundary.
 		List<ColorStatistics> statistics = new ArrayList<>();
 
 		for (double startValue : SLICE_STARTS) {
-			statistics.add(getColorStatistics(getSubPixels(imageBitmap, startValue, startValue + SLICE_WIDTH, 0, BOUNDARY_THICKNESS)));
-			statistics.add(getColorStatistics(getSubPixels(imageBitmap, 1 - BOUNDARY_THICKNESS, 1, startValue, startValue + SLICE_WIDTH)));
-			statistics.add(getColorStatistics(getSubPixels(imageBitmap, 1 - startValue - SLICE_WIDTH, 1 - startValue, 1 - BOUNDARY_THICKNESS, 1)));
-			statistics.add(getColorStatistics(getSubPixels(imageBitmap, 0, BOUNDARY_THICKNESS, 1 - startValue - SLICE_WIDTH, 1 - startValue)));
+			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, startValue, startValue + SLICE_WIDTH, 0, BOUNDARY_THICKNESS)));
+			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, 1 - BOUNDARY_THICKNESS, 1, startValue, startValue + SLICE_WIDTH)));
+			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, 1 - startValue - SLICE_WIDTH, 1 - startValue, 1 - BOUNDARY_THICKNESS, 1)));
+			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, 0, BOUNDARY_THICKNESS, 1 - startValue - SLICE_WIDTH, 1 - startValue)));
 		}
 
 		// Sort by variance.
@@ -57,7 +67,19 @@ public final class ImageAnalyzer {
 			}
 		});
 
-		int[] colors = new int[] {statistics.get(0).getAverageColor(), statistics.get(1).getAverageColor(), statistics.get(2).getAverageColor()};
+		// Select colors of rectangles with lowest variance.
+		List<Integer> colorList = new ArrayList<>();
+		for (ColorStatistics statistic : statistics) {
+			if (colorList.size() < 3 || statistic.getVariance() < VARIANCE_THRESHOLD) { // MAGIC_NUMBER
+				colorList.add(statistic.getAverageColor());
+			}
+		}
+		// Map List into Array.
+		int[] colors = new int[colorList.size()];
+		int i = 0;
+		for (int color : colorList) {
+			colors[i++] = color;
+		}
 		return getColorClosestToAverage(colors);
 	}
 
@@ -118,7 +140,6 @@ public final class ImageAnalyzer {
 		}
 
 		int averageColor = Color.rgb((int) (redSum / sampleSize), (int) (greenSum / sampleSize), (int) (blueSum / sampleSize));
-
 		long variance = ((redSquareSum + greenSquareSum + blueSquareSum)
 				- (redSum * redSum + greenSum * greenSum + blueSum * blueSum) / sampleSize) / sampleSize;
 
