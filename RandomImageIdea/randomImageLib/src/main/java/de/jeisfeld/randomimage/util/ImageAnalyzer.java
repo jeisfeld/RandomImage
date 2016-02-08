@@ -1,7 +1,9 @@
 package de.jeisfeld.randomimage.util;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,17 +13,17 @@ import android.graphics.Color;
  */
 public final class ImageAnalyzer {
 	/**
-	 * The thickness of the patches at the border of the image from which the colors are taken.
+	 * The thickness of the rectangles at the border of the image from which the colors are taken.
 	 */
 	private static final double BOUNDARY_THICKNESS = 0.1;
 	/**
-	 * The start distance of the patches.
+	 * The width of the rectangles at the border of the image from which the colors are taken.
 	 */
-	private static final double SLICE_START = 0.2;
+	private static final double SLICE_WIDTH = 0.1;
 	/**
-	 * The end distance of the patches.
+	 * The starting points of the rectangles at the border of the image from which the colors are taken.
 	 */
-	private static final double SLICE_END = 0.3;
+	private static final double[] SLICE_STARTS = {0, 0.3, 0.6};
 
 	/**
 	 * Hide default constructor.
@@ -37,26 +39,25 @@ public final class ImageAnalyzer {
 	 * @return The color from this image.
 	 */
 	public static int getColorFromImage(final Bitmap imageBitmap) {
-		// Take 8 regions around the boundary.
-		ColorStatistics[] statistics = new ColorStatistics[] {
-				getColorStatistics(getSubPixels(imageBitmap, SLICE_START, SLICE_END, 0, BOUNDARY_THICKNESS)),
-				getColorStatistics(getSubPixels(imageBitmap, 1 - SLICE_END, 1 - SLICE_START, 0, BOUNDARY_THICKNESS)),
-				getColorStatistics(getSubPixels(imageBitmap, 1 - BOUNDARY_THICKNESS, 1, SLICE_START, SLICE_END)),
-				getColorStatistics(getSubPixels(imageBitmap, 1 - BOUNDARY_THICKNESS, 1, 1 - SLICE_END, 1 - SLICE_START)),
-				getColorStatistics(getSubPixels(imageBitmap, 1 - SLICE_END, 1 - SLICE_START, 1 - BOUNDARY_THICKNESS, 1)),
-				getColorStatistics(getSubPixels(imageBitmap, SLICE_START, SLICE_END, 1 - BOUNDARY_THICKNESS, 1)),
-				getColorStatistics(getSubPixels(imageBitmap, 0, BOUNDARY_THICKNESS, 1 - SLICE_END, 1 - SLICE_START)),
-				getColorStatistics(getSubPixels(imageBitmap, 0, BOUNDARY_THICKNESS, SLICE_START, SLICE_END))};
+		// Take regions around the boundary.
+		List<ColorStatistics> statistics = new ArrayList<>();
+
+		for (double startValue : SLICE_STARTS) {
+			statistics.add(getColorStatistics(getSubPixels(imageBitmap, startValue, startValue + SLICE_WIDTH, 0, BOUNDARY_THICKNESS)));
+			statistics.add(getColorStatistics(getSubPixels(imageBitmap, 1 - BOUNDARY_THICKNESS, 1, startValue, startValue + SLICE_WIDTH)));
+			statistics.add(getColorStatistics(getSubPixels(imageBitmap, 1 - startValue - SLICE_WIDTH, 1 - startValue, 1 - BOUNDARY_THICKNESS, 1)));
+			statistics.add(getColorStatistics(getSubPixels(imageBitmap, 0, BOUNDARY_THICKNESS, 1 - startValue - SLICE_WIDTH, 1 - startValue)));
+		}
 
 		// Sort by variance.
-		Arrays.sort(statistics, new Comparator<ColorStatistics>() {
+		Collections.sort(statistics, new Comparator<ColorStatistics>() {
 			@Override
 			public int compare(final ColorStatistics lhs, final ColorStatistics rhs) {
 				return Long.valueOf(lhs.getVariance()).compareTo(rhs.getVariance());
 			}
 		});
 
-		int[] colors = new int[] {statistics[0].getAverageColor(), statistics[1].getAverageColor(), statistics[2].getAverageColor()};
+		int[] colors = new int[] {statistics.get(0).getAverageColor(), statistics.get(1).getAverageColor(), statistics.get(2).getAverageColor()};
 		return getColorClosestToAverage(colors);
 	}
 
