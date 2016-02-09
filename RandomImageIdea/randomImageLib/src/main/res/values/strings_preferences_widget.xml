@@ -66,12 +66,13 @@
         <item>Blue</item>
         <item>Red</item>
         <item>Green</item>
-        <item>Yellow</item>
+        <item>Yellow/Brown</item>
         <item>Cyan</item>
         <item>Magenta</item>
         <item>Random</item>
         <item>Random (transparent)</item>
-        <item>Color from image</item>
+        <item>Color from image border</item>
+        <item>Average image color</item>
     </string-array>
     <string-array name="background_style_values" translatable="false">
         <item>0</item>
@@ -89,6 +90,7 @@
         <item>12</item>
         <item>13</item>
         <item>14</item>
+        <item>15</item>
     </string-array>
     <string-array name="button_style_names">
         <item>Always visible, bottom</item>

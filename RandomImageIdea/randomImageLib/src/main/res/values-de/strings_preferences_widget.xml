@@ -38,12 +38,13 @@
         <item>Blau</item>
         <item>Rot</item>
         <item>Grün</item>
-        <item>Gelb</item>
+        <item>Gelb/Braun</item>
         <item>Türkis</item>
         <item>Pink</item>
         <item>Zufällig</item>
         <item>Zufällig (transparent)</item>
         <item>Farbe aus dem Bild</item>
+        <item>Durchschnittliche Bildfarbe</item>
     </string-array>
     <string-array name="button_style_names">
         <item>Immer sichtbar, unten</item>

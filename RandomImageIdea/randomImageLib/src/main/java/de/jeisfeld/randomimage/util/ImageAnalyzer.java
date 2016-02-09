@@ -41,22 +41,63 @@ public final class ImageAnalyzer {
 	}
 
 	/**
-	 * Get a color from an image.
+	 * Get some kind of "average color" of an image.
 	 *
 	 * @param imageBitmap The image bitmap.
-	 * @return The color from this image.
+	 * @return The "average color" of this bitmap.
+	 */
+	public static int getAverageImageColor(final Bitmap imageBitmap) {
+		Bitmap shrunkBitmap = Bitmap.createScaledBitmap(imageBitmap, ANALYZED_BITMAP_SIZE, ANALYZED_BITMAP_SIZE, true);
+		float[] hsv = new float[3]; // MAGIC_NUMBER
+		int pixelCount = 0;
+		float hueXSum = 0;
+		float hueYSum = 0;
+		float saturationSum = 0;
+		float valueSum = 0;
+
+		for (int x = 0; x < shrunkBitmap.getWidth(); x++) {
+			for (int y = 0; y < shrunkBitmap.getWidth(); y++) {
+				int color = shrunkBitmap.getPixel(x, y);
+				Color.colorToHSV(color, hsv);
+				hueXSum += Math.cos(hsv[0] * Math.PI / 180); // MAGIC_NUMBER
+				hueYSum += Math.sin(hsv[0] * Math.PI / 180); // MAGIC_NUMBER
+				saturationSum += hsv[1];
+				valueSum += hsv[2];
+				pixelCount++;
+			}
+		}
+
+		float avgHue;
+		try {
+			avgHue = (float) (Math.atan2(hueYSum, hueXSum) * 180 / Math.PI); // MAGIC_NUMBER
+			if (avgHue < 0) {
+				avgHue += 360; // MAGIC_NUMBER
+			}
+		}
+		catch (Exception e) {
+			avgHue = 0;
+		}
+
+		return Color.HSVToColor(new float[] {avgHue, saturationSum / pixelCount, valueSum / pixelCount});
+	}
+
+	/**
+	 * Get a color from an image. The color is taken from a border area with not too high variance.
+	 *
+	 * @param imageBitmap The image bitmap.
+	 * @return A color from this image.
 	 */
 	public static int getColorFromImage(final Bitmap imageBitmap) {
-		Bitmap shrinkedBitmap = Bitmap.createScaledBitmap(imageBitmap, ANALYZED_BITMAP_SIZE, ANALYZED_BITMAP_SIZE, true);
+		Bitmap shrunkBitmap = Bitmap.createScaledBitmap(imageBitmap, ANALYZED_BITMAP_SIZE, ANALYZED_BITMAP_SIZE, true);
 
 		// Take regions around the boundary.
 		List<ColorStatistics> statistics = new ArrayList<>();
 
 		for (double startValue : SLICE_STARTS) {
-			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, startValue, startValue + SLICE_WIDTH, 0, BOUNDARY_THICKNESS)));
-			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, 1 - BOUNDARY_THICKNESS, 1, startValue, startValue + SLICE_WIDTH)));
-			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, 1 - startValue - SLICE_WIDTH, 1 - startValue, 1 - BOUNDARY_THICKNESS, 1)));
-			statistics.add(getColorStatistics(getSubPixels(shrinkedBitmap, 0, BOUNDARY_THICKNESS, 1 - startValue - SLICE_WIDTH, 1 - startValue)));
+			statistics.add(getColorStatistics(getSubPixels(shrunkBitmap, startValue, startValue + SLICE_WIDTH, 0, BOUNDARY_THICKNESS)));
+			statistics.add(getColorStatistics(getSubPixels(shrunkBitmap, 1 - BOUNDARY_THICKNESS, 1, startValue, startValue + SLICE_WIDTH)));
+			statistics.add(getColorStatistics(getSubPixels(shrunkBitmap, 1 - startValue - SLICE_WIDTH, 1 - startValue, 1 - BOUNDARY_THICKNESS, 1)));
+			statistics.add(getColorStatistics(getSubPixels(shrunkBitmap, 0, BOUNDARY_THICKNESS, 1 - startValue - SLICE_WIDTH, 1 - startValue)));
 		}
 
 		// Sort by variance.
