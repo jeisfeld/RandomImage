@@ -258,6 +258,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_colored_icon, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_display_name, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_background, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_flip_behavior, notificationId);
 		NotificationSettingsActivity.removeNotificationId(notificationId);
 

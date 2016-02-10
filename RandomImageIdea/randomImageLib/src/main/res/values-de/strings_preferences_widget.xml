@@ -16,6 +16,7 @@
     <string name="pref_title_widget_button_color">Button-Farbe</string>
     <string name="pref_title_widget_display_name">Name des Widgets</string>
     <string name="pref_title_widget_detail_scale_type">Skalierung in Detailansicht</string>
+    <string name="pref_title_widget_detail_background">Hintergrund in Detailansicht</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -70,6 +71,12 @@
         <item>Das Fenster ausfüllen</item>
         <item>Drehen und einpassen</item>
         <item>Drehen und ausfüllen</item>
+    </string-array>
+    <string-array name="detail_background_names">
+        <item>Dunkel</item>
+        <item>Hell</item>
+        <item>Farbe aus dem Bildrand</item>
+        <item>Durchschnittliche Bildfarbe</item>
     </string-array>
 
 </resources>

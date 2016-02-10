@@ -51,6 +51,10 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, getAppWidgetId(),
 							Integer.parseInt(stringValue));
 				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_background))) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, getAppWidgetId(),
+							Integer.parseInt(stringValue));
+				}
 
 				return true;
 			}

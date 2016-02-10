@@ -83,6 +83,13 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_detail_scale_type"/>
         <ListPreference
+            android:entries="@array/detail_background_names"
+            android:entryValues="@array/detail_background_values"
+            android:key="@string/key_notification_detail_background"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_notification_detail_background"/>
+        <ListPreference
             android:entries="@array/notification_detail_flip_behavior_names"
             android:entryValues="@array/notification_detail_flip_behavior_values"
             android:key="@string/key_notification_detail_flip_behavior"

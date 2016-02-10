@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -20,9 +21,11 @@ import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.ImageAnalyzer;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -157,6 +160,10 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 	 * The way in which the image gets initially scaled.
 	 */
 	private ScaleType mScaleType = ScaleType.FIT;
+	/**
+	 * The background color.
+	 */
+	private BackgroundColor mBackgroundColor = BackgroundColor.AVERAGE_IMAGE_COLOR;
 
 	/**
 	 * Flag helping to detect if a destroy is final or only temporary.
@@ -281,6 +288,8 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 				NOTIFICATION_MAP.put(mNotificationId, this);
 				mScaleType = ScaleType.fromResourceScaleType(
 						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
+				mBackgroundColor = BackgroundColor.fromResourceValue(
+						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
 
 				if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1)
 						!= NotificationUtil.NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
@@ -292,6 +301,8 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 		else {
 			mScaleType = ScaleType.fromResourceScaleType(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+			mBackgroundColor = BackgroundColor.fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 		}
 
 		if (mScaleType == ScaleType.TURN_FIT || mScaleType == ScaleType.TURN_STRETCH) {
@@ -408,7 +419,35 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 		imageView.setGestureDetector(mGestureDetector);
 		imageView.setScaleType(mScaleType);
 		imageView.setImage(fileName, this, cacheIndex);
+		imageView.setBackgroundColor(getBackgroundColor(fileName));
+
 		return imageView;
+	}
+
+	/**
+	 * Get the background color to be set.
+	 *
+	 * @param fileName The file for which to set the background.
+	 * @return the background color.
+	 */
+	private int getBackgroundColor(final String fileName) {
+		int backgroundColor;
+		switch (mBackgroundColor) {
+		case LIGHT:
+			backgroundColor = Color.WHITE;
+			break;
+		case COLOR_FROM_IMAGE:
+			backgroundColor = ImageAnalyzer.getColorFromImage(ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE));
+			break;
+		case AVERAGE_IMAGE_COLOR:
+			backgroundColor = ImageAnalyzer.getAverageImageColor(ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE));
+			break;
+		case DARK:
+		default:
+			backgroundColor = Color.TRANSPARENT;
+			break;
+		}
+		return backgroundColor;
 	}
 
 	/**
@@ -740,6 +779,55 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 			}
 			double angleDiff = Math.abs(getAngle() - otherDirection.getAngle());
 			return angleDiff > Math.PI / 2 && angleDiff < 3 * Math.PI / 2; // MAGIC_NUMBER
+		}
+	}
+
+	/**
+	 * Helper class containing constants for background colors.
+	 */
+	protected enum BackgroundColor {
+
+		// JAVADOC:OFF
+		DARK(0),
+		LIGHT(1),
+		COLOR_FROM_IMAGE(2),
+		AVERAGE_IMAGE_COLOR(3);
+		// JAVADOC:ON
+
+		/**
+		 * The value by which the color is specified in the resources.
+		 */
+		private final int mResourceValue;
+
+		/**
+		 * A map from the resourceValue to the color.
+		 */
+		private static final Map<Integer, BackgroundColor> BACKGROUND_COLOR_MAP = new HashMap<>();
+
+		static {
+			for (BackgroundColor backgroundColor : BackgroundColor.values()) {
+				BACKGROUND_COLOR_MAP.put(backgroundColor.mResourceValue, backgroundColor);
+			}
+		}
+
+		/**
+		 * Constructor giving only the resourceValue (for random colors).
+		 *
+		 * @param resourceValue The resource value.
+		 */
+		BackgroundColor(final int resourceValue) {
+			mResourceValue = resourceValue;
+		}
+
+		/**
+		 * Get the color from its resource value.
+		 *
+		 * @param resourceValue The resource value.
+		 * @return The corresponding BackgroundColor.
+		 */
+		private static BackgroundColor fromResourceValue(final int resourceValue) {
+			BackgroundColor result = BACKGROUND_COLOR_MAP.get(resourceValue);
+			return result == null ? BackgroundColor.AVERAGE_IMAGE_COLOR : result;
 		}
 	}
 

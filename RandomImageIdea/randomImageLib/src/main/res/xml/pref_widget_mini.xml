@@ -18,5 +18,12 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_detail_scale_type"/>
+    <ListPreference
+        android:entries="@array/detail_background_names"
+        android:entryValues="@array/detail_background_values"
+        android:key="@string/key_widget_detail_background"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_widget_detail_background"/>
 
 </PreferenceScreen>

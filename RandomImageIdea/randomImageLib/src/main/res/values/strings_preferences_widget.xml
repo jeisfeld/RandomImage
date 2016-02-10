@@ -18,6 +18,7 @@
     <string name="key_widget_button_color" translatable="false">widget_button_color</string>
     <string name="key_widget_display_name" translatable="false">widget_display_name</string>
     <string name="key_widget_detail_scale_type" translatable="false">widget_detail_scale_type</string>
+    <string name="key_widget_detail_background" translatable="false">widget_detail_background</string>
     <string name="key_widget_current_file_name" translatable="false">widget_current_file_name</string>
 
     <!-- Strings related to Settings -->
@@ -28,12 +29,14 @@
     <string name="pref_title_widget_button_style">Button Style</string>
     <string name="pref_title_widget_button_color">Button Color</string>
     <string name="pref_title_widget_display_name">Widget Name</string>
-    <string name="pref_title_widget_detail_scale_type">Scaling when showing details</string>
+    <string name="pref_title_widget_detail_scale_type">Scaling in detail view</string>
+    <string name="pref_title_widget_detail_background">Background in detail view</string>
     <string name="pref_default_widget_alarm_interval" translatable="false">3600000</string>
     <string name="pref_default_widget_background_style" translatable="false">2</string>
     <string name="pref_default_widget_button_style" translatable="false">0</string>
     <string name="pref_default_widget_button_color" translatable="false">2</string>
     <string name="pref_default_widget_detail_scale_type" translatable="false">0</string>
+    <string name="pref_default_widget_detail_background" translatable="false">3</string>
 
     <!-- String arrays -->
     <string-array name="timer_duration_names">
@@ -137,6 +140,18 @@
         <item>Rotate and stretch</item>
     </string-array>
     <string-array name="detail_scale_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="detail_background_names">
+        <item>Dark</item>
+        <item>Light</item>
+        <item>Color from image border</item>
+        <item>Average image color</item>
+    </string-array>
+    <string-array name="detail_background_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>

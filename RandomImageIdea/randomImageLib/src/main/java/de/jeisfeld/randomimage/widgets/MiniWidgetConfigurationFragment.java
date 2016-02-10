@@ -48,6 +48,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		addEditListListener();
 	}
 
@@ -94,12 +95,17 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	 */
 	protected final boolean setDefaultValues() {
 		boolean isUpdated = false;
-		int detailScaleType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1);
-		if (detailScaleType == -1) {
+		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
 							R.string.pref_default_widget_detail_scale_type));
+		}
+		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_background,
+							R.string.pref_default_widget_detail_background));
 		}
 		return isUpdated;
 	}
@@ -114,6 +120,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_background,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1)));
 	}
 
 	/**
@@ -145,7 +153,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		String value;
-		if (preferenceKey == R.string.key_widget_detail_scale_type) {
+		if (preferenceKey == R.string.key_widget_detail_scale_type
+				|| preferenceKey == R.string.key_widget_detail_background) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
 		else {
@@ -176,6 +185,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
+						Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_background))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId,
 						Integer.parseInt(stringValue));
 			}
 

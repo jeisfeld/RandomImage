@@ -71,6 +71,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_colored_icon);
 		bindPreferenceSummaryToValue(R.string.key_notification_display_name);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_scale_type);
+		bindPreferenceSummaryToValue(R.string.key_notification_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
 		addEditListListener();
 		addCancelNotificationListener();
@@ -187,6 +188,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_detail_scale_type,
 							R.string.pref_default_notification_detail_scale_type));
 		}
+		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_detail_background,
+							R.string.pref_default_notification_detail_background));
+		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId,
@@ -282,6 +289,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, mNotificationId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_detail_scale_type,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_detail_background,
+				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1)));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_notification_detail_flip_behavior,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1)));
 	}
@@ -334,6 +343,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_notification_style
 				|| preferenceKey == R.string.key_notification_led_color
 				|| preferenceKey == R.string.key_notification_detail_scale_type
+				|| preferenceKey == R.string.key_notification_detail_background
 				|| preferenceKey == R.string.key_notification_detail_flip_behavior) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mNotificationId, -1));
 		}
@@ -453,6 +463,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
+						Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_background))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId,
 						Integer.parseInt(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_flip_behavior))) {
