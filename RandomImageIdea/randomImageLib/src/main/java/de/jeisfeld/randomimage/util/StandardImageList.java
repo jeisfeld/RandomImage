@@ -93,7 +93,7 @@ public final class StandardImageList extends ImageList {
 	}
 
 	/**
-	 * Get the list of file names, including the files in the configured folders, in shuffled order.
+	 * Get the list of file names, including the files in the image list, in shuffled order.
 	 *
 	 * @return The list of file names.
 	 */

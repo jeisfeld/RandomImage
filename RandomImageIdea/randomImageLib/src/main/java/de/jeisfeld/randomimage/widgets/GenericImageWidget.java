@@ -242,7 +242,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * @return The corresponding BackgroundColor.
 		 */
 		private static BackgroundColor fromResourceValue(final int resourceValue) {
-			return BACKGROUND_COLOR_MAP.get(resourceValue);
+			BackgroundColor result = BACKGROUND_COLOR_MAP.get(resourceValue);
+			return result == null ? BackgroundColor.WHITE_SHADOW : result;
 		}
 
 		/**
@@ -387,7 +388,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * @return The corresponding ButtonColor.
 		 */
 		private static ButtonColor fromResourceValue(final int resourceValue) {
-			return BUTTON_COLOR_MAP.get(resourceValue);
+			ButtonColor result = BUTTON_COLOR_MAP.get(resourceValue);
+			return result == null ? ButtonColor.BLUE : result;
 		}
 
 		/**
