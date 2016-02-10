@@ -11,6 +11,7 @@
 
     <string name="pref_title_widget_list_name">Listenname</string>
     <string name="pref_title_widget_alarm_interval">Wechselhäufigkeit</string>
+    <string name="pref_title_widget_show_cyclically">Alle Bilder zyklisch zeigen</string>
     <string name="pref_title_widget_background_style">Hintergrund</string>
     <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_button_color">Button-Farbe</string>

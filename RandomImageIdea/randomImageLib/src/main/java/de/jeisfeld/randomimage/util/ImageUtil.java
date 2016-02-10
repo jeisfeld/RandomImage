@@ -138,18 +138,19 @@ public final class ImageUtil {
 	 * @return the bitmap.
 	 */
 	public static Bitmap getImageBitmap(final String path, final int maxSize) {
-		return getImageBitmap(path, maxSize, maxSize);
+		return getImageBitmap(path, maxSize, maxSize, false);
 	}
 
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path      The file path of the image.
-	 * @param maxWidth  The maximum width of this bitmap. If bigger, it will be resized.
-	 * @param maxHeight The maximum height of this bitmap. If bigger, it will be resized.
+	 * @param path           The file path of the image.
+	 * @param maxWidth       The maximum width of this bitmap. If bigger, it will be resized.
+	 * @param maxHeight      The maximum height of this bitmap. If bigger, it will be resized.
+	 * @param growIfRequired Flag indicating if the image size should be increased if required.
 	 * @return the bitmap.
 	 */
-	public static Bitmap getImageBitmap(final String path, final int maxWidth, final int maxHeight) {
+	public static Bitmap getImageBitmap(final String path, final int maxWidth, final int maxHeight, final boolean growIfRequired) {
 		Bitmap bitmap = null;
 		boolean foundThumbInMediaStore = false;
 		int rotation = getExifRotation(path);
@@ -195,7 +196,7 @@ public final class ImageUtil {
 				bitmap = rotateBitmap(bitmap, rotation);
 			}
 
-			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore) {
+			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore || growIfRequired) {
 				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
 				if (bitmap.getWidth() * maxHeight > bitmap.getHeight() * maxWidth) {
 					//noinspection UnnecessaryLocalVariable
@@ -227,7 +228,7 @@ public final class ImageUtil {
 	 * @return the bitmap.
 	 */
 	public static Bitmap getBitmapOfExactSize(final String path, final int width, final int height, final int border) {
-		Bitmap baseBitmap = getImageBitmap(path, width - 2 * border, height - 2 * border);
+		Bitmap baseBitmap = getImageBitmap(path, width - 2 * border, height - 2 * border, true);
 		Bitmap targetBitmap = Bitmap.createBitmap(width, height, baseBitmap.getConfig());
 		Paint paint = new Paint();
 		Canvas canvas = new Canvas(targetBitmap);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -125,6 +126,48 @@ public final class StandardImageList extends ImageList {
 		}
 
 		return nestedImageFiles.get(mRandom.nextInt(nestedImageFiles.size()));
+	}
+
+	/**
+	 * Get a set of distinct random file names.
+	 *
+	 * @param numberOfFiles  The number of files to retrieve.
+	 * @param forbiddenFiles A list of files that should not be retrieved.
+	 * @return The result list.
+	 */
+	public ArrayList<String> getSetOfRandomFileNames(final int numberOfFiles, final List<String> forbiddenFiles) {
+		ArrayList<String> allFiles = getShuffledFileNames();
+		allFiles.removeAll(forbiddenFiles);
+
+		if (numberOfFiles > allFiles.size()) {
+			// If list not sufficient, then allow duplicates and forbidden files for further addition.
+			allFiles.addAll(getSetOfRandomFileNames(numberOfFiles - allFiles.size(), new ArrayList<String>()));
+			return allFiles;
+		}
+		if (numberOfFiles == allFiles.size()) {
+			return allFiles;
+		}
+		if (numberOfFiles >= allFiles.size() / 2) {
+			// Do not consider weights if we have to get more than half of the images.
+			return new ArrayList<>(allFiles.subList(0, numberOfFiles));
+		}
+
+		ArrayList<String> resultList = new ArrayList<>();
+
+		// Try first to get the files in a random way.
+		for (int counter = 0; counter < 3 * numberOfFiles + 50 && resultList.size() < numberOfFiles; counter++) { // MAGIC_NUMBER
+			String fileName = getRandomFileName();
+			if (!forbiddenFiles.contains(fileName) && !resultList.contains(fileName)) {
+				resultList.add(fileName);
+			}
+		}
+
+		if (resultList.size() < numberOfFiles) {
+			allFiles.removeAll(resultList);
+			resultList.addAll(allFiles.subList(0, numberOfFiles - resultList.size()));
+		}
+
+		return resultList;
 	}
 
 	/**

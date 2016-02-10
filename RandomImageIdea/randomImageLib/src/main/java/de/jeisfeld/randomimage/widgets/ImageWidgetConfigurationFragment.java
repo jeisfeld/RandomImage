@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
+import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -12,6 +13,14 @@ import de.jeisfeld.randomimagelib.R;
  * Fragment for displaying the settings of the image widget.
  */
 public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigurationFragment {
+	@Override
+	public final void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Do not offer cyclic change in ImageWidget.
+		getPreferenceScreen().removePreference(findPreference(getString(R.string.key_widget_show_cyclically)));
+	}
+
 	@Override
 	protected final GenericImageWidgetConfigurationFragment.OnWidgetPreferenceChangeListener createOnPreferenceChangeListener() {
 		return new GenericImageWidgetConfigurationFragment.OnWidgetPreferenceChangeListener() {
@@ -29,6 +38,11 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
 					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					ImageWidget.updateTimers(getAppWidgetId());
+				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_show_cyclically))) {
+					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, getAppWidgetId(),
+							Boolean.parseBoolean(stringValue));
+					ImageWidget.updateInstances(UpdateType.NEW_LIST, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, getAppWidgetId(),

@@ -54,6 +54,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		super.onDeleted(context, appWidgetIds);
 
 		for (int appWidgetId : appWidgetIds) {
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_show_cyclically, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_background_style, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_button_style, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_button_color, appWidgetId);

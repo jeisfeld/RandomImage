@@ -49,8 +49,9 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	 */
 	private OnWidgetPreferenceChangeListener mOnPreferenceChangeListener;
 
+	// OVERRIDABLE
 	@Override
-	public final void onCreate(final Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mOnPreferenceChangeListener = createOnPreferenceChangeListener();
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
@@ -66,6 +67,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_alarm_interval);
+		bindPreferenceSummaryToValue(R.string.key_widget_show_cyclically);
 		bindPreferenceSummaryToValue(R.string.key_widget_background_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_color);
@@ -164,6 +166,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_alarm_interval,
 				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_show_cyclically,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_background_style,
 				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1)));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_style,
@@ -216,6 +220,9 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				|| preferenceKey == R.string.key_widget_detail_scale_type
 				|| preferenceKey == R.string.key_widget_detail_background) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
+		}
+		else if (preferenceKey == R.string.key_widget_show_cyclically) {
+			value = "";
 		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mAppWidgetId);

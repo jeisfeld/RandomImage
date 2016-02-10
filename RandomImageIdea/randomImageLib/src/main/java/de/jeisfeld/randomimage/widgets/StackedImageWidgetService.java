@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -41,12 +42,19 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	 * The maximum aspect ratio of the image view.
 	 */
 	private static final float MAX_ASPECT_RATIO = 16.0f / 9;
-
 	/**
 	 * The size of the border around the image.
 	 */
 	private static final int IMAGE_BORDER_SIZE = Application.getAppContext().getResources()
 			.getDimensionPixelSize(R.dimen.stack_image_widget_border_size);
+	/**
+	 * The array size to be used if the images are not shown cyclically. Needs to be divisible by four!
+	 */
+	private static final int IMAGE_ARRAY_SIZE = 100;
+	/**
+	 * A quarter of the image array size (used for updating).
+	 */
+	private static final int QUARTER_IMAGE_ARRAY_SIZE = IMAGE_ARRAY_SIZE / 4;
 
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
@@ -87,6 +95,15 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		private String mListName;
 
 		/**
+		 * Flag indicating if all files in the image list should be displayed in cyclic order.
+		 */
+		private boolean mShowCyclically;
+		/**
+		 * Flag indicating if we are currently in the second half of the list of files. (This is used in order to determine when to regenerate files.)
+		 */
+		private boolean mInSecondHalfOfFiles = false;
+
+		/**
 		 * Constructor.
 		 *
 		 * @param context The context in which the factory is called.
@@ -99,6 +116,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			determineImageDimensions();
 
 			mListName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
+			mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
 		}
 
 		/**
@@ -134,19 +152,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onCreate() {
-			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
-
-			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget creation");
-				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
-				NotificationUtil.displayNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST,
-						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
-				mFileNames = new ArrayList<>();
-			}
-			else {
-				NotificationUtil.cancelNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST);
-				mFileNames = imageList.getShuffledFileNames();
-			}
+			createImageList();
 		}
 
 		@Override
@@ -160,6 +166,38 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public RemoteViews getViewAt(final int position) {
+			if (!mShowCyclically) {
+				// once in a while, re-generate the opposite range files.
+				if (mInSecondHalfOfFiles && position == 1) {
+					mInSecondHalfOfFiles = false;
+
+					List<String> retainedFileNames = new ArrayList<>();
+					retainedFileNames.addAll(mFileNames.subList(0, QUARTER_IMAGE_ARRAY_SIZE));
+					retainedFileNames.addAll(mFileNames.subList(IMAGE_ARRAY_SIZE - QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE));
+					ArrayList<String> newImages = getNewImages(IMAGE_ARRAY_SIZE / 2, retainedFileNames);
+					if (newImages != null) {
+						ArrayList<String> newFileNames = new ArrayList<>();
+						newFileNames.addAll(mFileNames.subList(0, QUARTER_IMAGE_ARRAY_SIZE));
+						newFileNames.addAll(newImages);
+						newFileNames.addAll(mFileNames.subList(IMAGE_ARRAY_SIZE - QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE));
+						mFileNames = newFileNames;
+					}
+				}
+				else if (!mInSecondHalfOfFiles && position == IMAGE_ARRAY_SIZE / 2 + 1) {
+					mInSecondHalfOfFiles = true;
+
+					ArrayList<String> newImages = getNewImages(IMAGE_ARRAY_SIZE / 2,
+							mFileNames.subList(QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE - QUARTER_IMAGE_ARRAY_SIZE));
+					if (newImages != null) {
+						ArrayList<String> newFileNames = new ArrayList<>();
+						newFileNames.addAll(newImages.subList(0, IMAGE_ARRAY_SIZE / 2));
+						newFileNames.addAll(mFileNames.subList(QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE - QUARTER_IMAGE_ARRAY_SIZE));
+						newFileNames.addAll(newImages.subList(IMAGE_ARRAY_SIZE / 2, IMAGE_ARRAY_SIZE));
+						mFileNames = newFileNames;
+					}
+				}
+			}
+
 			RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_stacked_image_item);
 
 			String currentFileName = mFileNames.get(position);
@@ -229,11 +267,18 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			determineImageDimensions();
 			// Update the list name
 			mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
-
+			mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
 			// create new image list
+			createImageList();
+		}
+
+		/**
+		 * Create the list of images to be displayed in the widget.
+		 */
+		private void createImageList() {
 			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 			if (imageList == null) {
-				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget data change");
+				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget " + mAppWidgetId);
 				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
 				NotificationUtil.displayNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST,
 						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
@@ -241,7 +286,35 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			}
 			else {
 				NotificationUtil.cancelNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST);
-				mFileNames = imageList.getShuffledFileNames();
+
+				if (mShowCyclically) {
+					mFileNames = imageList.getShuffledFileNames();
+				}
+				else {
+					mFileNames = imageList.getSetOfRandomFileNames(IMAGE_ARRAY_SIZE, new ArrayList<String>());
+				}
+			}
+		}
+
+		/**
+		 * Get new images for the image list (for modification while scrolling).
+		 *
+		 * @param numberOfFiles   The number of files to retrieve.
+		 * @param forbiddenImages The list of images that should not be recreated.
+		 * @return The new list of images.
+		 */
+		private ArrayList<String> getNewImages(final int numberOfFiles, final List<String> forbiddenImages) {
+			StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
+			if (imageList == null) {
+				Log.e(Application.TAG, "Could not load image list " + mListName + " for StackedImageWidget " + mAppWidgetId);
+				DialogUtil.displayToast(mContext, R.string.toast_error_while_loading, mListName);
+				NotificationUtil.displayNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST,
+						R.string.title_notification_failed_loading, R.string.toast_error_while_loading, mListName);
+				return null;
+			}
+			else {
+				NotificationUtil.cancelNotification(mContext, mListName, NotificationType.ERROR_LOADING_LIST);
+				return imageList.getSetOfRandomFileNames(numberOfFiles, forbiddenImages);
 			}
 		}
 	}
