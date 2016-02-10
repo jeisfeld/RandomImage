@@ -1,8 +1,6 @@
 package de.jeisfeld.randomimage.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -27,11 +25,7 @@ public final class ImageAnalyzer {
 	/**
 	 * The starting points of the rectangles at the border of the image from which the colors are taken.
 	 */
-	private static final double[] SLICE_STARTS = {0, 0.3, 0.6};
-	/**
-	 * The variance threshold - rectangles with a lower variance are always considered when determining the color.
-	 */
-	private static final int VARIANCE_THRESHOLD = 500;
+	private static final double[] SLICE_STARTS = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
 
 	/**
 	 * Hide default constructor.
@@ -100,28 +94,7 @@ public final class ImageAnalyzer {
 			statistics.add(getColorStatistics(getSubPixels(shrunkBitmap, 0, BOUNDARY_THICKNESS, 1 - startValue - SLICE_WIDTH, 1 - startValue)));
 		}
 
-		// Sort by variance.
-		Collections.sort(statistics, new Comparator<ColorStatistics>() {
-			@Override
-			public int compare(final ColorStatistics lhs, final ColorStatistics rhs) {
-				return Long.valueOf(lhs.getVariance()).compareTo(rhs.getVariance());
-			}
-		});
-
-		// Select colors of rectangles with lowest variance.
-		List<Integer> colorList = new ArrayList<>();
-		for (ColorStatistics statistic : statistics) {
-			if (colorList.size() < 3 || statistic.getVariance() < VARIANCE_THRESHOLD) { // MAGIC_NUMBER
-				colorList.add(statistic.getAverageColor());
-			}
-		}
-		// Map List into Array.
-		int[] colors = new int[colorList.size()];
-		int i = 0;
-		for (int color : colorList) {
-			colors[i++] = color;
-		}
-		return getColorClosestToAverage(colors);
+		return ColorForest.getBestColor(statistics);
 	}
 
 	/**
@@ -188,32 +161,6 @@ public final class ImageAnalyzer {
 	}
 
 	/**
-	 * From an array of colors, get the color closest to the average color.
-	 *
-	 * @param colorArray The array of colors.
-	 * @return The color closest to the average.
-	 */
-	private static int getColorClosestToAverage(final int[] colorArray) {
-		int averageColor = getColorStatistics(colorArray).getAverageColor();
-
-		long minSquareDistanceFromAverage = Long.MAX_VALUE;
-		int bestColor = 0;
-
-		for (int color : colorArray) {
-			long squareDistanceFromAverage = (Color.red(color) - Color.red(averageColor)) * (Color.red(color) - Color.red(averageColor))
-					+ (Color.green(color) - Color.green(averageColor)) * (Color.green(color) - Color.green(averageColor))
-					+ (Color.blue(color) - Color.blue(averageColor)) * (Color.blue(color) - Color.blue(averageColor));
-
-			if (squareDistanceFromAverage < minSquareDistanceFromAverage) {
-				minSquareDistanceFromAverage = squareDistanceFromAverage;
-				bestColor = color;
-			}
-		}
-
-		return bestColor;
-	}
-
-	/**
 	 * A holder for average and variance of an array of colors.
 	 */
 	private static final class ColorStatistics {
@@ -246,4 +193,190 @@ public final class ImageAnalyzer {
 			mVariance = variance;
 		}
 	}
+
+
+	/**
+	 * Utility class building a tree from an array of color statistics in order to find a color with maximum representation.
+	 */
+	private static final class ColorForest {
+		/**
+		 * The root nodes of a forest of binary trees.
+		 */
+		private List<ColorNode> mNodes;
+
+		/**
+		 * Get the best color out of a list of color statistics.
+		 *
+		 * @param statistics The list of color statistics.
+		 * @return The best color.
+		 */
+		private static int getBestColor(final List<ColorStatistics> statistics) {
+			ColorForest colorForest = new ColorForest(statistics);
+
+			while (colorForest.mNodes.size() > 1) {
+				colorForest.joinBestPair();
+			}
+
+			return colorForest.mNodes.get(0).getBestLeaf().mAverage;
+		}
+
+		/**
+		 * Initialize the forest with a list of color statistics. Each statistic will represent a one-node tree.
+		 *
+		 * @param statistics the list of color statistics.
+		 */
+		private ColorForest(final List<ColorStatistics> statistics) {
+			mNodes = new ArrayList<>();
+
+			for (ColorStatistics statistic : statistics) {
+				mNodes.add(new ColorNode(statistic.getAverageColor(), statistic.getVariance()));
+			}
+		}
+
+		/**
+		 * Join the best pair of root nodes (i.e. the ones having the smallest variance when joined).
+		 */
+		private void joinBestPair() {
+			ColorNode bestPair = new ColorNode(0, Long.MAX_VALUE);
+
+			for (int i = 0; i < mNodes.size() - 1; i++) {
+				for (int j = i + 1; j < mNodes.size(); j++) {
+					ColorNode currentPair = new ColorNode(mNodes.get(i), mNodes.get(j));
+					if (currentPair.mVariance < bestPair.mVariance) {
+						bestPair = currentPair;
+					}
+				}
+			}
+
+			mNodes.remove(bestPair.mChild1);
+			mNodes.remove(bestPair.mChild2);
+			mNodes.add(bestPair);
+		}
+
+		/**
+		 * A node of a binary color tree. Represents either a single color or the root of a tree.
+		 */
+		private static final class ColorNode {
+			/**
+			 * The first child, if existing.
+			 */
+			private ColorNode mChild1;
+			/**
+			 * The second child, if existing.
+			 */
+			private ColorNode mChild2;
+			/**
+			 * The number of mNodes in the subtree rooted by this node.
+			 */
+			private int mWeight;
+			/**
+			 * The average of all colors in the subtree rooted by this node.
+			 */
+			private int mAverage;
+			/**
+			 * The total variance of all color mNodes in the subtree rooted by this node.
+			 */
+			private long mVariance;
+			/**
+			 * The value of a node for later usage as representative color.
+			 */
+			private double mValue;
+
+			/**
+			 * Constructor of a leaf - a basic color entry.
+			 *
+			 * @param color    The color of the leaf.
+			 * @param variance The original variance of this entry.
+			 */
+			private ColorNode(final int color, final long variance) {
+				mChild1 = null;
+				mChild2 = null;
+				mWeight = 1;
+				mAverage = color;
+				mVariance = variance;
+				mValue = calculateValue();
+			}
+
+			/**
+			 * Constructor of a non-leaf - join two color entries.
+			 *
+			 * @param child1 The first child.
+			 * @param child2 The second child.
+			 */
+			private ColorNode(final ColorNode child1, final ColorNode child2) {
+				mChild1 = child1;
+				mChild2 = child2;
+				mWeight = child1.mWeight + child2.mWeight;
+				mAverage = Color.rgb((child1.mWeight * Color.red(child1.mAverage) + child2.mWeight * Color.red(child2.mAverage)) / mWeight,
+						(child1.mWeight * Color.green(child1.mAverage) + child2.mWeight * Color.green(child2.mAverage)) / mWeight,
+						(child1.mWeight * Color.blue(child1.mAverage) + child2.mWeight * Color.blue(child2.mAverage)) / mWeight);
+				mVariance = (child1.mWeight * child1.mVariance + child2.mWeight * child2.mVariance) / mWeight
+						+ ((Color.red(child1.mAverage) - Color.red(child2.mAverage)) * (Color.red(child1.mAverage) - Color.red(child2.mAverage)))
+						+ ((Color.green(child1.mAverage) - Color.green(child2.mAverage))
+						* (Color.green(child1.mAverage) - Color.green(child2.mAverage)))
+						+ ((Color.blue(child1.mAverage) - Color.blue(child2.mAverage)) * (Color.blue(child1.mAverage) - Color.blue(child2.mAverage)))
+						* child1.mWeight * child2.mWeight / (mWeight * mWeight);
+				mValue = Math.max(calculateValue(), Math.max(child1.mValue, child2.mValue));
+			}
+
+			/**
+			 * Calculate the value from weight and variance - this should ensure that collections with low variance are preferred, provided
+			 * they have enough weight. Give slight preference to saturated colors.
+			 *
+			 * @return The calculated value.
+			 */
+			private double calculateValue() {
+				float[] hsv = new float[3]; // MAGIC_NUMBER
+				Color.colorToHSV(mAverage, hsv);
+
+				return mWeight / (50 + Math.sqrt(mVariance)) * (1 + hsv[1] * hsv[2]); // MAGIC_NUMBER
+			}
+
+			/**
+			 * Check if it is a leaf.
+			 *
+			 * @return true for a leaf.
+			 */
+			private boolean isLeaf() {
+				return mChild1 == null;
+			}
+
+			/**
+			 * Get the child having the bigger weight. In case of equality, take the one with lower variance.
+			 *
+			 * @return The better child.
+			 */
+			private ColorNode getBestChild() {
+				if (mChild1.mValue >= mChild2.mValue) {
+					return mChild1;
+				}
+				else {
+					return mChild2;
+				}
+			}
+
+
+			/**
+			 * Go down the tree via best children to get the best leaf node.
+			 *
+			 * @return The best leaf node.
+			 */
+			private ColorNode getBestLeaf() {
+				if (isLeaf()) {
+					return this;
+				}
+				else {
+					return getBestChild().getBestLeaf();
+				}
+			}
+
+			@Override
+			public String toString() {
+				return "(" + mWeight + "|" + Color.red(mAverage) + "," + Color.green(mAverage) + "," + Color.blue(mAverage) + "|" + mVariance
+						+ "|" + mValue + ")";
+			}
+		}
+	}
+
+
 }
