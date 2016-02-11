@@ -13,6 +13,7 @@
     <string name="key_widget_view_width" translatable="false">widget_view_width</string>
     <string name="key_widget_view_height" translatable="false">widget_view_height</string>
     <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
+    <string name="key_widget_view_as_list" translatable="false">widget_view_as_list</string>
     <string name="key_widget_show_cyclically" translatable="false">widget_show_cyclically</string>
     <string name="key_widget_background_style" translatable="false">widget_background_style</string>
     <string name="key_widget_button_style" translatable="false">widget_button_style</string>
@@ -26,6 +27,7 @@
 
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_alarm_interval">Change Frequency</string>
+    <string name="pref_title_widget_view_as_list">View as list</string>
     <string name="pref_title_widget_show_cyclically">Show all images cyclically</string>
     <string name="pref_title_widget_background_style">Background</string>
     <string name="pref_title_widget_button_style">Button Style</string>

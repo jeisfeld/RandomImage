@@ -198,7 +198,7 @@ public final class ImageUtil {
 
 			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore || growIfRequired) {
 				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
-				if (bitmap.getWidth() * maxHeight > bitmap.getHeight() * maxWidth) {
+				if ((long) bitmap.getWidth() * maxHeight > (long) bitmap.getHeight() * maxWidth) {
 					//noinspection UnnecessaryLocalVariable
 					int targetWidth = maxWidth;
 					int targetHeight = bitmap.getHeight() * maxWidth / bitmap.getWidth();
@@ -285,10 +285,10 @@ public final class ImageUtil {
 		BitmapFactory.decodeFile(filepath, options);
 
 		if (rotate) {
-			return Math.min(options.outHeight / targetWidth, options.outWidth / targetHeight);
+			return Math.max(options.outHeight / targetWidth, options.outWidth / targetHeight);
 		}
 		else {
-			return Math.min(options.outWidth / targetWidth, options.outHeight / targetHeight);
+			return Math.max(options.outWidth / targetWidth, options.outHeight / targetHeight);
 		}
 	}
 

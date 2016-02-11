@@ -16,6 +16,9 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_alarm_interval"/>
     <CheckBoxPreference
+        android:key="@string/key_widget_view_as_list"
+        android:title="@string/pref_title_widget_view_as_list"/>
+    <CheckBoxPreference
         android:key="@string/key_widget_show_cyclically"
         android:title="@string/pref_title_widget_show_cyclically"/>
     <ListPreference

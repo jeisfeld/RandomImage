@@ -17,8 +17,9 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Do not offer cyclic change in ImageWidget.
+		// Do not offer cyclic change and list view in ImageWidget.
 		getPreferenceScreen().removePreference(findPreference(getString(R.string.key_widget_show_cyclically)));
+		getPreferenceScreen().removePreference(findPreference(getString(R.string.key_widget_view_as_list)));
 	}
 
 	@Override
@@ -38,11 +39,6 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
 					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					ImageWidget.updateTimers(getAppWidgetId());
-				}
-				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_show_cyclically))) {
-					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, getAppWidgetId(),
-							Boolean.parseBoolean(stringValue));
-					ImageWidget.updateInstances(UpdateType.NEW_LIST, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_background_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_background_style, getAppWidgetId(),

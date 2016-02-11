@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
@@ -30,6 +31,7 @@ public class StackedImageWidget extends GenericImageWidget {
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
 									 final int appWidgetId, final UpdateType updateType) {
+		Log.i(Application.TAG, "Updating StackedImageWidget " + appWidgetId + " with type " + updateType);
 
 		Intent intent = new Intent(context, StackedImageWidgetService.class);
 		// Add the app widget ID to the intent extras.
@@ -55,6 +57,12 @@ public class StackedImageWidget extends GenericImageWidget {
 		Intent nestedIntent = DisplayRandomImageActivity.createIntent(context, getListName(appWidgetId), null, false, appWidgetId, null);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, nestedIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setPendingIntentTemplate(R.id.stackViewWidget, pendingIntent);
+
+		boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, appWidgetId, false);
+		if (viewAsList && (updateType == UpdateType.NEW_LIST
+				|| updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC)) {
+			remoteViews.setInt(R.id.stackViewWidget, "smoothScrollToPosition", 0);
+		}
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
@@ -156,14 +164,15 @@ public class StackedImageWidget extends GenericImageWidget {
 		Context context = Application.getAppContext();
 		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
 				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
+		boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, appWidgetId, false);
 
 		switch (buttonStyle) {
 		case 0:
-			return R.layout.widget_stacked_image_bottom_buttons;
+			return viewAsList ? R.layout.widget_list_image_bottom_buttons : R.layout.widget_stacked_image_bottom_buttons;
 		case 1:
-			return R.layout.widget_stacked_image_top_buttons;
+			return viewAsList ? R.layout.widget_list_image_top_buttons : R.layout.widget_stacked_image_top_buttons;
 		default:
-			return R.layout.widget_stacked_image_centered_buttons;
+			return viewAsList ? R.layout.widget_list_image_centered_buttons : R.layout.widget_stacked_image_centered_buttons;
 		}
 	}
 

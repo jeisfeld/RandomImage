@@ -99,6 +99,10 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		 */
 		private boolean mShowCyclically;
 		/**
+		 * Flag indicating if the images should be displayed as list rather than a stack.
+		 */
+		private boolean mViewAsList;
+		/**
 		 * Flag indicating if we are currently in the second half of the list of files. (This is used in order to determine when to regenerate files.)
 		 */
 		private boolean mInSecondHalfOfFiles = false;
@@ -117,6 +121,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 			mListName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
 			mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
+			mViewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
 		}
 
 		/**
@@ -125,6 +130,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		private void determineImageDimensions() {
 			int viewWidth = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_width, mAppWidgetId, 0);
 			int viewHeight = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_view_height, mAppWidgetId, 0);
+			boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
+			if (viewAsList) {
+				mImageWidth = viewWidth;
+				mImageHeight = Integer.MAX_VALUE;
+				return;
+			}
 
 			double targetWidth = SQUARE_IMAGE_SCALE_FACTOR * viewWidth;
 			double targetHeight = SQUARE_IMAGE_SCALE_FACTOR * viewHeight;
@@ -198,7 +209,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				}
 			}
 
-			RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_stacked_image_item);
+			RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(),
+					mViewAsList ? R.layout.widget_list_image_item : R.layout.widget_stacked_image_item);
 
 			String currentFileName = mFileNames.get(position);
 
@@ -209,21 +221,28 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
 				Bitmap bitmap;
 				if (mImageWidth > 0 && mImageHeight > 0) {
-					bitmap = ImageUtil.getBitmapOfExactSize(currentFileName, mImageWidth, mImageHeight, stretchToFit ? -1 : IMAGE_BORDER_SIZE);
+					if (mViewAsList) {
+						bitmap = ImageUtil.getImageBitmap(currentFileName, mImageWidth, mImageHeight, true);
+					}
+					else {
+						bitmap = ImageUtil.getBitmapOfExactSize(currentFileName, mImageWidth, mImageHeight, stretchToFit ? -1 : IMAGE_BORDER_SIZE);
+					}
 				}
 				else {
 					bitmap = ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE);
 				}
 				remoteViews.setImageViewBitmap(R.id.imageViewWidget, bitmap);
 
-				BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(mAppWidgetId);
-				if (backgroundColor == BackgroundColor.COLOR_FROM_IMAGE) {
-					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(
-							ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
-				}
-				else if (backgroundColor == BackgroundColor.AVERAGE_IMAGE_COLOR) {
-					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getAverageImageColor(
-							ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
+				if (!mViewAsList) {
+					BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(mAppWidgetId);
+					if (backgroundColor == BackgroundColor.COLOR_FROM_IMAGE) {
+						remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(
+								ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
+					}
+					else if (backgroundColor == BackgroundColor.AVERAGE_IMAGE_COLOR) {
+						remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getAverageImageColor(
+								ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
+					}
 				}
 			}
 
@@ -268,6 +287,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			// Update the list name
 			mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
 			mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
+			mViewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
+			Log.i(Application.TAG, "StackedImageWidget: data set changed for " + mAppWidgetId + " on list \"" + mListName + "\"");
 			// create new image list
 			createImageList();
 		}

@@ -67,6 +67,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_alarm_interval);
+		bindPreferenceSummaryToValue(R.string.key_widget_view_as_list);
 		bindPreferenceSummaryToValue(R.string.key_widget_show_cyclically);
 		bindPreferenceSummaryToValue(R.string.key_widget_background_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_style);
@@ -166,6 +167,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_alarm_interval,
 				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_view_as_list,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_show_cyclically,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_background_style,
@@ -221,7 +224,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				|| preferenceKey == R.string.key_widget_detail_background) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
-		else if (preferenceKey == R.string.key_widget_show_cyclically) {
+		else if (preferenceKey == R.string.key_widget_show_cyclically
+				|| preferenceKey == R.string.key_widget_view_as_list) {
 			value = "";
 		}
 		else {
