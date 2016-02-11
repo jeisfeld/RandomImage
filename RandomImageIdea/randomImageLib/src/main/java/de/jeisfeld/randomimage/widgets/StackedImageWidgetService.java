@@ -327,6 +327,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 					mFileNames = imageList.getSetOfRandomFileNames(IMAGE_ARRAY_SIZE, new ArrayList<String>());
 				}
 			}
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_current_stack_size, mAppWidgetId, mFileNames.size());
 		}
 
 		/**

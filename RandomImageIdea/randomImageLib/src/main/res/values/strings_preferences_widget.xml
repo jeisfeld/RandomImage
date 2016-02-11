@@ -23,6 +23,7 @@
     <string name="key_widget_detail_background" translatable="false">widget_detail_background</string>
     <string name="key_widget_current_file_name" translatable="false">widget_current_file_name</string>
     <string name="key_widget_requires_update" translatable="false">widget_requires_update</string>
+    <string name="key_widget_current_stack_size" translatable="false">widget_current_stack_size</string>
 
     <!-- Strings related to Settings -->
 

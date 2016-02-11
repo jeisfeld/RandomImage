@@ -61,7 +61,8 @@ public class StackedImageWidget extends GenericImageWidget {
 		boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, appWidgetId, false);
 		if (viewAsList && (updateType == UpdateType.NEW_LIST
 				|| updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC)) {
-			remoteViews.setInt(R.id.stackViewWidget, "smoothScrollToPosition", 0);
+			int stackSize = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_current_stack_size, appWidgetId, 0);
+			remoteViews.setInt(R.id.stackViewWidget, "smoothScrollToPosition", stackSize / 2);
 		}
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
