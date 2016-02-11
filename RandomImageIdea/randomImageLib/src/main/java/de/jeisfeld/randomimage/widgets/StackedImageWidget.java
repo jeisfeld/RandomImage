@@ -70,6 +70,7 @@ public class StackedImageWidget extends GenericImageWidget {
 
 		// trigger also onDataStackChanged, as the intent will not update the service once created.
 		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_requires_update, appWidgetId, true);
 			appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 		}
 
@@ -88,6 +89,7 @@ public class StackedImageWidget extends GenericImageWidget {
 
 		determineWidgetDimensions(appWidgetManager, appWidgetId);
 
+		PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_requires_update, appWidgetId, true);
 		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 	}
 

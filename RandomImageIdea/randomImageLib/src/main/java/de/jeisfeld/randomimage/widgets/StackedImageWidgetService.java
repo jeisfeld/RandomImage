@@ -177,6 +177,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public RemoteViews getViewAt(final int position) {
+			boolean requiresUpdate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_requires_update, mAppWidgetId, false);
+			if (requiresUpdate) {
+				// Ensure that changes apply as soon as possible.
+				onDataSetChanged();
+			}
+
 			if (!mShowCyclically) {
 				// once in a while, re-generate the opposite range files.
 				if (mInSecondHalfOfFiles && position == 1) {
@@ -201,9 +207,9 @@ public class StackedImageWidgetService extends RemoteViewsService {
 							mFileNames.subList(QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE - QUARTER_IMAGE_ARRAY_SIZE));
 					if (newImages != null) {
 						ArrayList<String> newFileNames = new ArrayList<>();
-						newFileNames.addAll(newImages.subList(0, IMAGE_ARRAY_SIZE / 2));
+						newFileNames.addAll(newImages.subList(0, QUARTER_IMAGE_ARRAY_SIZE));
 						newFileNames.addAll(mFileNames.subList(QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE - QUARTER_IMAGE_ARRAY_SIZE));
-						newFileNames.addAll(newImages.subList(IMAGE_ARRAY_SIZE / 2, IMAGE_ARRAY_SIZE));
+						newFileNames.addAll(newImages.subList(QUARTER_IMAGE_ARRAY_SIZE, IMAGE_ARRAY_SIZE / 2));
 						mFileNames = newFileNames;
 					}
 				}
@@ -267,7 +273,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public int getViewTypeCount() {
-			return 1;
+			return 2;
 		}
 
 		@Override
@@ -282,15 +288,21 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onDataSetChanged() {
-			// update image dimensions
-			determineImageDimensions();
-			// Update the list name
-			mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
-			mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
-			mViewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
-			Log.i(Application.TAG, "StackedImageWidget: data set changed for " + mAppWidgetId + " on list \"" + mListName + "\"");
-			// create new image list
-			createImageList();
+			boolean requiresUpdate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_requires_update, mAppWidgetId, false);
+
+			if (requiresUpdate) {
+				// reset at the start, so that changes happening from now on will lead to another update
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_requires_update, mAppWidgetId, false);
+				// update image dimensions
+				determineImageDimensions();
+				// Update the list name
+				mListName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId);
+				mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
+				mViewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
+				Log.i(Application.TAG, "StackedImageWidget: data set changed for " + mAppWidgetId + " on list \"" + mListName + "\"");
+				// create new image list
+				createImageList();
+			}
 		}
 
 		/**
