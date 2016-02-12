@@ -33,7 +33,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * Factor by which the image sizes are reduced compared to allowed size in square view.
 	 */
-	private static final float SQUARE_IMAGE_SCALE_FACTOR = 0.6f;
+	private static final float SQUARE_IMAGE_SCALE_FACTOR = 0.7f;
 	/**
 	 * Factor by which the image sizes are reduced compared to allowed size in stretched view.
 	 */
@@ -58,7 +58,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 	@Override
 	public final RemoteViewsFactory onGetViewFactory(final Intent intent) {
-		return new StackRemoteViewsFactory(this.getApplicationContext(), intent);
+		return new StackRemoteViewsFactory(getApplicationContext(), intent);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
 			if (viewAsList) {
 				mImageWidth = viewWidth;
-				mImageHeight = Integer.MAX_VALUE;
+				mImageHeight = viewHeight;
 				return;
 			}
 
@@ -228,7 +228,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				Bitmap bitmap;
 				if (mImageWidth > 0 && mImageHeight > 0) {
 					if (mViewAsList) {
-						bitmap = ImageUtil.getImageBitmap(currentFileName, mImageWidth, mImageHeight, true);
+						bitmap = ImageUtil.getBitmapOfMinimumHeight(currentFileName, mImageWidth, mImageHeight);
 					}
 					else {
 						bitmap = ImageUtil.getBitmapOfExactSize(currentFileName, mImageWidth, mImageHeight, stretchToFit ? -1 : IMAGE_BORDER_SIZE);
@@ -239,16 +239,14 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				}
 				remoteViews.setImageViewBitmap(R.id.imageViewWidget, bitmap);
 
-				if (!mViewAsList) {
-					BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(mAppWidgetId);
-					if (backgroundColor == BackgroundColor.COLOR_FROM_IMAGE) {
-						remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(
-								ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
-					}
-					else if (backgroundColor == BackgroundColor.AVERAGE_IMAGE_COLOR) {
-						remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getAverageImageColor(
-								ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
-					}
+				BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(mAppWidgetId);
+				if (backgroundColor == BackgroundColor.COLOR_FROM_IMAGE) {
+					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(
+							ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
+				}
+				else if (backgroundColor == BackgroundColor.AVERAGE_IMAGE_COLOR) {
+					remoteViews.setInt(R.id.imageViewWidget, GenericImageWidget.SET_BACKGROUND_COLOR, ImageAnalyzer.getAverageImageColor(
+							ImageUtil.getImageBitmap(currentFileName, MediaStoreUtil.MINI_THUMB_SIZE)));
 				}
 			}
 
@@ -327,7 +325,6 @@ public class StackedImageWidgetService extends RemoteViewsService {
 					mFileNames = imageList.getSetOfRandomFileNames(IMAGE_ARRAY_SIZE, new ArrayList<String>());
 				}
 			}
-			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_current_stack_size, mAppWidgetId, mFileNames.size());
 		}
 
 		/**

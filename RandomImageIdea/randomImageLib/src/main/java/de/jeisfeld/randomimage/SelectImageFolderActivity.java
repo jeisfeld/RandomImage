@@ -312,7 +312,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 							for (String imageFolder : imageFolders) {
 								List<String> images = ImageUtil.getImagesInFolder(imageFolder);
 								if (images != null && images.size() > 0) {
-									MediaStoreUtil.getThumbnailFromPath(images.get(0), MediaStoreUtil.MINI_THUMB_SIZE);
+									MediaStoreUtil.getThumbnailFromPath(images.get(0));
 								}
 							}
 							PreferenceUtil.setSharedPreferenceLong(R.string.key_last_thumb_creation_time, System.currentTimeMillis());

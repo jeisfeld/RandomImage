@@ -137,6 +137,9 @@ public final class StandardImageList extends ImageList {
 	 */
 	public ArrayList<String> getSetOfRandomFileNames(final int numberOfFiles, final List<String> forbiddenFiles) {
 		ArrayList<String> allFiles = getShuffledFileNames();
+		if (allFiles.size() == 0) {
+			return new ArrayList<>();
+		}
 		allFiles.removeAll(forbiddenFiles);
 
 		if (numberOfFiles > allFiles.size()) {

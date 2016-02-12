@@ -487,8 +487,7 @@ public class SelectDirectoryActivity extends Activity {
 			new Thread() {
 				@Override
 				public void run() {
-					final Bitmap bitmap = ImageUtil.getImageBitmap(mFileNames.get(position),
-							MediaStoreUtil.MICRO_THUMB_SIZE);
+					final Bitmap bitmap = ImageUtil.getImageBitmap(mFileNames.get(position), MediaStoreUtil.MINI_THUMB_SIZE);
 
 					try {
 						SelectDirectoryActivity.this.runOnUiThread(new Runnable() {

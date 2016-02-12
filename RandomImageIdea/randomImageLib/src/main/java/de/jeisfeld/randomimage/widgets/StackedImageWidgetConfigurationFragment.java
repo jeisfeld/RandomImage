@@ -16,16 +16,6 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setStyleDependentPropertyEnablement();
-	}
-
-	/**
-	 * Enable or disable properties based on the display style.
-	 */
-	private void setStyleDependentPropertyEnablement() {
-		boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, getAppWidgetId(), false);
-		Preference backgroundPreference = findPreference(getString(R.string.key_widget_background_style));
-		backgroundPreference.setEnabled(!viewAsList);
 	}
 
 	@Override
@@ -49,7 +39,6 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_view_as_list))) {
 					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, getAppWidgetId(),
 							Boolean.parseBoolean(stringValue));
-					setStyleDependentPropertyEnablement();
 					StackedImageWidget.updateInstances(UpdateType.NEW_LIST, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_show_cyclically))) {

@@ -52,11 +52,6 @@ public final class ImageUtil {
 	public static final int MAX_BITMAP_SIZE = 2048;
 
 	/**
-	 * Number of milliseconds for retry of getting bitmap.
-	 */
-	private static final long BITMAP_RETRY = 50;
-
-	/**
 	 * The file endings considered as image files.
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
@@ -160,8 +155,8 @@ public final class ImageUtil {
 		}
 		else {
 
-			if (maxWidth <= MediaStoreUtil.MINI_THUMB_SIZE && maxHeight <= MediaStoreUtil.MINI_THUMB_SIZE) {
-				bitmap = MediaStoreUtil.getThumbnailFromPath(path, Math.max(maxWidth, maxHeight));
+			if (maxWidth <= MediaStoreUtil.MINI_THUMB_SIZE || maxHeight <= MediaStoreUtil.MINI_THUMB_SIZE) {
+				bitmap = MediaStoreUtil.getThumbnailFromPath(path);
 				if (bitmap != null) {
 					foundThumbInMediaStore = true;
 				}
@@ -169,24 +164,13 @@ public final class ImageUtil {
 
 			if (bitmap == null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = getBitmapFactor(path, maxWidth, maxHeight, rotation == ROTATION_90 || rotation == ROTATION_270);
+				options.inSampleSize = getBitmapFactor(path, maxWidth, maxHeight, rotation == ROTATION_90 || rotation == ROTATION_270, false);
 				// options.inPurgeable = true;
 				bitmap = BitmapFactory.decodeFile(path, options);
 				if (bitmap == null) {
-					// cannot create bitmap - try once more in case that the image was just in process of saving
-					// metadata
-					try {
-						Thread.sleep(BITMAP_RETRY);
-					}
-					catch (InterruptedException e) {
-						// ignore exception
-					}
-					bitmap = BitmapFactory.decodeFile(path, options);
-					if (bitmap == null) {
-						// cannot create bitmap - return dummy
-						Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
-						return getDummyBitmap();
-					}
+					// cannot create bitmap - return dummy
+					Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
+					return getDummyBitmap();
 				}
 			}
 			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
@@ -217,6 +201,76 @@ public final class ImageUtil {
 		return bitmap;
 	}
 
+	/**
+	 * Return a bitmap of this photo having the given minimum size.
+	 *
+	 * @param path      The file path of the image.
+	 * @param minWidth  The minimum width of this bitmap. If smaller, it will be resized.
+	 * @param minHeight The minimum height of this bitmap. If smaller, it will be resized.
+	 * @return the bitmap.
+	 */
+	public static Bitmap getImageBitmapOfMinimumSize(final String path, final int minWidth, final int minHeight) {
+		Bitmap bitmap = null;
+		int rotation = getExifRotation(path);
+
+		if (minWidth <= 0 || minHeight <= 0) {
+			bitmap = BitmapFactory.decodeFile(path);
+		}
+		else {
+			if (minWidth <= MediaStoreUtil.MINI_THUMB_SIZE && minHeight <= MediaStoreUtil.MINI_THUMB_SIZE) {
+				bitmap = MediaStoreUtil.getThumbnailFromPath(path);
+			}
+
+			if (bitmap == null) {
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inSampleSize = getBitmapFactor(path, minWidth, minHeight, rotation == ROTATION_90 || rotation == ROTATION_270, true);
+				// options.inPurgeable = true;
+				bitmap = BitmapFactory.decodeFile(path, options);
+				if (bitmap == null) {
+					// cannot create bitmap - return dummy
+					Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
+					return getDummyBitmap();
+				}
+			}
+			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
+				return bitmap;
+			}
+			if (rotation != 0) {
+				bitmap = rotateBitmap(bitmap, rotation);
+			}
+
+			if ((long) bitmap.getWidth() * minHeight > (long) bitmap.getHeight() * minWidth) {
+				int targetWidth = bitmap.getWidth() * minHeight / bitmap.getHeight();
+				//noinspection UnnecessaryLocalVariable
+				int targetHeight = minHeight;
+				bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
+			}
+			else {
+				//noinspection UnnecessaryLocalVariable
+				int targetWidth = minWidth;
+				int targetHeight = bitmap.getHeight() * minWidth / bitmap.getWidth();
+				bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
+			}
+		}
+
+		return bitmap;
+	}
+
+	/**
+	 * Surround the given bitmap by transparent space to match the given size.
+	 *
+	 * @param baseBitmap the original bitmap. Should be already limited to at most the target dimensions.
+	 * @param width      The width of the target bitmap.
+	 * @param height     The height of the target bitmap.
+	 * @return the sized bitmap.
+	 */
+	private static Bitmap extendToBitmapOfSize(final Bitmap baseBitmap, final int width, final int height) {
+		Bitmap targetBitmap = Bitmap.createBitmap(width, height, baseBitmap.getConfig());
+		Paint paint = new Paint();
+		Canvas canvas = new Canvas(targetBitmap);
+		canvas.drawBitmap(baseBitmap, (width - baseBitmap.getWidth()) / 2, (height - baseBitmap.getHeight()) / 2, paint);
+		return targetBitmap;
+	}
 
 	/**
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given size.
@@ -228,15 +282,15 @@ public final class ImageUtil {
 	 * @return the bitmap.
 	 */
 	public static Bitmap getBitmapOfExactSize(final String path, final int width, final int height, final int border) {
-		Bitmap baseBitmap = getImageBitmap(path, width - 2 * border, height - 2 * border, true);
-		Bitmap targetBitmap = Bitmap.createBitmap(width, height, baseBitmap.getConfig());
-		Paint paint = new Paint();
-		Canvas canvas = new Canvas(targetBitmap);
-
 		if (border >= 0) {
-			canvas.drawBitmap(baseBitmap, (width - baseBitmap.getWidth()) / 2, (height - baseBitmap.getHeight()) / 2, paint);
+			Bitmap baseBitmap = getImageBitmap(path, width - 2 * border, height - 2 * border, true);
+			return extendToBitmapOfSize(baseBitmap, width, height);
 		}
 		else {
+			Bitmap baseBitmap = getImageBitmapOfMinimumSize(path, width, height);
+			Bitmap targetBitmap = Bitmap.createBitmap(width, height, baseBitmap.getConfig());
+			Paint paint = new Paint();
+			Canvas canvas = new Canvas(targetBitmap);
 			if (baseBitmap.getWidth() * height >= baseBitmap.getHeight() * width) {
 				int horizontalPadding = (baseBitmap.getWidth() - baseBitmap.getHeight() * width / height) / 2;
 				Rect srcRect = new Rect(horizontalPadding, 0, horizontalPadding + baseBitmap.getHeight() * width / height, baseBitmap.getHeight());
@@ -247,8 +301,26 @@ public final class ImageUtil {
 				Rect srcRect = new Rect(0, verticalPadding, baseBitmap.getWidth(), verticalPadding + baseBitmap.getWidth() * height / width);
 				canvas.drawBitmap(baseBitmap, srcRect, new Rect(0, 0, width, height), paint);
 			}
+			return targetBitmap;
 		}
-		return targetBitmap;
+	}
+
+	/**
+	 * Return a bitmap of this photo, where the Bitmap object has the exact given width and the minimum given height.
+	 *
+	 * @param path      The file path of the image.
+	 * @param width     The width of the target bitmap.
+	 * @param minHeight The minimum height of the target bitmap.
+	 * @return the bitmap.
+	 */
+	public static Bitmap getBitmapOfMinimumHeight(final String path, final int width, final int minHeight) {
+		Bitmap baseBitmap = getImageBitmap(path, width, Integer.MAX_VALUE, true);
+		if (baseBitmap.getHeight() >= minHeight) {
+			return baseBitmap;
+		}
+		else {
+			return extendToBitmapOfSize(baseBitmap, width, minHeight);
+		}
 	}
 
 	/**
@@ -261,9 +333,7 @@ public final class ImageUtil {
 	 * @param maxY       The maximum Y position to retrieve.
 	 * @return The bitmap.
 	 */
-	public static Bitmap getPartialBitmap(final Bitmap fullBitmap, final float minX, final float maxX,
-										  final float minY,
-										  final float maxY) {
+	public static Bitmap getPartialBitmap(final Bitmap fullBitmap, final float minX, final float maxX, final float minY, final float maxY) {
 		return Bitmap.createBitmap(fullBitmap, Math.round(minX * fullBitmap.getWidth()),
 				Math.round(minY * fullBitmap.getHeight()),
 				Math.round((maxX - minX) * fullBitmap.getWidth()),
@@ -277,18 +347,24 @@ public final class ImageUtil {
 	 * @param targetWidth  the target width of the bitmap
 	 * @param targetHeight the target height of the bitmap
 	 * @param rotate       flag indicating if the bitmap should be 90 degrees rotated.
+	 * @param minimum      flag indicating if the dimensions are minimum dimensions.
 	 * @return the sample size to be used.
 	 */
-	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight, final boolean rotate) {
+	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight, final boolean rotate,
+									   final boolean minimum) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(filepath, options);
 
 		if (rotate) {
-			return Math.max(options.outHeight / targetWidth, options.outWidth / targetHeight);
+			return minimum
+					? Math.min(options.outHeight / targetWidth, options.outWidth / targetHeight)
+					: Math.max(options.outHeight / targetWidth, options.outWidth / targetHeight);
 		}
 		else {
-			return Math.max(options.outWidth / targetWidth, options.outHeight / targetHeight);
+			return minimum
+					? Math.min(options.outWidth / targetWidth, options.outHeight / targetHeight)
+					: Math.max(options.outWidth / targetWidth, options.outHeight / targetHeight);
 		}
 	}
 

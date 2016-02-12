@@ -12,6 +12,7 @@ import android.widget.RemoteViews;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -61,8 +62,7 @@ public class StackedImageWidget extends GenericImageWidget {
 		boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, appWidgetId, false);
 		if (viewAsList && (updateType == UpdateType.NEW_LIST
 				|| updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC)) {
-			int stackSize = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_current_stack_size, appWidgetId, 0);
-			remoteViews.setInt(R.id.stackViewWidget, "smoothScrollToPosition", stackSize / 2);
+			remoteViews.setInt(R.id.stackViewWidget, "smoothScrollToPosition", 0);
 		}
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
@@ -102,8 +102,12 @@ public class StackedImageWidget extends GenericImageWidget {
 	 */
 	private void determineWidgetDimensions(final AppWidgetManager appWidgetManager, final int appWidgetId) {
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
-		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
-		int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
+
+		String widthOption = SystemUtil.isLandscape() ? AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH : AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH;
+		String heightOption = SystemUtil.isLandscape() ? AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT : AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT;
+		int width = (int) Math.ceil(DENSITY * options.getInt(widthOption));
+		int height = (int) Math.ceil(DENSITY * options.getInt(heightOption));
+
 		if (width > 0) {
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_width, appWidgetId, width);
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_view_height, appWidgetId, height);

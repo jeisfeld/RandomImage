@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
@@ -55,16 +54,6 @@ public final class SystemUtil {
 	 */
 	public static boolean isAtLeastVersion(final int version) {
 		return Build.VERSION.SDK_INT >= version;
-	}
-
-	/**
-	 * Determine if the device has a camera activity.
-	 *
-	 * @return true if the device has a camera activity.
-	 */
-	public static boolean hasCameraActivity() {
-		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		return takePictureIntent.resolveActivity(Application.getAppContext().getPackageManager()) != null;
 	}
 
 	/**
