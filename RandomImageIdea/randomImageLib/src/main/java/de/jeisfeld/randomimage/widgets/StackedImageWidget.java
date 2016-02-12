@@ -168,15 +168,13 @@ public class StackedImageWidget extends GenericImageWidget {
 	 */
 	@Override
 	protected final int getWidgetLayoutId(final int appWidgetId) {
-		Context context = Application.getAppContext();
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
+		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);
 		boolean viewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, appWidgetId, false);
 
 		switch (buttonStyle) {
-		case 0:
+		case BOTTOM:
 			return viewAsList ? R.layout.widget_list_image_bottom_buttons : R.layout.widget_stacked_image_bottom_buttons;
-		case 1:
+		case TOP:
 			return viewAsList ? R.layout.widget_list_image_top_buttons : R.layout.widget_stacked_image_top_buttons;
 		default:
 			return viewAsList ? R.layout.widget_list_image_centered_buttons : R.layout.widget_stacked_image_centered_buttons;

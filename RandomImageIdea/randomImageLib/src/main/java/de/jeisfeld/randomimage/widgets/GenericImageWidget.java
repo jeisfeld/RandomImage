@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
@@ -96,13 +97,16 @@ public abstract class GenericImageWidget extends GenericWidget {
 				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
 
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
-		if (buttonStyle > 1) {
+		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);
+		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 			int padding = context.getResources().getDimensionPixelSize(
-					buttonStyle == 2 ? R.dimen.widget_button_padding_narrow : R.dimen.widget_button_padding_wide);
+					buttonStyle == ButtonStyle.NARROW ? R.dimen.widget_button_padding_narrow : R.dimen.widget_button_padding_wide);
 			remoteViews.setViewPadding(R.id.buttonNextImage, padding, 0, padding, 0);
 			remoteViews.setViewPadding(R.id.buttonSettings, padding, 0, padding, 0);
+		}
+		else if (buttonStyle == ButtonStyle.GONE) {
+			remoteViews.setViewVisibility(R.id.buttonNextImage, View.GONE);
+			remoteViews.setViewVisibility(R.id.buttonSettings, View.GONE);
 		}
 
 		Bitmap[] buttonBitmaps = getColoredButtonBitmaps(context, appWidgetId, R.drawable.ic_widget_settings, R.drawable.ic_widget_next);
@@ -115,7 +119,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 
 		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 
-		if (buttonStyle > 1) {
+		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 			new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
 					R.id.buttonNextImage, R.id.buttonSettings).start();
 		}
@@ -243,7 +247,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * @param resourceValue The resource value.
 		 * @return The corresponding BackgroundColor.
 		 */
-		private static BackgroundColor fromResourceValue(final int resourceValue) {
+		protected static BackgroundColor fromResourceValue(final int resourceValue) {
 			BackgroundColor result = BACKGROUND_COLOR_MAP.get(resourceValue);
 			return result == null ? BackgroundColor.WHITE_SHADOW : result;
 		}
@@ -437,4 +441,65 @@ public abstract class GenericImageWidget extends GenericWidget {
 		}
 	}
 
+	/**
+	 * Helper class containing constants for button styles.
+	 */
+	protected enum ButtonStyle {
+		// JAVADOC:OFF
+		BOTTOM(0),
+		TOP(1),
+		NARROW(2),
+		WIDE(3),
+		GONE(4);
+		// JAVADOC:ON
+
+		/**
+		 * The value by which the color is specified in the resources.
+		 */
+		private final int mResourceValue;
+
+		/**
+		 * A map from the resourceValue to the color.
+		 */
+		private static final Map<Integer, ButtonStyle> BUTTON_STYLE_MAP = new HashMap<>();
+
+		static {
+			for (ButtonStyle buttonStyle : ButtonStyle.values()) {
+				BUTTON_STYLE_MAP.put(buttonStyle.mResourceValue, buttonStyle);
+			}
+		}
+
+		/**
+		 * Constructor giving the resourceValue.
+		 *
+		 * @param resourceValue The resource value.
+		 */
+		ButtonStyle(final int resourceValue) {
+			mResourceValue = resourceValue;
+		}
+
+		/**
+		 * Get the button style from its resource value.
+		 *
+		 * @param resourceValue The resource value.
+		 * @return The corresponding ButtonStyle.
+		 */
+		protected static ButtonStyle fromResourceValue(final int resourceValue) {
+			ButtonStyle result = BUTTON_STYLE_MAP.get(resourceValue);
+			return result == null ? ButtonStyle.BOTTOM : result;
+		}
+
+		/**
+		 * Get the background color style of a widget.
+		 *
+		 * @param appWidgetId The widget id.
+		 * @return The BackgroundColor value of the widget.
+		 */
+		protected static ButtonStyle fromWidgetId(final int appWidgetId) {
+			return fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
+							Integer.parseInt(Application.getAppContext().getString(R.string.pref_default_widget_button_style))));
+
+		}
+	}
 }

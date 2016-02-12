@@ -224,7 +224,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				remoteViews.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_launcher);
 			}
 			else {
-				boolean stretchToFit = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == 0;
+				boolean stretchToFit = BackgroundColor.fromWidgetId(mAppWidgetId) == BackgroundColor.FILL_FRAME;
 				Bitmap bitmap;
 				if (mImageWidth > 0 && mImageHeight > 0) {
 					if (mViewAsList) {

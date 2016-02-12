@@ -53,6 +53,7 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, getAppWidgetId(), Integer.parseInt(stringValue));
+					updatePropertyEnablement();
 					StackedImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_color))) {

@@ -47,6 +47,7 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_style))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_style, getAppWidgetId(), Integer.parseInt(stringValue));
+					updatePropertyEnablement();
 					ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, getAppWidgetId());
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_button_color))) {

@@ -75,7 +75,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
 		addEditListListener();
 		addCancelNotificationListener();
-		setStyleDependentPropertyEnablement();
+		updatePropertyEnablement();
 
 		if (((Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator()) {
 			bindPreferenceSummaryToValue(R.string.key_notification_vibration);
@@ -296,9 +296,9 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	}
 
 	/**
-	 * Enable or disable properties in dependence of the notification style.
+	 * Enable or disable properties in dependence of other properties.
 	 */
-	private void setStyleDependentPropertyEnablement() {
+	private void updatePropertyEnablement() {
 		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1);
 		Preference ledPreference = findPreference(getString(R.string.key_notification_led_color));
 		ledPreference.setEnabled(!NotificationUtil.isActivityNotificationStyle(notificationStyle));
@@ -444,7 +444,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_style))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, Integer.parseInt(stringValue));
-				setStyleDependentPropertyEnablement();
+				updatePropertyEnablement();
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_led_color))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_led_color, mNotificationId, Integer.parseInt(stringValue));

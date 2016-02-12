@@ -19,6 +19,7 @@ import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.widgets.GenericImageWidget.ButtonStyle;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
@@ -76,7 +77,19 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		addEditListListener();
+
+		updatePropertyEnablement();
 	}
+
+	/**
+	 * Enable or disable properties in dependence of other properties.
+	 */
+	protected final void updatePropertyEnablement() {
+		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(mAppWidgetId);
+		Preference buttonColorPreference = findPreference(getString(R.string.key_widget_button_color));
+		buttonColorPreference.setEnabled(buttonStyle != ButtonStyle.GONE);
+	}
+
 
 	@Override
 	public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {

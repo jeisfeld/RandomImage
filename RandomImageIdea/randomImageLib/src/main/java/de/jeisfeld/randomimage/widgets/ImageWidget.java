@@ -25,6 +25,8 @@ import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
+import static de.jeisfeld.randomimage.widgets.GenericImageWidget.BackgroundColor.FILL_FRAME;
+
 /**
  * The extended widget, also displaying a changing image.
  */
@@ -139,9 +141,8 @@ public class ImageWidget extends GenericImageWidget {
 				setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 				configureButtons(context, appWidgetManager, appWidgetId, true);
 
-				int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
-						Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
-				if (buttonStyle > 1) {
+				ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);
+				if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 					new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
 							R.id.buttonNextImage, R.id.buttonSettings).start();
 				}
@@ -269,19 +270,16 @@ public class ImageWidget extends GenericImageWidget {
 	 */
 	@Override
 	protected final int getWidgetLayoutId(final int appWidgetId) {
-		Context context = Application.getAppContext();
-		int buttonStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_button_style)));
-		int backgroundStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, appWidgetId,
-				Integer.parseInt(context.getString(R.string.pref_default_widget_background_style)));
+		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);
+		BackgroundColor backgroundStyle = BackgroundColor.fromWidgetId(appWidgetId);
 
 		switch (buttonStyle) {
-		case 0:
-			return backgroundStyle == 0 ? R.layout.widget_image_crop_bottom_buttons : R.layout.widget_image_inside_bottom_buttons;
-		case 1:
-			return backgroundStyle == 0 ? R.layout.widget_image_crop_top_buttons : R.layout.widget_image_inside_top_buttons;
+		case BOTTOM:
+			return backgroundStyle == FILL_FRAME ? R.layout.widget_image_crop_bottom_buttons : R.layout.widget_image_inside_bottom_buttons;
+		case TOP:
+			return backgroundStyle == FILL_FRAME ? R.layout.widget_image_crop_top_buttons : R.layout.widget_image_inside_top_buttons;
 		default:
-			return backgroundStyle == 0 ? R.layout.widget_image_crop_centered_buttons : R.layout.widget_image_inside_centered_buttons;
+			return backgroundStyle == FILL_FRAME ? R.layout.widget_image_crop_centered_buttons : R.layout.widget_image_inside_centered_buttons;
 		}
 	}
 

@@ -54,6 +54,7 @@
         <item>Immer sichtbar, oben</item>
         <item>Versteckt, schmal</item>
         <item>Versteckt, breit</item>
+        <item>Keine Buttons</item>
     </string-array>
     <string-array name="button_color_names">
         <item>Schwarz</item>

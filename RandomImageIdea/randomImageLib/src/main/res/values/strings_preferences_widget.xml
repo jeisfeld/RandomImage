@@ -105,12 +105,14 @@
         <item>Always visible, top</item>
         <item>Hidden, narrow</item>
         <item>Hidden, wide</item>
+        <item>No buttons</item>
     </string-array>
     <string-array name="button_style_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
     <string-array name="button_color_names">
         <item>Black</item>
