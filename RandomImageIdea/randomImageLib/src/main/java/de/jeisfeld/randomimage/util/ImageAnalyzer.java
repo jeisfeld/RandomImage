@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -81,7 +82,21 @@ public final class ImageAnalyzer {
 	 * @param imageBitmap The image bitmap.
 	 * @return A color from this image.
 	 */
-	public static int getColorFromImage(final Bitmap imageBitmap) {
+	public static int getRandomColorFromImage(final Bitmap imageBitmap) {
+		Random random = new Random();
+		int xValue = random.nextInt(imageBitmap.getWidth());
+		int yValue = random.nextInt(imageBitmap.getHeight());
+
+		return imageBitmap.getPixel(xValue, yValue);
+	}
+
+	/**
+	 * Get a color from an image. The color is taken from a border area with not too high variance.
+	 *
+	 * @param imageBitmap The image bitmap.
+	 * @return A color from this image.
+	 */
+	public static int getColorFromImageBorder(final Bitmap imageBitmap) {
 		Bitmap shrunkBitmap = Bitmap.createScaledBitmap(imageBitmap, ANALYZED_BITMAP_SIZE, ANALYZED_BITMAP_SIZE, true);
 
 		// Take regions around the boundary.

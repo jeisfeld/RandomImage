@@ -167,6 +167,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		case BLACK_SHADOW:
 			remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_RESOURCE, R.drawable.background_transparent_black);
 			break;
+		case RANDOM_FROM_IMAGE:
 		case COLOR_FROM_IMAGE:
 		case AVERAGE_IMAGE_COLOR:
 			// background can be set only after image is loaded.
@@ -212,8 +213,9 @@ public abstract class GenericImageWidget extends GenericWidget {
 		MAGENTA(11),
 		RANDOM(12),
 		RANDOM_TRANSPARENT(13),
-		COLOR_FROM_IMAGE(14),
-		AVERAGE_IMAGE_COLOR(15);
+		RANDOM_FROM_IMAGE(14),
+		COLOR_FROM_IMAGE(15),
+		AVERAGE_IMAGE_COLOR(16);
 		// JAVADOC:ON
 
 		/**

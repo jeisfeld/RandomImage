@@ -200,10 +200,13 @@ public class ImageWidget extends GenericImageWidget {
 
 			BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(appWidgetId);
 			if (backgroundColor == BackgroundColor.COLOR_FROM_IMAGE) {
-				remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImage(bitmap));
+				remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, ImageAnalyzer.getColorFromImageBorder(bitmap));
 			}
 			else if (backgroundColor == BackgroundColor.AVERAGE_IMAGE_COLOR) {
 				remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, ImageAnalyzer.getAverageImageColor(bitmap));
+			}
+			else if (backgroundColor == BackgroundColor.RANDOM_FROM_IMAGE) {
+				remoteViews.setInt(R.id.imageViewWidget, SET_BACKGROUND_COLOR, ImageAnalyzer.getRandomColorFromImage(bitmap));
 			}
 		}
 

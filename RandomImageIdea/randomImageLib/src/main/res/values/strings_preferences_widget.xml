@@ -79,6 +79,7 @@
         <item>Magenta</item>
         <item>Random</item>
         <item>Random (transparent)</item>
+        <item>Random from image</item>
         <item>Color from image border</item>
         <item>Average image color</item>
     </string-array>
@@ -99,6 +100,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
     <string-array name="button_style_names">
         <item>Always visible, bottom</item>

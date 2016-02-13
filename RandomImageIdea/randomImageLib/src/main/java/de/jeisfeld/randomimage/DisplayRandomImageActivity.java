@@ -437,7 +437,7 @@ public class DisplayRandomImageActivity extends PermissionsActivity {
 			backgroundColor = Color.WHITE;
 			break;
 		case COLOR_FROM_IMAGE:
-			backgroundColor = ImageAnalyzer.getColorFromImage(ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE));
+			backgroundColor = ImageAnalyzer.getColorFromImageBorder(ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE));
 			break;
 		case AVERAGE_IMAGE_COLOR:
 			backgroundColor = ImageAnalyzer.getAverageImageColor(ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE));
