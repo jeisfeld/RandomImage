@@ -1,73 +1,77 @@
-<LinearLayout
-    android:id="@+id/layoutDisplayNestedListDetails"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="0px"
-    android:orientation="vertical"
-    android:padding="0px">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textViewNestedListName"
+    <LinearLayout
+        android:id="@+id/layoutDisplayNestedListDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/text_padding"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/text_padding"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:layout_height="match_parent"
+        android:layout_margin="0px"
+        android:orientation="vertical"
+        android:padding="0px">
 
-    <TextView
-        android:id="@+id/textViewNumberOfImages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/text_padding"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/text_padding"
-        android:text="@string/info_number_of_images_loading"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <TextView
+            android:id="@+id/textViewNestedListName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/text_padding"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <Button
-        android:id="@+id/buttonClone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/text_padding"
-        android:padding="@dimen/text_padding"
-        android:text="@string/button_clone_list"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <TextView
+            android:id="@+id/textViewNumberOfImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/text_padding"
+            android:text="@string/info_number_of_images_loading"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <Button
-        android:id="@+id/buttonRename"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/text_padding"
-        android:text="@string/button_rename_list"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Button
+            android:id="@+id/buttonClone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_padding"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_clone_list"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <Button
-        android:id="@+id/buttonDelete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/text_padding"
-        android:text="@string/button_delete_list"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Button
+            android:id="@+id/buttonRename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_rename_list"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <Button
-        android:id="@+id/buttonBackup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/text_padding"
-        android:text="@string/button_backup_list"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Button
+            android:id="@+id/buttonDelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_delete_list"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <Button
-        android:id="@+id/buttonRestore"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/text_padding"
-        android:text="@string/button_restore_list"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:visibility="gone"/>
+        <Button
+            android:id="@+id/buttonBackup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_backup_list"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/buttonRestore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_restore_list"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</ScrollView>
