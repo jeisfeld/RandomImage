@@ -299,6 +299,10 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * Parse all image folders and add missing image folders to the adapter.
 	 */
 	private void parseAllImageFolders() {
+		final String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+		final boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
+				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
+
 		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
 
 			@Override
@@ -323,7 +327,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 
 			@Override
 			public void handleImageFolder(final String imageFolder) {
-				if (!mAllImageFolders.contains(imageFolder)) {
+				if (!mAllImageFolders.contains(imageFolder) && (!useRegexp || !imageFolder.matches(hiddenFoldersPattern))) {
 					synchronized (mAllImageFolders) {
 						mAllImageFolders.add(imageFolder);
 					}
