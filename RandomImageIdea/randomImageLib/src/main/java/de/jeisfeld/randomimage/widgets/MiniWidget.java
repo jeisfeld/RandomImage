@@ -19,8 +19,14 @@ public class MiniWidget extends GenericWidget {
 									 final UpdateType updateType) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
 		final String listName = getListName(appWidgetId);
+		final String widgetName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, appWidgetId);
 
-		remoteViews.setTextViewText(R.id.textViewWidget, listName);
+		if (widgetName != null && widgetName.length() > 0) {
+			remoteViews.setTextViewText(R.id.textViewWidget, widgetName);
+		}
+		else {
+			remoteViews.setTextViewText(R.id.textViewWidget, listName);
+		}
 
 		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, false, appWidgetId, null);
 		PendingIntent pendingIntent =
