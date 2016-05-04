@@ -510,6 +510,17 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Check if a directory is marked as containing no media files.
+	 *
+	 * @param folder The directory path.
+	 * @return true if marked as no media.
+	 */
+	private static boolean isNoMediaDirectory(final File folder) {
+		File nomediaFile = new File(folder, ".nomedia");
+		return nomediaFile.exists() && nomediaFile.isFile();
+	}
+
+	/**
 	 * Get the list of all image folders from previously retrieved list.
 	 *
 	 * @return The list of all image folders, filtered by regexp.
@@ -551,8 +562,12 @@ public final class ImageUtil {
 			// do not consider hidden paths
 			return result;
 		}
-		if (parentFolder.getAbsolutePath().endsWith("Android/data")) {
+		if (parentFolder.getAbsolutePath().endsWith("/Android/data")) {
 			// do not consider Android data paths.
+			return result;
+		}
+		if (isNoMediaDirectory(parentFolder)) {
+			// do not consider .nomedia folders
 			return result;
 		}
 
