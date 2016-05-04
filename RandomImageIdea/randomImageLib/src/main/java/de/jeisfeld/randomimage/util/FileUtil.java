@@ -287,6 +287,12 @@ public final class FileUtil {
 					paths.add(path);
 				}
 			}
+
+			// remove duplicate Samsung path
+			if (paths.contains("/mnt/extSdCard") && paths.contains("/storage/extSdCard")) {
+				paths.remove("/mnt/extSdCard");
+			}
+
 			return paths.toArray(new String[paths.size()]);
 		}
 	}
