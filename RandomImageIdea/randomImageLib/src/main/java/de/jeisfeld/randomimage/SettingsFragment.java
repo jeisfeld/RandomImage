@@ -72,6 +72,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
+		bindPreferenceSummaryToValue(R.string.key_pref_show_hidden_folders);
 		bindPreferenceSummaryToValue(R.string.key_pref_show_list_notification);
 		bindPreferenceSummaryToValue(R.string.key_pref_use_regex_filter);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_folders_pattern);
@@ -84,6 +85,7 @@ public class SettingsFragment extends PreferenceFragment {
 		addDeveloperContactListener();
 		addProAppButtonListener();
 		updateRegexpPreferences(getActivity());
+		updateShowHiddenFoldersPreference(getActivity());
 
 		mPrefCategoryPremium = (PreferenceCategory) findPreference(getString(R.string.key_pref_category_premium));
 
@@ -286,6 +288,16 @@ public class SettingsFragment extends PreferenceFragment {
 	}
 
 	/**
+	 * Update the enabling of the "Show Hidden Folders" preference.
+	 *
+	 * @param context The context.
+	 */
+	private void updateShowHiddenFoldersPreference(final Context context) {
+		int mechanism = PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_folder_selection_mechanism, -1);
+		findPreference(context.getString(R.string.key_pref_show_hidden_folders)).setEnabled(mechanism == 0);
+	}
+
+	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
 	private class CustomOnPreferenceChangeListener implements OnPreferenceChangeListener {
@@ -316,6 +328,11 @@ public class SettingsFragment extends PreferenceFragment {
 					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
 					ImageRegistry.parseConfigFiles();
 				}
+			}
+			// Update view depending on folder selection mechanism.
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_folder_selection_mechanism))) {
+				PreferenceUtil.setSharedPreferenceString(R.string.key_pref_folder_selection_mechanism, stringValue);
+				updateShowHiddenFoldersPreference(preference.getContext());
 			}
 
 			setSummary(preference, stringValue);

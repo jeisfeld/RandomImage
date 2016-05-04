@@ -558,17 +558,19 @@ public final class ImageUtil {
 		if (!parentFolder.exists() || !parentFolder.isDirectory()) {
 			return result;
 		}
-		if (parentFolder.getName().startsWith(".")) {
-			// do not consider hidden paths
-			return result;
-		}
-		if (parentFolder.getAbsolutePath().endsWith("/Android/data")) {
-			// do not consider Android data paths.
-			return result;
-		}
-		if (isNoMediaDirectory(parentFolder)) {
-			// do not consider .nomedia folders
-			return result;
+		if (!PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_show_hidden_folders)) {
+			if (parentFolder.getName().startsWith(".")) {
+				// do not consider hidden paths
+				return result;
+			}
+			if (parentFolder.getAbsolutePath().endsWith("/Android/data")) {
+				// do not consider Android data paths.
+				return result;
+			}
+			if (isNoMediaDirectory(parentFolder)) {
+				// do not consider .nomedia folders
+				return result;
+			}
 		}
 
 		final List<String> imageFiles = getImagesInFolder(parentFolder.getAbsolutePath());
