@@ -111,7 +111,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		 * Constructor.
 		 *
 		 * @param context The context in which the factory is called.
-		 * @param intent  The intent for the views
+		 * @param intent The intent for the views
 		 */
 		private StackRemoteViewsFactory(final Context context, final Intent intent) {
 			this.mContext = context;
@@ -122,6 +122,8 @@ public class StackedImageWidgetService extends RemoteViewsService {
 			mListName = intent.getStringExtra(StackedImageWidget.STRING_EXTRA_LISTNAME);
 			mShowCyclically = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false);
 			mViewAsList = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false);
+
+			recreateImageList();
 		}
 
 		/**
@@ -163,7 +165,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 
 		@Override
 		public void onCreate() {
-			createImageList();
+			recreateImageList();
 		}
 
 		@Override
@@ -329,12 +331,26 @@ public class StackedImageWidgetService extends RemoteViewsService {
 					mFileNames = imageList.getSetOfRandomFileNames(IMAGE_ARRAY_SIZE, new ArrayList<String>());
 				}
 			}
+
+			PreferenceUtil.setIndexedSharedPreferenceStringList(R.string.key_widget_current_list_of_file_names, mAppWidgetId, mFileNames);
+		}
+
+		/**
+		 * Re-create the previously created image list.
+		 */
+		private void recreateImageList() {
+			if (mFileNames.size() == 0) {
+				mFileNames = PreferenceUtil.getIndexedSharedPreferenceStringList(R.string.key_widget_current_list_of_file_names, mAppWidgetId);
+				if (mFileNames.size() == 0) {
+					createImageList();
+				}
+			}
 		}
 
 		/**
 		 * Get new images for the image list (for modification while scrolling).
 		 *
-		 * @param numberOfFiles   The number of files to retrieve.
+		 * @param numberOfFiles The number of files to retrieve.
 		 * @param forbiddenImages The list of images that should not be recreated.
 		 * @return The new list of images.
 		 */
