@@ -343,7 +343,7 @@ public final class NotificationUtil {
 	 * @return The dismissal intent.
 	 */
 	private static PendingIntent createDismissalIntent(final Context context, final NotificationType notificationType, final String notificationTag) {
-		Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
+		Intent dismissalIntent = new Intent("de.jeisfeld.randomimage.NOTIFICATION_BROADCAST_RECEIVER");
 		dismissalIntent.putExtra(EXTRA_NOTIFICATION_TYPE, notificationType);
 		int uniqueId = getUniqueId(notificationTag, notificationType);
 		if (notificationTag != null) {

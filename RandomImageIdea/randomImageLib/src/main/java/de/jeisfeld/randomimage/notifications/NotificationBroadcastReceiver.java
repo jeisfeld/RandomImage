@@ -7,7 +7,7 @@ import android.content.Intent;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 
 /**
- * Broadcase receiver that handles actions on notifications.
+ * Broadcast receiver that handles actions on notifications.
  */
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 	@Override

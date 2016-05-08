@@ -135,7 +135,7 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 * @return The PendingIntent.
 	 */
 	private static PendingIntent createAlarmIntent(final Context context, final int appWidgetId) {
-		Intent intent = new Intent(context, WidgetAlarmReceiver.class);
+		Intent intent = new Intent("de.jeisfeld.randomimage.WIDGET_ALARM_RECEIVER");
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	}

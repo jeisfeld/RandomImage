@@ -259,7 +259,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * @return The PendingIntent.
 	 */
 	private static PendingIntent createAlarmIntent(final Context context, final int notificationId, final boolean isCancellation) {
-		Intent intent = new Intent(context, NotificationAlarmReceiver.class);
+		Intent intent = new Intent("de.jeisfeld.randomimage.NOTIFICATION_ALARM_RECEIVER");
 		intent.putExtra(STRING_NOTIFICATION_ID, notificationId);
 		if (isCancellation) {
 			intent.putExtra(STRING_IS_CANCELLATION, true);

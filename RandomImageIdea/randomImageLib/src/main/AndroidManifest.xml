@@ -188,9 +188,27 @@
                 <data android:scheme="file"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver"/>
-        <receiver android:name="de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver"/>
-        <receiver android:name="de.jeisfeld.randomimage.notifications.NotificationBroadcastReceiver"/>
+        <receiver
+            android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.jeisfeld.randomimage.WIDGET_ALARM_RECEIVER"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.jeisfeld.randomimage.NOTIFICATION_ALARM_RECEIVER"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="de.jeisfeld.randomimage.notifications.NotificationBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.jeisfeld.randomimage.NOTIFICATION_BROADCAST_RECEIVER"/>
+            </intent-filter>
+        </receiver>
 
         <service
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetService"
