@@ -750,10 +750,10 @@ public final class NotificationUtil {
 	 */
 	private static class LedColor {
 		// JAVADOC:OFF
-		private static final int FAINT = Color.parseColor("#0F0707");
-		private static final int RED_GREEN = Color.parseColor("#7F3F0F");
-		private static final int GREEN_BLUE = Color.parseColor("#0F7F3F");
-		private static final int BLUE_RED = Color.parseColor("#3F1F7F");
+		private static final int FAINT = Color.parseColor("#070707");
+		private static final int RED_GREEN = Color.parseColor("#7F7F00");
+		private static final int GREEN_BLUE = Color.parseColor("#007F7F");
+		private static final int BLUE_RED = Color.parseColor("#7F007F");
 		// JAVADOC:ON
 
 		/**
