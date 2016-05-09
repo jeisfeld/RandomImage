@@ -53,7 +53,7 @@
         <item>4 hours</item>
         <item>1 day</item>
         <item>1 week</item>
-        <item>only on restart</item>
+        <item>never</item>
     </string-array>
     <string-array name="timer_durations" translatable="false">
         <item>60000</item>

@@ -29,7 +29,7 @@
         <item>4 Stunden</item>
         <item>1 Tag</item>
         <item>1 Woche</item>
-        <item>Nur bei Neustart</item>
+        <item>nie</item>
     </string-array>
     <string-array name="background_style_names">
         <item>Rahmen mit Bild füllen</item>
