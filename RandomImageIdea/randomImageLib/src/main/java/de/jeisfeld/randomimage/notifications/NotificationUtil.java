@@ -35,7 +35,6 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
-import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -181,8 +180,6 @@ public final class NotificationUtil {
 	 * @param notificationId the id of the configured notification.
 	 */
 	public static void displayRandomImageNotification(final Context context, final int notificationId) {
-		MigrationUtil.migrateAppVersion();
-
 		final String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
 		final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 		if (imageList == null) {

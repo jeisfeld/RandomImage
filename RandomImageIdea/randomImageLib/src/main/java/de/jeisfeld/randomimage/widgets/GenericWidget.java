@@ -22,7 +22,6 @@ import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageRegistry;
-import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -69,8 +68,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
-		MigrationUtil.migrateAppVersion();
-
 		String action = intent.getAction();
 		if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
 			int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);

@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
+import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -40,6 +41,7 @@ public class Application extends android.app.Application {
 	public final void onCreate() {
 		super.onCreate();
 		Application.mContext = getApplicationContext();
+		MigrationUtil.migrateAppVersion();
 		setLanguage();
 		setExceptionHandler();
 
