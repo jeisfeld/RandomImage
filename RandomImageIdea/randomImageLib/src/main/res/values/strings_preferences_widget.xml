@@ -12,7 +12,7 @@
     <string name="key_widget_list_name" translatable="false">widget_list_name</string>
     <string name="key_widget_view_width" translatable="false">widget_view_width</string>
     <string name="key_widget_view_height" translatable="false">widget_view_height</string>
-    <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
+    <string name="key_widget_timer_duration" translatable="false">widget_timer_duration</string>
     <string name="key_widget_view_as_list" translatable="false">widget_view_as_list</string>
     <string name="key_widget_show_cyclically" translatable="false">widget_show_cyclically</string>
     <string name="key_widget_background_style" translatable="false">widget_background_style</string>
@@ -25,10 +25,14 @@
     <string name="key_widget_current_list_of_file_names" translatable="false">widget_current_list_of_file_names</string>
     <string name="key_widget_requires_update" translatable="false">widget_requires_update</string>
 
+    <!-- Deprecated preferences from previous app versions -->
+
+    <string name="key_widget_alarm_interval" translatable="false">widget_alarm_interval</string>
+
     <!-- Strings related to Settings -->
 
     <string name="pref_title_widget_list_name">List Name</string>
-    <string name="pref_title_widget_alarm_interval">Change Frequency</string>
+    <string name="pref_title_widget_timer_duration">Change Frequency</string>
     <string name="pref_title_widget_view_as_list">View as list</string>
     <string name="pref_title_widget_show_cyclically">Display all images cyclically</string>
     <string name="pref_title_widget_background_style">Background</string>
@@ -37,7 +41,7 @@
     <string name="pref_title_widget_display_name">Widget Name</string>
     <string name="pref_title_widget_detail_scale_type">Scaling in detail view</string>
     <string name="pref_title_widget_detail_background">Background in detail view</string>
-    <string name="pref_default_widget_alarm_interval" translatable="false">3600000</string>
+    <string name="pref_default_widget_timer_duration" translatable="false">3600</string>
     <string name="pref_default_widget_background_style" translatable="false">2</string>
     <string name="pref_default_widget_button_style" translatable="false">0</string>
     <string name="pref_default_widget_button_color" translatable="false">2</string>
@@ -55,14 +59,14 @@
         <item>1 week</item>
         <item>never</item>
     </string-array>
-    <string-array name="timer_durations" translatable="false">
-        <item>60000</item>
-        <item>300000</item>
-        <item>900000</item>
-        <item>3600000</item>
-        <item>14400000</item>
-        <item>86400000</item>
-        <item>604800000</item>
+    <string-array name="timer_duration_values" translatable="false">
+        <item>60</item>
+        <item>300</item>
+        <item>900</item>
+        <item>3600</item>
+        <item>14400</item>
+        <item>86400</item>
+        <item>604800</item>
         <item>0</item>
     </string-array>
     <string-array name="background_style_names">

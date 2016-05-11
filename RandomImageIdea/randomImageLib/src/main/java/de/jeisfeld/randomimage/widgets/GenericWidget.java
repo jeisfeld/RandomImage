@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -21,6 +22,7 @@ import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -44,6 +46,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	protected static final String EXTRA_UPDATE_TYPE = "de.jeisfeld.randomimage.UPDATE_TYPE";
 
 	/**
+	 * The number of milliseconds per second.
+	 */
+	private static final int MILLIS_PER_SECOND = (int) TimeUnit.SECONDS.toMillis(1);
+
+	/**
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
 	 * complete the animation.
 	 */
@@ -62,6 +69,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
+		MigrationUtil.migrateAppVersion();
+
 		String action = intent.getAction();
 		if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
 			int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
@@ -108,7 +117,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_display_name, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_alarm_interval, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timer_duration, appWidgetId);
 		}
 	}
 
@@ -136,9 +145,9 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	public static final void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
 
-		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, interval);
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, interval);
 		if (interval > 0) {
-			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval);
+			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval * MILLIS_PER_SECOND);
 		}
 		else {
 			WidgetAlarmReceiver.cancelAlarm(Application.getAppContext(), appWidgetId);
@@ -202,10 +211,10 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 		for (int appWidgetId : ids) {
 			long interval =
-					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, 0);
+					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, 0);
 
 			if (interval > 0) {
-				WidgetAlarmReceiver.setAlarm(context, appWidgetId, interval);
+				WidgetAlarmReceiver.setAlarm(context, appWidgetId, interval * MILLIS_PER_SECOND);
 			}
 		}
 	}

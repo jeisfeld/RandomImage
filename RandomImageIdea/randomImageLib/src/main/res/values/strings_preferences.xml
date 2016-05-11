@@ -32,6 +32,7 @@
     <string name="key_device_shut_down" translatable="false">device_shut_down</string>
     <string name="key_last_thumb_creation_time" translatable="false">last_thumb_creation_time</string>
     <string name="key_folder_selection_filter" translatable="false">folder_selection_filter</string>
+    <string name="key_last_app_version" translatable="false">last_app_version</string>
 
     <!-- Keys for indexed shared preferences -->
 

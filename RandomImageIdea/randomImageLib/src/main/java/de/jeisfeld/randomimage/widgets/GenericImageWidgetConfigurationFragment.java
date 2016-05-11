@@ -67,7 +67,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		addPreferencesFromResource(R.xml.pref_widget_image);
 
 		configureListNameProperty();
-		bindPreferenceSummaryToValue(R.string.key_widget_alarm_interval);
+		bindPreferenceSummaryToValue(R.string.key_widget_timer_duration);
 		bindPreferenceSummaryToValue(R.string.key_widget_view_as_list);
 		bindPreferenceSummaryToValue(R.string.key_widget_show_cyclically);
 		bindPreferenceSummaryToValue(R.string.key_widget_background_style);
@@ -137,10 +137,10 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	 */
 	protected final boolean setDefaultValues() {
 		boolean isUpdated = false;
-		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1) == -1) {
+		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId,
-					Long.parseLong(getActivity().getString(R.string.pref_default_widget_alarm_interval)));
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId,
+					Long.parseLong(getActivity().getString(R.string.pref_default_widget_timer_duration)));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
@@ -178,8 +178,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	private void setNonIndexedValues() {
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_list_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_alarm_interval,
-				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_timer_duration,
+				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId, -1)));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_view_as_list,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_show_cyclically,
@@ -227,7 +227,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		String value;
-		if (preferenceKey == R.string.key_widget_alarm_interval) {
+		if (preferenceKey == R.string.key_widget_timer_duration) {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
 		}
 		else if (preferenceKey == R.string.key_widget_background_style // BOOLEAN_EXPRESSION_COMPLEXITY
@@ -256,11 +256,11 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	 * @return The alarm interval as String.
 	 */
 	public static String getAlarmIntervalString(final int appWidgetId) {
-		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId, -1);
+		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, -1);
 		if (alarmInterval <= 0) {
 			return null;
 		}
-		String[] timerDurations = Application.getAppContext().getResources().getStringArray(R.array.timer_durations);
+		String[] timerDurations = Application.getAppContext().getResources().getStringArray(R.array.timer_duration_values);
 		String[] timerDurationNames = Application.getAppContext().getResources().getStringArray(R.array.timer_duration_names);
 		for (int i = 0; i < timerDurations.length; i++) {
 			if (Long.parseLong(timerDurations[i]) == alarmInterval) {

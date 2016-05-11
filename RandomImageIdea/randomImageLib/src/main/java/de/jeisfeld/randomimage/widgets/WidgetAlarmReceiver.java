@@ -54,7 +54,7 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 *
 	 * @param context     The context in which the alarm is set.
 	 * @param appWidgetId the widget id.
-	 * @param interval    the interval in which the alarm triggers.
+	 * @param interval    the interval (in milliseconds) in which the alarm triggers.
 	 */
 	public static final void setAlarm(final Context context, final int appWidgetId, final long interval) {
 		if (interval <= 0) {

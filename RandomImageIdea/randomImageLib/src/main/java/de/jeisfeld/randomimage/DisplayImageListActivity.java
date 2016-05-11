@@ -16,7 +16,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display a list of images from a folder.
  */
-public abstract class DisplayImageListActivity extends PermissionsActivity {
+public abstract class DisplayImageListActivity extends StartActivity {
 	/**
 	 * Temporary storage for selected files.
 	 */

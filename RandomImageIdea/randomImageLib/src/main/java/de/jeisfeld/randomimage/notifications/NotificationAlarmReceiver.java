@@ -43,6 +43,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * The number of hours per day.
 	 */
 	private static final int HOURS_PER_DAY = (int) TimeUnit.DAYS.toHours(1);
+	/**
+	 * The number of seconds per day.
+	 */
+	private static final int SECONDS_PER_DAY = (int) TimeUnit.DAYS.toSeconds(1);
 
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
@@ -71,7 +75,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * @param useLastAlarmTime flag indicating if the last existing alarm time should be re-used.
 	 */
 	public static final void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
-		int frequency = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_frequency, notificationId, 0);
+		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, 0);
 		if (frequency == 0) {
 			cancelAlarm(context, notificationId, false);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
@@ -81,16 +85,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, notificationId, -1);
 		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, notificationId, -1);
 
-		// Positive frequencies: expected numer of days
-		double expectedDaysUntilAlarm = frequency;
-		if (frequency < 0) {
-			// Negative frequencies: portions of days
-			expectedDaysUntilAlarm = -1.0 / frequency;
-
-			if (frequency < -4) { // MAGIC_NUMBER
-				// refer to hours rather than days if we are below quarter-day
-				expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
-			}
+		double expectedDaysUntilAlarm = (double) frequency / SECONDS_PER_DAY;
+		if (frequency < 21600) { // MAGIC_NUMBER
+			// refer to hours rather than days if we are below six hours
+			expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
 		}
 
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

@@ -247,7 +247,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 */
 	protected static void cancelNotification(final int notificationId) {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_list_name, notificationId);
-		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_frequency, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_duration, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, notificationId);

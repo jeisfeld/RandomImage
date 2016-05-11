@@ -228,8 +228,8 @@ public class ImageWidget extends GenericImageWidget {
 	public static final void configure(final int appWidgetId, final String listName, final UpdateType updateType) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateimagewidget);
 
-		long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, appWidgetId,
-				Long.parseLong(Application.getAppContext().getString(R.string.pref_default_widget_alarm_interval)));
+		long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId,
+				Long.parseLong(Application.getAppContext().getString(R.string.pref_default_widget_timer_duration)));
 
 		doBaseConfiguration(appWidgetId, listName, interval);
 

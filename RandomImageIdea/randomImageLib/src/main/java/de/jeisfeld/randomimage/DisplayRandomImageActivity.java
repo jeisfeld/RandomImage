@@ -36,7 +36,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Display a random image.
  */
-public class DisplayRandomImageActivity extends PermissionsActivity {
+public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */

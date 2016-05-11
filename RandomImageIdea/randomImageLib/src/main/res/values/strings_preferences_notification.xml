@@ -11,7 +11,7 @@
     <!-- Indexed keys -->
 
     <string name="key_notification_list_name" translatable="false">notification_list_name</string>
-    <string name="key_notification_frequency" translatable="false">notification_frequency</string>
+    <string name="key_notification_timer_duration" translatable="false">notification_timer_duration</string>
     <string name="key_notification_timer_variance" translatable="false">notification_timer_variance</string>
     <string name="key_notification_daily_start_time" translatable="false">notification_daily_start_time</string>
     <string name="key_notification_daily_end_time" translatable="false">notification_daily_end_time</string>
@@ -26,6 +26,10 @@
     <string name="key_notification_detail_flip_behavior" translatable="false">notification_detail_flip_behavior</string>
     <string name="key_notification_current_alarm_timestamp" translatable="false">notification_current_alarm_timestamp</string>
 
+    <!-- Deprecated preferences from previous app versions -->
+
+    <string name="key_notification_frequency" translatable="false">notification_frequency</string>
+
     <!-- Strings related to Notification settings -->
 
     <string name="pref_heading_notifcation">Notification</string>
@@ -35,8 +39,8 @@
     <string name="pref_group_title_appearance">Notification Appearance</string>
     <string name="pref_group_title_other">Other Settings</string>
     <string name="pref_title_notification_list_name">List Name</string>
-    <string name="pref_title_notification_frequency">Notification frequency</string>
-    <string name="pref_default_notification_frequency" translatable="false">1</string>
+    <string name="pref_title_notification_timer_duration">Notification frequency</string>
+    <string name="pref_default_notification_timer_duration" translatable="false">86400</string>
     <string name="pref_title_notification_timer_variance">Notification variability</string>
     <string name="pref_default_notification_timer_variance" translatable="false">0</string>
     <string name="pref_title_notification_daily_start_time">Start hour for notifications</string>
@@ -61,7 +65,7 @@
     <string name="pref_title_cancel_notification">Remove Notification</string>
 
     <!-- String arrays -->
-    <string-array name="notification_frequency_names">
+    <string-array name="notification_timer_duration_names">
         <item>every minute (for testing)</item>
         <item>twice per hour</item>
         <item>hourly</item>
@@ -78,21 +82,21 @@
         <item>twice a year</item>
         <item>never</item>
     </string-array>
-    <string-array name="notification_frequency_values" translatable="false">
-        <item>-1440</item>
-        <item>-48</item>
-        <item>-24</item>
-        <item>-12</item>
-        <item>-4</item>
-        <item>-2</item>
-        <item>1</item>
-        <item>2</item>
-        <item>4</item>
-        <item>7</item>
-        <item>14</item>
-        <item>30</item>
-        <item>90</item>
-        <item>180</item>
+    <string-array name="notification_timer_duration_values" translatable="false">
+        <item>60</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+        <item>302400</item>
+        <item>604800</item>
+        <item>1209600</item>
+        <item>2592000</item>
+        <item>7776000</item>
+        <item>15552000</item>
         <item>0</item>
     </string-array>
     <string-array name="notification_timer_variance_names">

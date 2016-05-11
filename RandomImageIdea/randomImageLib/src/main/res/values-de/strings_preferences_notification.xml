@@ -10,7 +10,7 @@
     <string name="pref_group_title_appearance">Erscheinungsbild</string>
     <string name="pref_group_title_other">Andere Einstellungen</string>
     <string name="pref_title_notification_list_name">Listenname</string>
-    <string name="pref_title_notification_frequency">Häufigkeit der Benachrichtigung</string>
+    <string name="pref_title_notification_timer_duration">Häufigkeit der Benachrichtigung</string>
     <string name="pref_title_notification_timer_variance">Variabilität der Benachrichtigung</string>
     <string name="pref_title_notification_daily_start_time">Startzeit für Benachrichtigungen</string>
     <string name="pref_title_notification_daily_end_time">Endzeit für Benachrichtigungen</string>
@@ -26,7 +26,7 @@
     <string name="pref_title_cancel_notification">Benachrichtigung entfernen</string>
 
     <!-- String arrays -->
-    <string-array name="notification_frequency_names">
+    <string-array name="notification_timer_duration_names">
         <item>minütlich (zum Testen)</item>
         <item>halbstündlich</item>
         <item>stündlich</item>

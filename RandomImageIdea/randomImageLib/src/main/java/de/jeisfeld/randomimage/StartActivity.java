@@ -11,12 +11,15 @@ import android.support.v4.content.ContextCompat;
 
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
- * An activity in which required app permissions are checked for Android 6.
+ * An activity used for starting the app.
+ *
+ * <p>Here, potential version upgrade activities are done, and required app permissions are checked for Android 6.
  */
-public abstract class PermissionsActivity extends Activity {
+public abstract class StartActivity extends Activity {
 	/**
 	 * The request code used to query for permission.
 	 */
@@ -27,6 +30,8 @@ public abstract class PermissionsActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		MigrationUtil.migrateAppVersion();
+
 		int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 		int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -34,7 +39,7 @@ public abstract class PermissionsActivity extends Activity {
 			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog) {
-					ActivityCompat.requestPermissions(PermissionsActivity.this,
+					ActivityCompat.requestPermissions(StartActivity.this,
 							new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
 							REQUEST_CODE_PERMISSION);
 				}

@@ -35,8 +35,8 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					ImageWidget.configure(getAppWidgetId(), stringValue, UpdateType.NEW_LIST);
 				}
-				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_alarm_interval))) {
-					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_alarm_interval, getAppWidgetId(), Long.parseLong(stringValue));
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_timer_duration))) {
+					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, getAppWidgetId(), Long.parseLong(stringValue));
 					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 					ImageWidget.updateTimers(getAppWidgetId());
 				}

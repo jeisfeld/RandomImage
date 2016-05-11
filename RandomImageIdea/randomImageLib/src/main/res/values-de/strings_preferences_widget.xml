@@ -10,7 +10,7 @@
     <!-- Strings related to Settings -->
 
     <string name="pref_title_widget_list_name">Listenname</string>
-    <string name="pref_title_widget_alarm_interval">Wechselhäufigkeit</string>
+    <string name="pref_title_widget_timer_duration">Wechselhäufigkeit</string>
     <string name="pref_title_widget_view_as_list">Als Liste anzeigen</string>
     <string name="pref_title_widget_show_cyclically">Alle Bilder zyklisch zeigen</string>
     <string name="pref_title_widget_background_style">Hintergrund</string>
