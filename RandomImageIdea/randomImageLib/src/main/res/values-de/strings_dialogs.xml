@@ -60,7 +60,6 @@
     <string name="dialog_hint_main_configuration">Dies ist die Hauptkonfigurationsseite der App. Hier können Sie einerseits eine Bildliste zum Bearbeiten auswählen, und andererseits Widgets und Benachrichtigungen konfigurieren.</string>
 
     <!-- Messages of dialogs -->
-    <string name="dialog_info_premium_deprecated">Das Premium-Paket dieser App wird nicht mehr unterstützt. Bitte nutzen Sie stattdessen die Pro-Version der App. Wenden Sie sich an ramdomimage@jeisfeld.de, wenn Sie den Kaufpreis erstattet haben wollen.</string>
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
     <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich widgets für die Liste „%1$s“. Bitte denken Sie daran, diese zu entfernen.</string>

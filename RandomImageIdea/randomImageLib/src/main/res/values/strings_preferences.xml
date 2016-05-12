@@ -11,10 +11,6 @@
     <string name="key_pref_hidden_lists_pattern" translatable="false">pref_hidden_lists_pattern</string>
     <string name="key_pref_hidden_folders_pattern" translatable="false">pref_hidden_folders_pattern</string>
 
-    <!-- Deprecated preferences from previous app versions -->
-
-    <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
-
     <!-- Dummy keys only required as menu reference -->
 
     <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>

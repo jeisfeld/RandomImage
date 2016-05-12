@@ -3,11 +3,12 @@
     package="de.jeisfeld.randomimage.underground"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="19"
-    android:versionName="1.0.2">
+    android:versionCode="20"
+    android:versionName="1.0.3">
 
     <application
         android:name="de.jeisfeld.randomimage.Application"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher_underground"
         android:logo="@drawable/ic_launcher"
         tools:replace="android:icon">

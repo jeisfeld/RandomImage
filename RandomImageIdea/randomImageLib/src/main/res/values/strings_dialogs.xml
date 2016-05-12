@@ -60,7 +60,6 @@
     <string name="dialog_hint_main_configuration">This is the main configuration page of the app. Here you can either select an image list for editing, or you may configure widgets or notifications.</string>
 
     <!-- Messages of dialogs -->
-    <string name="dialog_info_premium_deprecated">The “Premium Pack” of this app is deprecated with this app version. Please use the Pro version of the app instead. Please contact ramdomimage@jeisfeld.de if you want to get the purchasing price reimbursed.</string>
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
     <string name="dialog_info_name_already_existing">The name “%1$s” already exists - please choose another one.</string>
     <string name="dialog_info_delete_widgets">On your home screen, there are widgets for the list “%1$s”. Please remember to remove these.</string>
