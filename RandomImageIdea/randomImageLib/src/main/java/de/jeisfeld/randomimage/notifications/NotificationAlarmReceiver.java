@@ -103,7 +103,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.MINUTES.toMillis(duration);
 
 				if (oldAlarmTime > System.currentTimeMillis()) {
-					alarmMgr.set(AlarmManager.RTC, oldAlarmTime, alarmIntent);
+					alarmMgr.set(AlarmManager.RTC_WAKEUP, oldAlarmTime, alarmIntent);
 				}
 				else if (duration <= 0 || oldAlarmExpirationTime > System.currentTimeMillis()) {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
@@ -115,7 +115,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 					}
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
-					alarmMgr.set(AlarmManager.RTC, newAlarmTime, alarmIntent);
+					alarmMgr.set(AlarmManager.RTC_WAKEUP, newAlarmTime, alarmIntent);
 				}
 				return;
 			}
@@ -191,7 +191,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, alarmTimeMillis);
-		alarmMgr.set(AlarmManager.RTC, alarmTimeMillis, alarmIntent);
+		alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, alarmIntent);
 
 		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
 		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
@@ -219,7 +219,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true);
 		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(duration);
 
-		alarmMgr.set(AlarmManager.RTC, alarmTimeMillis, alarmIntent);
+		alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, alarmIntent);
 	}
 
 	/**
