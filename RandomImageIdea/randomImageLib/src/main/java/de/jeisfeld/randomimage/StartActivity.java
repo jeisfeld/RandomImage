@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -28,6 +29,12 @@ public abstract class StartActivity extends Activity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// TODO: remove in the next version (This is used only while deprecating Google Billing)
+		if (PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium)) {
+			DialogUtil.displayInfo(this, R.string.dialog_info_premium_deprecated);
+			PreferenceUtil.removeSharedPreference(R.string.key_pref_has_premium);
+		}
 
 		int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 		int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);

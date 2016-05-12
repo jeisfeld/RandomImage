@@ -4,7 +4,7 @@
     <!-- Basic application strings -->
     <string name="app_name">Surprise Image</string>
     <string name="app_name_short">Surprise Image</string>
-    <string name="authorization_class" translatable="false"/>
+    <string name="has_premium" translatable="false">false</string>
     <string name="mini_widget_name">Surprise Image Widget</string>
     <string name="image_widget_name">Surprise Image Frame</string>
     <string name="stacked_image_widget_name">Surprise Image Deck</string>

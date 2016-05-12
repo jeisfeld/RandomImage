@@ -20,7 +20,6 @@ import android.widget.TextView;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
-import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
@@ -266,7 +265,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * @return true if it is allowed to add another list.
 	 */
 	private boolean checkIfMoreListsAllowed() {
-		boolean hasPremium = AuthorizationHelper.hasPremium();
+		boolean hasPremium = Boolean.parseBoolean(Application.getResourceString(R.string.has_premium));
 		if (!hasPremium) {
 			boolean moreListsAllowed = ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).size() < ALLOWED_LISTS_NON_PREMIUM;
 

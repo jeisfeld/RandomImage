@@ -6,11 +6,14 @@
     <string name="key_pref_language" translatable="false">pref_language</string>
     <string name="key_pref_folder_selection_mechanism" translatable="false">pref_folder_selection_mechanism</string>
     <string name="key_pref_show_hidden_folders" translatable="false">pref_show_hidden_folders</string>
-    <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
     <string name="key_pref_show_list_notification" translatable="false">pref_show_list_notification</string>
     <string name="key_pref_use_regex_filter" translatable="false">pref_use_regex_filter</string>
     <string name="key_pref_hidden_lists_pattern" translatable="false">pref_hidden_lists_pattern</string>
     <string name="key_pref_hidden_folders_pattern" translatable="false">pref_hidden_folders_pattern</string>
+
+    <!-- Deprecated preferences from previous app versions -->
+
+    <string name="key_pref_has_premium" translatable="false">pref_has_premium</string>
 
     <!-- Dummy keys only required as menu reference -->
 

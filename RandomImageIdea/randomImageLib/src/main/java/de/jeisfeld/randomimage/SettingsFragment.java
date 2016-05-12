@@ -1,7 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,20 +9,10 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
-import com.android.vending.billing.Purchase;
-import com.android.vending.billing.PurchasedSku;
-import com.android.vending.billing.SkuDetails;
-
-import de.jeisfeld.randomimage.util.AuthorizationHelper;
 import de.jeisfeld.randomimage.util.DialogUtil;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
-import de.jeisfeld.randomimage.util.GoogleBillingHelper;
-import de.jeisfeld.randomimage.util.GoogleBillingHelper.OnInventoryFinishedListener;
-import de.jeisfeld.randomimage.util.GoogleBillingHelper.OnPurchaseSuccessListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -35,11 +23,6 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class SettingsFragment extends PreferenceFragment {
 	/**
-	 * A prefix put before the productId to define the according preference key.
-	 */
-	private static final String SKU_KEY_PREFIX = "sku_";
-
-	/**
 	 * Field holding the value of the language preference, in order to detect a real change.
 	 */
 	private String mLanguageString;
@@ -48,11 +31,6 @@ public class SettingsFragment extends PreferenceFragment {
 	 * Field holding the value of the hidden lists pattern, in order to detect a real change.
 	 */
 	private String mHiddenListsPattern;
-
-	/**
-	 * The preference screen handling donations.
-	 */
-	private PreferenceCategory mPrefCategoryPremium;
 
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
@@ -87,12 +65,7 @@ public class SettingsFragment extends PreferenceFragment {
 		updateRegexpPreferences(getActivity());
 		updateShowHiddenFoldersPreference(getActivity());
 
-		mPrefCategoryPremium = (PreferenceCategory) findPreference(getString(R.string.key_pref_category_premium));
-
-		if (AuthorizationHelper.requiresGoogleBilling()) {
-			GoogleBillingHelper.initialize(getActivity(), mOnInventoryFinishedListener);
-		}
-		else {
+		if (Boolean.parseBoolean(Application.getResourceString(R.string.has_premium))) {
 			getPreferenceScreen().removePreference(findPreference(getString(R.string.key_pref_category_premium)));
 		}
 	}
@@ -215,66 +188,6 @@ public class SettingsFragment extends PreferenceFragment {
 	private void bindPreferenceSummaryToValue(final int preferenceKey) {
 		bindPreferenceSummaryToValue(findPreference(getString(preferenceKey)));
 	}
-
-	/**
-	 * A listener handling the response after reading the in-add purchase inventory.
-	 */
-	private OnInventoryFinishedListener mOnInventoryFinishedListener = new OnInventoryFinishedListener() {
-		@Override
-		public void handleProducts(final List<PurchasedSku> purchases, final List<SkuDetails> availableProducts,
-								   final boolean isPremium) {
-			if (isPremium != PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_has_premium)) {
-				// Update premium status, also in ConfigureImageListActivity.
-				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, isPremium);
-				((SettingsActivity) getActivity()).returnResult(true);
-			}
-
-			// List inventory items.
-			for (PurchasedSku purchase : purchases) {
-				Preference purchasePreference = new Preference(getActivity());
-				String title = getString(R.string.button_purchased_item, purchase.getSkuDetails().getDisplayTitle(getActivity()));
-				purchasePreference.setTitle(title);
-				purchasePreference.setSummary(purchase.getSkuDetails().getDescription());
-				purchasePreference.setEnabled(false);
-				mPrefCategoryPremium.addPreference(purchasePreference);
-			}
-			for (SkuDetails skuDetails : availableProducts) {
-				Preference skuPreference = new Preference(getActivity());
-				skuPreference.setTitle(skuDetails.getDisplayTitle(getActivity()));
-				skuPreference.setKey(SKU_KEY_PREFIX + skuDetails.getSku());
-				skuPreference.setSummary(skuDetails.getDescription());
-				skuPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-					@Override
-					public boolean onPreferenceClick(final Preference preference) {
-						String productId = preference.getKey().substring(SKU_KEY_PREFIX.length());
-						GoogleBillingHelper.launchPurchaseFlow(productId, mOnPurchaseSuccessListener);
-						return false;
-					}
-				});
-				mPrefCategoryPremium.addPreference(skuPreference);
-			}
-		}
-	};
-
-	/**
-	 * A listener handling the response after purchasing a product.
-	 */
-	private OnPurchaseSuccessListener mOnPurchaseSuccessListener = new OnPurchaseSuccessListener() {
-		@Override
-		public void handlePurchase(final Purchase purchase, final boolean addedPremiumProduct) {
-			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_has_premium, true);
-			MessageDialogListener listener = new MessageDialogListener() {
-				@Override
-				public void onDialogFinished() {
-					((SettingsActivity) getActivity()).returnResult(true);
-					getActivity().finish();
-				}
-			};
-
-			DialogUtil.displayInfo(getActivity(), listener, 0, R.string.dialog_info_premium_thanks);
-		}
-	};
-
 
 	/**
 	 * Update the enabling of the regexp preferences.

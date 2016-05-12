@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import de.jeisfeld.randomimage.util.AuthorizationHelper;
-import de.jeisfeld.randomimage.util.GoogleBillingHelper;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -64,22 +62,6 @@ public class SettingsActivity extends Activity {
 	 */
 	public static final void setDefaultSharedPreferences(final Context context) {
 		PreferenceManager.setDefaultValues(Application.getAppContext(), R.xml.pref_general, false);
-	}
-
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (AuthorizationHelper.requiresGoogleBilling()) {
-			GoogleBillingHelper.handleActivityResult(requestCode, resultCode, data);
-		}
-	}
-
-	@Override
-	public final void onDestroy() {
-		super.onDestroy();
-		if (AuthorizationHelper.requiresGoogleBilling()) {
-			GoogleBillingHelper.dispose();
-		}
 	}
 
 	/**

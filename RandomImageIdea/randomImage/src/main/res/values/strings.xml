@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="authorization_class" translatable="false">de.jeisfeld.randomimage.util.AuthorizationHelperGoogleBilling</string>
-    
+    <string name="has_premium" translatable="false">false</string>
+
 </resources>
