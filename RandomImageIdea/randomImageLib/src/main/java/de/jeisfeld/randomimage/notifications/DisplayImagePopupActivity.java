@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
 
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -113,15 +111,6 @@ public class DisplayImagePopupActivity extends Activity {
 		mImageView.setScaleType(ScaleType.HALF_SIZE);
 		mImageView.setImage(mFileName, this, 0);
 		mImageView.setGestureDetector(getGestureDetector());
-
-		mImageView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				startActivity(DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
-						mListName, mFileName, true, null, mNotificationId));
-				finish();
-			}
-		});
 	}
 
 	/**
@@ -166,6 +155,14 @@ public class DisplayImagePopupActivity extends Activity {
 				else {
 					return false;
 				}
+			}
+
+			@Override
+			public boolean onSingleTapUp(final MotionEvent e) {
+				startActivity(DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
+						mListName, mFileName, true, null, mNotificationId));
+				finish();
+				return true;
 			}
 		});
 	}
