@@ -144,7 +144,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId, currentListName);
 			}
 		}
-		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, mNotificationId, 0) == 0) {
+		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, mNotificationId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, mNotificationId,
 					Long.parseLong(getActivity().getString(R.string.pref_default_notification_timer_duration)));
