@@ -71,7 +71,7 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 					interval, alarmIntent);
 		}
 		else if (interval < AlarmManager.INTERVAL_DAY) {
-			alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + interval,
+			alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + interval,
 					interval, alarmIntent);
 		}
 		else {
@@ -90,7 +90,7 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 			// Then add the planned interval
 			calendar.setTimeInMillis(calendar.getTimeInMillis() + interval);
 
-			alarmMgr.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), interval, alarmIntent);
+			alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
 		}
 
 		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.

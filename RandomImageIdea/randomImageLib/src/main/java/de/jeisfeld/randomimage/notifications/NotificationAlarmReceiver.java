@@ -12,6 +12,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.SdMountReceiver;
@@ -91,7 +93,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 			expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
 		}
 
-		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, false);
 		Random random = new Random();
 
@@ -103,7 +104,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.MINUTES.toMillis(duration);
 
 				if (oldAlarmTime > System.currentTimeMillis()) {
-					alarmMgr.set(AlarmManager.RTC_WAKEUP, oldAlarmTime, alarmIntent);
+					setAlarm(context, oldAlarmTime, alarmIntent);
 				}
 				else if (duration <= 0 || oldAlarmExpirationTime > System.currentTimeMillis()) {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
@@ -115,7 +116,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 					}
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
-					alarmMgr.set(AlarmManager.RTC_WAKEUP, newAlarmTime, alarmIntent);
+					setAlarm(context, newAlarmTime, alarmIntent);
 				}
 				return;
 			}
@@ -191,7 +192,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, alarmTimeMillis);
-		alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, alarmIntent);
+		setAlarm(context, alarmTimeMillis, alarmIntent);
 
 		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
 		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
@@ -200,6 +201,23 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		pm.setComponentEnabledSetting(receiver,
 				PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 				PackageManager.DONT_KILL_APP);
+	}
+
+	/**
+	 * Set an alarm for a notification.
+	 *
+	 * @param context     The context
+	 * @param alarmTime   The alarm time
+	 * @param alarmIntent The alarm intent
+	 */
+	private static void setAlarm(final Context context, final long alarmTime, final PendingIntent alarmIntent) {
+		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		if (VERSION.SDK_INT >= VERSION_CODES.M) {
+			alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+		}
+		else {
+			alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+		}
 	}
 
 	/**
