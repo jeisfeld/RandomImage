@@ -1,5 +1,8 @@
 package de.jeisfeld.randomimage;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +36,11 @@ public class SettingsFragment extends PreferenceFragment {
 	private String mHiddenListsPattern;
 
 	/**
+	 * Field holding the value of the hidden folders pattern, in order to detect a real change.
+	 */
+	private String mHiddenFoldersPattern;
+
+	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
 	private CustomOnPreferenceChangeListener mOnPreferenceChangeListener = new CustomOnPreferenceChangeListener();
@@ -47,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment {
 		// Fill variables in order to detect changed values.
 		mLanguageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
 		mHiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
+		mHiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
@@ -237,9 +246,29 @@ public class SettingsFragment extends PreferenceFragment {
 			}
 			// In case of switch of hidden lists pattern, refresh
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
-				if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(value)) {
+				if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(stringValue)) {
+					try {
+						//noinspection ResultOfMethodCallIgnored
+						Pattern.compile(stringValue);
+					}
+					catch (PatternSyntaxException e) {
+						DialogUtil.displayInfo(getActivity(), R.string.dialog_info_invalid_regexp);
+						return false;
+					}
 					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_hidden_lists_pattern, (String) value);
 					ImageRegistry.parseConfigFiles();
+				}
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_folders_pattern))) {
+				if (mHiddenFoldersPattern == null || !mHiddenFoldersPattern.equals(stringValue)) {
+					try {
+						//noinspection ResultOfMethodCallIgnored
+						Pattern.compile(stringValue);
+					}
+					catch (PatternSyntaxException e) {
+						DialogUtil.displayInfo(getActivity(), R.string.dialog_info_invalid_regexp);
+						return false;
+					}
 				}
 			}
 			// Update view depending on folder selection mechanism.

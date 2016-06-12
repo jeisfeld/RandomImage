@@ -73,6 +73,7 @@
     <string name="dialog_info_no_images_in_folder">The folder “%1$s” does not contain any images.</string>
     <string name="dialog_info_no_widget">There is no widget available - please place one or more widgets on your home screen.</string>
     <string name="dialog_info_need_premium">You have to acquire the Pro version of the app to create more than three image lists.</string>
+    <string name="dialog_info_invalid_regexp">Please enter a valid regular expression.</string>
     <string name="dialog_input_enter_list_name_new">Please enter a name for the new list.</string>
     <string name="dialog_input_enter_list_name_cloned">Please enter a name for the cloned list.</string>
     <string name="dialog_input_enter_list_name_changed">Please enter the new name of the list.</string>
