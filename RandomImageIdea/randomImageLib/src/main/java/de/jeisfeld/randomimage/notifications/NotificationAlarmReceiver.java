@@ -101,7 +101,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
 			if (oldAlarmTime >= 0) {
 				int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
-				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.MINUTES.toMillis(duration);
+				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.SECONDS.toMillis(duration);
 
 				if (oldAlarmTime > System.currentTimeMillis()) {
 					setAlarm(context, oldAlarmTime, alarmIntent);
@@ -235,7 +235,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true);
-		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(duration);
+		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(duration);
 
 		alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, alarmIntent);
 	}

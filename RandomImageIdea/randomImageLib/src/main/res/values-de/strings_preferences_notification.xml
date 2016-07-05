@@ -27,7 +27,10 @@
 
     <!-- String arrays -->
     <string-array name="notification_timer_duration_names">
-        <item>minütlich (zum Testen)</item>
+        <item>minütlich</item>
+        <item>alle zwei Minuten</item>
+        <item>alle fünf Minuten</item>
+        <item>viertelstündlich</item>
         <item>halbstündlich</item>
         <item>stündlich</item>
         <item>alle zwei Stunden</item>
@@ -67,6 +70,7 @@
     </string-array>
     <string-array name="notification_duration_names">
         <item>Unbefristet</item>
+        <item>Fünfzehn Sekunden</item>
         <item>Eine Minute</item>
         <item>Fünf Minuten</item>
         <item>Eine Viertelstunde</item>

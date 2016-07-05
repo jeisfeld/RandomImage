@@ -66,7 +66,10 @@
 
     <!-- String arrays -->
     <string-array name="notification_timer_duration_names">
-        <item>every minute (for testing)</item>
+        <item>every minute</item>
+        <item>every two minutes</item>
+        <item>every five minutes</item>
+        <item>every fifteen minutes</item>
         <item>twice per hour</item>
         <item>hourly</item>
         <item>every two hours</item>
@@ -84,6 +87,9 @@
     </string-array>
     <string-array name="notification_timer_duration_values" translatable="false">
         <item>60</item>
+        <item>120</item>
+        <item>300</item>
+        <item>900</item>
         <item>1800</item>
         <item>3600</item>
         <item>7200</item>
@@ -145,6 +151,7 @@
     </string-array>
     <string-array name="notification_duration_names">
         <item>Unlimited</item>
+        <item>Fifteen seconds</item>
         <item>One minute</item>
         <item>Five minutes</item>
         <item>Fifteen minutes</item>
@@ -153,11 +160,12 @@
     </string-array>
     <string-array name="notification_duration_values" translatable="false">
         <item>0</item>
-        <item>1</item>
-        <item>5</item>
         <item>15</item>
         <item>60</item>
-        <item>1440</item>
+        <item>300</item>
+        <item>900</item>
+        <item>3600</item>
+        <item>86400</item>
     </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>
