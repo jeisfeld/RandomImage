@@ -291,9 +291,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 				mBackgroundColor = BackgroundColor.fromResourceValue(
 						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
 
-				if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1)
-						!= NotificationUtil.NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
-					// Stop auto-cancellation if the notification has been actively clicked
+				if (!NotificationUtil.isActivityNotificationStyle(
+						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1))) {
+					// Stop auto-cancellation if a normal notification has been actively clicked
 					NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				}
 			}

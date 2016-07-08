@@ -93,6 +93,10 @@ public final class NotificationUtil {
 	private static final int NOTIFICATION_LARGE_ICON_WIDTH;
 
 	/**
+	 * The notification style for the special notification.
+	 */
+	public static final int NOTIFICATION_STYLE_SPECIAL_NOTIFICATION = 1;
+	/**
 	 * The notification style that triggers DisplayImagePopupActivity instead of a notification.
 	 */
 	public static final int NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY = 2;
@@ -270,7 +274,7 @@ public final class NotificationUtil {
 			title = listName;
 		}
 
-		if (notificationStyle == 1) {
+		if (notificationStyle == NOTIFICATION_STYLE_SPECIAL_NOTIFICATION) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
 			remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
 			notificationBuilder.setContent(remoteViews);
@@ -329,7 +333,7 @@ public final class NotificationUtil {
 	 * @param notificationStyle The notificationStyle value.
 	 * @return True if this style leads to an activity.
 	 */
-	protected static boolean isActivityNotificationStyle(final int notificationStyle) {
+	public static boolean isActivityNotificationStyle(final int notificationStyle) {
 		return notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
 				|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY;
 	}

@@ -46,6 +46,10 @@ public class DisplayImagePopupActivity extends Activity {
 	 * Flag helping to detect if the user puts the activity into the background.
 	 */
 	private boolean mUserIsLeaving = false;
+	/**
+	 * Flag indicating that the user started the DisplayRandomImageActivity.
+	 */
+	private boolean mUserStartedRandomImageActivity = false;
 
 	/**
 	 * The id of the notification triggering this activity.
@@ -142,6 +146,7 @@ public class DisplayImagePopupActivity extends Activity {
 										// do not pass file name, in order to get new image.
 										DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
 												mListName, null, true, null, mNotificationId));
+								mUserStartedRandomImageActivity = true;
 							}
 							finish();
 						}
@@ -161,6 +166,7 @@ public class DisplayImagePopupActivity extends Activity {
 			public boolean onSingleTapUp(final MotionEvent e) {
 				startActivity(DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
 						mListName, mFileName, true, null, mNotificationId));
+				mUserStartedRandomImageActivity = true;
 				finish();
 				return true;
 			}
@@ -173,7 +179,7 @@ public class DisplayImagePopupActivity extends Activity {
 		super.onDestroy();
 		if (mNotificationId != null) {
 			NOTIFICATION_MAP.remove(mNotificationId);
-			if (mUserIsLeaving || !mSavingInstanceState) {
+			if ((mUserIsLeaving || !mSavingInstanceState) && !mUserStartedRandomImageActivity) {
 				NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
 			}

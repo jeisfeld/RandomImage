@@ -42,6 +42,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 */
 	private static final int ALARM_WAIT_SECONDS = 60;
 	/**
+	 * Threshold (in seconds) below which alarms should be exact.
+	 */
+	private static final int EXACT_THRESHOLD = 900;
+	/**
 	 * The number of hours per day.
 	 */
 	private static final int HOURS_PER_DAY = (int) TimeUnit.DAYS.toHours(1);
@@ -104,7 +108,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.SECONDS.toMillis(duration);
 
 				if (oldAlarmTime > System.currentTimeMillis()) {
-					setAlarm(context, oldAlarmTime, alarmIntent);
+					setAlarm(context, oldAlarmTime, alarmIntent, frequency < EXACT_THRESHOLD);
 				}
 				else if (duration <= 0 || oldAlarmExpirationTime > System.currentTimeMillis()) {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
@@ -116,7 +120,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 					}
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
-					setAlarm(context, newAlarmTime, alarmIntent);
+					setAlarm(context, newAlarmTime, alarmIntent, frequency < EXACT_THRESHOLD);
 				}
 				return;
 			}
@@ -192,7 +196,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, alarmTimeMillis);
-		setAlarm(context, alarmTimeMillis, alarmIntent);
+		setAlarm(context, alarmTimeMillis, alarmIntent, frequency < EXACT_THRESHOLD);
 
 		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
 		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
@@ -209,14 +213,25 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * @param context     The context
 	 * @param alarmTime   The alarm time
 	 * @param alarmIntent The alarm intent
+	 * @param exact       flag indicating if the alarm time should be exact.
 	 */
-	private static void setAlarm(final Context context, final long alarmTime, final PendingIntent alarmIntent) {
+	private static void setAlarm(final Context context, final long alarmTime, final PendingIntent alarmIntent, final boolean exact) {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if (VERSION.SDK_INT >= VERSION_CODES.M) {
-			alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			if (exact) {
+				alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			}
+			else {
+				alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			}
 		}
 		else {
-			alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			if (exact && VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+				alarmMgr.setExact(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			}
+			else {
+				alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			}
 		}
 	}
 
@@ -233,11 +248,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 			return;
 		}
 
-		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true);
 		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(duration);
 
-		alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, alarmIntent);
+		setAlarm(context, alarmTimeMillis, alarmIntent, duration < EXACT_THRESHOLD);
 	}
 
 	/**
