@@ -34,10 +34,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 */
 	private static final String STRING_IS_CANCELLATION = "de.eisfeldj.randomimage.IS_CANCELLATION";
 	/**
-	 * The maximum number of days for a notification.
-	 */
-	private static final double MAX_ALARM_DAYS = 730;
-	/**
 	 * Time to wait with the alarm after boot.
 	 */
 	private static final int ALARM_WAIT_SECONDS = 60;
@@ -53,6 +49,19 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * The number of seconds per day.
 	 */
 	private static final int SECONDS_PER_DAY = (int) TimeUnit.DAYS.toSeconds(1);
+
+	/**
+	 * Timer variance constant for no variance.
+	 */
+	private static final int TIMER_VARIANCE_NONE = 0;
+	/**
+	 * Timer variance constant for small variance.
+	 */
+	private static final int TIMER_VARIANCE_SMALL = 1;
+	/**
+	 * Timer variance constant for big variance.
+	 */
+	private static final int TIMER_VARIANCE_BIG = 2;
 
 	@Override
 	public final void onReceive(final Context context, final Intent intent) {
@@ -104,7 +113,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 			long oldAlarmTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, -1);
 
 			if (oldAlarmTime >= 0) {
-				int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
+				long duration = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_duration, notificationId, 0);
 				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.SECONDS.toMillis(duration);
 
 				if (oldAlarmTime > System.currentTimeMillis()) {
@@ -129,24 +138,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 
 		// Set the alarm
-
 		int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, notificationId, -1);
-
-		double daysUntilAlarm;
-
-		switch (timerVariance) {
-		case 0:
-			// equal distribution at some distance from now
-			daysUntilAlarm = (0.25 + 1.5 * random.nextDouble()) * expectedDaysUntilAlarm; // MAGIC_NUMBER
-			break;
-		case 1:
-		default:
-			// exponential distribution
-			daysUntilAlarm = -expectedDaysUntilAlarm * Math.log(random.nextDouble());
-			if (daysUntilAlarm > MAX_ALARM_DAYS) {
-				daysUntilAlarm = MAX_ALARM_DAYS - random.nextDouble();
-			}
-		}
+		double daysUntilAlarm = getRandomizedDuration(expectedDaysUntilAlarm, timerVariance);
 
 		// Determine how much of "notification time" is already elapsed today.
 		Calendar currentTimeCalendar = Calendar.getInstance();
@@ -243,16 +236,42 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * @param notificationId the notification id.
 	 */
 	public static final void setCancellationAlarm(final Context context, final int notificationId) {
-		int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
-		if (duration == 0) {
+		long expectedDuration = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_duration, notificationId, 0);
+		if (expectedDuration == 0) {
 			return;
 		}
 
+		int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, notificationId, -1);
+		double duration = getRandomizedDuration(expectedDuration, timerVariance);
+
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true);
-		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(duration);
+		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis((long) duration);
 
 		setAlarm(context, alarmTimeMillis, alarmIntent, duration < EXACT_THRESHOLD);
 	}
+
+	/**
+	 * Get a randomized timer duration.
+	 *
+	 * @param baseDuration The configured timer duration.
+	 * @param variance     The configured timer variance.
+	 * @return The randomized timer duration.
+	 */
+	private static double getRandomizedDuration(final double baseDuration, final int variance) {
+		Random random = new Random();
+		switch (variance) {
+		case TIMER_VARIANCE_SMALL:
+			// equal distribution at some distance from now
+			return (0.25 + 1.5 * random.nextDouble()) * baseDuration; // MAGIC_NUMBER
+		case TIMER_VARIANCE_BIG:
+			// exponential distribution
+			return -baseDuration * Math.log(random.nextDouble());
+		case TIMER_VARIANCE_NONE:
+		default:
+			return baseDuration;
+		}
+	}
+
 
 	/**
 	 * Cancels the alarms for a notification.

@@ -57,7 +57,7 @@ public class TimeSelectorPreference extends DialogPreference {
 	}
 
 	@Override
-	protected void onBindDialogView(final View view) {
+	protected final void onBindDialogView(final View view) {
 		super.onBindDialogView(view);
 
 		mEditText = (EditText) view.findViewById(R.id.editTextUnits);

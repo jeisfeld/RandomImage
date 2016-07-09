@@ -61,6 +61,9 @@ public final class MigrationUtil {
 		case 19: // MAGIC_NUMBER
 			doMigrationToVersion19();
 			break;
+		case 20: // MAGIC_NUMBER
+			doMigrationToVersion20();
+			break;
 		default:
 			break;
 		}
@@ -87,6 +90,21 @@ public final class MigrationUtil {
 			}
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, newFrequency);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_frequency, notificationId);
+		}
+	}
+
+	/**
+	 * Do the migration steps for migration into app version 20.
+	 */
+	private static void doMigrationToVersion20() {
+		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+			int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
+			long newDuration = duration * 60; // MAGIC_NUMBER
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_duration, notificationId, newDuration);
+
+			int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, notificationId, 0);
+			int newTimerVariance = timerVariance + 1;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, notificationId, newTimerVariance);
 		}
 	}
 

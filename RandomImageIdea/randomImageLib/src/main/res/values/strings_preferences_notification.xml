@@ -15,6 +15,7 @@
     <string name="key_notification_daily_start_time" translatable="false">notification_daily_start_time</string>
     <string name="key_notification_daily_end_time" translatable="false">notification_daily_end_time</string>
     <string name="key_notification_duration" translatable="false">notification_duration</string>
+    <string name="key_notification_duration_variance" translatable="false">notification_duration_variance</string>
     <string name="key_notification_style" translatable="false">notification_style</string>
     <string name="key_notification_led_color" translatable="false">notification_led_color</string>
     <string name="key_notification_vibration" translatable="false">notification_vibration</string>
@@ -41,13 +42,15 @@
     <string name="pref_title_notification_timer_duration">Notification frequency</string>
     <string name="pref_default_notification_timer_duration" translatable="false">86400</string>
     <string name="pref_title_notification_timer_variance">Notification variability</string>
-    <string name="pref_default_notification_timer_variance" translatable="false">0</string>
+    <string name="pref_default_notification_timer_variance" translatable="false">1</string>
     <string name="pref_title_notification_daily_start_time">Start hour for notifications</string>
     <string name="pref_default_notification_daily_start_time" translatable="false">0</string>
     <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
     <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
     <string name="pref_title_notification_duration">Duration</string>
     <string name="pref_default_notification_duration" translatable="false">0</string>
+    <string name="pref_title_notification_duration_variance">Duration variability</string>
+    <string name="pref_default_notification_duration_variance" translatable="false">0</string>
     <string name="pref_title_notification_style">Notification style</string>
     <string name="pref_default_notification_style" translatable="false">0</string>
     <string name="pref_title_notification_led_color">LED color</string>
@@ -65,12 +68,14 @@
 
     <!-- String arrays -->
     <string-array name="notification_timer_variance_names">
+        <item>no variation</item>
         <item>little variation</item>
         <item>big variation</item>
     </string-array>
     <string-array name="notification_timer_variance_values" translatable="false">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
     <string-array name="notification_daily_start_time_names">
         <item>12 am</item>
