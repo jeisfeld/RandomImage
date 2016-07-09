@@ -41,6 +41,7 @@
     <string name="pref_title_notification_list_name">List Name</string>
     <string name="pref_title_notification_timer_duration">Notification frequency</string>
     <string name="pref_default_notification_timer_duration" translatable="false">86400</string>
+    <string name="pref_indefinite_value_notification_timer_duration">never</string>
     <string name="pref_title_notification_timer_variance">Notification variability</string>
     <string name="pref_default_notification_timer_variance" translatable="false">1</string>
     <string name="pref_title_notification_daily_start_time">Start hour for notifications</string>
@@ -48,6 +49,7 @@
     <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
     <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
     <string name="pref_title_notification_duration">Duration</string>
+    <string name="pref_indefinite_value_notification_duration">unlimited</string>
     <string name="pref_default_notification_duration" translatable="false">0</string>
     <string name="pref_title_notification_duration_variance">Duration variability</string>
     <string name="pref_default_notification_duration_variance" translatable="false">0</string>

@@ -201,7 +201,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 */
 	private static String getHeaderSummary(final int notificationId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
-		String frequencyString = NotificationConfigurationFragment.getNotificationFrequencyString(notificationId);
+		String frequencyString = NotificationConfigurationFragment.getNotificationFrequencyHeaderString(notificationId);
 		if (frequencyString == null) {
 			return listName;
 		}

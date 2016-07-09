@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -20,6 +21,14 @@ import de.jeisfeld.randomimagelib.R;
  */
 public class TimeSelectorPreference extends DialogPreference {
 	/**
+	 * The standard entries of the Spinner.
+	 */
+	private static final SpinnerEntry[] SPINNER_ENTRIES;
+	/**
+	 * The current entries of the Spinner.
+	 */
+	private SpinnerEntry[] mSpinnerEntries;
+	/**
 	 * The EditText for the number of seconds/minutes etc.
 	 */
 	private EditText mEditText;
@@ -27,13 +36,9 @@ public class TimeSelectorPreference extends DialogPreference {
 	 * The spinner for the seletion of units (seconds, minutes etc.).
 	 */
 	private Spinner mSpinner;
-	/**
-	 * The entries of the Spinner.
-	 */
-	private static final SpinnerEntry[] SPINNER_ENTRIES;
 
 	static {
-		SPINNER_ENTRIES = SpinnerEntry.getSpinnerEntries(Application.getAppContext());
+		SPINNER_ENTRIES = SpinnerEntry.getDefaultSpinnerEntries(Application.getAppContext());
 	}
 
 	/**
@@ -45,6 +50,12 @@ public class TimeSelectorPreference extends DialogPreference {
 	public TimeSelectorPreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setDialogLayoutResource(R.layout.dialog_time_selector);
+
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimeSelectorPreference);
+		String indefiniteValue = a.getString(R.styleable.TimeSelectorPreference_indefiniteValue);
+		a.recycle();
+
+		mSpinnerEntries = SpinnerEntry.setIndefiniteValue(SPINNER_ENTRIES, indefiniteValue);
 	}
 
 	/**
@@ -63,16 +74,16 @@ public class TimeSelectorPreference extends DialogPreference {
 		mEditText = (EditText) view.findViewById(R.id.editTextUnits);
 		mSpinner = (Spinner) view.findViewById(R.id.spinnerUnits);
 
-		ArrayAdapter<SpinnerEntry> dataAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, SPINNER_ENTRIES);
+		ArrayAdapter<SpinnerEntry> dataAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, mSpinnerEntries);
 		mSpinner.setAdapter(dataAdapter);
 
 		String oldValue = getSharedPreferences().getString(getKey(), null);
 
 		if (oldValue != null) {
 			try {
-				DialogData dialogData = DialogData.fromValue(Long.parseLong(oldValue));
+				DialogData dialogData = DialogData.fromValue(mSpinnerEntries, Long.parseLong(oldValue));
 				mEditText.setText(String.format(Locale.getDefault(), "%d", dialogData.mUnitsEntry));
-				mSpinner.setSelection(dialogData.getSpinnerPosition());
+				mSpinner.setSelection(Arrays.asList(mSpinnerEntries).indexOf(dialogData.mSpinnerEntry));
 			}
 			catch (NumberFormatException e) {
 				// do nothing
@@ -107,8 +118,19 @@ public class TimeSelectorPreference extends DialogPreference {
 	 * @param value The value.
 	 * @return The summary text.
 	 */
-	public static String getSummaryFromValue(final String value) {
-		return DialogData.fromValue(Long.parseLong(value)).getDisplayText();
+	public final String getSummaryFromValue(final String value) {
+		return DialogData.fromValue(mSpinnerEntries, Long.parseLong(value)).getDisplayText();
+	}
+
+	/**
+	 * Get the summary text from the value.
+	 *
+	 * @param value The value.
+	 * @return The summary text.
+	 */
+	public static String getDefaultSummaryFromValue(final String value) {
+		DialogData dialogData = DialogData.fromValue(SPINNER_ENTRIES, Long.parseLong(value));
+		return dialogData.getValue() == 0 ? null : dialogData.getDisplayText();
 	}
 
 	/**
@@ -139,7 +161,7 @@ public class TimeSelectorPreference extends DialogPreference {
 		 * @param context The context.
 		 * @return The array of spinner entries.
 		 */
-		public static SpinnerEntry[] getSpinnerEntries(final Context context) {
+		public static SpinnerEntry[] getDefaultSpinnerEntries(final Context context) {
 			String[] names = context.getResources().getStringArray(R.array.timer_unit_names);
 			String[] values = context.getResources().getStringArray(R.array.timer_unit_values);
 
@@ -152,14 +174,42 @@ public class TimeSelectorPreference extends DialogPreference {
 		}
 
 		/**
+		 * Clone the list of spinner entries, setting the indefinite display value.
+		 *
+		 * @param spinnerEntries  The list of spinner entries.
+		 * @param indefiniteValue The indefinite display value.
+		 * @return The cloned list.
+		 */
+		public static SpinnerEntry[] setIndefiniteValue(final SpinnerEntry[] spinnerEntries, final String indefiniteValue) {
+			SpinnerEntry[] result = new SpinnerEntry[spinnerEntries.length];
+			for (int i = 0; i < spinnerEntries.length; i++) {
+				result[i] = new SpinnerEntry(spinnerEntries[i]);
+				if (result[i].getValue() == 0) {
+					result[i].mDisplayString = indefiniteValue;
+				}
+			}
+			return result;
+		}
+
+		/**
 		 * Create a spinner entry.
 		 *
 		 * @param displayString The display String.
-		 * @param value         Thevlue.
+		 * @param value         The value.
 		 */
 		private SpinnerEntry(final String displayString, final String value) {
 			mDisplayString = displayString;
 			mValue = Long.parseLong(value);
+		}
+
+		/**
+		 * Clone a spinnerEntry.
+		 *
+		 * @param spinnerEntry The spinnerEntry to be cloned.
+		 */
+		private SpinnerEntry(final SpinnerEntry spinnerEntry) {
+			this.mDisplayString = spinnerEntry.mDisplayString;
+			this.mValue = spinnerEntry.mValue;
 		}
 
 		@Override
@@ -209,21 +259,23 @@ public class TimeSelectorPreference extends DialogPreference {
 		/**
 		 * Get the dialog data from the value (in seconds).
 		 *
+		 * @param spinnerEntries The list of spinner entries.
 		 * @param value The value in seconds.
 		 * @return The dialog data.
 		 */
-		public static DialogData fromValue(final long value) {
+		public static DialogData fromValue(final SpinnerEntry[] spinnerEntries, final long value) {
 			DialogData result = new DialogData();
 			if (value == 0) {
-				result.mSpinnerEntry = SPINNER_ENTRIES[SPINNER_ENTRIES.length - 1];
+				result.mSpinnerEntry = spinnerEntries[spinnerEntries.length - 1];
 				result.mUnitsEntry = 0;
 				return result;
 			}
 
-			for (int i = SPINNER_ENTRIES.length - 2; i >= 0; i--) {
-				Long spinnerValue = SPINNER_ENTRIES[i].getValue();
+			for (int i = spinnerEntries.length - 2; i >= 0; i--) {
+				Long spinnerValue = spinnerEntries[i].getValue();
+
 				if (value % spinnerValue == 0) {
-					result.mSpinnerEntry = SPINNER_ENTRIES[i];
+					result.mSpinnerEntry = spinnerEntries[i];
 					result.mUnitsEntry = value / spinnerValue;
 					return result;
 				}
@@ -239,15 +291,6 @@ public class TimeSelectorPreference extends DialogPreference {
 		 */
 		public long getValue() {
 			return mUnitsEntry * mSpinnerEntry.getValue();
-		}
-
-		/**
-		 * Get the position of the Spinner entry.
-		 *
-		 * @return The position of the Spinner entry.
-		 */
-		public int getSpinnerPosition() {
-			return Arrays.asList(SPINNER_ENTRIES).indexOf(mSpinnerEntry);
 		}
 
 		/**

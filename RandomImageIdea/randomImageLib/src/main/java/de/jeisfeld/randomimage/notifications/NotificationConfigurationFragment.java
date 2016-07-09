@@ -384,9 +384,9 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	 * @param notificationId The notification id
 	 * @return The frequency as String.
 	 */
-	public static String getNotificationFrequencyString(final int notificationId) {
+	public static String getNotificationFrequencyHeaderString(final int notificationId) {
 		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, 0);
-		return TimeSelectorPreference.getSummaryFromValue(Long.toString(frequency));
+		return TimeSelectorPreference.getDefaultSummaryFromValue(Long.toString(frequency));
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 			}
 			else if (preference instanceof TimeSelectorPreference) {
-				preference.setSummary(TimeSelectorPreference.getSummaryFromValue(value));
+				preference.setSummary(((TimeSelectorPreference) preference).getSummaryFromValue(value));
 			}
 			else if (!(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's simple string representation.

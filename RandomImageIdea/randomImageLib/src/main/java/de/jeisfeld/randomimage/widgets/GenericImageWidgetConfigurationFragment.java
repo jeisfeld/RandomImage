@@ -255,9 +255,9 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	 * @param appWidgetId The widget id.
 	 * @return The alarm interval as String.
 	 */
-	public static String getAlarmIntervalString(final int appWidgetId) {
+	public static String getAlarmIntervalHeaderString(final int appWidgetId) {
 		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, -1);
-		return TimeSelectorPreference.getSummaryFromValue(Long.toString(alarmInterval));
+		return TimeSelectorPreference.getDefaultSummaryFromValue(Long.toString(alarmInterval));
 	}
 
 	/**

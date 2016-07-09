@@ -33,6 +33,7 @@
 
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_timer_duration">Change Frequency</string>
+    <string name="pref_indefinite_value_widget_timer_duration">never</string>
     <string name="pref_title_widget_view_as_list">View as list</string>
     <string name="pref_title_widget_show_cyclically">Display all images cyclically</string>
     <string name="pref_title_widget_background_style">Background</string>

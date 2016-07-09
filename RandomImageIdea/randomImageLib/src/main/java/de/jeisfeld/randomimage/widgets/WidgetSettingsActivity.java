@@ -162,7 +162,7 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	 */
 	private static String getHeaderSummary(final Class<? extends GenericWidget> widgetClass, final int appWidgetId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
-		String timerString = GenericImageWidgetConfigurationFragment.getAlarmIntervalString(appWidgetId);
+		String timerString = GenericImageWidgetConfigurationFragment.getAlarmIntervalHeaderString(appWidgetId);
 		if (widgetClass.equals(MiniWidget.class) || timerString == null) {
 			return listName;
 		}

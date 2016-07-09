@@ -89,7 +89,7 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 					preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 				}
 				else if (preference instanceof TimeSelectorPreference) {
-					preference.setSummary(TimeSelectorPreference.getSummaryFromValue(value));
+					preference.setSummary(((TimeSelectorPreference) preference).getSummaryFromValue(value));
 				}
 				else if (!(preference instanceof CheckBoxPreference)) {
 					// For all other preferences, set the summary to the value's

@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:rim="http://schemas.android.com/apk/res-auto"
+                  xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
         android:key="@string/key_widget_list_name"
@@ -9,6 +10,7 @@
         android:key="@string/key_pref_edit_list"
         android:title="@string/menu_edit_list"/>
     <de.jeisfeld.randomimage.view.TimeSelectorPreference
+        rim:indefiniteValue="@string/pref_indefinite_value_widget_timer_duration"
         android:key="@string/key_widget_timer_duration"
         android:title="@string/pref_title_widget_timer_duration"/>
     <CheckBoxPreference

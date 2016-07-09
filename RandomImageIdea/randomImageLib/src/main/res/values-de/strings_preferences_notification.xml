@@ -11,10 +11,12 @@
     <string name="pref_group_title_other">Andere Einstellungen</string>
     <string name="pref_title_notification_list_name">Listenname</string>
     <string name="pref_title_notification_timer_duration">Häufigkeit der Benachrichtigung</string>
+    <string name="pref_indefinite_value_notification_timer_duration">nie</string>
     <string name="pref_title_notification_timer_variance">Variabilität der Benachrichtigung</string>
     <string name="pref_title_notification_daily_start_time">Startzeit für Benachrichtigungen</string>
     <string name="pref_title_notification_daily_end_time">Endzeit für Benachrichtigungen</string>
     <string name="pref_title_notification_duration">Anzeigedauer</string>
+    <string name="pref_indefinite_value_notification_duration">unbegrenzt</string>
     <string name="pref_title_notification_duration_variance">Variabilität der Anzeigedauer</string>
     <string name="pref_title_notification_style">Benachrichtigungs-Stil</string>
     <string name="pref_title_notification_led_color">LED-Farbe</string>
