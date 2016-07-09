@@ -140,7 +140,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId,
-					Long.parseLong(getActivity().getString(R.string.pref_default_widget_timer_duration)));
+					PreferenceUtil.getSharedPreferenceLongString(R.string.key_widget_timer_duration, R.string.pref_default_widget_timer_duration));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
@@ -178,24 +178,24 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	private void setNonIndexedValues() {
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_list_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_timer_duration,
-				Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_timer_duration,
+				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_view_as_list,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_view_as_list, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_show_cyclically,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_show_cyclically, mAppWidgetId, false));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_background_style,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_style,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_button_color,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_background_style,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_background_style, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_button_style,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_style, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_button_color,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_background,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_background,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 	}
 
 	/**

@@ -119,10 +119,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_scale_type,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1)));
-		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_detail_background,
-				Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1)));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_background,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 	}
 
 	/**

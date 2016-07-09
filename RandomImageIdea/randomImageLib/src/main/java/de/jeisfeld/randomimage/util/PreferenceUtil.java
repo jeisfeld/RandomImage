@@ -198,6 +198,43 @@ public final class PreferenceUtil {
 	}
 
 	/**
+	 * Retrieve a long from a shared preference string.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param defaultId    the String key of the default value. If not existing, value -1 is returned.
+	 * @return the corresponding preference value.
+	 */
+	public static long getSharedPreferenceLongString(final int preferenceId, @Nullable final Integer defaultId) {
+		String resultString;
+
+		if (defaultId == null) {
+			resultString = getSharedPreferenceString(preferenceId);
+		}
+		else {
+			resultString = getSharedPreferenceString(preferenceId, defaultId);
+		}
+		if (resultString == null || resultString.length() == 0) {
+			return -1;
+		}
+		try {
+			return Long.parseLong(resultString);
+		}
+		catch (NumberFormatException e) {
+			return -1;
+		}
+	}
+
+	/**
+	 * Set a string shared preference from a long.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param i            the target value of the preference.
+	 */
+	public static void setSharedPreferenceLongString(final int preferenceId, final long i) {
+		setSharedPreferenceString(preferenceId, Long.toString(i));
+	}
+
+	/**
 	 * Retrieve a String List shared preference.
 	 *
 	 * @param preferenceId the id of the shared preference.
