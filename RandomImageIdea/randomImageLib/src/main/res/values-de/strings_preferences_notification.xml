@@ -26,26 +26,6 @@
     <string name="pref_title_cancel_notification">Benachrichtigung entfernen</string>
 
     <!-- String arrays -->
-    <string-array name="notification_timer_duration_names">
-        <item>minütlich</item>
-        <item>alle zwei Minuten</item>
-        <item>alle fünf Minuten</item>
-        <item>viertelstündlich</item>
-        <item>halbstündlich</item>
-        <item>stündlich</item>
-        <item>alle zwei Stunden</item>
-        <item>viermal täglich</item>
-        <item>zweimal täglich</item>
-        <item>täglich</item>
-        <item>alle zwei Tage</item>
-        <item>zweimal wöchentlich</item>
-        <item>wöchentlich</item>
-        <item>alle zwei Wochen</item>
-        <item>monatlich</item>
-        <item>vierteljährlich</item>
-        <item>halbjährlich</item>
-        <item>nie</item>
-    </string-array>
     <string-array name="notification_timer_variance_names">
         <item>geringe Variation</item>
         <item>große Variation</item>
@@ -67,15 +47,6 @@
         <item>0:00</item>
         <item>1:00</item>
         <item>2:00</item>
-    </string-array>
-    <string-array name="notification_duration_names">
-        <item>Unbefristet</item>
-        <item>Fünfzehn Sekunden</item>
-        <item>Eine Minute</item>
-        <item>Fünf Minuten</item>
-        <item>Eine Viertelstunde</item>
-        <item>Eine Stunde</item>
-        <item>Ein Tag</item>
     </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>

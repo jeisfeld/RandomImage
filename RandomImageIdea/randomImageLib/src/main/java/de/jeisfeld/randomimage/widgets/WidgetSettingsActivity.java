@@ -122,7 +122,7 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 
 		Header header = new Header();
 		header.title = title;
-		header.summary = getHeaderSummary(appWidgetId);
+		header.summary = getHeaderSummary(widgetClass, appWidgetId);
 		header.fragment = fragmentString;
 		header.id = appWidgetId;
 
@@ -156,13 +156,14 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	/**
 	 * Get the summary of the header entry for a widget.
 	 *
+	 * @param widgetClass The widget class.
 	 * @param appWidgetId The widget id.
 	 * @return The header summary
 	 */
-	private static String getHeaderSummary(final int appWidgetId) {
+	private static String getHeaderSummary(final Class<? extends GenericWidget> widgetClass, final int appWidgetId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
 		String timerString = GenericImageWidgetConfigurationFragment.getAlarmIntervalString(appWidgetId);
-		if (timerString == null) {
+		if (widgetClass.equals(MiniWidget.class) || timerString == null) {
 			return listName;
 		}
 		else {

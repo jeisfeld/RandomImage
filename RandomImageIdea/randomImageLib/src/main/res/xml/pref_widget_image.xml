@@ -8,12 +8,8 @@
     <Preference
         android:key="@string/key_pref_edit_list"
         android:title="@string/menu_edit_list"/>
-    <ListPreference
-        android:entries="@array/timer_duration_names"
-        android:entryValues="@array/timer_duration_values"
+    <de.jeisfeld.randomimage.view.TimeSelectorPreference
         android:key="@string/key_widget_timer_duration"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_timer_duration"/>
     <CheckBoxPreference
         android:key="@string/key_widget_view_as_list"

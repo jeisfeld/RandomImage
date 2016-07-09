@@ -9,7 +9,6 @@
     <string name="key_dummy_pref_group_appearance" translatable="false">dummy_dummy_pref_group_appearance</string>
 
     <!-- Indexed keys -->
-
     <string name="key_notification_list_name" translatable="false">notification_list_name</string>
     <string name="key_notification_timer_duration" translatable="false">notification_timer_duration</string>
     <string name="key_notification_timer_variance" translatable="false">notification_timer_variance</string>
@@ -65,46 +64,6 @@
     <string name="pref_title_cancel_notification">Remove Notification</string>
 
     <!-- String arrays -->
-    <string-array name="notification_timer_duration_names">
-        <item>every minute</item>
-        <item>every two minutes</item>
-        <item>every five minutes</item>
-        <item>every fifteen minutes</item>
-        <item>twice per hour</item>
-        <item>hourly</item>
-        <item>every two hours</item>
-        <item>four times a day</item>
-        <item>twice a day</item>
-        <item>daily</item>
-        <item>every two days</item>
-        <item>twice a week</item>
-        <item>weekly</item>
-        <item>every two weeks</item>
-        <item>monthly</item>
-        <item>every three months</item>
-        <item>twice a year</item>
-        <item>never</item>
-    </string-array>
-    <string-array name="notification_timer_duration_values" translatable="false">
-        <item>60</item>
-        <item>120</item>
-        <item>300</item>
-        <item>900</item>
-        <item>1800</item>
-        <item>3600</item>
-        <item>7200</item>
-        <item>21600</item>
-        <item>43200</item>
-        <item>86400</item>
-        <item>172800</item>
-        <item>302400</item>
-        <item>604800</item>
-        <item>1209600</item>
-        <item>2592000</item>
-        <item>7776000</item>
-        <item>15552000</item>
-        <item>0</item>
-    </string-array>
     <string-array name="notification_timer_variance_names">
         <item>little variation</item>
         <item>big variation</item>
@@ -148,24 +107,6 @@
         <item>24</item>
         <item>25</item>
         <item>26</item>
-    </string-array>
-    <string-array name="notification_duration_names">
-        <item>Unlimited</item>
-        <item>Fifteen seconds</item>
-        <item>One minute</item>
-        <item>Five minutes</item>
-        <item>Fifteen minutes</item>
-        <item>One hour</item>
-        <item>One day</item>
-    </string-array>
-    <string-array name="notification_duration_values" translatable="false">
-        <item>0</item>
-        <item>15</item>
-        <item>60</item>
-        <item>300</item>
-        <item>900</item>
-        <item>3600</item>
-        <item>86400</item>
     </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>

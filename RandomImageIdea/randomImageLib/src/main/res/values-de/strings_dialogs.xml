@@ -114,4 +114,16 @@
     <string name="partial_folder_multiple">%1$d Verzeichnisse</string>
     <string name="partial_quoted_string">„%1$s“</string>
 
+    <!-- Strings used in TimeSelectorPreference -->
+    <string-array name="timer_unit_names">
+        <item>Sekunde(n)</item>
+        <item>Minute(n)</item>
+        <item>Stunde(n)</item>
+        <item>Tag(e)</item>
+        <item>Woche(n)</item>
+        <item>Monat(e)</item>
+        <item>Jahr(e)</item>
+        <item>unbegrenzt</item>
+    </string-array>
+
 </resources>

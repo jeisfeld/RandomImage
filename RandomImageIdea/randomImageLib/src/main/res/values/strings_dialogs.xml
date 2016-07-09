@@ -122,4 +122,27 @@
     <string name="key_hint_display_image" translatable="false">hint_display_image</string>
     <string name="key_hint_main_configuration" translatable="false">hint_main_configuration</string>
 
+
+    <!-- Strings used in TimeSelectorDialog -->
+    <string-array name="timer_unit_names">
+        <item>second(s)</item>
+        <item>minute(s)</item>
+        <item>hour(s)</item>
+        <item>day(s)</item>
+        <item>week(s)</item>
+        <item>month(s)</item>
+        <item>year(s)</item>
+        <item>infinite</item>
+    </string-array>
+    <string-array name="timer_unit_values" translatable="false">
+        <item>1</item>
+        <item>60</item>
+        <item>3600</item>
+        <item>86400</item>
+        <item>604800</item>
+        <item>2629746</item>
+        <item>31556952</item>
+        <item>0</item>
+    </string-array>
+
 </resources>

@@ -6,6 +6,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
@@ -80,6 +81,9 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					int index = listPreference.findIndexOfValue(value);
 
 					preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+				}
+				else if (preference instanceof TimeSelectorPreference) {
+					preference.setSummary(TimeSelectorPreference.getSummaryFromValue(value));
 				}
 				else if (!(preference instanceof CheckBoxPreference)) {
 					// For all other preferences, set the summary to the value's

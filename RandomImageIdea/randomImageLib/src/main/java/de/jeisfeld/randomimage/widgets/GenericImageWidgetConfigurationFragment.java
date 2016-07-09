@@ -14,11 +14,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericImageWidget.ButtonStyle;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
@@ -257,17 +257,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	 */
 	public static String getAlarmIntervalString(final int appWidgetId) {
 		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, -1);
-		if (alarmInterval <= 0) {
-			return null;
-		}
-		String[] timerDurations = Application.getAppContext().getResources().getStringArray(R.array.timer_duration_values);
-		String[] timerDurationNames = Application.getAppContext().getResources().getStringArray(R.array.timer_duration_names);
-		for (int i = 0; i < timerDurations.length; i++) {
-			if (Long.parseLong(timerDurations[i]) == alarmInterval) {
-				return timerDurationNames[i];
-			}
-		}
-		return null;
+		return TimeSelectorPreference.getSummaryFromValue(Long.toString(alarmInterval));
 	}
 
 	/**

@@ -15,7 +15,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 
-import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -23,6 +22,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
@@ -376,17 +376,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	 */
 	public static String getNotificationFrequencyString(final int notificationId) {
 		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, 0);
-		if (frequency == 0) {
-			return null;
-		}
-		String[] frequencyValues = Application.getAppContext().getResources().getStringArray(R.array.notification_timer_duration_values);
-		String[] frequencyNames = Application.getAppContext().getResources().getStringArray(R.array.notification_timer_duration_names);
-		for (int i = 0; i < frequencyValues.length; i++) {
-			if (Integer.parseInt(frequencyValues[i]) == frequency) {
-				return frequencyNames[i];
-			}
-		}
-		return null;
+		return TimeSelectorPreference.getSummaryFromValue(Long.toString(frequency));
 	}
 
 	/**
@@ -489,16 +479,17 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		private void setSummary(final Preference preference, final String value) {
 			// set summary
 			if (preference.getClass().equals(ListPreference.class)) {
-				// For list preferences (except customized ones), look up the correct display value in
-				// the preference's 'entries' list.
+				// For list preferences (except customized ones), look up the correct display value in the preference's 'entries' list.
 				ListPreference listPreference = (ListPreference) preference;
 				int index = listPreference.findIndexOfValue(value);
 
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 			}
+			else if (preference instanceof TimeSelectorPreference) {
+				preference.setSummary(TimeSelectorPreference.getSummaryFromValue(value));
+			}
 			else if (!(preference instanceof CheckBoxPreference)) {
-				// For all other preferences, set the summary to the value's
-				// simple string representation.
+				// For all other preferences, set the summary to the value's simple string representation.
 				preference.setSummary(value);
 			}
 		}
