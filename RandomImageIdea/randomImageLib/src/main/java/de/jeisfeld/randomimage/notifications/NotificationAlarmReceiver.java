@@ -49,6 +49,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * The number of seconds per day.
 	 */
 	private static final int SECONDS_PER_DAY = (int) TimeUnit.DAYS.toSeconds(1);
+	/**
+	 * The threshold above which "number of days" are counted rather than "number of seconds".
+	 */
+	private static final int DAY_THRESHOLD = (int) TimeUnit.HOURS.toSeconds(6);
 
 	/**
 	 * Timer variance constant for no variance.
@@ -101,7 +105,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, notificationId, -1);
 
 		double expectedDaysUntilAlarm = (double) frequency / SECONDS_PER_DAY;
-		if (frequency < 21600) { // MAGIC_NUMBER
+		if (frequency < DAY_THRESHOLD) {
 			// refer to hours rather than days if we are below six hours
 			expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
 		}
