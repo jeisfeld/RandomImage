@@ -28,11 +28,10 @@ public final class MigrationUtil {
 	 * Check if there has been a version upgrade. If so, do required migration steps.
 	 */
 	public static void migrateAppVersion() {
-		int lastVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_last_app_version, 18); // MAGIC_NUMBER
 		int currentVersion = Application.getVersion();
-		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, currentVersion);
+		int lastVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_last_app_version, currentVersion);
 
-		if (currentVersion != lastVersion && currentVersion != initialVersion) {
+		if (currentVersion != lastVersion) {
 			doMigration(lastVersion, currentVersion);
 		}
 
