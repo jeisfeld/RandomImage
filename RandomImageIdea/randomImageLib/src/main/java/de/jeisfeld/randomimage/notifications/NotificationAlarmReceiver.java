@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import android.app.AlarmManager;
+import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -89,8 +90,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * Sets an alarm that runs at the given interval in order to trigger a notification. When the alarm fires, the app broadcasts an
 	 * Intent to this NotificationAlarmReceiver. The alarm policies are determined by the notification properties.
 	 *
-	 * @param context          The context in which the alarm is set.
-	 * @param notificationId   the notification id.
+	 * @param context The context in which the alarm is set.
+	 * @param notificationId the notification id.
 	 * @param useLastAlarmTime flag indicating if the last existing alarm time should be re-used.
 	 */
 	public static final void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
@@ -122,20 +123,21 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
 				if (oldAlarmTime > System.currentTimeMillis()) {
 					setAlarm(context, oldAlarmTime, alarmIntent, frequency < EXACT_THRESHOLD);
+					return;
 				}
 				else if (duration <= 0 || oldAlarmExpirationTime > System.currentTimeMillis()) {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
 					long newAlarmTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ALARM_WAIT_SECONDS);
 
-					// For alarms bigger than hourly, add some random minutes.
-					if (frequency > -HOURS_PER_DAY) {
+					// For alarms bigger than daily, add some random minutes.
+					if (frequency >= SECONDS_PER_DAY) {
 						newAlarmTime += random.nextDouble() * TimeUnit.MINUTES.toMillis(10); // MAGIC_NUMBER
 					}
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
 					setAlarm(context, newAlarmTime, alarmIntent, frequency < EXACT_THRESHOLD);
+					return;
 				}
-				return;
 			}
 			// in case of non-existing old alarm time or if old notification is already expired,
 			// continue to generate a new alarm time based on notification configuration.
@@ -207,16 +209,16 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Set an alarm for a notification.
 	 *
-	 * @param context     The context
-	 * @param alarmTime   The alarm time
+	 * @param context The context
+	 * @param alarmTime The alarm time
 	 * @param alarmIntent The alarm intent
-	 * @param exact       flag indicating if the alarm time should be exact.
+	 * @param exact flag indicating if the alarm time should be exact.
 	 */
 	private static void setAlarm(final Context context, final long alarmTime, final PendingIntent alarmIntent, final boolean exact) {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if (VERSION.SDK_INT >= VERSION_CODES.M) {
 			if (exact) {
-				alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+				alarmMgr.setAlarmClock(new AlarmClockInfo(alarmTime, alarmIntent), alarmIntent);
 			}
 			else {
 				alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
@@ -236,7 +238,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * Sets an alarm that runs at the given interval in order to cancel a notification. When the alarm fires, the app broadcasts an
 	 * Intent to this NotificationAlarmReceiver. The alarm policies are determined by the notification properties.
 	 *
-	 * @param context        The context in which the alarm is set.
+	 * @param context The context in which the alarm is set.
 	 * @param notificationId the notification id.
 	 */
 	public static final void setCancellationAlarm(final Context context, final int notificationId) {
@@ -258,7 +260,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 * Get a randomized timer duration.
 	 *
 	 * @param baseDuration The configured timer duration.
-	 * @param variance     The configured timer variance.
+	 * @param variance The configured timer variance.
 	 * @return The randomized timer duration.
 	 */
 	private static double getRandomizedDuration(final double baseDuration, final int variance) {
@@ -266,7 +268,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		switch (variance) {
 		case TIMER_VARIANCE_SMALL:
 			// equal distribution at some distance from now
-			return (0.25 + 1.5 * random.nextDouble()) * baseDuration; // MAGIC_NUMBER
+			return (0.5 + random.nextDouble()) * baseDuration; // MAGIC_NUMBER
 		case TIMER_VARIANCE_BIG:
 			// exponential distribution
 			return -baseDuration * Math.log(random.nextDouble());
@@ -276,12 +278,11 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		}
 	}
 
-
 	/**
 	 * Cancels the alarms for a notification.
 	 *
-	 * @param context             The context in which the alarm is set.
-	 * @param notificationId      the notification id.
+	 * @param context The context in which the alarm is set.
+	 * @param notificationId the notification id.
 	 * @param isCancellationAlarm flag indicating if the regular alarm or the cancellation alarm shoud be cancelled.
 	 */
 	public static final void cancelAlarm(final Context context, final int notificationId, final boolean isCancellationAlarm) {
@@ -306,7 +307,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Create a PendingIntent which can be used for creating or cancelling an alarm for a notification.
 	 *
-	 * @param context        The context in which the alarm is set.
+	 * @param context The context in which the alarm is set.
 	 * @param notificationId the notification id.
 	 * @param isCancellation flag indicating if the alarm should cancel the notification.
 	 * @return The PendingIntent.
