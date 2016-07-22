@@ -268,7 +268,6 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		updateHeader();
 	}
 
-
 	/**
 	 * Set the non-indexed preferences to the same values as the indexed ones, so that the views behave well.
 	 */
@@ -445,6 +444,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_duration))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_duration, mNotificationId, Long.parseLong(stringValue));
 			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_duration_variance))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, mNotificationId,
+						Integer.parseInt(stringValue));
+			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_style))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, Integer.parseInt(stringValue));
 				updatePropertyEnablement();
@@ -484,7 +487,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		 * Set the summary of the preference.
 		 *
 		 * @param preference The preference.
-		 * @param value      The value of the preference.
+		 * @param value The value of the preference.
 		 */
 		private void setSummary(final Preference preference, final String value) {
 			// set summary
