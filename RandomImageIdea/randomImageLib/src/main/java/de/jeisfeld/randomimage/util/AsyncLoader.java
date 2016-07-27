@@ -125,7 +125,7 @@ public final class AsyncLoader {
 
 		final Thread localLoaderThread = mLoaderThread;
 		if (isReady()) {
-			afterLoading.run();
+			safeAfterLoading.run();
 			return;
 		}
 
