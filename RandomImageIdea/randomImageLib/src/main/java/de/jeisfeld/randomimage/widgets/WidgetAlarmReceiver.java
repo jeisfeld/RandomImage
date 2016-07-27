@@ -2,25 +2,29 @@ package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.SdMountReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
+import de.jeisfeld.randomimage.util.AlarmReceiver;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
+import de.jeisfeld.randomimagelib.R;
 
 /**
  * Receiver for the alarm triggering the update of the image widget.
  */
-public class WidgetAlarmReceiver extends BroadcastReceiver {
+public class WidgetAlarmReceiver extends AlarmReceiver {
 	/**
 	 * The timer start hour.
 	 */
@@ -39,12 +43,17 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 			return;
 		}
 
-		if (ImageWidget.hasWidgetOfId(appWidgetId)) {
-			ImageWidget.updateInstances(UpdateType.NEW_IMAGE_AUTOMATIC, appWidgetId);
+		boolean isCancellation = intent.getBooleanExtra(STRING_IS_CANCELLATION, false);
+		if (isCancellation) {
+			DisplayRandomImageActivity.finishActivityForWidget(context, appWidgetId);
 		}
-
-		if (StackedImageWidget.hasWidgetOfId(appWidgetId)) {
-			StackedImageWidget.updateInstances(UpdateType.NEW_IMAGE_AUTOMATIC, appWidgetId);
+		else {
+			if (ImageWidget.hasWidgetOfId(appWidgetId)) {
+				ImageWidget.updateInstances(UpdateType.NEW_IMAGE_AUTOMATIC, appWidgetId);
+			}
+			if (StackedImageWidget.hasWidgetOfId(appWidgetId)) {
+				StackedImageWidget.updateInstances(UpdateType.NEW_IMAGE_AUTOMATIC, appWidgetId);
+			}
 		}
 	}
 
@@ -61,7 +70,7 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 			return;
 		}
 
-		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId);
+		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId, false);
 
 		// Set the alarm
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -107,24 +116,43 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 *
 	 * @param context     The context in which the alarm is set.
 	 * @param appWidgetId the widget id.
+	 * @param isCancellationAlarm flag indicating if the regular alarm or the cancellation alarm should be cancelled.
 	 */
-	public static final void cancelAlarm(final Context context, final int appWidgetId) {
-		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId);
-
+	public static final void cancelAlarm(final Context context, final int appWidgetId, final boolean isCancellationAlarm) {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alarmMgr.cancel(createAlarmIntent(context, appWidgetId, isCancellationAlarm));
 
-		alarmMgr.cancel(alarmIntent);
+		if (!isCancellationAlarm) {
+			ArrayList<Integer> allWidgetIds = GenericWidget.getAllWidgetIds();
+			if ((allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId)
+					&& NotificationSettingsActivity.getNotificationIds().size() == 0) {
+				ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
+				PackageManager pm = context.getPackageManager();
 
-		ArrayList<Integer> allWidgetIds = GenericWidget.getAllWidgetIds();
-		if ((allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId)
-				&& NotificationSettingsActivity.getNotificationIds().size() == 0) {
-			ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
-			PackageManager pm = context.getPackageManager();
-
-			pm.setComponentEnabledSetting(receiver,
-					PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-					PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(receiver,
+						PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+						PackageManager.DONT_KILL_APP);
+			}
 		}
+	}
+
+	/**
+	 * Sets an alarm that runs at the given interval in order to cancel the triggered widget. When the alarm fires, the app broadcasts an
+	 * Intent to this WidgetAlarmReceiver.
+	 *
+	 * @param context     The context in which the alarm is set.
+	 * @param appWidgetId the widget id.
+	 */
+	public static final void setCancellationAlarm(final Context context, final int appWidgetId) {
+		long timeout = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, appWidgetId, 0);
+		if (timeout == 0) {
+			return;
+		}
+
+		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId, true);
+		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(timeout);
+
+		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(timeout));
 	}
 
 	/**
@@ -132,12 +160,16 @@ public class WidgetAlarmReceiver extends BroadcastReceiver {
 	 *
 	 * @param context     The context in which the alarm is set.
 	 * @param appWidgetId the widget id.
+	 * @param isCancellation flag indicating if the alarm should cancel the widget activity.
 	 * @return The PendingIntent.
 	 */
-	private static PendingIntent createAlarmIntent(final Context context, final int appWidgetId) {
+	private static PendingIntent createAlarmIntent(final Context context, final int appWidgetId, final boolean isCancellation) {
 		Intent intent = new Intent("de.jeisfeld.randomimage.WIDGET_ALARM_RECEIVER");
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-		return PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		if (isCancellation) {
+			intent.putExtra(STRING_IS_CANCELLATION, true);
+		}
+		int uniqueId = isCancellation ? -appWidgetId : appWidgetId;
+		return PendingIntent.getBroadcast(context, uniqueId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	}
-
 }

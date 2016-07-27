@@ -59,7 +59,7 @@ public class MiniWidget extends GenericWidget {
 	}
 
 	@Override
-	public void onDeleted(final Context context, final int[] appWidgetIds) {
+	public final void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 		for (int appWidgetId : appWidgetIds) {
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timeout, appWidgetId);

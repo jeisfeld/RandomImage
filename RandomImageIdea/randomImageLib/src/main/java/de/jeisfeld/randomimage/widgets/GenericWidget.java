@@ -110,12 +110,12 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	public void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 		for (int appWidgetId : appWidgetIds) {
-			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId);
+			WidgetAlarmReceiver.cancelAlarm(context, appWidgetId, false);
 
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_display_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timer_duration, appWidgetId);
-			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_last_click_time, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_last_usage_time, appWidgetId);
 		}
 	}
 
@@ -148,7 +148,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			WidgetAlarmReceiver.setAlarm(Application.getAppContext(), appWidgetId, interval * MILLIS_PER_SECOND);
 		}
 		else {
-			WidgetAlarmReceiver.cancelAlarm(Application.getAppContext(), appWidgetId);
+			WidgetAlarmReceiver.cancelAlarm(Application.getAppContext(), appWidgetId, false);
 		}
 	}
 

@@ -384,7 +384,7 @@ public final class NotificationUtil {
 	public static void cancelRandomImageNotification(final Context context, final int notificationId) {
 		// Cancel both the normal notification and the triggered activity.
 		cancelNotification(context, Integer.toString(notificationId), NotificationType.RANDOM_IMAGE);
-		DisplayRandomImageActivity.finishActivity(context, notificationId);
+		DisplayRandomImageActivity.finishActivityForNotification(context, notificationId);
 		DisplayImagePopupActivity.finishActivity(context, notificationId);
 	}
 

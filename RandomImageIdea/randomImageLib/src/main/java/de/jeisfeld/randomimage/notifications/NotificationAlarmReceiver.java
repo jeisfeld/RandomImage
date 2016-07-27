@@ -6,18 +6,15 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import android.app.AlarmManager;
-import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.SdMountReceiver;
+import de.jeisfeld.randomimage.util.AlarmReceiver;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
@@ -25,27 +22,15 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Receiver for the alarm triggering the update of the image widget.
  */
-public class NotificationAlarmReceiver extends BroadcastReceiver {
+public class NotificationAlarmReceiver extends AlarmReceiver {
 	/**
 	 * The resource key for the notification id.
 	 */
 	private static final String STRING_NOTIFICATION_ID = "de.eisfeldj.randomimage.NOTIFICATION_ID";
 	/**
-	 * The resource key for the flag indicating a cancellation.
-	 */
-	private static final String STRING_IS_CANCELLATION = "de.eisfeldj.randomimage.IS_CANCELLATION";
-	/**
 	 * Time to wait with the alarm after boot.
 	 */
 	private static final int ALARM_WAIT_SECONDS = 60;
-	/**
-	 * Threshold (in seconds) below which alarms should be exact.
-	 */
-	private static final int EXACT_THRESHOLD = 900;
-	/**
-	 * Threshold (in seconds) below which alarms should use AlarmClock (which is the only real exact alarm in Android 6).
-	 */
-	private static final int CLOCK_THRESHOLD = 300;
 	/**
 	 * The number of hours per day.
 	 */
@@ -220,40 +205,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	}
 
 	/**
-	 * Set an alarm for a notification.
-	 *
-	 * @param context     The context
-	 * @param alarmTime   The alarm time
-	 * @param alarmIntent The alarm intent
-	 * @param alarmType   flag indicating if the alarm time should be exact.
-	 */
-	private static void setAlarm(final Context context, final long alarmTime, final PendingIntent alarmIntent, final AlarmType alarmType) {
-		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		if (VERSION.SDK_INT >= VERSION_CODES.M) {
-			switch (alarmType) {
-			case CLOCK:
-				alarmMgr.setAlarmClock(new AlarmClockInfo(alarmTime, null), alarmIntent);
-				break;
-			case EXACT:
-				alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
-				break;
-			case INEXACT:
-			default:
-				alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
-				break;
-			}
-		}
-		else {
-			if (alarmType != AlarmType.INEXACT && VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
-				alarmMgr.setExact(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
-			}
-			else {
-				alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
-			}
-		}
-	}
-
-	/**
 	 * Sets an alarm that runs at the given interval in order to cancel a notification. When the alarm fires, the app broadcasts an
 	 * Intent to this NotificationAlarmReceiver. The alarm policies are determined by the notification properties.
 	 *
@@ -306,7 +257,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 	 */
 	public static final void cancelAlarm(final Context context, final int notificationId, final boolean isCancellationAlarm) {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
 		alarmMgr.cancel(createAlarmIntent(context, notificationId, isCancellationAlarm, false));
 
 		if (!isCancellationAlarm) {
@@ -352,41 +302,5 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 		for (int notificationId : notificationIds) {
 			setAlarm(Application.getAppContext(), notificationId, true);
 		}
-	}
-
-	/**
-	 * Get the alarm type indicating the exactness of the alarm.
-	 *
-	 * @param frequency The alarm frequency in seconds.
-	 * @return The alarm type.
-	 */
-	private static AlarmType getAlarmType(final long frequency) {
-		if (frequency < CLOCK_THRESHOLD) {
-			return AlarmType.CLOCK;
-		}
-		else if (frequency < EXACT_THRESHOLD) {
-			return AlarmType.EXACT;
-		}
-		else {
-			return AlarmType.INEXACT;
-		}
-	}
-
-	/**
-	 * The type of alarm to be set.
-	 */
-	private enum AlarmType {
-		/**
-		 * Inexact alarm.
-		 */
-		INEXACT,
-		/**
-		 * Exact alarm.
-		 */
-		EXACT,
-		/**
-		 * Clock alarm.
-		 */
-		CLOCK
 	}
 }

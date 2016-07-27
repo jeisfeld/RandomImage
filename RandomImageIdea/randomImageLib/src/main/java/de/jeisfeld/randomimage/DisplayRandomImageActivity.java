@@ -34,6 +34,7 @@ import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
+import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -78,6 +79,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Map storing the activities triggered by notifications.
 	 */
 	private static final Map<Integer, DisplayRandomImageActivity> NOTIFICATION_MAP = new HashMap<>();
+
+	/**
+	 * Map storing the activities triggered by widgets.
+	 */
+	private static final Map<Integer, DisplayRandomImageActivity> WIDGET_MAP = new HashMap<>();
 
 	/**
 	 * The name of the used image list.
@@ -178,6 +184,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private boolean mUserIsLeaving = false;
 
 	/**
+	 * Flag indicating if the triggering widget was locked.
+	 */
+	private boolean mIsLocked = false;
+
+	/**
 	 * The imageList used by the activity.
 	 */
 	private RandomFileProvider mRandomFileProvider;
@@ -206,7 +217,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		if (notificationId != null) {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-			finishActivity(context, notificationId);
+			finishActivityForNotification(context, notificationId);
 		}
 		else if (allowDisplayMultiple) {
 			intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -231,11 +242,25 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * @param context        The context.
 	 * @param notificationId The notificationId that has triggered the activity.
 	 */
-	public static final void finishActivity(final Context context, final int notificationId) {
+	public static final void finishActivityForNotification(final Context context, final int notificationId) {
 		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
 			activity.finish();
 			NOTIFICATION_MAP.remove(notificationId);
+		}
+	}
+
+	/**
+	 * Finish the activity started from a certain widget.
+	 *
+	 * @param context     The context.
+	 * @param appWidgetId The appWidgetId that has triggered the activity.
+	 */
+	public static final void finishActivityForWidget(final Context context, final int appWidgetId) {
+		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
+		if (activity != null) {
+			activity.finish();
+			WIDGET_MAP.remove(appWidgetId);
 		}
 	}
 
@@ -302,22 +327,26 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 		}
 		else {
-			long lastClickTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_last_click_time, mAppWidgetId, -1);
+			long lastClickTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, -1);
 			long allowedCallFrequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0);
 			long nextAllowedTime = lastClickTime + TimeUnit.SECONDS.toMillis(allowedCallFrequency);
 			long currentTime = System.currentTimeMillis();
 
 			if (allowedCallFrequency > 0 && currentTime < nextAllowedTime) {
+				mIsLocked = true;
 				DialogUtil.displayToast(this, R.string.toast_widget_locked, DateUtil.format(new Date(nextAllowedTime)));
 				finish();
 				return;
 			}
+			WIDGET_MAP.put(mAppWidgetId, this);
 
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_click_time, mAppWidgetId, currentTime);
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
 			mScaleType = ScaleType.fromResourceScaleType(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 			mBackgroundColor = BackgroundColor.fromResourceValue(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
+
+			WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);
 		}
 
 		if (mScaleType == ScaleType.TURN_FIT || mScaleType == ScaleType.TURN_STRETCH) {
@@ -395,6 +424,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 			if (mUserIsLeaving || !mSavingInstanceState) {
 				NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
+			}
+		}
+		if (mAppWidgetId != null) {
+			WIDGET_MAP.remove(mAppWidgetId);
+			WidgetAlarmReceiver.cancelAlarm(this, mAppWidgetId, true);
+			if (!mIsLocked) {
+				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, System.currentTimeMillis());
 			}
 		}
 	}

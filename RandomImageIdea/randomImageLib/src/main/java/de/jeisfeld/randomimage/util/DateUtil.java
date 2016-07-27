@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import de.jeisfeld.randomimage.Application;
-
 /**
  * Utility class for handling dates.
  */
@@ -52,10 +50,7 @@ public final class DateUtil {
 	 * @return the formatted date
 	 */
 	public static String format(final Date date) {
-		DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(Application.getAppContext());
-		DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(Application.getAppContext());
 		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(date);
-		//return dateFormat.format(date) + " " + timeFormat.format(date);
 	}
 
 }
