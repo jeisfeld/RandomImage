@@ -200,7 +200,7 @@ public final class NotificationUtil {
 						}
 						catch (Exception e) {
 							// In case of error, trigger new alarm.
-							Log.e(Application.TAG, "Failed to publich notification for list " + listName, e);
+							Log.e(Application.TAG, "Failed to publish notification for list " + listName, e);
 							NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 						}
 					}

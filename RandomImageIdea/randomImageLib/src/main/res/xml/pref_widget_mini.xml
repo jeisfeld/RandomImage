@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:rim="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
         android:key="@string/key_widget_list_name"
@@ -25,5 +26,13 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_detail_background"/>
+    <de.jeisfeld.randomimage.view.TimeSelectorPreference
+        android:key="@string/key_widget_timeout"
+        android:title="@string/pref_title_widget_timeout"
+        rim:indefiniteValue="@string/pref_indefinite_value_widget_timeout"/>
+    <de.jeisfeld.randomimage.view.TimeSelectorPreference
+        android:key="@string/key_widget_allowed_call_frequency"
+        android:title="@string/pref_title_widget_allowed_call_frequency"
+        rim:indefiniteValue="@string/pref_indefinite_value_widget_allowed_call_frequency"/>
 
 </PreferenceScreen>

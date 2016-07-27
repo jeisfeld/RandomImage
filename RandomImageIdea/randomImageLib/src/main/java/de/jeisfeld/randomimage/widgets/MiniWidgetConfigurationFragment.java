@@ -19,6 +19,7 @@ import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
@@ -50,6 +51,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
+		bindPreferenceSummaryToValue(R.string.key_widget_timeout);
+		bindPreferenceSummaryToValue(R.string.key_widget_allowed_call_frequency);
 		addEditListListener();
 	}
 
@@ -108,6 +111,18 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_background,
 							R.string.pref_default_widget_detail_background));
 		}
+		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceLongString(R.string.key_widget_timeout,
+							R.string.pref_default_widget_timeout));
+		}
+		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceLongString(R.string.key_widget_allowed_call_frequency,
+							R.string.pref_default_widget_allowed_call_frequency));
+		}
 		return isUpdated;
 	}
 
@@ -123,6 +138,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_background,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_timeout,
+				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0));
+		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_allowed_call_frequency,
+				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0));
 	}
 
 	/**
@@ -157,6 +176,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		if (preferenceKey == R.string.key_widget_detail_scale_type
 				|| preferenceKey == R.string.key_widget_detail_background) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
+		}
+		else if (preferenceKey == R.string.key_widget_timeout
+				|| preferenceKey == R.string.key_widget_allowed_call_frequency) {
+			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
 		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mAppWidgetId);
@@ -193,6 +216,12 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId,
 						Integer.parseInt(stringValue));
 			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_timeout))) {
+				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, Long.parseLong(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_allowed_call_frequency))) {
+				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, Long.parseLong(stringValue));
+			}
 
 			return true;
 		}
@@ -212,6 +241,9 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				int index = listPreference.findIndexOfValue(value);
 
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+			}
+			else if (preference instanceof TimeSelectorPreference) {
+				preference.setSummary(((TimeSelectorPreference) preference).getSummaryFromValue(value));
 			}
 			else if (!(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's

@@ -20,6 +20,10 @@
     <string name="pref_title_widget_display_name">Name des Widgets</string>
     <string name="pref_title_widget_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_widget_detail_background">Hintergrund in Detailansicht</string>
+    <string name="pref_title_widget_timeout">Nutzungsdauer des Widgets</string>
+    <string name="pref_indefinite_value_widget_timeout">unbegrenzt</string>
+    <string name="pref_title_widget_allowed_call_frequency">Sperrdauer des Widgets</string>
+    <string name="pref_indefinite_value_widget_allowed_call_frequency">keine Sperre</string>
 
     <!-- String arrays -->
     <string-array name="background_style_names">
