@@ -55,8 +55,6 @@
     <string name="pref_default_widget_button_color" translatable="false">2</string>
     <string name="pref_default_widget_detail_scale_type" translatable="false">0</string>
     <string name="pref_default_widget_detail_background" translatable="false">3</string>
-    <string name="pref_default_widget_timeout" translatable="false">0</string>
-    <string name="pref_default_widget_allowed_call_frequency" translatable="false">0</string>
 
     <!-- String arrays -->
     <string-array name="background_style_names">

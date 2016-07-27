@@ -113,15 +113,11 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId,
-					PreferenceUtil.getSharedPreferenceLongString(R.string.key_widget_timeout,
-							R.string.pref_default_widget_timeout));
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0);
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId,
-					PreferenceUtil.getSharedPreferenceLongString(R.string.key_widget_allowed_call_frequency,
-							R.string.pref_default_widget_allowed_call_frequency));
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0);
 		}
 		return isUpdated;
 	}

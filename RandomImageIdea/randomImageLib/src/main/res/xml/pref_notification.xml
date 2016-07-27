@@ -14,6 +14,7 @@
     <PreferenceCategory android:title="@string/pref_group_title_timing">
         <de.jeisfeld.randomimage.view.TimeSelectorPreference
             rim:indefiniteValue="@string/pref_indefinite_value_notification_timer_duration"
+            rim:allowSeconds="true"
             android:key="@string/key_notification_timer_duration"
             android:title="@string/pref_title_notification_timer_duration"/>
         <ListPreference
@@ -39,6 +40,7 @@
             android:title="@string/pref_title_notification_daily_end_time"/>
         <de.jeisfeld.randomimage.view.TimeSelectorPreference
             rim:indefiniteValue="@string/pref_indefinite_value_notification_duration"
+            rim:allowSeconds="true"
             android:key="@string/key_notification_duration"
             android:title="@string/pref_title_notification_duration"/>
         <ListPreference

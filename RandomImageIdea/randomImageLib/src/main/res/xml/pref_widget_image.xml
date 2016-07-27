@@ -11,6 +11,7 @@
         android:title="@string/menu_edit_list"/>
     <de.jeisfeld.randomimage.view.TimeSelectorPreference
         rim:indefiniteValue="@string/pref_indefinite_value_widget_timer_duration"
+        rim:allowSeconds="false"
         android:key="@string/key_widget_timer_duration"
         android:title="@string/pref_title_widget_timer_duration"/>
     <CheckBoxPreference

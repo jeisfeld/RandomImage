@@ -428,7 +428,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 		if (mAppWidgetId != null) {
 			WIDGET_MAP.remove(mAppWidgetId);
-			WidgetAlarmReceiver.cancelAlarm(this, mAppWidgetId, true);
+			if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0) > 0) {
+				WidgetAlarmReceiver.cancelAlarm(this, mAppWidgetId, true);
+			}
 			if (!mIsLocked) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, System.currentTimeMillis());
 			}

@@ -29,10 +29,12 @@
     <de.jeisfeld.randomimage.view.TimeSelectorPreference
         android:key="@string/key_widget_timeout"
         android:title="@string/pref_title_widget_timeout"
+        rim:allowSeconds="true"
         rim:indefiniteValue="@string/pref_indefinite_value_widget_timeout"/>
     <de.jeisfeld.randomimage.view.TimeSelectorPreference
         android:key="@string/key_widget_allowed_call_frequency"
         android:title="@string/pref_title_widget_allowed_call_frequency"
+        rim:allowSeconds="true"
         rim:indefiniteValue="@string/pref_indefinite_value_widget_allowed_call_frequency"/>
 
 </PreferenceScreen>
