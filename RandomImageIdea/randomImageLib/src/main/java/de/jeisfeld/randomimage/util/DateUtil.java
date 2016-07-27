@@ -54,7 +54,8 @@ public final class DateUtil {
 	public static String format(final Date date) {
 		DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(Application.getAppContext());
 		DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(Application.getAppContext());
-		return dateFormat.format(date) + " " + timeFormat.format(date);
+		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(date);
+		//return dateFormat.format(date) + " " + timeFormat.format(date);
 	}
 
 }

@@ -26,6 +26,7 @@
     <string name="key_widget_requires_update" translatable="false">widget_requires_update</string>
     <string name="key_widget_timeout" translatable="false">widget_timeout</string>
     <string name="key_widget_allowed_call_frequency" translatable="false">widget_allowed_call_frequency</string>
+    <string name="key_widget_last_click_time" translatable="false">widget_last_click_time</string>
 
     <!-- Deprecated preferences from previous app versions -->
 

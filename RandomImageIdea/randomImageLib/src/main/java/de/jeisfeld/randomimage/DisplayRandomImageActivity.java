@@ -1,9 +1,11 @@
 package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -20,6 +22,7 @@ import android.view.MotionEvent;
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
+import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageAnalyzer;
 import de.jeisfeld.randomimage.util.ImageList;
@@ -299,6 +302,18 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 		}
 		else {
+			long lastClickTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_last_click_time, mAppWidgetId, -1);
+			long allowedCallFrequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0);
+			long nextAllowedTime = lastClickTime + TimeUnit.SECONDS.toMillis(allowedCallFrequency);
+			long currentTime = System.currentTimeMillis();
+
+			if (allowedCallFrequency > 0 && currentTime < nextAllowedTime) {
+				DialogUtil.displayToast(this, R.string.toast_widget_locked, DateUtil.format(new Date(nextAllowedTime)));
+				finish();
+				return;
+			}
+
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_click_time, mAppWidgetId, currentTime);
 			mScaleType = ScaleType.fromResourceScaleType(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 			mBackgroundColor = BackgroundColor.fromResourceValue(

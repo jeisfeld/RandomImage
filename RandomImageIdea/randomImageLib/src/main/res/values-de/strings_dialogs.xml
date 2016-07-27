@@ -51,6 +51,7 @@
     <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
     <string name="toast_error_select_folder">Unerwarteter Fehler beim Versuch, ein Verzeichnis auszuwählen.</string>
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
+    <string name="toast_widget_locked">Das Widget ist bis %1$s gesperrt.</string>
 
     <!-- Messages of hint dialogs -->
     <string name="dialog_hint_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>

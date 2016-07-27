@@ -115,6 +115,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_display_name, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timer_duration, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_last_click_time, appWidgetId);
 		}
 	}
 
