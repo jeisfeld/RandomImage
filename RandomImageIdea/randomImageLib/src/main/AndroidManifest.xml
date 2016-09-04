@@ -33,6 +33,7 @@
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -213,6 +214,26 @@
         <service
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false"/>
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="632.0dip"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="598.0dip"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:value="632.0dip"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:value="598.0dip"/>
 
     </application>
 
