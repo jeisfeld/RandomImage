@@ -411,6 +411,7 @@ public final class DialogUtil {
 				preventRecreation = savedInstanceState.getBoolean(PREVENT_RECREATION);
 			}
 			if (preventRecreation) {
+				mListener = null;
 				dismiss();
 			}
 
@@ -500,6 +501,7 @@ public final class DialogUtil {
 				preventRecreation = savedInstanceState.getBoolean(PREVENT_RECREATION);
 			}
 			if (preventRecreation) {
+				mListener = null;
 				dismiss();
 			}
 
@@ -511,14 +513,18 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
+							if(mListener != null) {
+								mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
+							}
 						}
 					}) //
 					.setPositiveButton(confirmButtonResource, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the negative button event back to the host activity
-							mListener.onDialogPositiveClick(ConfirmDialogFragment.this);
+							if(mListener != null) {
+								mListener.onDialogPositiveClick(ConfirmDialogFragment.this);
+							}
 						}
 					});
 			return builder.create();
@@ -592,6 +598,7 @@ public final class DialogUtil {
 				preventRecreation = savedInstanceState.getBoolean(PREVENT_RECREATION);
 			}
 			if (preventRecreation) {
+				mListener = null;
 				dismiss();
 			}
 
@@ -603,14 +610,18 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
+							if(mListener != null) {
+								mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
+							}
 						}
 					}) //
 					.setPositiveButton(confirmButtonResource, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the negative button event back to the host activity
-							mListener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
+							if(mListener != null) {
+								mListener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
+							}
 						}
 					});
 			return builder.create();
@@ -703,6 +714,7 @@ public final class DialogUtil {
 				preventRecreation = savedInstanceState.getBoolean(PREVENT_RECREATION);
 			}
 			if (preventRecreation) {
+				mListener = null;
 				dismiss();
 			}
 
@@ -713,7 +725,9 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
+							if(mListener != null) {
+								mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
+							}
 						}
 					});
 
