@@ -2,8 +2,6 @@ package de.jeisfeld.randomimage;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +13,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -78,12 +77,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Map storing the activities triggered by notifications.
 	 */
-	private static final Map<Integer, DisplayRandomImageActivity> NOTIFICATION_MAP = new HashMap<>();
+	private static final SparseArray<DisplayRandomImageActivity> NOTIFICATION_MAP = new SparseArray<>();
 
 	/**
 	 * Map storing the activities triggered by widgets.
 	 */
-	private static final Map<Integer, DisplayRandomImageActivity> WIDGET_MAP = new HashMap<>();
+	private static final SparseArray<DisplayRandomImageActivity> WIDGET_MAP = new SparseArray<>();
 
 	/**
 	 * The name of the used image list.
@@ -246,7 +245,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
 			activity.finish();
-			NOTIFICATION_MAP.remove(notificationId);
+			NOTIFICATION_MAP.delete(notificationId);
 		}
 	}
 
@@ -260,7 +259,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
 			activity.finish();
-			WIDGET_MAP.remove(appWidgetId);
+			WIDGET_MAP.delete(appWidgetId);
 		}
 	}
 
@@ -284,6 +283,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Use this as trigger to verify if notification alarms are still present.
+		NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -420,14 +422,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 	protected final void onDestroy() {
 		super.onDestroy();
 		if (mNotificationId != null) {
-			NOTIFICATION_MAP.remove(mNotificationId);
+			NOTIFICATION_MAP.delete(mNotificationId);
 			if (mUserIsLeaving || !mSavingInstanceState) {
 				NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
 			}
 		}
 		if (mAppWidgetId != null) {
-			WIDGET_MAP.remove(mAppWidgetId);
+			WIDGET_MAP.delete(mAppWidgetId);
 			if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0) > 0) {
 				WidgetAlarmReceiver.cancelAlarm(this, mAppWidgetId, true);
 			}
@@ -855,7 +857,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * A map from the resourceValue to the color.
 		 */
-		private static final Map<Integer, BackgroundColor> BACKGROUND_COLOR_MAP = new HashMap<>();
+		private static final SparseArray<BackgroundColor> BACKGROUND_COLOR_MAP = new SparseArray<>();
 
 		static {
 			for (BackgroundColor backgroundColor : BackgroundColor.values()) {

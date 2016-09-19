@@ -43,6 +43,10 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 * The threshold above which "number of days" are counted rather than "number of seconds".
 	 */
 	private static final int DAY_THRESHOLD = (int) TimeUnit.HOURS.toSeconds(6);
+	/**
+	 * Time (in milliseconds) after which timers are considered as outdated.
+	 */
+	private static final long OUTDATED_INTERVAL = TimeUnit.MINUTES.toMillis(10);
 
 	/**
 	 * Timer variance constant for no variance.
@@ -301,6 +305,25 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		List<Integer> notificationIds = NotificationSettingsActivity.getNotificationIds();
 		for (int notificationId : notificationIds) {
 			setAlarm(Application.getAppContext(), notificationId, true);
+		}
+	}
+
+	/**
+	 * Check if there are outdated notification alarms (indicating that there were issues leading to lost timers).
+	 * If so, then re-create notification alarms.
+	 */
+	public static void createNotificationAlarmsIfOutdated() {
+		List<Integer> notificationIds = NotificationSettingsActivity.getNotificationIds();
+		boolean isOutdated = false;
+		for (int notificationId : notificationIds) {
+			long oldAlarmTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, -1);
+			if (oldAlarmTime < System.currentTimeMillis() - OUTDATED_INTERVAL) {
+				isOutdated = true;
+				break;
+			}
+		}
+		if (isOutdated) {
+			createAllNotificationAlarms();
 		}
 	}
 }
