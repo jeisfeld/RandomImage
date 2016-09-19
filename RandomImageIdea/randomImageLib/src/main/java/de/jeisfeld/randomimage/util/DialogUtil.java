@@ -513,7 +513,7 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							if(mListener != null) {
+							if (mListener != null) {
 								mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
 							}
 						}
@@ -522,7 +522,7 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the negative button event back to the host activity
-							if(mListener != null) {
+							if (mListener != null) {
 								mListener.onDialogPositiveClick(ConfirmDialogFragment.this);
 							}
 						}
@@ -610,7 +610,7 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							if(mListener != null) {
+							if (mListener != null) {
 								mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
 							}
 						}
@@ -619,7 +619,7 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the negative button event back to the host activity
-							if(mListener != null) {
+							if (mListener != null) {
 								mListener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
 							}
 						}
@@ -725,7 +725,7 @@ public final class DialogUtil {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity
-							if(mListener != null) {
+							if (mListener != null) {
 								mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
 							}
 						}
