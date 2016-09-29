@@ -1,20 +1,15 @@
 package de.jeisfeld.randomimage.util;
 
-import java.util.Arrays;
-import java.util.Locale;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
-import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
 
 import de.jeisfeld.randomimage.Application;
-import de.jeisfeld.randomimagelib.R;
 
 /**
  * Utility class for getting system information.
@@ -115,45 +110,6 @@ public final class SystemUtil {
 	}
 
 	/**
-	 * Retrieve the unique id of the hardware device. Requires android.permission.READ_PHONE_STATE.
-	 *
-	 * @return The device id.
-	 */
-	public static String getDeviceId() {
-		TelephonyManager tm =
-				(TelephonyManager) Application.getAppContext().getSystemService(Context.TELEPHONY_SERVICE);
-		return tm.getDeviceId();
-	}
-
-	/**
-	 * Get ISO 3166-1 alpha-2 country code for this device (or null if not available).
-	 *
-	 * @return country code or null
-	 */
-	public static String getUserCountry() {
-		Context context = Application.getAppContext();
-		String locale = null;
-
-		final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		final String simCountry = tm.getSimCountryIso();
-		if (simCountry != null && simCountry.length() == 2) { // SIM country code is available
-			locale = simCountry.toUpperCase(Locale.getDefault());
-		}
-		else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) { // device is not 3G (would be unreliable)
-			String networkCountry = tm.getNetworkCountryIso();
-			if (networkCountry != null && networkCountry.length() == 2) { // network country code is available
-				locale = networkCountry.toLowerCase(Locale.getDefault());
-			}
-		}
-
-		if (locale == null || locale.length() != 2) {
-			locale = context.getResources().getConfiguration().locale.getCountry();
-		}
-
-		return locale;
-	}
-
-	/**
 	 * Get the large memory class of the device.
 	 *
 	 * @return the memory class - the maximal available memory for the app (in MB).
@@ -163,16 +119,5 @@ public final class SystemUtil {
 				(ActivityManager) Application.getAppContext().getSystemService(Context.ACTIVITY_SERVICE);
 
 		return manager.getLargeMemoryClass();
-	}
-
-	/**
-	 * Get information if this is one of JE's devices.
-	 *
-	 * @return true if one of JE's devices.
-	 */
-	public static boolean isJeDevice() {
-		String[] jeDevices = Application.getAppContext().getResources().getStringArray(R.array.private_je_devices);
-
-		return Arrays.asList(jeDevices).contains(getDeviceId());
 	}
 }
