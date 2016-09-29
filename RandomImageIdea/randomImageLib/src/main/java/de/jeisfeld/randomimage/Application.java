@@ -13,6 +13,9 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -31,6 +34,14 @@ public class Application extends android.app.Application {
 	 */
 	private static Context mContext;
 	/**
+	 * The tracker for Google Analytics.
+	 */
+	private Tracker mInstanceTracker;
+	/**
+	 * The tracker for Google Analytics (on instance level).
+	 */
+	private static Tracker mTracker;
+	/**
 	 * The default tag for logging.
 	 */
 	public static final String TAG = "Randomimage.JE";
@@ -41,6 +52,8 @@ public class Application extends android.app.Application {
 	public final void onCreate() {
 		super.onCreate();
 		Application.mContext = getApplicationContext();
+		Application.mTracker = getDefaultTracker();
+
 		MigrationUtil.migrateAppVersion();
 		setLanguage();
 		setExceptionHandler();
@@ -91,6 +104,15 @@ public class Application extends android.app.Application {
 	 */
 	public static Context getAppContext() {
 		return Application.mContext;
+	}
+
+	/**
+	 * Retrieve the Google Analytics tracker.
+	 *
+	 * @return The (statically stored) tracker
+	 */
+	public static Tracker getAppTracker() {
+		return Application.mTracker;
 	}
 
 	/**
@@ -190,4 +212,17 @@ public class Application extends android.app.Application {
 		triggeringActivity.startActivity(intent);
 	}
 
+	/**
+	 * Gets the default {@link Tracker} for this {@link Application}.
+	 *
+	 * @return tracker
+	 */
+	private synchronized Tracker getDefaultTracker() {
+		if (mInstanceTracker == null) {
+			GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+			// To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+			mInstanceTracker = analytics.newTracker(R.xml.global_tracker);
+		}
+		return mInstanceTracker;
+	}
 }

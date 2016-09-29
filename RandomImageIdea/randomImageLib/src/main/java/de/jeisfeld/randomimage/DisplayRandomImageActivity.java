@@ -31,6 +31,8 @@ import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
@@ -193,6 +195,23 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private RandomFileProvider mRandomFileProvider;
 
 	/**
+	 * Duration of usage of the screen.
+	 */
+	private long mTrackingDuration = 0;
+	/**
+	 * Timestamp for measuring the tracking duration.
+	 */
+	private long mTrackingTimestamp = 0;
+	/**
+	 * Number of images viewed.
+	 */
+	private long mTrackingImages = 0;
+	/**
+	 * Indicator if the activity was recreated after saving instance state.
+	 */
+	private boolean mRecreatedAfterSavingInstanceState = false;
+
+	/**
 	 * Static helper method to create an intent for this activity.
 	 *
 	 * @param context              The context in which this activity is started.
@@ -297,12 +316,18 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mPreviousCacheIndex = savedInstanceState.getInt("previousCacheIndex");
 			mCurrentCacheIndex = savedInstanceState.getInt("currentCacheIndex");
 			mNextCacheIndex = savedInstanceState.getInt("nextCacheIndex");
+			mTrackingTimestamp = savedInstanceState.getLong("trackingTimestamp");
+			mTrackingImages = savedInstanceState.getLong("trackingImages");
+			mRecreatedAfterSavingInstanceState = true;
 		}
 		if (mListName == null) {
 			mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		}
 		if (mCurrentFileName == null) {
 			mCurrentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+			if (mCurrentFileName != null) {
+				mTrackingImages++;
+			}
 		}
 
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
@@ -437,6 +462,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, System.currentTimeMillis());
 			}
 		}
+		if (mUserIsLeaving || !mSavingInstanceState) {
+			sendStatistics();
+		}
 	}
 
 	@Override
@@ -458,7 +486,31 @@ public class DisplayRandomImageActivity extends StartActivity {
 	protected final void onResume() {
 		super.onResume();
 		mUserIsLeaving = false;
+		if (!mRecreatedAfterSavingInstanceState) {
+			TrackingUtil.sendScreen(this);
+			if (mTrackingDuration > 0) {
+				sendStatistics();
+			}
+			mTrackingTimestamp = System.currentTimeMillis();
+			TrackingUtil.sendEvent(Category.VIEW, "View Images", "View Images");
+		}
 		mSavingInstanceState = false;
+		mRecreatedAfterSavingInstanceState = false;
+	}
+
+	@Override
+	protected final void onPause() {
+		super.onPause();
+		mTrackingDuration = System.currentTimeMillis() - mTrackingTimestamp;
+	}
+
+	/**
+	 * Send the tracking statistics.
+	 */
+	private void sendStatistics() {
+		TrackingUtil.sendTiming(Category.VIEW, "Viewing Duration", mTrackingDuration);
+		mTrackingImages = 0;
+		mTrackingDuration = 0;
 	}
 
 	/**
@@ -550,6 +602,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							}
 						}
 						setContentView(mCurrentImageView);
+						mTrackingImages++;
 
 						if (mDoPreload) {
 							mNextFileName = mRandomFileProvider.getRandomFileName();
@@ -625,9 +678,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 									mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
 								}
 								setContentView(mCurrentImageView);
+								TrackingUtil.sendEvent(Category.VIEW, "Fling", "Fling back");
 							}
 							else {
 								displayRandomImage();
+								TrackingUtil.sendEvent(Category.VIEW, "Fling", "Fling new");
 							}
 
 							if (mPreviousImageView != null) {
@@ -673,6 +728,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 			outState.putInt("previousCacheIndex", mPreviousCacheIndex);
 			outState.putInt("currentCacheIndex", mCurrentCacheIndex);
 			outState.putInt("nextCacheIndex", mNextCacheIndex);
+			outState.putLong("trackingImages", mTrackingImages);
+			outState.putLong("trackingTimestamp", mTrackingTimestamp);
 		}
 	}
 

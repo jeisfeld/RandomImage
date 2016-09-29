@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "855963941817",
+    "project_id": "firebase-randomimage"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855963941817:android:7cf605e39d38ff1b",
+        "android_client_info": {
+          "package_name": "de.jeisfeld.randomimage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB06_129yqUAokQgES4n1fuY79ImEjJuio"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-84935089-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
