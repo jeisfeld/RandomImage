@@ -29,6 +29,8 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -51,6 +53,10 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * The resource key for the flat indicating if it should be prevented to trigger the ConfigureImageListActivity.
 	 */
 	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
+	/**
+	 * The resource key for the a tracking String.
+	 */
+	public static final String STRING_EXTRA_TRACKING = "de.jeisfeld.randomimage.TRACKING";
 	/**
 	 * The resource key for the flag if the parent activity should be finished.
 	 */
@@ -88,13 +94,17 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * @param fileName          The name of the file whose details should be displayed.
 	 * @param listName          The name of the list from which this file is taken.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
+	 * @param trackingName A String indicating the starter of the activity.
 	 */
 	public static final void startActivity(final Activity activity, final String fileName, final String listName,
-										   final boolean preventDisplayAll) {
+										   final boolean preventDisplayAll, final String trackingName) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
+		}
+		if (trackingName != null) {
+			intent.putExtra(STRING_EXTRA_TRACKING, trackingName);
 		}
 		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, preventDisplayAll);
 		activity.startActivityForResult(intent, REQUEST_CODE);
@@ -111,6 +121,11 @@ public class DisplayImageDetailsActivity extends Activity {
 		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
+
+		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
+		if (trackingName != null) {
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Display Image Details", trackingName);
+		}
 
 		// Enable icon
 		final TextView title = (TextView) findViewById(android.R.id.title);
@@ -180,6 +195,12 @@ public class DisplayImageDetailsActivity extends Activity {
 		}
 	}
 
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
+	}
+
 	/**
 	 * Configure the buttons related to the image list.
 	 */
@@ -236,7 +257,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			btnEditList.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
+					ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName, "from Image Details");
 					returnResult(false, false);
 				}
 			});

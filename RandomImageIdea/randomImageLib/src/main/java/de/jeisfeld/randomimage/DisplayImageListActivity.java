@@ -9,6 +9,7 @@ import android.widget.GridView;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 import de.jeisfeld.randomimagelib.R;
@@ -60,6 +61,12 @@ public abstract class DisplayImageListActivity extends StartActivity {
 			mSelectedFolders = savedInstanceState.getStringArrayList("selectedFolders");
 			mSelectedLists = savedInstanceState.getStringArrayList("selectedLists");
 		}
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	/**

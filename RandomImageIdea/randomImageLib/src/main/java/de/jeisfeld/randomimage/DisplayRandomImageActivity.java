@@ -214,12 +214,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Static helper method to create an intent for this activity.
 	 *
-	 * @param context              The context in which this activity is started.
-	 * @param listName             the image list which should be taken.
-	 * @param fileName             the image file name which should be displayed first.
+	 * @param context The context in which this activity is started.
+	 * @param listName the image list which should be taken.
+	 * @param fileName the image file name which should be displayed first.
 	 * @param allowDisplayMultiple flag indicating if the activity can be opened on top of existing activities.
-	 * @param appWidgetId          the id of the widget triggering this activity.
-	 * @param notificationId       the id of the notification triggering this activity.
+	 * @param appWidgetId the id of the widget triggering this activity.
+	 * @param notificationId the id of the notification triggering this activity.
 	 * @return the intent.
 	 */
 	public static final Intent createIntent(final Context context, final String listName, final String fileName,
@@ -257,12 +257,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Finish the activity started from a certain notification.
 	 *
-	 * @param context        The context.
+	 * @param context The context.
 	 * @param notificationId The notificationId that has triggered the activity.
 	 */
 	public static final void finishActivityForNotification(final Context context, final int notificationId) {
 		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Notification");
 			activity.finish();
 			NOTIFICATION_MAP.delete(notificationId);
 		}
@@ -271,12 +272,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Finish the activity started from a certain widget.
 	 *
-	 * @param context     The context.
+	 * @param context The context.
 	 * @param appWidgetId The appWidgetId that has triggered the activity.
 	 */
 	public static final void finishActivityForWidget(final Context context, final int appWidgetId) {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Widget");
 			activity.finish();
 			WIDGET_MAP.delete(appWidgetId);
 		}
@@ -285,9 +287,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Static helper method to start the activity for the contents of an image folder.
 	 *
-	 * @param context    The context starting this activity.
+	 * @param context The context starting this activity.
 	 * @param folderName the name of the folder whose images should be displayed.
-	 * @param fileName   the name of the file that should be displayed first
+	 * @param fileName the name of the file that should be displayed first
 	 */
 	public static final void startActivityForFolder(final Context context, final String folderName,
 													final String fileName) {
@@ -440,7 +442,45 @@ public class DisplayRandomImageActivity extends StartActivity {
 			DialogUtil.displayInfo(this, null, R.string.key_hint_display_image, R.string.dialog_hint_display_image);
 		}
 
+		sendInitialTrackingEvent(savedInstanceState != null, folderName != null);
+
 		test();
+	}
+
+	/**
+	 * Send the initial event to Google analytics.
+	 *
+	 * @param hasSavedInstanceState parameter indicating if there was a saved instance state.
+	 * @param hasFolderName         parameter indicating if there was a folder name.
+	 */
+	private void sendInitialTrackingEvent(final boolean hasSavedInstanceState, final boolean hasFolderName) {
+		if (hasSavedInstanceState) {
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Orientation Change", "Display Images");
+		}
+		else {
+			String trackingLabel;
+			if (mNotificationId != null) {
+				trackingLabel = "Notification";
+			}
+			else if (mAppWidgetId != null) {
+				if (getIntent().getStringExtra(STRING_EXTRA_FILENAME) != null) {
+					trackingLabel = "Image Widget";
+				}
+				else {
+					trackingLabel = "Mini Widget";
+				}
+			}
+			else if (hasFolderName) {
+				trackingLabel = "Folder";
+			}
+			else if (getIntent().getStringExtra(STRING_EXTRA_FILENAME) != null) {
+				trackingLabel = "List Configuration";
+			}
+			else {
+				trackingLabel = "Launcher";
+			}
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, "View Images", trackingLabel);
+		}
 	}
 
 	@Override
@@ -485,14 +525,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
+		TrackingUtil.sendScreen(this);
 		mUserIsLeaving = false;
 		if (!mRecreatedAfterSavingInstanceState) {
-			TrackingUtil.sendScreen(this);
 			if (mTrackingDuration > 0) {
 				sendStatistics();
+				TrackingUtil.sendEvent(Category.EVENT_VIEW, "View Images", "Resuming");
 			}
 			mTrackingTimestamp = System.currentTimeMillis();
-			TrackingUtil.sendEvent(Category.VIEW, "View Images", "View Images");
 		}
 		mSavingInstanceState = false;
 		mRecreatedAfterSavingInstanceState = false;
@@ -508,7 +548,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Send the tracking statistics.
 	 */
 	private void sendStatistics() {
-		TrackingUtil.sendTiming(Category.VIEW, "Viewing Duration", mTrackingDuration);
+		TrackingUtil.sendTiming(Category.TIME_USAGE, "View Images", null, mTrackingDuration);
+		TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Viewed Images", null, mTrackingImages);
 		mTrackingImages = 0;
 		mTrackingDuration = 0;
 	}
@@ -516,7 +557,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Create a PinchImageView displaying a given file.
 	 *
-	 * @param fileName   The name of the file.
+	 * @param fileName The name of the file.
 	 * @param cacheIndex an index helping for caching the image for orientation change.
 	 * @return The PinchImageView.
 	 */
@@ -586,7 +627,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							if (mCurrentFileName == null) {
 								// Handle the case where the provider does not return any image.
 								if (mListName != null) {
-									ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName);
+									ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName, "empty/Display");
 								}
 								finish();
 								return;
@@ -640,7 +681,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 					}
 				}
 				else {
-					ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName);
+					ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName, "via Double Tap");
 				}
 				return true;
 			}
@@ -678,11 +719,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 									mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
 								}
 								setContentView(mCurrentImageView);
-								TrackingUtil.sendEvent(Category.VIEW, "Fling", "Fling back");
+								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 							}
 							else {
 								displayRandomImage();
-								TrackingUtil.sendEvent(Category.VIEW, "Fling", "Fling new");
+								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
 							}
 
 							if (mPreviousImageView != null) {
@@ -705,7 +746,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName, mPreventDisplayAll);
+				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName, mPreventDisplayAll,
+						"Display random image");
 			}
 
 		});
@@ -735,7 +777,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 	@Override
 	public final boolean onPrepareOptionsMenu(final Menu menu) {
-		DisplayImageDetailsActivity.startActivity(this, mCurrentFileName, mListName, mPreventDisplayAll);
+		DisplayImageDetailsActivity.startActivity(this, mCurrentFileName, mListName, mPreventDisplayAll, "Display Random Image 2");
 		return true;
 	}
 
@@ -761,7 +803,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Static helper method to extract the result flag.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data       The activity response data.
+	 * @param data The activity response data.
 	 * @return the flag if the parent activity should be refreshed.
 	 */
 	public static final boolean getResult(final int resultCode, final Intent data) {
@@ -811,7 +853,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * Constructor initializing with the folder name.
 		 *
-		 * @param folderName      The folder name.
+		 * @param folderName The folder name.
 		 * @param defaultFileName The file name returned if there is no image file in the folder.
 		 */
 		private FolderRandomFileProvider(final String folderName, final String defaultFileName) {

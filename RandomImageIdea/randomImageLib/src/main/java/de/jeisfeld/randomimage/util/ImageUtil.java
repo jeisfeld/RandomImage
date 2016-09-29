@@ -32,6 +32,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -94,7 +95,7 @@ public final class ImageUtil {
 	 * @param path The file path of the image
 	 * @return the rotation stored in the exif data, mapped into degrees.
 	 */
-	public static int getExifRotation(final String path) {
+	private static int getExifRotation(final String path) {
 		int rotation = 0;
 		try {
 			ExifInterface exif = new ExifInterface(path);
@@ -145,7 +146,7 @@ public final class ImageUtil {
 	 * @param growIfRequired Flag indicating if the image size should be increased if required.
 	 * @return the bitmap.
 	 */
-	public static Bitmap getImageBitmap(final String path, final int maxWidth, final int maxHeight, final boolean growIfRequired) {
+	private static Bitmap getImageBitmap(final String path, final int maxWidth, final int maxHeight, final boolean growIfRequired) {
 		Bitmap bitmap = null;
 		boolean foundThumbInMediaStore = false;
 		int rotation = getExifRotation(path);
@@ -209,7 +210,7 @@ public final class ImageUtil {
 	 * @param minHeight The minimum height of this bitmap. If smaller, it will be resized.
 	 * @return the bitmap.
 	 */
-	public static Bitmap getImageBitmapOfMinimumSize(final String path, final int minWidth, final int minHeight) {
+	private static Bitmap getImageBitmapOfMinimumSize(final String path, final int minWidth, final int minHeight) {
 		Bitmap bitmap = null;
 		int rotation = getExifRotation(path);
 
@@ -375,7 +376,7 @@ public final class ImageUtil {
 	 * @param angle  The rotation angle
 	 * @return the rotated bitmap.
 	 */
-	public static Bitmap rotateBitmap(final Bitmap source, final float angle) {
+	private static Bitmap rotateBitmap(final Bitmap source, final float angle) {
 		Matrix matrix = new Matrix();
 		matrix.postRotate(angle);
 		return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
@@ -490,11 +491,14 @@ public final class ImageUtil {
 			public void run() {
 				final ArrayList<String> imageFolders = new ArrayList<>();
 
+				long timestamp = System.currentTimeMillis();
 				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
 
 				for (String path : FileUtil.getExtSdCardPaths()) {
 					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
 				}
+				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Parse Image Folders", null, System.currentTimeMillis() - timestamp);
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Image folders", null, (long) imageFolders.size());
 
 				PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
 				if (listener != null) {

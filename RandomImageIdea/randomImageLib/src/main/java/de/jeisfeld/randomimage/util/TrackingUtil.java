@@ -10,7 +10,6 @@ import de.jeisfeld.randomimage.Application;
  * Utility class for sending Google Analytics Events.
  */
 public final class TrackingUtil {
-
 	/**
 	 * Hide default constructor.
 	 */
@@ -41,30 +40,55 @@ public final class TrackingUtil {
 	 * @param category The event category.
 	 * @param action   The action.
 	 * @param label    The label.
+	 * @param value    An associated value.
 	 */
-	public static void sendEvent(final Category category, final String action, final String label) {
+	public static void sendEvent(final Category category, final String action, final String label, final Long value) {
 		EventBuilder eventBuilder = new EventBuilder();
 		eventBuilder.setCategory(category.toString());
 		if (action != null) {
 			eventBuilder.setAction(action);
 		}
-		if (label != null) {
-			eventBuilder.setLabel(label);
+		if (label == null) {
+			eventBuilder.setLabel(action);
+		}
+		else {
+			eventBuilder.setLabel(action + " - " + label);
+		}
+		if (value != null) {
+			eventBuilder.setValue(value);
 		}
 		Application.getAppTracker().send(eventBuilder.build());
+	}
+
+	/**
+	 * Send a specific event.
+	 *
+	 * @param category The event category.
+	 * @param action   The action.
+	 * @param label    The label.
+	 */
+	public static void sendEvent(final Category category, final String action, final String label) {
+		sendEvent(category, action, label, null);
 	}
 
 	/**
 	 * Send timing information.
 	 *
 	 * @param category The event category.
+	 * @param variable The variable.
 	 * @param label    The label.
 	 * @param duration The duration.
 	 */
-	public static void sendTiming(final Category category, final String label, final long duration) {
+	public static void sendTiming(final Category category, final String variable, final String label, final long duration) {
 		TimingBuilder timingBuilder = new TimingBuilder();
 		timingBuilder.setCategory(category.toString());
-		timingBuilder.setLabel(label);
+		timingBuilder.setVariable(variable);
+		if (label == null) {
+			timingBuilder.setLabel(variable);
+		}
+		else {
+			timingBuilder.setLabel(variable + " - " + label);
+		}
 		timingBuilder.setValue(duration);
 		Application.getAppTracker().send(timingBuilder.build());
 	}
@@ -77,14 +101,26 @@ public final class TrackingUtil {
 		/**
 		 * Setup activities of the user.
 		 */
-		SETUP,
+		EVENT_SETUP,
 		/**
 		 * Image viewing activities of the user.
 		 */
-		VIEW,
+		EVENT_VIEW,
 		/**
-		 * Background jobs of the app.
+		 * Background events of the app.
 		 */
-		BACKGROUND
+		EVENT_BACKGROUND,
+		/**
+		 * Usage times of the app.
+		 */
+		TIME_USAGE,
+		/**
+		 * Background times of the app.
+		 */
+		TIME_BACKGROUND,
+		/**
+		 * Image counters.
+		 */
+		COUNTER_IMAGES
 	}
 }

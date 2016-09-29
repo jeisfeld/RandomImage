@@ -23,6 +23,7 @@ import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
@@ -139,7 +140,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 *
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
-	protected abstract void init(final boolean toastIfFilesMissing);
+	protected abstract void init(boolean toastIfFilesMissing);
 
 	/**
 	 * Save and reload the list.
@@ -280,6 +281,7 @@ public abstract class ImageList extends RandomFileProvider {
 		if (!mConfigFile.exists()) {
 			return;
 		}
+		final long timestamp = System.currentTimeMillis();
 
 		mFileNames.clear();
 		mFolderNames.clear();
@@ -382,6 +384,7 @@ public abstract class ImageList extends RandomFileProvider {
 				mNestedListProperties.put(nestedListName, nestedProperties);
 			}
 		}
+		TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load image list", "config file", System.currentTimeMillis() - timestamp);
 	}
 
 	/**
@@ -389,7 +392,7 @@ public abstract class ImageList extends RandomFileProvider {
 	 *
 	 * @return true if successful.
 	 */
-	protected final synchronized boolean save() {
+	private synchronized boolean save() {
 		File backupFile = new File(mConfigFile.getParentFile(), mConfigFile.getName() + ".bak");
 
 		if (mConfigFile.exists()) {

@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,6 +23,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDial
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.StandardImageList;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -103,6 +105,12 @@ public class DisplayListInfoActivity extends Activity {
 			setTitle(R.string.title_activity_display_nested_list_info);
 			displayNestedListInfo(parentListName);
 		}
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	/**
@@ -250,7 +258,7 @@ public class DisplayListInfoActivity extends Activity {
 					@Override
 					public void run() {
 						TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
-						textViewNumberOfImages.setText(Html.fromHtml(getString(R.string.info_number_of_images, numberOfImages)));
+						textViewNumberOfImages.setText(Html.fromHtml(getString(R.string.info_number_of_images, Integer.toString(numberOfImages))));
 					}
 				});
 			}
@@ -268,7 +276,7 @@ public class DisplayListInfoActivity extends Activity {
 			return new DecimalFormat("###.#").format(probability * HUNDRED);
 		}
 		else {
-			return String.format("%1$,.2G", probability * HUNDRED);
+			return String.format(Locale.getDefault(), "%1$,.2G", probability * HUNDRED);
 		}
 	}
 

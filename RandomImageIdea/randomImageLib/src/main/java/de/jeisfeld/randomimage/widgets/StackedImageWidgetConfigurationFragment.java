@@ -6,6 +6,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
@@ -17,6 +19,7 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget Config", "StackedImageWidget");
 	}
 
 	@Override

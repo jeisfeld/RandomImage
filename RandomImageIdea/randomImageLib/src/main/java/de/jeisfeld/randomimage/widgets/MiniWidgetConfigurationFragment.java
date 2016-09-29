@@ -19,6 +19,8 @@ import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
@@ -40,6 +42,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget Config", "StackedImageWidget");
+
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
 
 		setDefaultValues();
@@ -76,6 +80,12 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		return preferenceLayout;
 	}
 
+	@Override
+	public final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
+	}
+
 	/**
 	 * Add the listener for the button to edit the image list.
 	 */
@@ -86,7 +96,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
+						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId), "from Mini Widget Config");
 				return true;
 			}
 		});

@@ -1,17 +1,17 @@
 package de.jeisfeld.randomimage.notifications;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.util.SparseArray;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -36,7 +36,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	/**
 	 * A map allowing to get the activity from its hashCode.
 	 */
-	private static Map<Integer, NotificationSettingsActivity> mActivityMap = new HashMap<>();
+	private static SparseArray<NotificationSettingsActivity> mActivityMap = new SparseArray<>();
 
 	/**
 	 * Utility method to start the activity.
@@ -58,6 +58,12 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	protected final void onDestroy() {
 		mActivityMap.remove(hashCode());
 		super.onDestroy();
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	@Override

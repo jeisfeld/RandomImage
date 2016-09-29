@@ -18,6 +18,7 @@ import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericImageWidget.ButtonStyle;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
@@ -111,6 +112,12 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		return preferenceLayout;
 	}
 
+	@Override
+	public final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
+	}
+
 	/**
 	 * Add the listener for the button to edit the image list.
 	 */
@@ -121,7 +128,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
+						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId), "from Image Widget Config");
 				if (isReconfigureWidget()) {
 					getActivity().finish();
 				}
@@ -277,14 +284,14 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		 * @param preference The preference.
 		 * @param value      The value of the preference.
 		 */
-		void setSummary(final Preference preference, final String value);
+		void setSummary(Preference preference, String value);
 
 		/**
 		 * Update the widget.
 		 *
 		 * @param updateType The update type.
 		 */
-		void updateWidget(final UpdateType updateType);
+		void updateWidget(UpdateType updateType);
 	}
 
 }

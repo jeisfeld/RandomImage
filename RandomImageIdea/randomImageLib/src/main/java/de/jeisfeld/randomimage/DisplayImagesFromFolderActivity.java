@@ -140,7 +140,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		// itemType is always file.
-		DisplayImageDetailsActivity.startActivity(this, name, null, true);
+		DisplayImageDetailsActivity.startActivity(this, name, null, true, "Display folder");
 	}
 
 	@Override

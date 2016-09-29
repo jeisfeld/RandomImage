@@ -14,6 +14,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -73,7 +74,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 				String listName = ImageRegistry.getCurrentListName();
 
 				initialize(savedInstanceState, appWidgetId, listName);
-				ConfigureImageListActivity.startActivity(this, listName);
+				ConfigureImageListActivity.startActivity(this, listName, "empty/Widget");
 			}
 			else if (listNames.size() == 1) {
 				initialize(savedInstanceState, appWidgetId, listNames.get(0));
@@ -93,6 +94,12 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 			}
 		}
 
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	/**
@@ -156,7 +163,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 	 * @param appWidgetId The widget id.
 	 * @param listName    The list name to be used by the widget.
 	 */
-	protected abstract void configure(final int appWidgetId, final String listName);
+	protected abstract void configure(int appWidgetId, String listName);
 
 	/**
 	 * Create an instance of the configuration fragment.

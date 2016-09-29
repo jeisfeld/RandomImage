@@ -22,6 +22,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
@@ -87,6 +88,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		}
 	}
 
+	@Override
+	public final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
+	}
+
 	/**
 	 * Add the listener for the button to edit the image list.
 	 */
@@ -97,7 +104,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId));
+						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId),
+						"from Notification Config");
 				return true;
 			}
 		});
@@ -224,7 +232,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				ImageRegistry.getCurrentImageListRefreshed(true);
 				String listName = ImageRegistry.getCurrentListName();
 
-				ConfigureImageListActivity.startActivity(getActivity(), listName);
+				ConfigureImageListActivity.startActivity(getActivity(), listName, "empty/Notification");
 				getActivity().finish();
 			}
 			else if (listNames.size() == 1) {
@@ -487,7 +495,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		 * Set the summary of the preference.
 		 *
 		 * @param preference The preference.
-		 * @param value The value of the preference.
+		 * @param value      The value of the preference.
 		 */
 		private void setSummary(final Preference preference, final String value) {
 			// set summary

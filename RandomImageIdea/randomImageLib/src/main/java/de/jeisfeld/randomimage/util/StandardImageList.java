@@ -13,6 +13,7 @@ import java.util.Set;
 import android.util.Log;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 
 /**
  * Subclass of ImageList, giving each file the same weight.
@@ -183,7 +184,7 @@ public final class StandardImageList extends ImageList {
 	 *
 	 * @return A random file name.
 	 */
-	public String getRandomFileNameFromAllFiles() {
+	private String getRandomFileNameFromAllFiles() {
 		ArrayList<String> allImageFiles = getAllImageFiles();
 		if (allImageFiles != null && allImageFiles.size() > 0) {
 			return allImageFiles.get(mRandom.nextInt(allImageFiles.size()));
@@ -452,6 +453,7 @@ public final class StandardImageList extends ImageList {
 		return new Runnable() {
 			@Override
 			public void run() {
+				final long timestamp = System.currentTimeMillis();
 				final ArrayList<String> folderNames = getFolderNames();
 				final ArrayList<String> fileNames = getFileNames();
 				final ArrayList<String> nestedListNames = getNestedListNames();
@@ -487,6 +489,12 @@ public final class StandardImageList extends ImageList {
 				mNestedLists = nestedLists;
 
 				calculateWeights();
+
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "All images in list", null, (long) mAllImageFilesInList.size());
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Images in list", null, (long) fileNames.size());
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Folders in list", null, (long) folderNames.size());
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Nested lists in list", null, (long) nestedLists.size());
+				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load image list", "all images", System.currentTimeMillis() - timestamp);
 			}
 		};
 	}

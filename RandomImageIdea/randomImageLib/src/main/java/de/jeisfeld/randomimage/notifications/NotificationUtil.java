@@ -36,6 +36,8 @@ import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -56,6 +58,11 @@ public final class NotificationUtil {
 	 * A dot used at the end of messages.
 	 */
 	private static final String DOT = ".";
+
+	/**
+	 * Activity String for Google Analytics.
+	 */
+	private static final String IMAGE_NOTIFICATION = "Image Notification";
 
 	/**
 	 * The vibration pattern.
@@ -95,15 +102,15 @@ public final class NotificationUtil {
 	/**
 	 * The notification style for the special notification.
 	 */
-	public static final int NOTIFICATION_STYLE_SPECIAL_NOTIFICATION = 1;
+	private static final int NOTIFICATION_STYLE_SPECIAL_NOTIFICATION = 1;
 	/**
 	 * The notification style that triggers DisplayImagePopupActivity instead of a notification.
 	 */
-	public static final int NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY = 2;
+	private static final int NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY = 2;
 	/**
 	 * The notification style that triggers DisplayRandomImageActivity instead of a notification.
 	 */
-	public static final int NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY = 3;
+	private static final int NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY = 3;
 
 	static {
 		restoreMountingIssues();
@@ -145,7 +152,7 @@ public final class NotificationUtil {
 
 		if (notificationType == NotificationType.MISSING_FILES || notificationType == NotificationType.UPDATED_LIST
 				|| notificationType == NotificationType.ERROR_LOADING_LIST || notificationType == NotificationType.ERROR_SAVING_LIST) {
-			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag);
+			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag, "NT." + notificationType.toString());
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			int uniqueId = getUniqueId(notificationTag, notificationType);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -238,9 +245,11 @@ public final class NotificationUtil {
 			if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
 				context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
 						notificationId));
+				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Fullscreen");
 			}
 			else {
 				context.startActivity(DisplayImagePopupActivity.createIntent(context, listName, fileName, notificationId));
+				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Popup");
 			}
 			if (vibrate) {
 				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -277,17 +286,30 @@ public final class NotificationUtil {
 		if (notificationStyle == NOTIFICATION_STYLE_SPECIAL_NOTIFICATION) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
 			remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
-			notificationBuilder.setContent(remoteViews);
+			if (VERSION.SDK_INT >= VERSION_CODES.N) {
+				notificationBuilder.setCustomContentView(remoteViews);
+			}
+			else {
+				//noinspection deprecation
+				notificationBuilder.setContent(remoteViews);
+			}
 
 			// Dummy intent will enable heads-up notifications if available
 			Intent intent = DisplayImagePopupActivity.createIntent(context, null, null, null);
 			PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
 
-			if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+
+			if (VERSION.SDK_INT >= VERSION_CODES.N) {
+				Notification publicNotification = new Builder(context).setCustomContentView(remoteViews).build();
+				notificationBuilder.setPublicVersion(publicNotification);
+			}
+			else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+				//noinspection deprecation
 				Notification publicNotification = new Builder(context).setContent(remoteViews).build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Special");
 		}
 		else {
 			Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
@@ -301,6 +323,7 @@ public final class NotificationUtil {
 						.setShowWhen(false).setContentTitle(title).build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Standard");
 		}
 
 		String notificationTag = Integer.toString(notificationId);

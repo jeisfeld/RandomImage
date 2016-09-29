@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -53,6 +54,12 @@ public class SettingsActivity extends Activity {
 			}
 		}
 
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	/**

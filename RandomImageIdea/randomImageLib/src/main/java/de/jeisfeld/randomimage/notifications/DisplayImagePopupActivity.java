@@ -1,17 +1,17 @@
 package de.jeisfeld.randomimage.notifications;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimagelib.R;
@@ -36,7 +36,7 @@ public class DisplayImagePopupActivity extends Activity {
 	/**
 	 * Map storing the activities triggered by notifications.
 	 */
-	private static final Map<Integer, DisplayImagePopupActivity> NOTIFICATION_MAP = new HashMap<>();
+	private static final SparseArray<DisplayImagePopupActivity> NOTIFICATION_MAP = new SparseArray<>();
 
 	/**
 	 * Flag helping to detect if a destroy is final or only temporary.
@@ -155,6 +155,7 @@ public class DisplayImagePopupActivity extends Activity {
 					mImageView.animateOut(velocityX, velocityY, runnable);
 
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
+					TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Popup");
 					return true;
 				}
 				else {
@@ -202,6 +203,7 @@ public class DisplayImagePopupActivity extends Activity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
+		TrackingUtil.sendScreen(this);
 		mUserIsLeaving = false;
 		mSavingInstanceState = false;
 	}
@@ -221,6 +223,7 @@ public class DisplayImagePopupActivity extends Activity {
 	public static final void finishActivity(final Context context, final int notificationId) {
 		DisplayImagePopupActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Popup");
 			activity.finish();
 			NOTIFICATION_MAP.remove(notificationId);
 		}

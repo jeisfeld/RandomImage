@@ -39,6 +39,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -216,6 +217,12 @@ public class SelectDirectoryActivity extends Activity {
 		});
 
 		fillGridView();
+	}
+
+	@Override
+	protected final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	/**

@@ -19,6 +19,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -77,6 +78,12 @@ public class SettingsFragment extends PreferenceFragment {
 		if (Boolean.parseBoolean(Application.getResourceString(R.string.has_premium))) {
 			getPreferenceScreen().removePreference(findPreference(getString(R.string.key_pref_category_premium)));
 		}
+	}
+
+	@Override
+	public final void onResume() {
+		super.onResume();
+		TrackingUtil.sendScreen(this);
 	}
 
 	/**

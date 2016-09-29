@@ -1,8 +1,6 @@
 package de.jeisfeld.randomimage.widgets;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import android.app.PendingIntent;
@@ -12,12 +10,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -184,7 +185,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @param appWidgetId The widget id.
 	 * @return The layout resource id.
 	 */
-	protected abstract int getWidgetLayoutId(final int appWidgetId);
+	protected abstract int getWidgetLayoutId(int appWidgetId);
 
 	/**
 	 * Get the fragment class of the widget.
@@ -192,6 +193,23 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @return The fragment class.
 	 */
 	protected abstract Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass(); // SUPPRESS_CHECKSTYLE
+
+	/**
+	 * Report a widget image change to Google Analytics.
+	 *
+	 * @param action     The action to be reported
+	 * @param updateType The updateType
+	 */
+	protected static void trackImageChange(final String action, final UpdateType updateType) {
+		if (updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, action, "Timer");
+		}
+		else {
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, action,
+					updateType == UpdateType.NEW_LIST ? "Updated List" : "Manual");
+		}
+	}
+
 
 	/**
 	 * Helper class containing constants for background colors.
@@ -226,7 +244,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		/**
 		 * A map from the resourceValue to the color.
 		 */
-		private static final Map<Integer, BackgroundColor> BACKGROUND_COLOR_MAP = new HashMap<>();
+		private static final SparseArray<BackgroundColor> BACKGROUND_COLOR_MAP = new SparseArray<>();
 
 		static {
 			for (BackgroundColor backgroundColor : BackgroundColor.values()) {
@@ -360,7 +378,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		/**
 		 * A map from the resourceValue to the color.
 		 */
-		private static final Map<Integer, ButtonColor> BUTTON_COLOR_MAP = new HashMap<>();
+		private static final SparseArray<ButtonColor> BUTTON_COLOR_MAP = new SparseArray<>();
 
 		static {
 			for (ButtonColor buttonColor : ButtonColor.values()) {
@@ -463,7 +481,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		/**
 		 * A map from the resourceValue to the color.
 		 */
-		private static final Map<Integer, ButtonStyle> BUTTON_STYLE_MAP = new HashMap<>();
+		private static final SparseArray<ButtonStyle> BUTTON_STYLE_MAP = new SparseArray<>();
 
 		static {
 			for (ButtonStyle buttonStyle : ButtonStyle.values()) {

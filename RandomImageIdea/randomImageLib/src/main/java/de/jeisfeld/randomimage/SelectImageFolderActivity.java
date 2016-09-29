@@ -168,7 +168,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		switch (itemType) {
 		case FOLDER:
-			DisplayImageDetailsActivity.startActivity(this, name, null, true);
+			DisplayImageDetailsActivity.startActivity(this, name, null, true, "Select Image Folder");
 			break;
 		default:
 			break;
