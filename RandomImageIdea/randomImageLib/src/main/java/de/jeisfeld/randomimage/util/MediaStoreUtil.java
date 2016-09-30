@@ -188,6 +188,7 @@ public final class MediaStoreUtil {
 	 * @param path The path of the image
 	 * @return the thumbnail.
 	 */
+	@SuppressWarnings("deprecation")
 	public static Bitmap getThumbnailFromPath(final String path) {
 		ContentResolver resolver = Application.getAppContext().getContentResolver();
 

@@ -229,6 +229,7 @@ public final class NotificationUtil {
 	 * @param listName       the name of the image list
 	 * @param imageList      the image list
 	 */
+	@SuppressWarnings("deprecation")
 	private static void doDisplayRandomImageNotification(final Context context, final int notificationId,
 														 final String listName, final ImageList imageList) {
 		String fileName = imageList.getRandomFileName();

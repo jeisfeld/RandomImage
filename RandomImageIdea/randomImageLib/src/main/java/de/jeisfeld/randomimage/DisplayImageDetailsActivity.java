@@ -13,8 +13,11 @@ import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -94,7 +97,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * @param fileName          The name of the file whose details should be displayed.
 	 * @param listName          The name of the list from which this file is taken.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
-	 * @param trackingName A String indicating the starter of the activity.
+	 * @param trackingName      A String indicating the starter of the activity.
 	 */
 	public static final void startActivity(final Activity activity, final String fileName, final String listName,
 										   final boolean preventDisplayAll, final String trackingName) {
@@ -326,7 +329,7 @@ public class DisplayImageDetailsActivity extends Activity {
 		textViewFileName.setText(file.getName());
 
 		TextView textViewParentFolder = (TextView) findViewById(R.id.textViewParentFolder);
-		textViewParentFolder.setText(Html.fromHtml(getString(R.string.info_parent_folder, file.getParent())));
+		textViewParentFolder.setText(fromHtml(getString(R.string.info_parent_folder, file.getParent())));
 
 		TextView textViewImageDate = (TextView) findViewById(R.id.textViewImageDate);
 		Date imageDate = ImageUtil.getExifDate(mFileName);
@@ -334,7 +337,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			textViewImageDate.setVisibility(View.GONE);
 		}
 		else {
-			textViewImageDate.setText(Html.fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
+			textViewImageDate.setText(fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
 		}
 
 		TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
@@ -348,10 +351,27 @@ public class DisplayImageDetailsActivity extends Activity {
 			if (probability > 0) {
 				probabilityString = " (" + DisplayListInfoActivity.getPercentageString(probability) + "%)";
 			}
-			textViewNumberOfImages.setText(Html.fromHtml(getString(R.string.info_number_of_images, imageCount + probabilityString)));
+			textViewNumberOfImages.setText(fromHtml(getString(R.string.info_number_of_images, imageCount + probabilityString)));
 		}
 		else {
 			textViewNumberOfImages.setVisibility(View.GONE);
+		}
+	}
+
+	/**
+	 * Convert a html String into a text.
+	 *
+	 * @param html The html
+	 * @return the text
+	 */
+	@SuppressWarnings("deprecation")
+	private static Spanned fromHtml(final String html) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+		}
+		else {
+			//noinspection deprecation
+			return Html.fromHtml(html);
 		}
 	}
 }

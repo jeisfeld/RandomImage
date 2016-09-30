@@ -193,6 +193,7 @@ public class Application extends android.app.Application {
 	 *
 	 * @param locale The locale to be set.
 	 */
+	@SuppressWarnings("deprecation")
 	private static void setLocale(final Locale locale) {
 		Resources res = getAppContext().getResources();
 		DisplayMetrics dm = res.getDisplayMetrics();
