@@ -1,15 +1,23 @@
 package de.jeisfeld.randomimage.util;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders.EventBuilder;
 import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder;
 import com.google.android.gms.analytics.HitBuilders.TimingBuilder;
+import com.google.android.gms.analytics.Tracker;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimagelib.R;
 
 /**
  * Utility class for sending Google Analytics Events.
  */
 public final class TrackingUtil {
+	/**
+	 * The tracker for Google Analytics (on instance level).
+	 */
+	private static Tracker mTracker;
+
 	/**
 	 * Hide default constructor.
 	 */
@@ -23,15 +31,16 @@ public final class TrackingUtil {
 	 * @param object The activity or fragment showing the screen.
 	 */
 	public static void sendScreen(final Object object) {
-		Application.getAppTracker().setScreenName(object.getClass().getSimpleName());
-		Application.getAppTracker().send(new ScreenViewBuilder().build());
+		getDefaultTracker();
+		mTracker.setScreenName(object.getClass().getSimpleName());
+		mTracker.send(new ScreenViewBuilder().build());
 	}
 
 	/**
 	 * Start a new session.
 	 */
 	public static void startSession() {
-		Application.getAppTracker().send(new ScreenViewBuilder().setNewSession().build());
+		mTracker.send(new ScreenViewBuilder().setNewSession().build());
 	}
 
 	/**
@@ -43,6 +52,7 @@ public final class TrackingUtil {
 	 * @param value    An associated value.
 	 */
 	public static void sendEvent(final Category category, final String action, final String label, final Long value) {
+		getDefaultTracker();
 		EventBuilder eventBuilder = new EventBuilder();
 		eventBuilder.setCategory(category.toString());
 		if (action != null) {
@@ -57,7 +67,7 @@ public final class TrackingUtil {
 		if (value != null) {
 			eventBuilder.setValue(value);
 		}
-		Application.getAppTracker().send(eventBuilder.build());
+		mTracker.send(eventBuilder.build());
 	}
 
 	/**
@@ -80,6 +90,7 @@ public final class TrackingUtil {
 	 * @param duration The duration.
 	 */
 	public static void sendTiming(final Category category, final String variable, final String label, final long duration) {
+		getDefaultTracker();
 		TimingBuilder timingBuilder = new TimingBuilder();
 		timingBuilder.setCategory(category.toString());
 		timingBuilder.setVariable(variable);
@@ -90,9 +101,23 @@ public final class TrackingUtil {
 			timingBuilder.setLabel(variable + " - " + label);
 		}
 		timingBuilder.setValue(duration);
-		Application.getAppTracker().send(timingBuilder.build());
+		mTracker.send(timingBuilder.build());
 	}
 
+	/**
+	 * Gets the default {@link Tracker} for this {@link Application}.
+	 *
+	 * @return tracker
+	 */
+	private static synchronized Tracker getDefaultTracker() {
+		if (mTracker == null) {
+			GoogleAnalytics analytics = GoogleAnalytics.getInstance(Application.getAppContext());
+			// To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+			mTracker = analytics.newTracker(R.xml.global_tracker);
+			mTracker.enableExceptionReporting(true);
+		}
+		return mTracker;
+	}
 
 	/**
 	 * Categories of app events.
