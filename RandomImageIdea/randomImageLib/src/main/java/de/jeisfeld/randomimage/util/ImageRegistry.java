@@ -529,6 +529,25 @@ public final class ImageRegistry {
 	}
 
 	/**
+	 * Check if there is not yet any image list configured.
+	 *
+	 * @return true if there is no image list configured.
+	 */
+	public static boolean isAllEmpty() {
+		ArrayList<String> imageListNames = getImageListNames(ListFiltering.ALL_LISTS);
+		if (imageListNames == null || imageListNames.size() == 0) {
+			return true;
+		}
+		else if (imageListNames.size() > 1) {
+			return false;
+		}
+		else {
+			ImageList imageList = getCurrentImageList(false);
+			return imageList.isEmpty();
+		}
+	}
+
+	/**
 	 * Enumeration indicating what should happen when switching to a non-existing list.
 	 */
 	public enum CreationStyle {

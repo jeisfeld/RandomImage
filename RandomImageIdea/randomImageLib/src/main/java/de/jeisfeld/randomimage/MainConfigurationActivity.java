@@ -83,6 +83,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 
 		if (savedInstanceState == null) {
 			DialogUtil.displayInfo(this, null, R.string.key_hint_main_configuration, R.string.dialog_hint_main_configuration);
+			DialogUtil.displayFirstUseMessageIfRequired(this);
 		}
 	}
 

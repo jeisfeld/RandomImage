@@ -369,7 +369,7 @@ public final class DialogUtil {
 	 */
 	public static void displayFirstUseMessageIfRequired(final Activity activity) {
 		boolean firstUseInfoWasDisplayed = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_hint_first_use);
-		if (!firstUseInfoWasDisplayed) {
+		if (!firstUseInfoWasDisplayed && ImageRegistry.isAllEmpty()) {
 			// Check if another version of the app is installed (pro vs. standard)
 			String packageName = Application.getAppContext().getPackageName();
 			String altPackageName;
