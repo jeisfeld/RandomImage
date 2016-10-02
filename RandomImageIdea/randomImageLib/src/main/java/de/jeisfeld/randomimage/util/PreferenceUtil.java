@@ -20,6 +20,7 @@ public final class PreferenceUtil {
 	 * The list of preferences used for switching on and off hints.
 	 */
 	private static final Integer[] HINT_PREFERENCES = {
+			R.string.key_hint_first_use,
 			R.string.key_hint_add_images,
 			R.string.key_hint_select_folder,
 			R.string.key_hint_display_image,
@@ -38,7 +39,7 @@ public final class PreferenceUtil {
 	 *
 	 * @return the default shared preferences.
 	 */
-	public static SharedPreferences getSharedPreferences() {
+	private static SharedPreferences getSharedPreferences() {
 		return PreferenceManager.getDefaultSharedPreferences(Application.getAppContext());
 	}
 

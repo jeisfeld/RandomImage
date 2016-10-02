@@ -63,6 +63,9 @@ public final class MigrationUtil {
 		case 20: // MAGIC_NUMBER
 			doMigrationToVersion20();
 			break;
+		case 21: // MAGIC_NUMBER
+			doMigrationToVersion21();
+			break;
 		default:
 			break;
 		}
@@ -106,5 +109,13 @@ public final class MigrationUtil {
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, notificationId, newTimerVariance);
 		}
 	}
+
+	/**
+	 * Do the migration steps for migration into app version 21.
+	 */
+	private static void doMigrationToVersion21() {
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_hint_first_use, true);
+	}
+
 
 }

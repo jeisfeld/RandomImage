@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="has_premium" translatable="false">true</string>
+    <string name="app_name">Überraschungsbild Pro</string>
+    <string name="app_name_short">Ü-Bild Pro</string>
+    <string name="title_icon_main_configuration">Ü-Bild Pro Einrichtung</string>
+
+</resources>

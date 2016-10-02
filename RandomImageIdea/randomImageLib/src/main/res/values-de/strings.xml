@@ -8,6 +8,7 @@
     <string name="image_widget_name">Überraschungsbilderrahmen</string>
     <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
     <string name="default_list_name">Meine erste Bildliste</string>
+    <string name="title_icon_main_configuration">Ü-Bild Einrichtung</string>
 
     <!-- Activity titles -->
     <string name="title_activity_display_image_details">Bildinformationen</string>
@@ -18,7 +19,6 @@
     <string name="title_activity_main_configuration_backup">Sicherung von Bildlisten</string>
     <string name="title_activity_main_configuration_restore">Wiederherstellung von Bildlisten</string>
     <string name="title_activity_main_configuration_delete">Löschen von Bildlisten</string>
-    <string name="title_icon_main_configuration">Ü-Bild Einrichtung</string>
     <string name="title_activity_configure_image_list">Bildliste einrichten</string>
     <string name="title_activity_display_images_from_folder">Bildverzeichnis anzeigen</string>
     <string name="title_activity_add_images">Bilder hinzufügen</string>

@@ -54,6 +54,7 @@
     <string name="toast_widget_locked">Das Widget ist bis %1$s gesperrt.</string>
 
     <!-- Messages of hint dialogs -->
+    <string name="dialog_hint_first_use">Danke für die Installation von Überraschungsbild!\n\nErste Schritte:\n1. Stellen Sie eine Liste von Bildern zusammen, die Sie anzeigen wollen, indem Sie Verzeichnisse und Fotos auf Ihrem Smartphone/Tablet auswählen.\n2. Anschließend können Sie zufällige Fotos aus dieser Liste anschauen, indem Sie entweder das Startseitensymbol oder ein Widget oder eine konfigurierbare Benachrichtigung nutzen.</string>
     <string name="dialog_hint_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
     <string name="dialog_hint_select_folder">Hier können Sie das Bildverzeichnis wählen, aus dem Sie Bilder zur Liste hinzufügen wollen.\n\nSie können den Filter nutzen, um nach Verzeichnissen zu suchen.\n\nDrücken Sie das Haken-Symbol, um mehrere Verzeichnisse auszuwählen.\n\nDrücken Sie die Ordner-Symbol, um das Dateisystem zu durchsuchen.</string>
     <string name="dialog_hint_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>
