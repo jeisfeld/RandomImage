@@ -54,7 +54,8 @@
     <string name="toast_widget_locked">The widget is locked until %1$s.</string>
 
     <!-- Messages of hint dialogs -->
-    <string name="dialog_hint_first_use">Thanks for installing Surprise Image!\n\nFirst steps:\n1. Configure a list of images that you want to display, by selecting folders and images from your device.\n2. Then you may ramdomly display images from this list by either using the launcher icon, a widget, or a configurable notification.</string>
+    <string name="dialog_hint_first_use">Thanks for installing %1$s!\n\nFirst steps:\n\n1. Configure a list of images that you want to display, by selecting folders and images from your device.\n\n2. Then you may ramdomly display images from this list by either using the launcher icon, a widget, or a configurable notification.</string>
+    <string name="dialog_hint_first_use_upgrade">Thanks for installing %1$s!\n\nYou can migrate your image lists to this app version in the following way:\n\n1. Open the configuration of the previously used version of the app, and make a backup of your image lists.\n\n2. Open the configuration of this %1$s again and import all your image lists (via “restore”).</string>
     <string name="dialog_hint_new_list">Your surprise image list is empty. Please press the “+” symbol on top in order to add images or folders to the list.</string>
     <string name="dialog_hint_select_folder">Here you can select the image folder from which you want to add images to the list.\n\nYou can use the filter in order to search for folders.\n\nPress the hook symbol in order to select multiple folders.\n\nPress the folder symbol in order to browse the file system.</string>
     <string name="dialog_hint_add_images">Now you can either add the complete image folder to your Surprise Image List, or you can select individual images to add.\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>

@@ -14,10 +14,10 @@
 
     <!-- Titles of notifications -->
 
-    <string name="title_notification_updated_list">„%1$s“ aktualisiert</string>
-    <string name="title_notification_failed_loading">„%1$s“ - Ladefehler</string>
-    <string name="title_notification_failed_saving">„%1$s“ - Speicherfehler</string>
-    <string name="title_notification_missing_files">„%1$s“ hat fehlende Bilder</string>
+    <string name="title_notification_updated_list">„%1$s” aktualisiert</string>
+    <string name="title_notification_failed_loading">„%1$s” - Ladefehler</string>
+    <string name="title_notification_failed_saving">„%1$s” - Speicherfehler</string>
+    <string name="title_notification_missing_files">„%1$s” hat fehlende Bilder</string>
     <string name="title_notification_unmounted_paths">“%1$s” nicht verfügbar</string>
 
     <!-- Contents of toasts or notifications -->
@@ -26,11 +26,11 @@
     <string name="toast_added_single">%1$s wurde zur Liste hinzugefügt</string>
     <string name="toast_added_image_none">Das Bild war bereits in der Liste.</string>
     <string name="toast_added_images_none">Alle ausgewählten Bilder waren bereits in der Liste.</string>
-    <string name="toast_added_folder_none">Das Verzeichnis „%1$s“ war bereits in der Liste.</string>
+    <string name="toast_added_folder_none">Das Verzeichnis „%1$s” war bereits in der Liste.</string>
     <string name="toast_added_folders_none">Alle ausgewählten Verzeichnisse waren bereits in der Liste.</string>
-    <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Überraschungsbildliste „%2$s“ hinzugefügt</string>
-    <string name="toast_added_images_single_external">Das Bild „%1$s“ wurde zur Überraschungsbildliste „%2$s“ hinzugefügt</string>
-    <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Überraschungsbildliste „%1$s“</string>
+    <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Überraschungsbildliste „%2$s” hinzugefügt</string>
+    <string name="toast_added_images_single_external">Das Bild „%1$s” wurde zur Überraschungsbildliste „%2$s” hinzugefügt</string>
+    <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Überraschungsbildliste „%1$s”</string>
     <string name="toast_add_no_folder_selected">Es wurden kein Verzeichnis zum Hinzufügen ausgewählt</string>
     <string name="toast_removed_multiple">Es wurden %1$s aus der Liste entfernt</string>
     <string name="toast_removed_single">%1$s wurde aus der Liste entfernt</string>
@@ -38,24 +38,25 @@
     <string name="toast_backup_no_selection">Es wurde keine Liste zum Sichern ausgewählt</string>
     <string name="toast_restore_no_selection">Es wurde keine Liste zum Wiederherstellen ausgewählt</string>
     <string name="toast_delete_no_selection">Es wurde keine Liste zum Löschen ausgewählt</string>
-    <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s“</string>
-    <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s“</string>
-    <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s“</string>
-    <string name="toast_failed_to_delete_list">Fehler beim Löschen der Liste „%1$s“</string>
-    <string name="toast_failed_to_load_files">%2$d Bilder oder Verzeichnisse der Bildliste „%1$s“ wurden nicht gefunden</string>
-    <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s“ wurde nicht gefunden</string>
+    <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s”</string>
+    <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s”</string>
+    <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s”</string>
+    <string name="toast_failed_to_delete_list">Fehler beim Löschen der Liste „%1$s”</string>
+    <string name="toast_failed_to_load_files">%2$d Bilder oder Verzeichnisse der Bildliste „%1$s” wurden nicht gefunden</string>
+    <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s” wurde nicht gefunden</string>
     <string name="toast_failed_to_open_google_play">Google Play konnte nicht gestartet werden.</string>
-    <string name="toast_cyclic_nesting">Die Liste „%1$s“ kann nicht eingefügt werden, da sie die aktuelle Liste enthält.</string>
+    <string name="toast_cyclic_nesting">Die Liste „%1$s” kann nicht eingefügt werden, da sie die aktuelle Liste enthält.</string>
     <string name="toast_cancelled_add_images">Das Hinzufügen der Bilder wurde unterbrochen.</string>
-    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s“</string>
-    <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s“</string>
+    <string name="toast_error_while_saving">Fehler beim Speichern der Bildliste „%1$s”</string>
+    <string name="toast_error_while_loading">Fehler beim Laden der Bildliste „%1$s”</string>
     <string name="toast_error_select_folder">Unerwarteter Fehler beim Versuch, ein Verzeichnis auszuwählen.</string>
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
     <string name="toast_widget_locked">Das Widget ist bis %1$s gesperrt.</string>
 
     <!-- Messages of hint dialogs -->
-    <string name="dialog_hint_first_use">Danke für die Installation von Überraschungsbild!\n\nErste Schritte:\n1. Stellen Sie eine Liste von Bildern zusammen, die Sie anzeigen wollen, indem Sie Verzeichnisse und Fotos auf Ihrem Smartphone/Tablet auswählen.\n2. Anschließend können Sie zufällige Fotos aus dieser Liste anschauen, indem Sie entweder das Startseitensymbol oder ein Widget oder eine konfigurierbare Benachrichtigung nutzen.</string>
-    <string name="dialog_hint_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+“ am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
+    <string name="dialog_hint_first_use">Danke für die Installation von %1$s!\n\nErste Schritte:\n\n1. Stellen Sie eine Liste von Bildern zusammen, die Sie anzeigen wollen, indem Sie Verzeichnisse und Fotos auf Ihrem Smartphone/Tablet auswählen.\n\n2. Anschließend können Sie zufällige Fotos aus dieser Liste anschauen, indem Sie entweder das Startseitensymbol oder ein Widget oder eine konfigurierbare Benachrichtigung nutzen.</string>
+    <string name="dialog_hint_first_use_upgrade">Danke für die Installation von %1$s!\n\nSie können Ihre Bildlisten wie folgt aus der bisher genutzten App-Version übertragen:\n\n1. Öffnen Sie die Konfiguration der bisher genutzten App-Version, und machen Sie ein Backup Ihrer Bildlisten.\n\n2. Öffnen Sie die Konfiguration der App %1$s und Importieren Sie Ihre Bildlisten (über „wiederherstellen”).</string>
+    <string name="dialog_hint_new_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+” am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
     <string name="dialog_hint_select_folder">Hier können Sie das Bildverzeichnis wählen, aus dem Sie Bilder zur Liste hinzufügen wollen.\n\nSie können den Filter nutzen, um nach Verzeichnissen zu suchen.\n\nDrücken Sie das Haken-Symbol, um mehrere Verzeichnisse auszuwählen.\n\nDrücken Sie die Ordner-Symbol, um das Dateisystem zu durchsuchen.</string>
     <string name="dialog_hint_add_images">Nun können Sie entweder das ganze Bildverzeichnis zu Ihrer Überraschunsbildliste hinzufügen, oder Sie können einzelne Bilder auswählen.\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>
     <string name="dialog_hint_display_image">Sie können das Bild zoomen und bewegen.\n\nSchnippen Sie das Bild weg, um ein anderes zu sehen.\n\nTippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\n\nEin langer Druck auf das Bild führt zu weiteren Optionen.</string>
@@ -64,15 +65,15 @@
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
-    <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich Widgets für die Liste „%1$s“. Bitte denken Sie daran, diese zu entfernen.</string>
-    <string name="dialog_info_backup_of_lists">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s“.</string>
+    <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich Widgets für die Liste „%1$s”. Bitte denken Sie daran, diese zu entfernen.</string>
+    <string name="dialog_info_backup_of_lists">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s”.</string>
     <string name="dialog_info_restore_of_lists">Die Listen %1$s wurden wiederhergestellt.</string>
     <string name="dialog_info_delete_of_lists">Die Listen %1$s wurden gelöscht.</string>
     <string name="dialog_info_not_allowed_to_delete_all_lists">Es ist nicht erlaubt, alle Listen zu löschen. Bitte stellen Sie sicher, dass mindestens eine Liste erhalten bleibt.</string>
-    <string name="dialog_info_backup_of_list_single">Die Liste %1$s wurde gesichert im Verzeichnis „%2$s“.</string>
+    <string name="dialog_info_backup_of_list_single">Die Liste %1$s wurde gesichert im Verzeichnis „%2$s”.</string>
     <string name="dialog_info_restore_of_list_single">Die Liste %1$s wurde wiederhergestellt.</string>
     <string name="dialog_info_delete_of_list_single">Die Liste %1$s wurde gelöscht.</string>
-    <string name="dialog_info_no_images_in_folder">Das Verzeichnis „%1$s“ enthält keine Bilder.</string>
+    <string name="dialog_info_no_images_in_folder">Das Verzeichnis „%1$s” enthält keine Bilder.</string>
     <string name="dialog_info_no_widget">Es ist kein Widget vorhanden - bitte platzieren Sie zunächst Widgets auf Ihrem Startbildschirm.</string>
     <string name="dialog_info_need_premium">Zur Nutzung von mehr als drei Bildlisten müssen Sie die Pro-Version der App erwerben.</string>
     <string name="dialog_info_invalid_regexp">Bitte geben Sie einen gültigen regulären Ausdruck ein.</string>
@@ -91,30 +92,30 @@
     <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%2$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_delete_lists">Wollen Sie die %1$d ausgewählten Bildlisten wirklich löschen?</string>
-    <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s“ entfernen?</string>
+    <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s” entfernen?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
     <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>
-    <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s“ zur Bildliste hinzufügen?</string>
-    <string name="dialog_confirmation_add_nested_list">Wollen Sie die Bildliste „%1$s“ zur Liste „%2$s“ als Unterliste hinzufügen?</string>
-    <string name="dialog_confirmation_overwrite_list">Wollen Sie die Bildliste „%1$s“ mit dem Backup überschreiben?</string>
-    <string name="dialog_confirmation_overwrite_list_single">Die Liste „%2$s“ existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
+    <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s” zur Bildliste hinzufügen?</string>
+    <string name="dialog_confirmation_add_nested_list">Wollen Sie die Bildliste „%1$s” zur Liste „%2$s” als Unterliste hinzufügen?</string>
+    <string name="dialog_confirmation_overwrite_list">Wollen Sie die Bildliste „%1$s” mit dem Backup überschreiben?</string>
+    <string name="dialog_confirmation_overwrite_list_single">Die Liste „%2$s” existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_list_multiple">%1$d der ausgewählen Listen existieren bereits. Wollen Sie diese mit dem Backup überschreiben?</string>
-    <string name="dialog_confirmation_overwrite_backup_single">Das Backup von „%2$s“ existiert bereits. Wollen Sie es überschreiben?</string>
+    <string name="dialog_confirmation_overwrite_backup_single">Das Backup von „%2$s” existiert bereits. Wollen Sie es überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup_multiple">Für %1$d der ausgewählten Listen gibt es bereits ein Backup. Wollen Sie dieses überschreiben?</string>
-    <string name="dialog_confirmation_missing_images">Folgende Bilder der Liste „%1$s“ können nicht geladen werden: \n\n%2$s</string>
+    <string name="dialog_confirmation_missing_images">Folgende Bilder der Liste „%1$s” können nicht geladen werden: \n\n%2$s</string>
     <string name="dialog_confirmation_need_read_permission">Die App benötigt Zugriff auf den Speicher, um auf Ihre Bilder zugreifen zu können. Bitte erlauben Sie diesen Zugriff - andernfalls wird die App nicht funktionieren.</string>
 
     <!-- Partial strings used to construct other strings -->
     <string name="partial_none">keine Bilder</string>
     <string name="partial_and">%1$s und %2$s</string>
-    <string name="partial_image_single">das Bild „%1$s“</string>
+    <string name="partial_image_single">das Bild „%1$s”</string>
     <string name="partial_image_multiple">%1$d Bilder</string>
     <string name="partial_nested_list_single">die Bildliste %1$s</string>
     <string name="partial_nested_list_multiple">die Bildlisten %1$s</string>
-    <string name="partial_folder_single">das Verzeichnis „%1$s“</string>
-    <string name="partial_folder_two">die Verzeichnisse „%1$s“ und „%2$s“</string>
+    <string name="partial_folder_single">das Verzeichnis „%1$s”</string>
+    <string name="partial_folder_two">die Verzeichnisse „%1$s” und „%2$s”</string>
     <string name="partial_folder_multiple">%1$d Verzeichnisse</string>
-    <string name="partial_quoted_string">„%1$s“</string>
+    <string name="partial_quoted_string">„%1$s”</string>
 
     <!-- Strings used in TimeSelectorPreference -->
     <string-array name="timer_unit_names">

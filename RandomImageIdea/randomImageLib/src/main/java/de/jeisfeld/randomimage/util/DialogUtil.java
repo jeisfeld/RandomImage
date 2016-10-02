@@ -363,6 +363,35 @@ public final class DialogUtil {
 	}
 
 	/**
+	 * Display the first use message if not yet shown before.
+	 *
+	 * @param activity The calling activity.
+	 */
+	public static void displayFirstUseMessageIfRequired(final Activity activity) {
+		boolean firstUseInfoWasDisplayed = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_hint_first_use);
+		if (!firstUseInfoWasDisplayed) {
+			// Check if another version of the app is installed (pro vs. standard)
+			String packageName = Application.getAppContext().getPackageName();
+			String altPackageName;
+			if ("de.jeisfeld.randomimagepro".equals(packageName)) {
+				altPackageName = "de.jeisfeld.randomimage";
+			}
+			else {
+				altPackageName = "de.jeisfeld.randomimagepro";
+			}
+			boolean isAltPackageInstalled = SystemUtil.isAppInstalled(altPackageName);
+			String appName = activity.getString(R.string.app_name);
+			if (isAltPackageInstalled) {
+				DialogUtil.displayInfo(activity, null, R.string.key_hint_first_use, R.string.dialog_hint_first_use_upgrade, appName);
+			}
+			else {
+				DialogUtil.displayInfo(activity, null, R.string.key_hint_first_use, R.string.dialog_hint_first_use, appName);
+			}
+
+		}
+	}
+
+	/**
 	 * Get a formatted String out of a message resource and parameter strings.
 	 *
 	 * @param resourceId The message resource.

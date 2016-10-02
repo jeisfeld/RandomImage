@@ -162,13 +162,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 		if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 			DialogUtil.displayInfo(this, null, R.string.key_hint_new_list, R.string.dialog_hint_new_list);
-
-			boolean firstUseInfoWasDisplayed = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_hint_first_use);
-			if (!firstUseInfoWasDisplayed) {
-				// Display first use info only once.
-				DialogUtil.displayInfo(this, null, 0, R.string.dialog_hint_first_use);
-				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_hint_first_use, true);
-			}
+			DialogUtil.displayFirstUseMessageIfRequired(this);
 		}
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayall);

@@ -20,7 +20,7 @@ public final class PreferenceUtil {
 	 * The list of preferences used for switching on and off hints.
 	 */
 	private static final Integer[] HINT_PREFERENCES = {
-			R.string.key_hint_first_use,
+			// R.string.key_hint_first_use, // Do not refresh this hint - this is used only once in the lifetime of an app.
 			R.string.key_hint_add_images,
 			R.string.key_hint_select_folder,
 			R.string.key_hint_display_image,
