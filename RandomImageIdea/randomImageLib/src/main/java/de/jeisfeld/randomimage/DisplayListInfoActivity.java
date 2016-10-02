@@ -8,11 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -158,7 +154,7 @@ public class DisplayListInfoActivity extends Activity {
 					@Override
 					public void run() {
 						((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
-								fromHtml(getString(R.string.info_number_of_images_and_proportion,
+								DialogUtil.fromHtml(getString(R.string.info_number_of_images_and_proportion,
 										imageList.getNestedListImageCount(mListName),
 										getPercentageString(imageList.getImagePercentage(mListName)))));
 
@@ -261,7 +257,8 @@ public class DisplayListInfoActivity extends Activity {
 					@Override
 					public void run() {
 						TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
-						textViewNumberOfImages.setText(fromHtml(getString(R.string.info_number_of_images, Integer.toString(numberOfImages))));
+						textViewNumberOfImages.setText(
+								DialogUtil.fromHtml(getString(R.string.info_number_of_images, Integer.toString(numberOfImages))));
 					}
 				});
 			}
@@ -324,22 +321,5 @@ public class DisplayListInfoActivity extends Activity {
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
 		finish();
-	}
-
-	/**
-	 * Convert a html String into a text.
-	 *
-	 * @param html The html
-	 * @return the text
-	 */
-	@SuppressWarnings("deprecation")
-	private static Spanned fromHtml(final String html) {
-		if (VERSION.SDK_INT >= VERSION_CODES.N) {
-			return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
-		}
-		else {
-			//noinspection deprecation
-			return Html.fromHtml(html);
-		}
 	}
 }

@@ -12,9 +12,13 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -385,6 +389,23 @@ public final class DialogUtil {
 	}
 
 	/**
+	 * Convert a html String into a text.
+	 *
+	 * @param html The html
+	 * @return the text
+	 */
+	@SuppressWarnings("deprecation")
+	public static Spanned fromHtml(final String html) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+		}
+		else {
+			//noinspection deprecation
+			return Html.fromHtml(html);
+		}
+	}
+
+	/**
 	 * Fragment to display an error and go back to the current activity.
 	 */
 	public static class DisplayMessageDialogFragment extends DialogFragment {
@@ -558,14 +579,14 @@ public final class DialogUtil {
 			 *
 			 * @param dialog the confirmation dialog fragment.
 			 */
-			void onDialogPositiveClick(final DialogFragment dialog);
+			void onDialogPositiveClick(DialogFragment dialog);
 
 			/**
 			 * Callback method for negative click from the confirmation dialog.
 			 *
 			 * @param dialog the confirmation dialog fragment.
 			 */
-			void onDialogNegativeClick(final DialogFragment dialog);
+			void onDialogNegativeClick(DialogFragment dialog);
 		}
 	}
 
@@ -656,14 +677,14 @@ public final class DialogUtil {
 			 * @param dialog the confirmation dialog fragment.
 			 * @param text   the text returned from the input.
 			 */
-			void onDialogPositiveClick(final DialogFragment dialog, final String text);
+			void onDialogPositiveClick(DialogFragment dialog, String text);
 
 			/**
 			 * Callback method for negative click from the confirmation dialog.
 			 *
 			 * @param dialog the confirmation dialog fragment.
 			 */
-			void onDialogNegativeClick(final DialogFragment dialog);
+			void onDialogNegativeClick(DialogFragment dialog);
 		}
 	}
 
@@ -767,14 +788,14 @@ public final class DialogUtil {
 			 * @param position the position of the array that was selected.
 			 * @param text     the text returned from the input.
 			 */
-			void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text);
+			void onDialogPositiveClick(DialogFragment dialog, int position, String text);
 
 			/**
 			 * Callback method for negative click from the confirmation dialog.
 			 *
 			 * @param dialog the confirmation dialog fragment.
 			 */
-			void onDialogNegativeClick(final DialogFragment dialog);
+			void onDialogNegativeClick(DialogFragment dialog);
 		}
 	}
 }

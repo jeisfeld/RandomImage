@@ -54,7 +54,7 @@
     <string name="key_statistics_countsettings" translatable="false">statistics_countsettings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_category_premium">Premium Add-Ons</string>
+    <string name="pref_category_premium">Premium Version</string>
     <string name="pref_category_support">Support</string>
     <string name="pref_category_other">Other settings</string>
     <string name="pref_title_language">Language</string>

@@ -6,7 +6,6 @@
         <Preference
             android:key="@string/key_pref_pro_app"
             android:order="101"
-            android:summary="@string/menu_detail_pro_app"
             android:title="@string/menu_title_pro_app"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_support">
