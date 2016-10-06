@@ -9,6 +9,7 @@
     <string name="image_widget_name">Surprise Image Frame</string>
     <string name="stacked_image_widget_name">Surprise Image Deck</string>
     <string name="default_list_name">My first Image List</string>
+    <string name="title_icon_main_configuration">Surprise Image Setup</string>
 
     <!-- Activity titles -->
     <string name="title_activity_display_image_details">Image Details</string>
@@ -19,7 +20,6 @@
     <string name="title_activity_main_configuration_backup">Backup Image Lists</string>
     <string name="title_activity_main_configuration_restore">Restore Image Lists</string>
     <string name="title_activity_main_configuration_delete">Delete Image Lists</string>
-    <string name="title_icon_main_configuration">Surprise Image Setup</string>
     <string name="title_activity_configure_image_list">Configure Image List</string>
     <string name="title_activity_display_images_from_folder">Display image folder</string>
     <string name="title_activity_add_images">Add images</string>
@@ -53,7 +53,7 @@
     <string name="button_send_to">Send to&#8230;</string>
 
     <!-- Info texts shown in activities. -->
-    <string name="text_info_select_image_folder_for_add">Select the folder whose images you want to add to the image list.</string>
+    <string name="text_info_select_image_folder_for_add">Select the folder fron which you want to add images to the image list.</string>
     <string name="text_info_select_image_folders_for_add">Select the folders which you want to add to the image list.</string>
     <string name="text_info_select_lists_for_backup">Select the image lists that you want to back up.</string>
     <string name="text_info_select_lists_for_restore">Select the image lists that you want to restore.</string>
@@ -61,6 +61,7 @@
     <string name="text_info_select_images_for_remove">Select the folders and images that you want to remove from the image list.</string>
     <string name="text_info_image_lists">My image lists</string>
     <string name="text_info_image_list_backups">Existing backups</string>
+    <string name="text_info_empty_list">Your surprise image list is empty. Please press the “+” symbol on top in order to add images or folders to the list.</string>
 
     <!-- Other texts -->
     <string name="text_initializing">Initializing&#8230;</string>

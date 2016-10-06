@@ -83,6 +83,11 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	private TextView mTextViewListName;
 
 	/**
+	 * The TextView displaying a message.
+	 */
+	private TextView mTextViewMessage;
+
+	/**
 	 * The current action within this activity.
 	 */
 	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
@@ -129,6 +134,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		mTextViewListName = (TextView) findViewById(R.id.textViewTitle);
+		mTextViewMessage = (TextView) findViewById(R.id.textViewMessage);
 
 		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
 		if (trackingName != null) {
@@ -161,7 +167,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		}
 
 		if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
-			DialogUtil.displayInfo(this, null, R.string.key_hint_new_list, R.string.dialog_hint_new_list);
 			DialogUtil.displayFirstUseMessageIfRequired(this);
 		}
 
@@ -214,6 +219,20 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		mTextViewListName.setText(mListName);
 		configureMissingImagesButton(imageList);
 		invalidateOptionsMenu();
+		displayEmptyListMessageIfRequired();
+	}
+
+	/**
+	 * Display the message on empty list if required.
+	 */
+	private void displayEmptyListMessageIfRequired() {
+		if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
+			mTextViewMessage.setVisibility(View.VISIBLE);
+			mTextViewMessage.setText(R.string.text_info_empty_list);
+		}
+		else {
+			mTextViewMessage.setVisibility(View.GONE);
+		}
 	}
 
 	/**
@@ -533,16 +552,16 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
-			TextView textViewInfo = (TextView) findViewById(R.id.textViewMessage);
 
 			switch (action) {
 			case DISPLAY:
 				setTitle(R.string.title_activity_configure_image_list);
-				textViewInfo.setVisibility(View.GONE);
+				displayEmptyListMessageIfRequired();
 				break;
 			case REMOVE:
 				setTitle(R.string.title_activity_remove_images);
-				textViewInfo.setVisibility(View.VISIBLE);
+				mTextViewMessage.setVisibility(View.VISIBLE);
+				mTextViewMessage.setText(R.string.text_info_select_images_for_remove);
 				break;
 			default:
 				break;

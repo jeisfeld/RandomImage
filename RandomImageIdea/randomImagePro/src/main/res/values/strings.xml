@@ -4,5 +4,6 @@
     <string name="has_premium" translatable="false">true</string>
     <string name="app_name">Surprise Image Pro</string>
     <string name="app_name_short">Surprise Image Pro</string>
+    <string name="title_icon_main_configuration">Surprise Image Pro Setup</string>
 
 </resources>

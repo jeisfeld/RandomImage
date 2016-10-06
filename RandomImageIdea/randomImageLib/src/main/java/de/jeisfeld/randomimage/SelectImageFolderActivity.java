@@ -521,6 +521,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 					NotificationUtil.notifyUpdatedList(SelectImageFolderActivity.this, mListName, false, addedLists, addedFolders, null);
 				}
 
+				changeAction(CurrentAction.DISPLAY);
 				returnResult(totalAddedCount > 0);
 			}
 			else {

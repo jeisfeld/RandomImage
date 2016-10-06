@@ -24,7 +24,6 @@ public final class PreferenceUtil {
 			R.string.key_hint_add_images,
 			R.string.key_hint_select_folder,
 			R.string.key_hint_display_image,
-			R.string.key_hint_new_list,
 			R.string.key_hint_main_configuration};
 
 	/**

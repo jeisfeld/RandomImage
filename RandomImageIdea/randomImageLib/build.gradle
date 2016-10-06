@@ -22,9 +22,9 @@ android {
 }
 
 dependencies {
-    compile files('libs/android-support-v13.jar')
     compile files('libs/annotations.jar')
     compile 'com.google.android.gms:play-services-analytics:9.6.1'
+    compile 'com.android.support:support-v13:24.2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

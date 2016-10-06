@@ -52,7 +52,7 @@
     <string name="button_send_to">Senden an&#8230;</string>
 
     <!-- Info texts shown in activities. -->
-    <string name="text_info_select_image_folder_for_add">Wählen Sie das Verzeichnis, dessen Bilder Sie zur Liste hinzufügen wollen.</string>
+    <string name="text_info_select_image_folder_for_add">Wählen Sie ein Verzeichnis, aus dem Sie Bilder zur Liste hinzufügen wollen.</string>
     <string name="text_info_select_image_folders_for_add">Wählen Sie die Verzeichnisse, die Sie zur Liste hinzufügen wollen.</string>
     <string name="text_info_select_lists_for_backup">Wählen Sie die Bildlisten, die Sie sichern wollen.</string>
     <string name="text_info_select_lists_for_restore">Wählen Sie die Bildlisten, die Sie wiederherstellen wollen.</string>
@@ -60,6 +60,7 @@
     <string name="text_info_select_images_for_remove">Wählen Sie die Verzeichnisse und Bilder, die Sie aus der Bildliste entfernen wollen.</string>
     <string name="text_info_image_lists">Meine Bildlisten</string>
     <string name="text_info_image_list_backups">Vorhandene Sicherungkopien</string>
+    <string name="text_info_empty_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+” am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
 
     <!-- Other texts -->
     <string name="text_initializing">Ladevorgang&#8230;</string>
