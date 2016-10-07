@@ -56,10 +56,10 @@
     <!-- Messages of hint dialogs -->
     <string name="dialog_hint_first_use">Thanks for installing %1$s!\n\nFirst steps:\n\n1. Configure a list of images that you want to display, by selecting folders and images from your device.\n\n2. Then you may ramdomly display images from this list by either using the launcher icon, a widget, or a configurable notification.</string>
     <string name="dialog_hint_first_use_upgrade">Thanks for installing %1$s!\n\nYou can migrate your image lists to this app version in the following way:\n\n1. Open the configuration of the previously used version of the app, and make a backup of your image lists.\n\n2. Open the configuration of this %1$s again and import all your image lists (via “restore”).</string>
-    <string name="dialog_hint_select_folder">Here you can select the image folder from which you want to add images to the list.\n\nYou can use the filter in order to search for folders.\n\nPress the hook symbol in order to select multiple folders.\n\nPress the folder symbol in order to browse the file system.</string>
-    <string name="dialog_hint_add_images">Now you can either add the complete image folder to your Surprise Image List, or you can select individual images to add.\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>
-    <string name="dialog_hint_display_image">You can zoom and move the image.\n\nFlip the image to see another one.\n\nDouble tap to go to the image list configuration.\n\nLong press for further options.</string>
-    <string name="dialog_hint_main_configuration">This is the main configuration page of the app. Here you can either select an image list for editing, or you may configure widgets or notifications.</string>
+    <string name="dialog_hint_select_folder">Here you can\n\n- Select an image folder from which you want to add single images to the Image List\\nn- Select multiple image folders and add them to the Image List</string>
+    <string name="dialog_hint_add_images">Here you can\n\n- add the complete image folder to your Image List\n\n- select individual images to add\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>
+    <string name="dialog_hint_display_image">You can zoom and move the image.\n\n- Flip the image to see another one.\n\n- Double tap to go to the image list configuration.\n\n- Long press for further options.</string>
+    <string name="dialog_hint_main_configuration">This is the main configuration page of the app. Here you can\n´n- Edit image lists\n\n- Backup and restore image lists\n\n- Configure widgets\n\n- Add and configure image notifications.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>

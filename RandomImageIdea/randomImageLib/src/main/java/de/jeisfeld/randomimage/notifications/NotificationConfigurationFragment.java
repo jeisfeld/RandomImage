@@ -56,10 +56,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		super.onCreate(savedInstanceState);
 		mNotificationId = getArguments().getInt(STRING_NOTIFICATION_ID);
 
-		handleNotificationCreation();
 		setDefaultValues();
 		setNonIndexedValues();
 		addPreferencesFromResource(R.xml.pref_notification);
+		handleNotificationCreation();
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_notification_timer_duration);
