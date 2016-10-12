@@ -166,7 +166,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			changeAction(mCurrentAction);
 		}
 
-		if (isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
+		if (savedInstanceState == null && isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 			DialogUtil.displayFirstUseMessageIfRequired(this);
 		}
 

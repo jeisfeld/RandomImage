@@ -54,6 +54,10 @@ public final class DialogUtil {
 	 */
 	private static final String PARAM_MESSAGE = "message";
 	/**
+	 * Parameter to pass the view resource to the DialogFragment.
+	 */
+	private static final String PARAM_VIEW = "view";
+	/**
 	 * Parameter to pass the skip preference to the DialogFragment.
 	 */
 	private static final String PARAM_SKIPPREFERENCE = "preference";
@@ -369,6 +373,7 @@ public final class DialogUtil {
 	 */
 	public static void displayFirstUseMessageIfRequired(final Activity activity) {
 		boolean firstUseInfoWasDisplayed = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_hint_first_use);
+
 		if (!firstUseInfoWasDisplayed && ImageRegistry.isAllEmpty()) {
 			// Check if another version of the app is installed (pro vs. standard)
 			String packageName = Application.getAppContext().getPackageName();
@@ -381,13 +386,26 @@ public final class DialogUtil {
 			}
 			boolean isAltPackageInstalled = SystemUtil.isAppInstalled(altPackageName);
 			String appName = activity.getString(R.string.app_name);
+
 			if (isAltPackageInstalled) {
 				DialogUtil.displayInfo(activity, null, R.string.key_hint_first_use, R.string.dialog_hint_first_use_upgrade, appName);
 			}
 			else {
-				DialogUtil.displayInfo(activity, null, R.string.key_hint_first_use, R.string.dialog_hint_first_use, appName);
-			}
+				Bundle bundle = new Bundle();
 
+				boolean skipDialog = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_hint_first_use);
+				if (skipDialog) {
+					return;
+				}
+				bundle.putInt(PARAM_SKIPPREFERENCE, R.string.key_hint_first_use);
+
+				bundle.putInt(PARAM_VIEW, R.layout.dialog_first_use);
+				bundle.putString(PARAM_TITLE, activity.getString(R.string.title_dialog_first_use, appName));
+				bundle.putInt(PARAM_ICON, R.drawable.ic_launcher);
+				DisplayMessageDialogFragment fragment = new DisplayMessageDialogFragment();
+				fragment.setArguments(bundle);
+				fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+			}
 		}
 	}
 
@@ -452,6 +470,7 @@ public final class DialogUtil {
 			final CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			final String title = getArguments().getString(PARAM_TITLE);
 			final int iconResource = getArguments().getInt(PARAM_ICON);
+			final int viewResource = getArguments().getInt(PARAM_VIEW);
 			final int skipPreference = getArguments().getInt(PARAM_SKIPPREFERENCE); // STORE_PROPERTY
 
 			// Listeners cannot retain functionality when automatically recreated.
@@ -467,29 +486,48 @@ public final class DialogUtil {
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(title) //
-					.setIcon(iconResource) //
-					.setMessage(message) //
-					.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int id) {
-							if (mListener != null) {
-								mListener.onDialogFinished();
-							}
-							dialog.dismiss();
-						}
-					});
+					.setIcon(iconResource);
 
-			if (skipPreference != 0) {
-				builder.setNegativeButton(R.string.button_dont_show, new DialogInterface.OnClickListener() {
+			if (viewResource == 0) {
+				builder.setMessage(message);
+			}
+			else {
+				View view = getActivity().getLayoutInflater().inflate(viewResource, null);
+				builder.setView(view);
+			}
+
+			if (skipPreference == 0) {
+				builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(final DialogInterface dialog, final int id) {
-						PreferenceUtil.setSharedPreferenceBoolean(skipPreference, true);
 						if (mListener != null) {
 							mListener.onDialogFinished();
 						}
 						dialog.dismiss();
 					}
 				});
+			}
+			else {
+				builder
+						.setPositiveButton(R.string.button_show_later, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(final DialogInterface dialog, final int id) {
+								if (mListener != null) {
+									mListener.onDialogFinished();
+								}
+								dialog.dismiss();
+							}
+						})
+						.setNegativeButton(R.string.button_dont_show, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(final DialogInterface dialog, final int id) {
+								PreferenceUtil.setSharedPreferenceBoolean(skipPreference, true);
+								if (mListener != null) {
+									mListener.onDialogFinished();
+								}
+								dialog.dismiss();
+							}
+						});
 			}
 
 			return builder.create();

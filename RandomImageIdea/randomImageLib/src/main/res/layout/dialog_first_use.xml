@@ -1,0 +1,45 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/layoutDisplayNestedListDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0px"
+        android:orientation="vertical"
+        android:padding="0px">
+
+        <TextView
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/text_padding"
+            android:text="@string/dialog_hint_first_use_1"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/first_steps_image1_height"
+            android:padding="@dimen/text_padding"
+            android:src="@drawable/firststeps_1"/>
+
+        <TextView
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/text_padding"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/text_padding"
+            android:text="@string/dialog_hint_first_use_2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/first_steps_image2_height"
+            android:padding="@dimen/text_padding"
+            android:src="@drawable/firststeps_2"/>
+    </LinearLayout>
+</ScrollView>

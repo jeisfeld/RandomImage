@@ -24,6 +24,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
@@ -73,6 +74,20 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		setTitle(R.string.title_activity_main_configuration);
 		fillListOfLists();
 
+		if (mListNames.size() == 0) {
+			// On first startup need to create default list.
+			ImageRegistry.getCurrentImageListRefreshed(true);
+			fillListOfLists();
+		}
+		if (mListNames.size() == 1) {
+			ImageList imageList = ImageRegistry.getCurrentImageList(false);
+			if (imageList.isEmpty()) {
+				ConfigureImageListActivity.startActivity(this, imageList.getListName(), "empty/MainConfig");
+				finish();
+				return;
+			}
+		}
+
 		if (savedInstanceState != null) {
 			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 		}
@@ -83,7 +98,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 
 		if (savedInstanceState == null) {
 			DialogUtil.displayInfo(this, null, R.string.key_hint_main_configuration, R.string.dialog_hint_main_configuration);
-			DialogUtil.displayFirstUseMessageIfRequired(this);
 		}
 	}
 

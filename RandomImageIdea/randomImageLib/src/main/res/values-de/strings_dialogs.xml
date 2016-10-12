@@ -11,6 +11,7 @@
     <string name="title_dialog_missing_images">Fehlende Bilder</string>
     <string name="title_dialog_add_list">Liste hinzufügen</string>
     <string name="title_dialog_request_permission">Berechtigung erforderlich</string>
+    <string name="title_dialog_first_use">Erste Schritte</string>
 
     <!-- Titles of notifications -->
 
@@ -54,7 +55,8 @@
     <string name="toast_widget_locked">Das Widget ist bis %1$s gesperrt.</string>
 
     <!-- Messages of hint dialogs -->
-    <string name="dialog_hint_first_use">Danke für die Installation von %1$s!\n\nErste Schritte:\n\n1. Stellen Sie eine Liste von Bildern zusammen, die Sie anzeigen wollen, indem Sie Verzeichnisse und Fotos auf Ihrem Smartphone/Tablet auswählen.\n\n2. Anschließend können Sie zufällige Fotos aus dieser Liste anschauen, indem Sie entweder das Startseitensymbol oder ein Widget oder eine konfigurierbare Benachrichtigung nutzen.</string>
+    <string name="dialog_hint_first_use_1">1. Stellen Sie eine Liste von Bildern und Bildverzeichnissen auf Ihrem Smartphone zusammen, die Sie anzeigen wollen.</string>
+    <string name="dialog_hint_first_use_2">2. Legen Sie ein Widget auf ihren Startbildschirm, um zufällige Bilder aus Ihrer Liste anzuschauen.</string>
     <string name="dialog_hint_first_use_upgrade">Danke für die Installation von %1$s!\n\nSie können Ihre Bildlisten wie folgt aus der bisher genutzten App-Version übertragen:\n\n1. Öffnen Sie die Konfiguration der bisher genutzten App-Version, und machen Sie ein Backup Ihrer Bildlisten.\n\n2. Öffnen Sie die Konfiguration der App %1$s und Importieren Sie Ihre Bildlisten (über „wiederherstellen”).</string>
     <string name="dialog_hint_select_folder">Hier können Sie\n\n- Ein Verzeichnis auswählen, aus dem Sie Bilder zu Ihrer Bildliste hinzufügen wollen\n\n- Mehrere Verzeichnisse auswählen und zu Ihrer Bildliste hinzufügen</string>
     <string name="dialog_hint_add_images">Hier können Sie\n\n- Das ganze Bildverzeichnis zu Ihrer Bildliste hinzufügen\n\n- einzelne Bilder auswählen und hinzufügen\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>

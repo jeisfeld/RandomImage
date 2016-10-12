@@ -11,6 +11,7 @@
     <string name="title_dialog_missing_images">Missing images</string>
     <string name="title_dialog_add_list">Add list</string>
     <string name="title_dialog_request_permission">Permission required</string>
+    <string name="title_dialog_first_use">First Steps</string>
 
     <!-- Titles of notifications -->
 
@@ -54,7 +55,8 @@
     <string name="toast_widget_locked">The widget is locked until %1$s.</string>
 
     <!-- Messages of hint dialogs -->
-    <string name="dialog_hint_first_use">Thanks for installing %1$s!\n\nFirst steps:\n\n1. Configure a list of images that you want to display, by selecting folders and images from your device.\n\n2. Then you may ramdomly display images from this list by either using the launcher icon, a widget, or a configurable notification.</string>
+    <string name="dialog_hint_first_use_1">1. Assemble a list of images and image folders from your device that you want to display.</string>
+    <string name="dialog_hint_first_use_2">2. Add a widget to your home screen, to see random images from your list.</string>
     <string name="dialog_hint_first_use_upgrade">Thanks for installing %1$s!\n\nYou can migrate your image lists to this app version in the following way:\n\n1. Open the configuration of the previously used version of the app, and make a backup of your image lists.\n\n2. Open the configuration of this %1$s again and import all your image lists (via “restore”).</string>
     <string name="dialog_hint_select_folder">Here you can\n\n- Select an image folder from which you want to add single images to the Image List\\nn- Select multiple image folders and add them to the Image List</string>
     <string name="dialog_hint_add_images">Here you can\n\n- add the complete image folder to your Image List\n\n- select individual images to add\n\nNote: you may also use your Gallery app and send images from there to the Surprise Image app.</string>
