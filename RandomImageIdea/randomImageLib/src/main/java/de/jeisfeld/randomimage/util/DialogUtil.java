@@ -417,6 +417,7 @@ public final class DialogUtil {
     public static void displayInitialSearchForImageFoldersIfRequired(final Activity activity) {
         if (PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) == null) {
             SearchImageFoldersDialogFragment fragment = new SearchImageFoldersDialogFragment();
+            fragment.setCancelable(false);
             fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
         }
     }
@@ -887,9 +888,9 @@ public final class DialogUtil {
          */
         private TextView mMessageView;
         /**
-         * The displayed String.
+         * The number of found folders.
          */
-        private String mMessage = "";
+        private int mFolderCount = 0;
 
         @Override
         public final Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -920,9 +921,9 @@ public final class DialogUtil {
 
                 @Override
                 public void handleImageFolder(final String imageFolder) {
-                    mMessage = imageFolder + "\n" + mMessage;
+                    mFolderCount++;
                     if (mMessageView != null) {
-                        mMessageView.setText(mMessage);
+                        mMessageView.setText(mFolderCount + ": " + imageFolder);
                     }
                 }
             });
