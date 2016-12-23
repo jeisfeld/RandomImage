@@ -485,7 +485,6 @@ public final class ImageUtil {
 	 */
 	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
 		final Handler handler = new Handler();
-
 		new Thread() {
 			@Override
 			public void run() {

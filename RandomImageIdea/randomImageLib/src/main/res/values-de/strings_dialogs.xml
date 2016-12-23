@@ -12,6 +12,7 @@
     <string name="title_dialog_add_list">Liste hinzufügen</string>
     <string name="title_dialog_request_permission">Berechtigung erforderlich</string>
     <string name="title_dialog_first_use">Erste Schritte</string>
+    <string name="title_dialog_searching_image_folders">Suche Bildverzeichnisse…</string>
 
     <!-- Titles of notifications -->
 
