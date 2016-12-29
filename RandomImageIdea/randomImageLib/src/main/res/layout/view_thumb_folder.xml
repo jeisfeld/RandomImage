@@ -4,6 +4,7 @@
              android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/imageViewFolderBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/text_initializing"
@@ -15,9 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/text_initializing"
-        android:padding="10dp"/>
+        android:padding="@dimen/view_folder_padding"/>
 
     <ImageView
+        android:id="@+id/imageViewFolderForeground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/text_initializing"

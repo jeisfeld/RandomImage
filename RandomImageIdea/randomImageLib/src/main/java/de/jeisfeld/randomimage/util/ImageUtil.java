@@ -127,6 +127,25 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Get a bitmap from a bitmap resource.
+	 *
+	 * @param resourceId The resource id.
+	 * @return the bitmap.
+	 */
+	public static Bitmap getBitmapFromResource(final int resourceId) {
+		@SuppressWarnings("deprecation")
+		Drawable bitmapDrawable = Application.getAppContext().getResources().getDrawable(resourceId);
+
+		if (bitmapDrawable instanceof BitmapDrawable) {
+			return ((BitmapDrawable) bitmapDrawable).getBitmap();
+		}
+		else {
+			return null;
+		}
+	}
+
+
+	/**
 	 * Return a bitmap of this photo.
 	 *
 	 * @param path    The file path of the image.
@@ -322,23 +341,6 @@ public final class ImageUtil {
 		else {
 			return extendToBitmapOfSize(baseBitmap, width, minHeight);
 		}
-	}
-
-	/**
-	 * Retrieve a part of a bitmap in full resolution.
-	 *
-	 * @param fullBitmap The bitmap from which to get the part.
-	 * @param minX       The minimum X position to retrieve.
-	 * @param maxX       The maximum X position to retrieve.
-	 * @param minY       The minimum Y position to retrieve.
-	 * @param maxY       The maximum Y position to retrieve.
-	 * @return The bitmap.
-	 */
-	public static Bitmap getPartialBitmap(final Bitmap fullBitmap, final float minX, final float maxX, final float minY, final float maxY) {
-		return Bitmap.createBitmap(fullBitmap, Math.round(minX * fullBitmap.getWidth()),
-				Math.round(minY * fullBitmap.getHeight()),
-				Math.round((maxX - minX) * fullBitmap.getWidth()),
-				Math.round((maxY - minY) * fullBitmap.getHeight()));
 	}
 
 	/**
@@ -653,7 +655,7 @@ public final class ImageUtil {
 		float red2 = Color.red(colorWhite);
 		float green2 = Color.green(colorWhite);
 		float blue2 = Color.blue(colorWhite);
-		ColorMatrix colorMatrix = new ColorMatrix(new float[] { //
+		ColorMatrix colorMatrix = new ColorMatrix(new float[]{ //
 				(red2 - red) / 255, 0, 0, 0, red, // MAGIC_NUMBER
 				0, (green2 - green) / 255, 0, 0, green, // MAGIC_NUMBER
 				0, 0, (blue2 - blue) / 255, 0, blue, // MAGIC_NUMBER
@@ -668,6 +670,21 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Get a colorized bitmap from a bitmap resource.
+	 *
+	 * @param resourceId The bitmap resource id.
+	 * @param colorBlackId The resourceId of the target color of the black parts
+	 * @param colorWhiteId The resourceId of the target color of the white parts
+	 * @return the colorized image bitmap
+	 */
+	@SuppressWarnings("deprecation")
+	public static Bitmap getColorizedBitmap(final int resourceId, final int colorBlackId, final int colorWhiteId) {
+		return changeBitmapColor(getBitmapFromResource(resourceId),
+				Application.getAppContext().getResources().getColor(colorBlackId),
+				Application.getAppContext().getResources().getColor(colorWhiteId));
+	}
+
+	/**
 	 * Get a transparent icon from a resource id.
 	 *
 	 * @param resourceId The resource id.
@@ -678,17 +695,6 @@ public final class ImageUtil {
 		Drawable icon = new BitmapDrawable(resources, BitmapFactory.decodeResource(resources, resourceId));
 		icon.setAlpha(128); // MAGIC_NUMBER
 		return icon;
-	}
-
-	/**
-	 * File filter class to identify image files.
-	 */
-	public static class ImageFileFilter implements FileFilter {
-		@Override
-		public final boolean accept(final File file) {
-			Uri uri = Uri.fromFile(file);
-			return file.exists() && file.isFile() && ImageUtil.getMimeType(uri).startsWith("image/");
-		}
 	}
 
 	/**

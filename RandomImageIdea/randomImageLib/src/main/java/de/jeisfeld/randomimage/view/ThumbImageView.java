@@ -29,6 +29,30 @@ public class ThumbImageView extends FrameLayout {
 			.getDimensionPixelSize(R.dimen.grid_pictures_size), MediaStoreUtil.MINI_THUMB_SIZE);
 
 	/**
+	 * The background image for a folder.
+	 */
+	private static final Bitmap BITMAP_FOLDER_BACKGROUND =
+			ImageUtil.getColorizedBitmap(R.drawable.folder_background, R.color.folder_background, R.color.folder_foreground);
+
+	/**
+	 * The foreground image for a folder.
+	 */
+	private static final Bitmap BITMAP_FOLDER_FOREGROUND =
+			ImageUtil.getColorizedBitmap(R.drawable.folder_foreground, R.color.folder_background, R.color.folder_foreground);
+
+	/**
+	 * The background image for a list.
+	 */
+	private static final Bitmap BITMAP_LIST_BACKGROUND =
+			ImageUtil.getColorizedBitmap(R.drawable.folder_background, R.color.list_background, R.color.list_foreground);
+
+	/**
+	 * The foreground image for a list.
+	 */
+	private static final Bitmap BITMAP_LIST_FOREGROUND =
+			ImageUtil.getColorizedBitmap(R.drawable.folder_foreground, R.color.list_background, R.color.list_foreground);
+
+	/**
 	 * The context in which this is used.
 	 */
 	private Context mContext;
@@ -67,7 +91,7 @@ public class ThumbImageView extends FrameLayout {
 	 * Standard constructor to be implemented for all views.
 	 *
 	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs   The attributes of the XML tag that is inflating the view.
+	 * @param attrs The attributes of the XML tag that is inflating the view.
 	 * @see android.view.View#View(Context, AttributeSet)
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs) {
@@ -77,10 +101,10 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context  The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs    The attributes of the XML tag that is inflating the view.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs The attributes of the XML tag that is inflating the view.
 	 * @param defStyle An attribute in the current theme that contains a reference to a style resource that supplies default
-	 *                 values for the view. Can be 0 to not look for defaults.
+	 *            values for the view. Can be 0 to not look for defaults.
 	 * @see android.view.View#View(Context, AttributeSet, int)
 	 */
 	public ThumbImageView(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -92,21 +116,28 @@ public class ThumbImageView extends FrameLayout {
 	 * Initialize the View, depending on the style.
 	 *
 	 * @param activity The activity displaying the view.
-	 * @param style    The style of the view.
+	 * @param style The style of the view.
 	 */
 	public final void initWithStyle(final Activity activity, final ThumbStyle style) {
 		this.mThumbStyle = style;
 
 		int layoutId = 0;
+		Bitmap bitmapBackground = null;
+		Bitmap bitmapForeground = null;
+
 		switch (mThumbStyle) {
 		case IMAGE:
 			layoutId = R.layout.view_thumb_image;
 			break;
 		case FOLDER:
 			layoutId = R.layout.view_thumb_folder;
+			bitmapBackground = BITMAP_FOLDER_BACKGROUND;
+			bitmapForeground = BITMAP_FOLDER_FOREGROUND;
 			break;
 		case LIST:
-			layoutId = R.layout.view_thumb_list;
+			layoutId = R.layout.view_thumb_folder;
+			bitmapBackground = BITMAP_LIST_BACKGROUND;
+			bitmapForeground = BITMAP_LIST_FOREGROUND;
 			break;
 		default:
 			break;
@@ -115,6 +146,13 @@ public class ThumbImageView extends FrameLayout {
 		LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		layoutInflater.inflate(layoutId, this, true);
 
+		if (bitmapBackground != null) {
+			((ImageView) findViewById(R.id.imageViewFolderBackground)).setImageBitmap(bitmapBackground);
+		}
+		if (bitmapForeground != null) {
+			((ImageView) findViewById(R.id.imageViewFolderForeground)).setImageBitmap(bitmapForeground);
+		}
+
 		mImageView = (ImageView) findViewById(R.id.imageViewThumb);
 		mCheckBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
 	}
@@ -122,12 +160,12 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Set the image and create the bitmap.
 	 *
-	 * @param activity         The activity holding the view.
+	 * @param activity The activity holding the view.
 	 * @param loadableFileName A provider for the name of the image to be displayed.
-	 * @param sameThread       if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
+	 * @param sameThread if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 */
 	public final void setImage(final Activity activity, final LoadableFileName loadableFileName,
-							   final boolean sameThread) {
+			final boolean sameThread) {
 		if (sameThread) {
 			loadImage(activity, loadableFileName);
 		}
@@ -146,7 +184,7 @@ public class ThumbImageView extends FrameLayout {
 	/**
 	 * Inner helper method of set Image, handling the loading of the image.
 	 *
-	 * @param activity         The activity triggering the load.
+	 * @param activity The activity triggering the load.
 	 * @param loadableFileName a provider of the name of the file to be loaded.
 	 */
 	private void loadImage(final Activity activity, final LoadableFileName loadableFileName) {

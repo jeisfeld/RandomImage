@@ -6,6 +6,7 @@
     <dimen name="grid_pictures_size">120dp</dimen>
     <dimen name="grid_text_size">12sp</dimen>
     <dimen name="text_size_grid_title">20sp</dimen>
+    <dimen name="view_folder_padding">10dp</dimen>
     <dimen name="grid_folder_bottom_size">40sp</dimen>
     <dimen name="mini_grid_pictures_size">86dp</dimen>
     <dimen name="text_padding">6dp</dimen>
