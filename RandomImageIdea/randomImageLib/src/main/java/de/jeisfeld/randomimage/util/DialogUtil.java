@@ -299,11 +299,11 @@ public final class DialogUtil {
             switch (folderCount) {
                 case 1:
                     folderString =
-                            getFormattedString(R.string.partial_folder_single, new File(folderList.get(0)).getName());
+                            getFormattedString(R.string.partial_folder_single, ImageUtil.getImageFolderShortName(folderList.get(0)));
                     break;
                 case 2:
-                    folderString = getFormattedString(R.string.partial_folder_two, new File(folderList.get(0)).getName(),
-                            new File(folderList.get(1)).getName());
+                    folderString = getFormattedString(R.string.partial_folder_two, ImageUtil.getImageFolderShortName(folderList.get(0)),
+                            ImageUtil.getImageFolderShortName(folderList.get(1)));
                     break;
                 default:
                     folderString = getFormattedString(R.string.partial_folder_multiple, folderCount);

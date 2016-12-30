@@ -1,11 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -19,6 +13,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DateUtil;
@@ -72,9 +71,19 @@ public class DisplayImageDetailsActivity extends Activity {
 			Application.getAppContext().getResources().getDisplayMetrics());
 
 	/**
+	 * The name of the file as stored in the image list.
+	 */
+	private String mFileNameInList;
+
+	/**
 	 * The name of the file whose details should be displayed.
 	 */
 	private String mFileName;
+
+	/**
+	 * The type of the file whose details should be displayed.
+	 */
+	private FileType mFileType;
 
 	/**
 	 * The name of the list from which this file is taken.
@@ -89,14 +98,14 @@ public class DisplayImageDetailsActivity extends Activity {
 	/**
 	 * Static helper method to start the activity.
 	 *
-	 * @param activity          The activity starting this activity.
-	 * @param fileName          The name of the file whose details should be displayed.
-	 * @param listName          The name of the list from which this file is taken.
+	 * @param activity The activity starting this activity.
+	 * @param fileName The name of the file whose details should be displayed.
+	 * @param listName The name of the list from which this file is taken.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
-	 * @param trackingName      A String indicating the starter of the activity.
+	 * @param trackingName A String indicating the starter of the activity.
 	 */
-	public static final void startActivity(final Activity activity, final String fileName, final String listName,
-										   final boolean preventDisplayAll, final String trackingName) {
+	public static void startActivity(final Activity activity, final String fileName, final String listName,
+									 final boolean preventDisplayAll, final String trackingName) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		if (listName != null) {
@@ -109,7 +118,6 @@ public class DisplayImageDetailsActivity extends Activity {
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
-	@SuppressLint("InflateParams")
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -117,9 +125,25 @@ public class DisplayImageDetailsActivity extends Activity {
 		// Ensure that this activity can be shown in Landscape mode, even if the parent activity is forced to Portrait.
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
-		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+		mFileNameInList = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
+		mFileName = mFileNameInList;
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
+
+		File file = new File(mFileName);
+		if (file.isFile()) {
+			mFileType = FileType.FILE;
+		}
+		else if (mFileName.endsWith(ImageUtil.RECURSIVE_SUFFIX) && file.getParentFile().isDirectory()) {
+			mFileType = FileType.FOLDER_RECURSIVE;
+			mFileName = file.getParent();
+		}
+		else if (file.isDirectory()) {
+			mFileType = FileType.FOLDER;
+		}
+		else {
+			mFileType = FileType.UNKNOWN;
+		}
 
 		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
 		if (trackingName != null) {
@@ -145,11 +169,10 @@ public class DisplayImageDetailsActivity extends Activity {
 		displayImageInfo();
 
 		final String galleryFileName;
-		File file = new File(mFileName);
-		if (file.isFile()) {
+		if (mFileType == FileType.FILE) {
 			galleryFileName = mFileName;
 		}
-		else if (file.isDirectory()) {
+		else if (mFileType == FileType.FOLDER) {
 			setTitle(R.string.title_activity_display_folder_details);
 			ArrayList<String> files = ImageUtil.getImagesInFolder(mFileName);
 			if (files.size() > 0) {
@@ -174,7 +197,7 @@ public class DisplayImageDetailsActivity extends Activity {
 			});
 		}
 
-		if (file.isFile()) {
+		if (mFileType == FileType.FILE) {
 			Button btnSendTo = (Button) findViewById(R.id.buttonSendTo);
 			btnSendTo.setVisibility(View.VISIBLE);
 			btnSendTo.setOnClickListener(new OnClickListener() {
@@ -205,33 +228,36 @@ public class DisplayImageDetailsActivity extends Activity {
 	 */
 	private void configureButtonsForImageList() {
 		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
-		if (imageList != null && imageList.contains(mFileName)) {
-			final boolean isDirectory = new File(mFileName).isDirectory();
-
+		if (imageList != null && imageList.contains(mFileNameInList)) {
 			Button btnRemoveFromList = (Button) findViewById(R.id.buttonRemoveFromList);
 			btnRemoveFromList.setVisibility(View.VISIBLE);
 			btnRemoveFromList.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					final String filesString;
-					if (isDirectory) {
-						filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
+					if (mFileType == FileType.FILE) {
+						filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
 					}
 					else {
-						filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
+						filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
 					}
 
 					DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
 							new ConfirmDialogListener() {
 								@Override
 								public void onDialogPositiveClick(final DialogFragment dialog) {
-									if (isDirectory) {
-										imageList.removeFolder(mFileName);
+									if (mFileType == FileType.FOLDER) {
+										imageList.removeFolder(mFileNameInList);
+										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+												null, Collections.singletonList(mFileName), null);
+									}
+									else if (mFileType == FileType.FOLDER_RECURSIVE) {
+										imageList.removeFolder(mFileNameInList);
 										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
 												null, Collections.singletonList(mFileName), null);
 									}
 									else {
-										imageList.removeFile(mFileName);
+										imageList.removeFile(mFileNameInList);
 										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
 												null, null, Collections.singletonList(mFileName));
 									}
@@ -264,15 +290,14 @@ public class DisplayImageDetailsActivity extends Activity {
 
 	}
 
-
 	/**
 	 * Static helper method to extract the finishParent flag.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data       The activity response data.
+	 * @param data The activity response data.
 	 * @return the flag if the parent activity should be finished.
 	 */
-	public static final boolean getResultFinishParent(final int resultCode, final Intent data) {
+	public static boolean getResultFinishParent(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_FINISH_PARENT);
@@ -286,10 +311,10 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * Static helper method to extract the fileRemoved flag.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data       The activity response data.
+	 * @param data The activity response data.
 	 * @return the flag if the file was removed.
 	 */
-	public static final boolean getResultFileRemoved(final int resultCode, final Intent data) {
+	public static boolean getResultFileRemoved(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_FILE_REMOVED);
@@ -303,7 +328,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * Helper method: Return the flag if the parent activity should be finished.
 	 *
 	 * @param finishParent The flag if the parent activity should be finished.
-	 * @param fileRemoved  The flag if the file has been removed from the list.
+	 * @param fileRemoved The flag if the file has been removed from the list.
 	 */
 	private void returnResult(final boolean finishParent, final boolean fileRemoved) {
 		Bundle resultData = new Bundle();
@@ -319,7 +344,7 @@ public class DisplayImageDetailsActivity extends Activity {
 	 * Display the image information.
 	 */
 	private void displayImageInfo() {
-		File file = new File(mFileName);
+		final File file = new File(mFileName);
 
 		TextView textViewFileName = (TextView) findViewById(R.id.textViewFileName);
 		textViewFileName.setText(file.getName());
@@ -336,23 +361,64 @@ public class DisplayImageDetailsActivity extends Activity {
 			textViewImageDate.setText(DialogUtil.fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
 		}
 
-		TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
-		if (file.isDirectory()) {
-			int imageCount = ImageUtil.getImagesInFolder(mFileName).size();
-			double probability = -1;
-			if (mListName != null && mListName.equals(ImageRegistry.getCurrentListName())) {
-				probability = ImageRegistry.getCurrentImageList(false).getProbability(mFileName);
+		final TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
+		new Thread() {
+			@Override
+			public void run() {
+				if (mFileType == FileType.FOLDER || mFileType == FileType.FOLDER_RECURSIVE) {
+					final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
+					double probability = -1;
+					if (mListName != null && mListName.equals(ImageRegistry.getCurrentListName())) {
+						probability = ImageRegistry.getCurrentImageList(false).getProbability(mFileNameInList);
+					}
+					final String probabilityString;
+					if (probability > 0) {
+						probabilityString = " (" + DisplayListInfoActivity.getPercentageString(probability) + "%)";
+					}
+					else {
+						probabilityString = "";
+					}
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							textViewNumberOfImages
+									.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images, imageCount + probabilityString)));
+						}
+					});
+				}
+				else {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							textViewNumberOfImages.setVisibility(View.GONE);
+						}
+					});
+				}
 			}
-			String probabilityString = "";
-			if (probability > 0) {
-				probabilityString = " (" + DisplayListInfoActivity.getPercentageString(probability) + "%)";
-			}
-			textViewNumberOfImages.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images, imageCount + probabilityString)));
-		}
-		else {
-			textViewNumberOfImages.setVisibility(View.GONE);
-		}
+		}.start();
+
 	}
 
+	/**
+	 * The type of file for which details are displayed.
+	 */
+	private enum FileType {
+		/**
+		 * A file.
+		 */
+		FILE,
+		/**
+		 * A folder.
+		 */
+		FOLDER,
+		/**
+		 * A recursive folder.
+		 */
+		FOLDER_RECURSIVE,
+		/**
+		 * Unknown file.
+		 */
+		UNKNOWN
+	}
 
 }

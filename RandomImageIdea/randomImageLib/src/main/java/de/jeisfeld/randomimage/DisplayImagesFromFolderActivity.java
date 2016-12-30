@@ -78,7 +78,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * @param listName the triggering image list to which files should be added.
 	 * @param forAddition Flag indicating if the activity is opened in order to add images to the current list.
 	 */
-	public static final void startActivity(final Activity activity, final String folderName,
+	public static void startActivity(final Activity activity, final String folderName,
 										   final String listName, final boolean forAddition) {
 		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -222,7 +222,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 								returnResult(false);
 							}
 						}, null, R.string.button_add_folder, R.string.dialog_confirmation_selected_no_image_add_folder,
-						new File(mFolderName).getName());
+						ImageUtil.getImageFolderShortName(mFolderName));
 			}
 			return true;
 		}
@@ -243,7 +243,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 								// stay in the activity.
 							}
 						}, null, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_ignore_selection,
-						new File(mFolderName).getName());
+						ImageUtil.getImageFolderShortName(mFolderName));
 			}
 			return true;
 		}
@@ -275,7 +275,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		}
 		else {
 			if (imageList.contains(mFolderName)) {
-				DialogUtil.displayToast(this, R.string.toast_added_folder_none, new File(mFolderName).getName());
+				DialogUtil.displayToast(this, R.string.toast_added_folder_none, ImageUtil.getImageFolderShortName(mFolderName));
 			}
 			else {
 				DialogUtil.displayToast(this, R.string.toast_error_select_folder);
@@ -329,7 +329,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * @param data       The activity response data.
 	 * @return the flag if the files were added.
 	 */
-	public static final boolean getResultFilesAdded(final int resultCode, final Intent data) {
+	public static boolean getResultFilesAdded(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_FILES_ADDED);

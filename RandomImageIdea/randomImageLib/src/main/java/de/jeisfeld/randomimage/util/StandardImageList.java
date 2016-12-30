@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.util;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import android.util.Log;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
@@ -243,17 +243,17 @@ public final class StandardImageList extends ImageList {
 		}
 		int nonNestedSize = mImageFilesInList.size();
 
-		if (file.isFile()) {
-			if (getFileNames().contains(file.getAbsolutePath())) {
-				return nonNestedWeight / nonNestedSize;
+		if (file.getName().equals("*") || file.isDirectory()) {
+			if (getFolderNames().contains(fileName)) {
+				return nonNestedWeight * ImageUtil.getImagesInFolder(fileName).size() / nonNestedSize;
 			}
 			else {
 				return 0;
 			}
 		}
-		else if (file.isDirectory()) {
-			if (getFolderNames().contains(file.getAbsolutePath())) {
-				return nonNestedWeight * ImageUtil.getImagesInFolder(fileName).size() / nonNestedSize;
+		else if (file.isFile()) {
+			if (getFileNames().contains(fileName)) {
+				return nonNestedWeight / nonNestedSize;
 			}
 			else {
 				return 0;
@@ -463,7 +463,7 @@ public final class StandardImageList extends ImageList {
 				Set<String> allImageFileSet = new HashSet<>();
 
 				for (String folderName : folderNames) {
-					imageFileSet.addAll(getImageFilesInFolder(folderName));
+					imageFileSet.addAll(ImageUtil.getImagesInFolder(folderName));
 				}
 				for (String fileName : fileNames) {
 					imageFileSet.add(fileName);

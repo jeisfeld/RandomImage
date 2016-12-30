@@ -184,7 +184,7 @@ public class SelectDirectoryActivity extends Activity {
 
 				final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 
-				String folderShortName = new File(selectedFolder).getName();
+				String folderShortName = ImageUtil.getImageFolderShortName(selectedFolder);
 
 				if (ImageUtil.isImageFolder(selectedFolder) && !imageList.contains(selectedFolder)) {
 					DialogUtil.displayConfirmationMessage(SelectDirectoryActivity.this,
@@ -287,7 +287,7 @@ public class SelectDirectoryActivity extends Activity {
 				if (v instanceof TextView) {
 					// Enable list item (directory) text wrapping
 					TextView tv = (TextView) v;
-					tv.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+					tv.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
 					tv.setEllipsize(null);
 				}
 				return v;
@@ -417,7 +417,7 @@ public class SelectDirectoryActivity extends Activity {
 	 * @param data       The activity response data.
 	 * @return the flag indicating that the list was updated
 	 */
-	public static final boolean getUpdatedFlag(final int resultCode, final Intent data) {
+	public static boolean getUpdatedFlag(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_UPDATED, false);

@@ -1,5 +1,9 @@
 package de.jeisfeld.randomimage.util;
 
+import android.net.Uri;
+import android.util.Log;
+import android.util.SparseArray;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -7,16 +11,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import android.net.Uri;
-import android.util.Log;
-import android.util.SparseArray;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
@@ -307,13 +305,24 @@ public abstract class ImageList extends RandomFileProvider {
 				// handle file names
 				if (line.startsWith(File.separator)) {
 					File file = new File(line);
-					if (file.exists()) {
+					if (file.getName().equals("*")) {
+						if (file.getParentFile().isDirectory()) {
+							mFolderNames.add(line);
+						}
+						else {
+							Log.w(Application.TAG, "Cannot find folder " + line);
+						}
+					}
+					else if (file.exists()) {
 						if (file.isDirectory()) {
 							mFolderNames.add(line);
 						}
 						else {
 							if (ImageUtil.isImage(file, false)) {
 								mFileNames.add(line);
+							}
+							else {
+								Log.w(Application.TAG, "File " + line + " is not an image file");
 							}
 						}
 					}
@@ -474,30 +483,6 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 		NotificationUtil.cancelNotification(Application.getAppContext(), getListName(), NotificationType.ERROR_SAVING_LIST);
 		return true;
-	}
-
-	/**
-	 * Get all image files in the given folder.
-	 *
-	 * @param folderName The image folder name
-	 * @return The list of image files in this folder.
-	 */
-	public static Set<String> getImageFilesInFolder(final String folderName) {
-		File folder = new File(folderName);
-		Set<String> result = new HashSet<>();
-		if (!folder.exists() || !folder.isDirectory()) {
-			return result;
-		}
-
-		File[] files = folder.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (ImageUtil.isImage(file, false)) {
-					result.add(file.getAbsolutePath());
-				}
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -665,6 +650,9 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 
 		File file = new File(folderName);
+		if (file.getName().equals("*")) {
+			file = file.getParentFile();
+		}
 		if (!file.exists() || !file.isDirectory()) {
 			return false;
 		}

@@ -1,12 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
 import android.content.Context;
 import android.util.Log;
 import android.util.SparseArray;
@@ -17,8 +10,15 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
@@ -101,7 +101,6 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 */
 	private final List<String> mFoldersNotYetAdded = new ArrayList<>();
 
-
 	static {
 		// Set cache size in dependence of device memory.
 		int memoryClass = SystemUtil.getLargeMemoryClass();
@@ -155,15 +154,15 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Constructor for the adapter.
 	 *
-	 * @param activity    The activity using the adapter.
-	 * @param listNames   The names of lists to be displayed.
+	 * @param activity The activity using the adapter.
+	 * @param listNames The names of lists to be displayed.
 	 * @param folderNames The names of folders to be displayed.
-	 * @param fileNames   The names of files to be displayed.
+	 * @param fileNames The names of files to be displayed.
 	 * @param fixedThumbs Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
 	public DisplayImageListAdapter(final DisplayImageListActivity activity,
-								   final List<String> listNames, final List<String> folderNames,
-								   final List<String> fileNames, final boolean fixedThumbs) {
+			final List<String> listNames, final List<String> folderNames,
+			final List<String> fileNames, final boolean fixedThumbs) {
 		this.mActivity = activity;
 		this.mFixedThumbs = fixedThumbs;
 
@@ -242,7 +241,6 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		}
 	}
 
-
 	@Override
 	public final int getCount() {
 		return mListNames.size() + mFolderNames.size() + mFileNames.size();
@@ -289,8 +287,8 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Create a new ThumbImageView for the file on a certain position.
 	 *
-	 * @param position   The position.
-	 * @param parent     The parent view.
+	 * @param position The position.
+	 * @param parent The parent view.
 	 * @param sameThread if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 * @return The ThumbImageView.
 	 */
@@ -347,7 +345,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			displayFileName = new LoadableFileName(new FileNameProvider() {
 				@Override
 				public String getFileName() {
-					ArrayList<String> imageFiles = new ArrayList<>(ImageList.getImageFilesInFolder(entryName));
+					ArrayList<String> imageFiles = new ArrayList<>(ImageUtil.getImagesInFolder(entryName));
 					if (imageFiles.size() > 0) {
 						if (mFixedThumbs) {
 							return imageFiles.get(0);
@@ -362,9 +360,9 @@ public class DisplayImageListAdapter extends BaseAdapter {
 				}
 			});
 
-			thumbImageView.initWithStyle(mActivity, ThumbStyle.FOLDER);
+			thumbImageView.initWithStyle(mActivity, entryName.endsWith(ImageUtil.RECURSIVE_SUFFIX) ? ThumbStyle.FOLDER_RECURSIVE : ThumbStyle.FOLDER);
 			thumbImageView.setMarked(mSelectedFolderNames.contains(entryName));
-			thumbImageView.setFolderName(new File(entryName).getName());
+			thumbImageView.setFolderName(ImageUtil.getImageFolderShortName(entryName));
 			break;
 		case FILE:
 		default:
@@ -636,7 +634,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		 * Preload a range of views and clean the cache.
 		 *
 		 * @param position The position from where to do the preload
-		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
+		 * @param atEnd Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void doPreload(final int position, final boolean atEnd) {
 			synchronized (mCache) {
@@ -699,7 +697,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		 * Trigger a preload thread, ensuring that only one such thread is running at a time.
 		 *
 		 * @param position The position from where to do the preload
-		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
+		 * @param atEnd Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void triggerPreload(final int position, final boolean atEnd) {
 			if (position == 0 || mIsInterrupted) {
@@ -753,7 +751,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		 * Get a view from the cache.
 		 *
 		 * @param position The position of the view.
-		 * @param parent   the parentView view.
+		 * @param parent the parentView view.
 		 * @return The view from cache, if existing. Otherwise a new view.
 		 */
 		private ThumbImageView get(final int position, final ViewGroup parent) {

@@ -41,6 +41,18 @@ public class ThumbImageView extends FrameLayout {
 			ImageUtil.getColorizedBitmap(R.drawable.folder_foreground, R.color.folder_background, R.color.folder_foreground);
 
 	/**
+	 * The background image for a folder.
+	 */
+	private static final Bitmap BITMAP_FOLDER_RECURSIVE_BACKGROUND =
+			ImageUtil.getColorizedBitmap(R.drawable.folder_background, R.color.folder_recursive_background, R.color.folder_recursive_foreground);
+
+	/**
+	 * The foreground image for a folder.
+	 */
+	private static final Bitmap BITMAP_FOLDER_RECURSIVE_FOREGROUND =
+			ImageUtil.getColorizedBitmap(R.drawable.folder_foreground, R.color.folder_recursive_background, R.color.folder_recursive_foreground);
+
+	/**
 	 * The background image for a list.
 	 */
 	private static final Bitmap BITMAP_LIST_BACKGROUND =
@@ -133,6 +145,11 @@ public class ThumbImageView extends FrameLayout {
 			layoutId = R.layout.view_thumb_folder;
 			bitmapBackground = BITMAP_FOLDER_BACKGROUND;
 			bitmapForeground = BITMAP_FOLDER_FOREGROUND;
+			break;
+		case FOLDER_RECURSIVE:
+			layoutId = R.layout.view_thumb_folder;
+			bitmapBackground = BITMAP_FOLDER_RECURSIVE_BACKGROUND;
+			bitmapForeground = BITMAP_FOLDER_RECURSIVE_FOREGROUND;
 			break;
 		case LIST:
 			layoutId = R.layout.view_thumb_folder;
@@ -336,6 +353,10 @@ public class ThumbImageView extends FrameLayout {
 		 * A thumb representing a folder.
 		 */
 		FOLDER,
+		/**
+		 * A thumb representing a recursive folder.
+		 */
+		FOLDER_RECURSIVE,
 		/**
 		 * A thumb representing an image list.
 		 */

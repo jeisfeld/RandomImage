@@ -1,14 +1,5 @@
 package de.jeisfeld.randomimage.util;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +21,15 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
@@ -57,6 +57,11 @@ public final class ImageUtil {
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
 			"JPG", "JPEG", "PNG", "BMP", "GIF");
+
+	/**
+	 * Suffix used to indicate recursive folders.
+	 */
+	public static final String RECURSIVE_SUFFIX = File.separator + "*";
 
 	/**
 	 * Hide default constructor.
@@ -144,11 +149,10 @@ public final class ImageUtil {
 		}
 	}
 
-
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path    The file path of the image.
+	 * @param path The file path of the image.
 	 * @param maxSize The maximum size of this bitmap. If bigger, it will be resized.
 	 * @return the bitmap.
 	 */
@@ -159,9 +163,9 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path           The file path of the image.
-	 * @param maxWidth       The maximum width of this bitmap. If bigger, it will be resized.
-	 * @param maxHeight      The maximum height of this bitmap. If bigger, it will be resized.
+	 * @param path The file path of the image.
+	 * @param maxWidth The maximum width of this bitmap. If bigger, it will be resized.
+	 * @param maxHeight The maximum height of this bitmap. If bigger, it will be resized.
 	 * @param growIfRequired Flag indicating if the image size should be increased if required.
 	 * @return the bitmap.
 	 */
@@ -203,14 +207,14 @@ public final class ImageUtil {
 			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore || growIfRequired) {
 				// Only if bitmap is bigger than maxSize, then resize it - but don't trust the thumbs from media store.
 				if ((long) bitmap.getWidth() * maxHeight > (long) bitmap.getHeight() * maxWidth) {
-					//noinspection UnnecessaryLocalVariable
+					// noinspection UnnecessaryLocalVariable
 					int targetWidth = maxWidth;
 					int targetHeight = bitmap.getHeight() * maxWidth / bitmap.getWidth();
 					bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 				}
 				else {
 					int targetWidth = bitmap.getWidth() * maxHeight / bitmap.getHeight();
-					//noinspection UnnecessaryLocalVariable
+					// noinspection UnnecessaryLocalVariable
 					int targetHeight = maxHeight;
 					bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 				}
@@ -224,8 +228,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo having the given minimum size.
 	 *
-	 * @param path      The file path of the image.
-	 * @param minWidth  The minimum width of this bitmap. If smaller, it will be resized.
+	 * @param path The file path of the image.
+	 * @param minWidth The minimum width of this bitmap. If smaller, it will be resized.
 	 * @param minHeight The minimum height of this bitmap. If smaller, it will be resized.
 	 * @return the bitmap.
 	 */
@@ -261,12 +265,12 @@ public final class ImageUtil {
 
 			if ((long) bitmap.getWidth() * minHeight > (long) bitmap.getHeight() * minWidth) {
 				int targetWidth = bitmap.getWidth() * minHeight / bitmap.getHeight();
-				//noinspection UnnecessaryLocalVariable
+				// noinspection UnnecessaryLocalVariable
 				int targetHeight = minHeight;
 				bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
 			}
 			else {
-				//noinspection UnnecessaryLocalVariable
+				// noinspection UnnecessaryLocalVariable
 				int targetWidth = minWidth;
 				int targetHeight = bitmap.getHeight() * minWidth / bitmap.getWidth();
 				bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
@@ -280,8 +284,8 @@ public final class ImageUtil {
 	 * Surround the given bitmap by transparent space to match the given size.
 	 *
 	 * @param baseBitmap the original bitmap. Should be already limited to at most the target dimensions.
-	 * @param width      The width of the target bitmap.
-	 * @param height     The height of the target bitmap.
+	 * @param width The width of the target bitmap.
+	 * @param height The height of the target bitmap.
 	 * @return the sized bitmap.
 	 */
 	private static Bitmap extendToBitmapOfSize(final Bitmap baseBitmap, final int width, final int height) {
@@ -295,8 +299,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given size.
 	 *
-	 * @param path   The file path of the image.
-	 * @param width  The width of the target bitmap.
+	 * @param path The file path of the image.
+	 * @param width The width of the target bitmap.
 	 * @param height The height of the target bitmap.
 	 * @param border The size of the border around the image. If negative, the image will be stretched to fill the bitmap.
 	 * @return the bitmap.
@@ -328,8 +332,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given width and the minimum given height.
 	 *
-	 * @param path      The file path of the image.
-	 * @param width     The width of the target bitmap.
+	 * @param path The file path of the image.
+	 * @param width The width of the target bitmap.
 	 * @param minHeight The minimum height of the target bitmap.
 	 * @return the bitmap.
 	 */
@@ -346,11 +350,11 @@ public final class ImageUtil {
 	/**
 	 * Utility to retrieve the sample size for BitmapFactory.decodeFile.
 	 *
-	 * @param filepath     the path of the bitmap.
-	 * @param targetWidth  the target width of the bitmap
+	 * @param filepath the path of the bitmap.
+	 * @param targetWidth the target width of the bitmap
 	 * @param targetHeight the target height of the bitmap
-	 * @param rotate       flag indicating if the bitmap should be 90 degrees rotated.
-	 * @param minimum      flag indicating if the dimensions are minimum dimensions.
+	 * @param rotate flag indicating if the bitmap should be 90 degrees rotated.
+	 * @param minimum flag indicating if the dimensions are minimum dimensions.
 	 * @return the sample size to be used.
 	 */
 	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight, final boolean rotate,
@@ -375,7 +379,7 @@ public final class ImageUtil {
 	 * Rotate a bitmap.
 	 *
 	 * @param source The original bitmap
-	 * @param angle  The rotation angle
+	 * @param angle The rotation angle
 	 * @return the rotated bitmap.
 	 */
 	private static Bitmap rotateBitmap(final Bitmap source, final float angle) {
@@ -409,7 +413,7 @@ public final class ImageUtil {
 	/**
 	 * Check if a file is an image file.
 	 *
-	 * @param file   The file
+	 * @param file The file
 	 * @param strict if true, then the file content will be checked, otherwise the suffix is sufficient.
 	 * @return true if it is an image file.
 	 */
@@ -449,23 +453,37 @@ public final class ImageUtil {
 		if (folderName == null) {
 			return fileNames;
 		}
+
+		List<String> imageFolders = new ArrayList<>();
 		File folder = new File(folderName);
-		if (!folder.exists() || !folder.isDirectory()) {
-			return fileNames;
+
+		if (folderName.endsWith(ImageUtil.RECURSIVE_SUFFIX)) {
+			imageFolders.addAll(ImageUtil.getStoredImageSubfolders(folderName));
 		}
-		File[] imageFiles = folder.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(final File file) {
-				return isImage(file, false);
-			}
-		});
-		if (imageFiles == null) {
+		else if (folder.exists() && folder.isDirectory()) {
+			imageFolders.add(folderName);
+		}
+		else {
 			return fileNames;
 		}
 
-		for (File file : imageFiles) {
-			fileNames.add(file.getAbsolutePath());
+		for (String imageFolderName : imageFolders) {
+			File imageFolder = new File(imageFolderName);
+			if (imageFolder.exists() && imageFolder.isDirectory()) {
+				File[] imageFiles = imageFolder.listFiles(new FileFilter() {
+					@Override
+					public boolean accept(final File file) {
+						return isImage(file, false);
+					}
+				});
+				if (imageFiles != null) {
+					for (File file : imageFiles) {
+						fileNames.add(file.getAbsolutePath());
+					}
+				}
+			}
 		}
+
 		Collections.sort(fileNames);
 		return fileNames;
 	}
@@ -545,13 +563,48 @@ public final class ImageUtil {
 		return filteredImageFolders;
 	}
 
+	/**
+	 * Get the list of all image subfolders of a given folder, from previously retrieved list.
+	 *
+	 * @param parentFolder The input folder
+	 * @return The image subfolders of this folder.
+	 */
+	public static ArrayList<String> getStoredImageSubfolders(final String parentFolder) {
+		ArrayList<String> result = new ArrayList<>();
+		String pathPrefix = parentFolder;
+		if (parentFolder.endsWith(RECURSIVE_SUFFIX)) {
+			pathPrefix = parentFolder.substring(0, parentFolder.length() - 2);
+		}
+		for (String folder : getAllStoredImageFolders()) {
+			if (folder.equals(pathPrefix)
+					|| (folder.startsWith(pathPrefix + "/") && !folder.endsWith(RECURSIVE_SUFFIX))) {
+				result.add(folder);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get the short name of an image folder.
+	 *
+	 * @param folderName The path of the image folder.
+	 * @return The short name.
+	 */
+	public static String getImageFolderShortName(final String folderName) {
+		if (folderName.endsWith(RECURSIVE_SUFFIX)) {
+			return new File(folderName).getParentFile().getName();
+		}
+		else {
+			return new File(folderName).getName();
+		}
+	}
 
 	/**
 	 * Get all image folders below one parent folder.
 	 *
 	 * @param parentFolder the folder where to look for image sub folders
-	 * @param handler      A handler running on the GUI thread.
-	 * @param listener     A listener handling the response via callback.
+	 * @param handler A handler running on the GUI thread.
+	 * @param listener A listener handling the response via callback.
 	 * @return The array of image folders.
 	 */
 	private static ArrayList<String> getAllImageSubfolders(final File parentFolder, final Handler handler,
@@ -578,10 +631,12 @@ public final class ImageUtil {
 			}
 		}
 
-		final List<String> imageFiles = getImagesInFolder(parentFolder.getAbsolutePath());
+		int numberOfImageFolders = 0;
+		List<String> imageFiles = getImagesInFolder(parentFolder.getAbsolutePath());
 
 		if (imageFiles.size() > 0) {
 			result.add(parentFolder.getAbsolutePath());
+			numberOfImageFolders++;
 			if (handler != null && listener != null) {
 				handler.post(new Runnable() {
 					@Override
@@ -603,7 +658,24 @@ public final class ImageUtil {
 		}
 
 		for (File aChildren : children) {
-			result.addAll(getAllImageSubfolders(aChildren, handler, listener));
+			List<String> imageFolders = getAllImageSubfolders(aChildren, handler, listener);
+			if (imageFolders.size() > 0) {
+				result.addAll(imageFolders);
+				numberOfImageFolders++;
+			}
+		}
+
+		// Add the current folder as recursive folder if there is more than one image subfolder.
+		if (numberOfImageFolders >= 2) {
+			result.add(0, parentFolder.getAbsolutePath() + RECURSIVE_SUFFIX);
+			if (handler != null && listener != null) {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						listener.handleImageFolder(parentFolder.getAbsolutePath() + RECURSIVE_SUFFIX);
+					}
+				});
+			}
 		}
 
 		return result;
@@ -621,7 +693,7 @@ public final class ImageUtil {
 	/**
 	 * Show a file in the phone gallery.
 	 *
-	 * @param context  the context from which the gallery is opened.
+	 * @param context the context from which the gallery is opened.
 	 * @param fileName The file name.
 	 * @return true if successful
 	 */
@@ -643,8 +715,8 @@ public final class ImageUtil {
 	 * Utility method to change the colours of a black/white bitmap.
 	 *
 	 * @param sourceBitmap The original bitmap
-	 * @param colorBlack   The target color of the black parts
-	 * @param colorWhite   The target color of the white parts
+	 * @param colorBlack The target color of the black parts
+	 * @param colorWhite The target color of the white parts
 	 * @return the bitmap with the target color.
 	 */
 	public static Bitmap changeBitmapColor(final Bitmap sourceBitmap, final int colorBlack, final int colorWhite) {

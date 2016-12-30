@@ -1,10 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -16,6 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
@@ -91,7 +91,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * @param activity The activity starting this activity.
 	 * @param listName the triggering image list to which folders should be added.
 	 */
-	public static final void startActivity(final Activity activity, final String listName) {
+	public static void startActivity(final Activity activity, final String listName) {
 		Intent intent = new Intent(activity, SelectImageFolderActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -157,7 +157,12 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			addNestedList(name);
 			break;
 		case FOLDER:
-			DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true);
+			if (name.endsWith(ImageUtil.RECURSIVE_SUFFIX)) {
+				addRecursiveFolder(name);
+			}
+			else {
+				DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true);
+			}
 			break;
 		default:
 			break;
@@ -294,6 +299,34 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				listName, mListName);
 	}
 
+	/**
+	 * Add the given folder as recursive folder after first querying.
+	 *
+	 * @param folderName The folder to be added.
+	 */
+	private void addRecursiveFolder(final String folderName) {
+		DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+					@Override
+					public void onDialogPositiveClick(final DialogFragment dialog) {
+						ImageList imageList = ImageRegistry.getImageListByName(mListName, false);
+						boolean success = imageList.addFolder(folderName);
+						if (success) {
+							String addedItemString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(folderName), null);
+							DialogUtil.displayToast(SelectImageFolderActivity.this, R.string.toast_added_single, addedItemString);
+							NotificationUtil.notifyUpdatedList(SelectImageFolderActivity.this, mListName, false,
+									null, Collections.singletonList(folderName), null);
+							imageList.update(true);
+							returnResult(true);
+						}
+					}
+
+					@Override
+					public void onDialogNegativeClick(final DialogFragment dialog) {
+						// do nothing.
+					}
+				}, R.string.title_dialog_add_folder, R.string.button_add_folder, R.string.dialog_confirmation_add_folder_recursively,
+				folderName.substring(0, folderName.length() - 2), mListName);
+	}
 
 	/**
 	 * Parse all image folders and add missing image folders to the adapter.
@@ -550,7 +583,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	 * @param data       The activity response data.
 	 * @return the flag indicating that the list was updated
 	 */
-	public static final boolean getUpdatedFlag(final int resultCode, final Intent data) {
+	public static boolean getUpdatedFlag(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_UPDATED, false);

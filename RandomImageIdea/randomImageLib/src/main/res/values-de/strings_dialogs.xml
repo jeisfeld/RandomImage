@@ -10,6 +10,7 @@
     <string name="title_dialog_select_folder">Auswahl des Verzeichnisses</string>
     <string name="title_dialog_missing_images">Fehlende Bilder</string>
     <string name="title_dialog_add_list">Liste hinzufügen</string>
+    <string name="title_dialog_add_folder">Verzeichnis hinzufügen</string>
     <string name="title_dialog_request_permission">Berechtigung erforderlich</string>
     <string name="title_dialog_first_use">Erste Schritte</string>
     <string name="title_dialog_searching_image_folders">Suche Bildverzeichnisse…</string>
@@ -98,6 +99,7 @@
     <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
     <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>
     <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s” zur Bildliste hinzufügen?</string>
+    <string name="dialog_confirmation_add_folder_recursively">Wollen Sie das Verzeichnis „%1$s” samt aller Unterverzeichnisse zur Bildliste hinzufügen?</string>
     <string name="dialog_confirmation_add_nested_list">Wollen Sie die Bildliste „%1$s” zur Liste „%2$s” als Unterliste hinzufügen?</string>
     <string name="dialog_confirmation_overwrite_list">Wollen Sie die Bildliste „%1$s” mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_list_single">Die Liste „%2$s” existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
