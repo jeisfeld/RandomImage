@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
@@ -56,6 +57,11 @@ public final class ImageUtil {
 	 * The number of milliseconds below which parsing of image folders is considered as "quick".
 	 */
 	private static final long QUICK_PARSING_MILLIS = 500;
+
+	/**
+	 * The number of milliseconds after which the app again parses image folders.
+	 */
+	private static final long REPARSING_INTERVAL = TimeUnit.DAYS.toMillis(7);
 
 	/**
 	 * The file endings considered as image files.
@@ -525,6 +531,7 @@ public final class ImageUtil {
 				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Image folders", null, (long) imageFolders.size());
 
 				PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
+				PreferenceUtil.setSharedPreferenceLong(R.string.key_last_parsing_time, System.currentTimeMillis());
 				if (listener != null) {
 					handler.post(new Runnable() {
 						@Override
@@ -535,6 +542,15 @@ public final class ImageUtil {
 				}
 			}
 		}.start();
+	}
+
+	/**
+	 * Redo parsing of all image folders if the last parsing was more than one week ago.
+	 */
+	public static void refreshStoredImageFoldersIfApplicable() {
+		if (System.currentTimeMillis() > PreferenceUtil.getSharedPreferenceLong(R.string.key_last_parsing_time, 0) + REPARSING_INTERVAL) {
+			getAllImageFolders(null);
+		}
 	}
 
 	/**

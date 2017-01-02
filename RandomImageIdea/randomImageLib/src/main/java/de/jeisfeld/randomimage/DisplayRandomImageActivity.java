@@ -1,10 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +12,11 @@ import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
@@ -222,8 +222,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * @param notificationId the id of the notification triggering this activity.
 	 * @return the intent.
 	 */
-	public static final Intent createIntent(final Context context, final String listName, final String fileName,
-											final boolean allowDisplayMultiple, final Integer appWidgetId, final Integer notificationId) {
+	public static Intent createIntent(final Context context, final String listName, final String fileName,
+									  final boolean allowDisplayMultiple, final Integer appWidgetId, final Integer notificationId) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -260,7 +260,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * @param context The context.
 	 * @param notificationId The notificationId that has triggered the activity.
 	 */
-	public static final void finishActivityForNotification(final Context context, final int notificationId) {
+	public static void finishActivityForNotification(final Context context, final int notificationId) {
 		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Notification");
@@ -275,7 +275,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * @param context The context.
 	 * @param appWidgetId The appWidgetId that has triggered the activity.
 	 */
-	public static final void finishActivityForWidget(final Context context, final int appWidgetId) {
+	public static void finishActivityForWidget(final Context context, final int appWidgetId) {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Widget");
@@ -291,8 +291,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * @param folderName the name of the folder whose images should be displayed.
 	 * @param fileName the name of the file that should be displayed first
 	 */
-	public static final void startActivityForFolder(final Context context, final String folderName,
-													final String fileName) {
+	public static void startActivityForFolder(final Context context, final String folderName,
+											  final String fileName) {
 		Intent intent = new Intent(context, DisplayRandomImageActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.putExtra(STRING_EXTRA_FOLDERNAME, folderName);
@@ -304,9 +304,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Use this as trigger to verify if notification alarms are still present.
-		NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -437,9 +434,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 		}
 
-		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 		if (savedInstanceState == null) {
+			PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 			DialogUtil.displayInfo(this, null, R.string.key_hint_display_image, R.string.dialog_hint_display_image);
+
+			// Trigger data updates that should be run every now and then for sanity reasons
+			NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
+			ImageUtil.refreshStoredImageFoldersIfApplicable();
 		}
 
 		sendInitialTrackingEvent(savedInstanceState != null, folderName != null);
@@ -806,7 +807,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * @param data The activity response data.
 	 * @return the flag if the parent activity should be refreshed.
 	 */
-	public static final boolean getResult(final int resultCode, final Intent data) {
+	public static boolean getResult(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_REFRESH_PARENT);

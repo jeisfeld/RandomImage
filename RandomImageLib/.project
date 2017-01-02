@@ -70,7 +70,7 @@
 			<locationURI>PARENT-1-PROJECT_LOC/RandomImageIdea/randomImageLib/src/main/java</locationURI>
 		</link>
 		<link>
-			<name>gen/de/jeisfeld/randomimagelib/R.java</name>
+			<name>genref/de/jeisfeld/randomimagelib/R.java</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/RandomImageIdea/randomImageLib/build/generated/source/r/debug/de/jeisfeld/randomimagelib/R.java</locationURI>
 		</link>
