@@ -650,7 +650,8 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 
 		File file = new File(folderName);
-		if (file.getName().equals("*")) {
+		boolean isRecursive = file.getName().equals("*");
+		if (isRecursive) {
 			file = file.getParentFile();
 		}
 		if (!file.exists() || !file.isDirectory()) {
@@ -662,6 +663,9 @@ public abstract class ImageList extends RandomFileProvider {
 		}
 		else {
 			mFolderNames.add(folderName);
+			if (isRecursive) {
+				ImageUtil.checkForQuickParsing(folderName);
+			}
 			return true;
 		}
 	}

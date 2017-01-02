@@ -53,6 +53,11 @@ public final class ImageUtil {
 	public static final int MAX_BITMAP_SIZE = 2048;
 
 	/**
+	 * The number of milliseconds below which parsing of image folders is considered as "quick".
+	 */
+	private static final long QUICK_PARSING_MILLIS = 500;
+
+	/**
 	 * The file endings considered as image files.
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
@@ -152,7 +157,7 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path The file path of the image.
+	 * @param path    The file path of the image.
 	 * @param maxSize The maximum size of this bitmap. If bigger, it will be resized.
 	 * @return the bitmap.
 	 */
@@ -163,9 +168,9 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo.
 	 *
-	 * @param path The file path of the image.
-	 * @param maxWidth The maximum width of this bitmap. If bigger, it will be resized.
-	 * @param maxHeight The maximum height of this bitmap. If bigger, it will be resized.
+	 * @param path           The file path of the image.
+	 * @param maxWidth       The maximum width of this bitmap. If bigger, it will be resized.
+	 * @param maxHeight      The maximum height of this bitmap. If bigger, it will be resized.
 	 * @param growIfRequired Flag indicating if the image size should be increased if required.
 	 * @return the bitmap.
 	 */
@@ -228,8 +233,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo having the given minimum size.
 	 *
-	 * @param path The file path of the image.
-	 * @param minWidth The minimum width of this bitmap. If smaller, it will be resized.
+	 * @param path      The file path of the image.
+	 * @param minWidth  The minimum width of this bitmap. If smaller, it will be resized.
 	 * @param minHeight The minimum height of this bitmap. If smaller, it will be resized.
 	 * @return the bitmap.
 	 */
@@ -284,8 +289,8 @@ public final class ImageUtil {
 	 * Surround the given bitmap by transparent space to match the given size.
 	 *
 	 * @param baseBitmap the original bitmap. Should be already limited to at most the target dimensions.
-	 * @param width The width of the target bitmap.
-	 * @param height The height of the target bitmap.
+	 * @param width      The width of the target bitmap.
+	 * @param height     The height of the target bitmap.
 	 * @return the sized bitmap.
 	 */
 	private static Bitmap extendToBitmapOfSize(final Bitmap baseBitmap, final int width, final int height) {
@@ -299,8 +304,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given size.
 	 *
-	 * @param path The file path of the image.
-	 * @param width The width of the target bitmap.
+	 * @param path   The file path of the image.
+	 * @param width  The width of the target bitmap.
 	 * @param height The height of the target bitmap.
 	 * @param border The size of the border around the image. If negative, the image will be stretched to fill the bitmap.
 	 * @return the bitmap.
@@ -332,8 +337,8 @@ public final class ImageUtil {
 	/**
 	 * Return a bitmap of this photo, where the Bitmap object has the exact given width and the minimum given height.
 	 *
-	 * @param path The file path of the image.
-	 * @param width The width of the target bitmap.
+	 * @param path      The file path of the image.
+	 * @param width     The width of the target bitmap.
 	 * @param minHeight The minimum height of the target bitmap.
 	 * @return the bitmap.
 	 */
@@ -350,11 +355,11 @@ public final class ImageUtil {
 	/**
 	 * Utility to retrieve the sample size for BitmapFactory.decodeFile.
 	 *
-	 * @param filepath the path of the bitmap.
-	 * @param targetWidth the target width of the bitmap
+	 * @param filepath     the path of the bitmap.
+	 * @param targetWidth  the target width of the bitmap
 	 * @param targetHeight the target height of the bitmap
-	 * @param rotate flag indicating if the bitmap should be 90 degrees rotated.
-	 * @param minimum flag indicating if the dimensions are minimum dimensions.
+	 * @param rotate       flag indicating if the bitmap should be 90 degrees rotated.
+	 * @param minimum      flag indicating if the dimensions are minimum dimensions.
 	 * @return the sample size to be used.
 	 */
 	private static int getBitmapFactor(final String filepath, final int targetWidth, final int targetHeight, final boolean rotate,
@@ -379,7 +384,7 @@ public final class ImageUtil {
 	 * Rotate a bitmap.
 	 *
 	 * @param source The original bitmap
-	 * @param angle The rotation angle
+	 * @param angle  The rotation angle
 	 * @return the rotated bitmap.
 	 */
 	private static Bitmap rotateBitmap(final Bitmap source, final float angle) {
@@ -413,7 +418,7 @@ public final class ImageUtil {
 	/**
 	 * Check if a file is an image file.
 	 *
-	 * @param file The file
+	 * @param file   The file
 	 * @param strict if true, then the file content will be checked, otherwise the suffix is sufficient.
 	 * @return true if it is an image file.
 	 */
@@ -458,7 +463,7 @@ public final class ImageUtil {
 		File folder = new File(folderName);
 
 		if (folderName.endsWith(ImageUtil.RECURSIVE_SUFFIX)) {
-			imageFolders.addAll(ImageUtil.getStoredImageSubfolders(folderName));
+			imageFolders.addAll(ImageUtil.getImageSubfolders(folderName));
 		}
 		else if (folder.exists() && folder.isDirectory()) {
 			imageFolders.add(folderName);
@@ -533,78 +538,11 @@ public final class ImageUtil {
 	}
 
 	/**
-	 * Check if a directory is marked as containing no media files.
-	 *
-	 * @param folder The directory path.
-	 * @return true if marked as no media.
-	 */
-	private static boolean isNoMediaDirectory(final File folder) {
-		File nomediaFile = new File(folder, ".nomedia");
-		return nomediaFile.exists() && nomediaFile.isFile();
-	}
-
-	/**
-	 * Get the list of all image folders from previously retrieved list.
-	 *
-	 * @return The list of all image folders, filtered by regexp.
-	 */
-	public static ArrayList<String> getAllStoredImageFolders() {
-		final List<String> allImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
-		final ArrayList<String> filteredImageFolders = new ArrayList<>();
-		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
-		boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
-				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
-
-		for (String path : allImageFolders) {
-			if (!useRegexp || !path.matches(hiddenFoldersPattern)) {
-				filteredImageFolders.add(path);
-			}
-		}
-		return filteredImageFolders;
-	}
-
-	/**
-	 * Get the list of all image subfolders of a given folder, from previously retrieved list.
-	 *
-	 * @param parentFolder The input folder
-	 * @return The image subfolders of this folder.
-	 */
-	public static ArrayList<String> getStoredImageSubfolders(final String parentFolder) {
-		ArrayList<String> result = new ArrayList<>();
-		String pathPrefix = parentFolder;
-		if (parentFolder.endsWith(RECURSIVE_SUFFIX)) {
-			pathPrefix = parentFolder.substring(0, parentFolder.length() - 2);
-		}
-		for (String folder : getAllStoredImageFolders()) {
-			if (folder.equals(pathPrefix)
-					|| (folder.startsWith(pathPrefix + "/") && !folder.endsWith(RECURSIVE_SUFFIX))) {
-				result.add(folder);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Get the short name of an image folder.
-	 *
-	 * @param folderName The path of the image folder.
-	 * @return The short name.
-	 */
-	public static String getImageFolderShortName(final String folderName) {
-		if (folderName.endsWith(RECURSIVE_SUFFIX)) {
-			return new File(folderName).getParentFile().getName();
-		}
-		else {
-			return new File(folderName).getName();
-		}
-	}
-
-	/**
 	 * Get all image folders below one parent folder.
 	 *
 	 * @param parentFolder the folder where to look for image sub folders
-	 * @param handler A handler running on the GUI thread.
-	 * @param listener A listener handling the response via callback.
+	 * @param handler      A handler running on the GUI thread.
+	 * @param listener     A listener handling the response via callback.
 	 * @return The array of image folders.
 	 */
 	private static ArrayList<String> getAllImageSubfolders(final File parentFolder, final Handler handler,
@@ -682,6 +620,111 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Check if a directory is marked as containing no media files.
+	 *
+	 * @param folder The directory path.
+	 * @return true if marked as no media.
+	 */
+	private static boolean isNoMediaDirectory(final File folder) {
+		File nomediaFile = new File(folder, ".nomedia");
+		return nomediaFile.exists() && nomediaFile.isFile();
+	}
+
+	/**
+	 * Get the list of all image folders from previously retrieved list.
+	 *
+	 * @return The list of all image folders, filtered by regexp.
+	 */
+	public static ArrayList<String> getAllStoredImageFolders() {
+		final List<String> allImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_all_image_folders);
+		final ArrayList<String> filteredImageFolders = new ArrayList<>();
+		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+		boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
+				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
+
+		for (String path : allImageFolders) {
+			if (!useRegexp || !path.matches(hiddenFoldersPattern)) {
+				filteredImageFolders.add(path);
+			}
+		}
+		return filteredImageFolders;
+	}
+
+	/**
+	 * Get the list of all image subfolders of a given folder, either from stored list or by parsing again, in dependence of the
+	 * parsing speed.
+	 *
+	 * @param parentFolder The input folder
+	 * @return The image subfolders of this folder.
+	 */
+	public static ArrayList<String> getImageSubfolders(final String parentFolder) {
+		ArrayList<String> quickParsingFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_quick_parsing_image_folders);
+		String pathPrefix = parentFolder;
+		if (parentFolder.endsWith(RECURSIVE_SUFFIX)) {
+			pathPrefix = parentFolder.substring(0, parentFolder.length() - RECURSIVE_SUFFIX.length());
+		}
+		if (quickParsingFolders.contains(pathPrefix)) {
+			return getAllImageSubfolders(new File(pathPrefix), null, null);
+		}
+		else {
+			ArrayList<String> result = new ArrayList<>();
+			for (String folder : getAllStoredImageFolders()) {
+				if (folder.equals(pathPrefix) || (folder.startsWith(pathPrefix + "/") && !folder.endsWith(RECURSIVE_SUFFIX))) {
+					result.add(folder);
+				}
+			}
+			return result;
+		}
+	}
+
+	/**
+	 * Check if parsing of subfolders of a given parent folder goes quickly.
+	 *
+	 * @param parentFolder The parent folder.
+	 */
+	public static void checkForQuickParsing(final String parentFolder) {
+		final String pathPrefix;
+		if (parentFolder.endsWith(RECURSIVE_SUFFIX)) {
+			pathPrefix = parentFolder.substring(0, parentFolder.length() - RECURSIVE_SUFFIX.length());
+		}
+		else {
+			pathPrefix = parentFolder;
+		}
+
+		new Thread() {
+			@Override
+			public void run() {
+				long startParsingTimestamp = System.currentTimeMillis();
+				getAllImageSubfolders(new File(pathPrefix), null, null);
+				long parsingDuration = System.currentTimeMillis() - startParsingTimestamp;
+				ArrayList<String> quickParsingFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_quick_parsing_image_folders);
+				if (parsingDuration > QUICK_PARSING_MILLIS) {
+					quickParsingFolders.remove(pathPrefix);
+				}
+				else {
+					quickParsingFolders.add(pathPrefix);
+				}
+				PreferenceUtil.setSharedPreferenceStringList(R.string.key_quick_parsing_image_folders, quickParsingFolders);
+			}
+		}.start();
+	}
+
+	/**
+	 * Get the short name of an image folder.
+	 *
+	 * @param folderName The path of the image folder.
+	 * @return The short name.
+	 */
+	public static String getImageFolderShortName(final String folderName) {
+		if (folderName.endsWith(RECURSIVE_SUFFIX)) {
+			return new File(folderName).getParentFile().getName();
+		}
+		else {
+			return new File(folderName).getName();
+		}
+	}
+
+	/**
 	 * Retrieves a dummy bitmap (for the case that an image file is not readable).
 	 *
 	 * @return the dummy bitmap.
@@ -693,7 +736,7 @@ public final class ImageUtil {
 	/**
 	 * Show a file in the phone gallery.
 	 *
-	 * @param context the context from which the gallery is opened.
+	 * @param context  the context from which the gallery is opened.
 	 * @param fileName The file name.
 	 * @return true if successful
 	 */
@@ -715,8 +758,8 @@ public final class ImageUtil {
 	 * Utility method to change the colours of a black/white bitmap.
 	 *
 	 * @param sourceBitmap The original bitmap
-	 * @param colorBlack The target color of the black parts
-	 * @param colorWhite The target color of the white parts
+	 * @param colorBlack   The target color of the black parts
+	 * @param colorWhite   The target color of the white parts
 	 * @return the bitmap with the target color.
 	 */
 	public static Bitmap changeBitmapColor(final Bitmap sourceBitmap, final int colorBlack, final int colorWhite) {
@@ -744,7 +787,7 @@ public final class ImageUtil {
 	/**
 	 * Get a colorized bitmap from a bitmap resource.
 	 *
-	 * @param resourceId The bitmap resource id.
+	 * @param resourceId   The bitmap resource id.
 	 * @param colorBlackId The resourceId of the target color of the black parts
 	 * @param colorWhiteId The resourceId of the target color of the white parts
 	 * @return the colorized image bitmap
