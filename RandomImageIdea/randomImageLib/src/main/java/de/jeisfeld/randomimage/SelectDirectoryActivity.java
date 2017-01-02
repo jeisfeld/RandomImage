@@ -1,13 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Stack;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -29,6 +21,14 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Stack;
 
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;

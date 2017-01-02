@@ -1,9 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -11,6 +7,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
