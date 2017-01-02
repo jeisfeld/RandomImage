@@ -1,9 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -16,6 +12,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
@@ -99,7 +99,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * @param context      The context creating the intent.
 	 * @param trackingName A String indicating the starter of the activity.
 	 */
-	public static final void startActivity(final Activity context, final String listName, final String trackingName) {
+	public static void startActivity(final Activity context, final String listName, final String trackingName) {
 		context.startActivity(createIntent(context, listName, trackingName));
 	}
 
@@ -111,7 +111,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * @param trackingName A String indicating the starter of the activity.
 	 * @return the intent.
 	 */
-	public static final Intent createIntent(final Context context, final String listName, final String trackingName) {
+	public static Intent createIntent(final Context context, final String listName, final String trackingName) {
 		Intent intent = new Intent(context, ConfigureImageListActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -166,7 +166,9 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			changeAction(mCurrentAction);
 		}
 
-		DialogUtil.displayInitialSearchForImageFoldersIfRequired(this);
+		if (PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) == null) {
+			DialogUtil.displayInitialSearchForImageFolders(this);
+		}
 
 		if (savedInstanceState == null && isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
 			DialogUtil.displayFirstUseMessageIfRequired(this);

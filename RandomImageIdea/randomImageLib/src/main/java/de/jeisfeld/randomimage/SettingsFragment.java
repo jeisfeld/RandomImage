@@ -1,8 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +11,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -68,6 +68,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);
+		addSearchImageFoldersListener();
 		addHelpPageListener();
 		addDonationListener();
 		addDeveloperContactListener();
@@ -98,6 +99,20 @@ public class SettingsFragment extends PreferenceFragment {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				PreferenceUtil.setAllHints(hintPreferenceValue);
+				return true;
+			}
+		});
+	}
+
+	/**
+	 * Add the listener for the "Search image folders" button.
+	 */
+	private void addSearchImageFoldersListener() {
+		Preference searchPreference = findPreference(getString(R.string.key_pref_search_image_folders));
+		searchPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(final Preference preference) {
+				DialogUtil.displayInitialSearchForImageFolders(getActivity());
 				return true;
 			}
 		});

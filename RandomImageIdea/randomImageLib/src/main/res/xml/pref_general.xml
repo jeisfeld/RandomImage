@@ -31,6 +31,9 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_folder_selection_mechanism"/>
+        <Preference
+            android:key="@string/key_pref_search_image_folders"
+            android:title="@string/menu_search_image_Folders"/>
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_pref_show_hidden_folders"

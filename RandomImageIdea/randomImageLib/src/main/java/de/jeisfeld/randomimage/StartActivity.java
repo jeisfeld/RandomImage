@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -56,7 +57,9 @@ public abstract class StartActivity extends Activity {
 			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
 				finish();
 			}
-			DialogUtil.displayInitialSearchForImageFoldersIfRequired(this);
+			if (PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) == null) {
+				DialogUtil.displayInitialSearchForImageFolders(this);
+			}
 		}
 	}
 }

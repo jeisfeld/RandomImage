@@ -31,6 +31,7 @@
     <!-- Entries related to buttons in the settings -->
 
     <string name="menu_hide_all_info">Do not display info messages</string>
+    <string name="menu_search_image_Folders">Search image folders</string>
     <string name="menu_show_all_info">Display all info messages</string>
     <string name="menu_title_donation">Donation</string>
     <string name="menu_detail_donation">via PayPal in browser</string>
