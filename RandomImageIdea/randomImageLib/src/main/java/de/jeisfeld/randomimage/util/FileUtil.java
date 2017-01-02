@@ -1,6 +1,16 @@
 package de.jeisfeld.randomimage.util;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,15 +20,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.ContentResolver;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
-import android.os.Environment;
-import android.util.Log;
 
 import de.jeisfeld.randomimage.Application;
 
@@ -240,6 +241,26 @@ public final class FileUtil {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Check if a folder has subfolders.
+	 *
+	 * @param filePath the path of the input folder
+	 * @return true if the input folder has subfolders.
+	 */
+	public static boolean hasSubfolders(final String filePath) {
+		File file = new File(filePath);
+		if (!file.exists() || !file.isDirectory()) {
+			return false;
+		}
+		File[] subfolders = file.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(final File pathname) {
+				return pathname.isDirectory();
+			}
+		});
+		return subfolders != null && subfolders.length > 0;
 	}
 
 	/**

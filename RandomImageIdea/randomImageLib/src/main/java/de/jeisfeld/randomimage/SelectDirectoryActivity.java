@@ -357,14 +357,22 @@ public class SelectDirectoryActivity extends Activity {
 
 		if (!mIsImageFolder) {
 			MenuItem menuItemOkay = menu.findItem(R.id.action_select_folder);
-			MenuItem menuItemAddFolder = menu.findItem(R.id.action_add_image_folder);
+			MenuItem menuItemAddThisFolder = menu.findItem(R.id.action_add_only_this_folder);
 
 			menuItemOkay.setEnabled(false);
-			menuItemAddFolder.setEnabled(false);
-
+			menuItemAddThisFolder.setEnabled(false);
 			menuItemOkay.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_okay));
-			menuItemAddFolder.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_add_folder));
 		}
+		if (!FileUtil.hasSubfolders(mCurrentFolder)) {
+			MenuItem menuItemAddThis = menu.findItem(R.id.action_add_only_this_folder);
+			menuItemAddThis.setEnabled(false);
+			if (!mIsImageFolder) {
+				MenuItem menuItemAddFolder = menu.findItem(R.id.action_add_image_folder);
+				menuItemAddFolder.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_add_folder));
+				menuItemAddFolder.setEnabled(false);
+			}
+		}
+
 		return true;
 	}
 
@@ -376,10 +384,19 @@ public class SelectDirectoryActivity extends Activity {
 			returnResult(false);
 			return true;
 		}
-		else if (menuId == R.id.action_add_image_folder) {
+		else if (menuId == R.id.action_add_only_this_folder || menuId == R.id.action_add_all_subfolders || menuId == R.id.action_add_image_folder) {
+			if (menuId == R.id.action_add_image_folder && FileUtil.hasSubfolders(mCurrentFolder)) {
+				return false;
+			}
+
 			PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
 			final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
-			boolean success = imageList.addFolder(mCurrentFolder);
+
+			String folderToBeAdded = mCurrentFolder;
+			if (menuId == R.id.action_add_all_subfolders) {
+				folderToBeAdded = mCurrentFolder + ImageUtil.RECURSIVE_SUFFIX;
+			}
+			boolean success = imageList.addFolder(folderToBeAdded);
 			if (success) {
 				String addedFoldersString =
 						DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mCurrentFolder), null);

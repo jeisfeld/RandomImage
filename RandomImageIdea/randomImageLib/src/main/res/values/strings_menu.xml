@@ -12,6 +12,8 @@
     <string name="menu_select_folder">Select folder</string>
     <string name="menu_add_images">Add images</string>
     <string name="menu_add_image_folder">Add an image folder</string>
+    <string name="menu_add_only_this_folder">Add only this image folder</string>
+    <string name="menu_add_all_subfolders">Add all subfolders of this folder</string>
     <string name="menu_manage_lists">Manage image lists</string>
     <string name="menu_backup_lists">Backup image lists</string>
     <string name="menu_backup">Backup</string>

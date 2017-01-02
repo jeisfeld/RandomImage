@@ -13,7 +13,16 @@
         android:icon="@drawable/ic_action_add_folder"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:title="@string/menu_add_image_folder"/>
+        android:title="@string/menu_add_image_folder">
+        <menu>
+            <item
+                android:id="@+id/action_add_only_this_folder"
+                android:title="@string/menu_add_only_this_folder"/>
+            <item
+                android:id="@+id/action_add_all_subfolders"
+                android:title="@string/menu_add_all_subfolders"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/action_select_folder"
         android:icon="@drawable/ic_action_okay"
