@@ -11,9 +11,9 @@
 
         <TextView
             android:id="@+id/textViewImageFolder"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             android:paddingBottom="@dimen/text_padding"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"

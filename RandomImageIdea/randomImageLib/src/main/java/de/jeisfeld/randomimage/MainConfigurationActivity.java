@@ -1,10 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -16,6 +11,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
@@ -57,7 +57,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 *
 	 * @param context The context creating the intent.
 	 */
-	public static final void startActivity(final Activity context) {
+	public static void startActivity(final Activity context) {
 		Intent intent = new Intent(context, MainConfigurationActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		context.startActivity(intent);
@@ -74,20 +74,6 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		setTitle(R.string.title_activity_main_configuration);
 		fillListOfLists();
 
-		if (mListNames.size() == 0) {
-			// On first startup need to create default list.
-			ImageRegistry.getCurrentImageListRefreshed(true);
-			fillListOfLists();
-		}
-		if (mListNames.size() == 1) {
-			ImageList imageList = ImageRegistry.getCurrentImageList(false);
-			if (imageList.isEmpty()) {
-				ConfigureImageListActivity.startActivity(this, imageList.getListName(), "empty/MainConfig");
-				finish();
-				return;
-			}
-		}
-
 		if (savedInstanceState != null) {
 			mCurrentAction = (CurrentAction) savedInstanceState.getSerializable("currentAction");
 		}
@@ -96,8 +82,23 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 
 		changeAction(mCurrentAction);
 
+		if (mListNames.size() == 0) {
+			// On first startup need to create default list.
+			ImageRegistry.getCurrentImageListRefreshed(true);
+			fillListOfLists();
+		}
+		if (mListNames.size() == 1) {
+			ImageList imageList = ImageRegistry.getCurrentImageList(false);
+			if (imageList.isEmpty()) {
+				if (DialogUtil.displaySearchForImageFoldersIfRequired(this, false, null)) {
+					return;
+				}
+			}
+		}
+
 		if (savedInstanceState == null) {
 			DialogUtil.displayInfo(this, null, R.string.key_hint_main_configuration, R.string.dialog_hint_main_configuration);
+			DialogUtil.displayFirstUseMessageIfRequired(this);
 		}
 	}
 
@@ -674,6 +675,13 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public final void updateAfterFirstImageListCreated() {
+		fillListOfLists();
+		DialogUtil.displayInfo(this, null, R.string.key_hint_main_configuration, R.string.dialog_hint_main_configuration);
+		DialogUtil.displayFirstUseMessageIfRequired(this);
 	}
 
 	/**

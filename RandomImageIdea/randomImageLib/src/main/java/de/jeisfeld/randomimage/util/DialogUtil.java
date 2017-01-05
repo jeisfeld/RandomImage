@@ -31,9 +31,11 @@ import java.util.List;
 import java.util.Locale;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.StartActivity;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
+import de.jeisfeld.randomimage.util.DialogUtil.SearchImageFoldersDialogFragment.SearchImageFoldersDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimagelib.R;
 
@@ -374,7 +376,7 @@ public final class DialogUtil {
 	public static void displayFirstUseMessageIfRequired(final Activity activity) {
 		boolean firstUseInfoWasDisplayed = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_hint_first_use);
 
-		if (!firstUseInfoWasDisplayed && ImageRegistry.isAllEmpty()) {
+		if (!firstUseInfoWasDisplayed) {
 			// Check if another version of the app is installed (pro vs. standard)
 			String packageName = Application.getAppContext().getPackageName();
 			String altPackageName;
@@ -413,11 +415,21 @@ public final class DialogUtil {
 	 * Search for image folders if this was not done before.
 	 *
 	 * @param activity The calling activity.
+	 * @param reparse  flag indicating if the folders should be reparsed if this was already done before.
+	 * @param listener The listener called after finishing.
+	 * @return true if the dialog was started.
 	 */
-	public static void displayInitialSearchForImageFolders(final Activity activity) {
+	public static boolean displaySearchForImageFoldersIfRequired(final Activity activity, final boolean reparse,
+																 final SearchImageFoldersDialogListener listener) {
+		if (!reparse && PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) != null) {
+			return false;
+		}
+
 		SearchImageFoldersDialogFragment fragment = new SearchImageFoldersDialogFragment();
 		fragment.setCancelable(false);
+		fragment.setListener(listener);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		return true;
 	}
 
 	/**
@@ -563,8 +575,7 @@ public final class DialogUtil {
 		}
 
 		/**
-		 * The activity that creates an instance of this dialog must implement this interface in order to receive event
-		 * callbacks.
+		 * A callback handler for the dialog.
 		 */
 		public interface MessageDialogListener {
 			/**
@@ -648,8 +659,7 @@ public final class DialogUtil {
 		}
 
 		/**
-		 * The activity that creates an instance of this dialog listFoldersFragment must implement this interface in
-		 * order to receive event callbacks. Each method passes the DialogFragment in case the host needs to query it.
+		 * A callback handler for the dialog.
 		 */
 		public interface ConfirmDialogListener {
 			/**
@@ -745,8 +755,7 @@ public final class DialogUtil {
 		}
 
 		/**
-		 * The activity that creates an instance of this dialog listFoldersFragment must implement this interface in
-		 * order to receive event callbacks. Each method passes the DialogFragment in case the host needs to query it.
+		 * A callback handler for the dialog.
 		 */
 		public interface RequestInputDialogListener {
 			/**
@@ -855,8 +864,7 @@ public final class DialogUtil {
 		}
 
 		/**
-		 * The activity that creates an instance of this dialog listFoldersFragment must implement this interface in
-		 * order to receive event callbacks. Each method passes the DialogFragment in case the host needs to query it.
+		 * A callback handler for the dialog.
 		 */
 		public interface SelectFromListDialogListener {
 			/**
@@ -882,6 +890,15 @@ public final class DialogUtil {
 	 */
 	public static class SearchImageFoldersDialogFragment extends DialogFragment {
 		/**
+		 * The listener called when the dialog is ended.
+		 */
+		private SearchImageFoldersDialogListener mListener = null;
+
+		public final void setListener(final SearchImageFoldersDialogListener listener) {
+			mListener = listener;
+		}
+
+		/**
 		 * The view displaying folders while searching.
 		 */
 		private TextView mMessageView;
@@ -902,6 +919,7 @@ public final class DialogUtil {
 			}
 
 			LayoutInflater inflater = getActivity().getLayoutInflater();
+			@SuppressLint("InflateParams")
 			View view = inflater.inflate(R.layout.dialog_searching_images, null);
 
 			mMessageView = (TextView) view.findViewById(R.id.textViewImageFolder);
@@ -914,6 +932,18 @@ public final class DialogUtil {
 			ImageUtil.getAllImageFolders(new ImageUtil.OnImageFoldersFoundListener() {
 				@Override
 				public void handleImageFolders(final ArrayList<String> imageFolders) {
+					ImageList imageList = ImageRegistry.getCurrentImageListRefreshed(false);
+					if (imageList.isEmpty() && imageFolders.size() > 0) {
+						imageList.addAllSdRoots();
+						if (getActivity() instanceof StartActivity) {
+							((StartActivity) getActivity()).updateAfterFirstImageListCreated();
+						}
+					}
+
+					if (mListener != null) {
+						mListener.onDialogFinished(SearchImageFoldersDialogFragment.this);
+					}
+
 					dismiss();
 				}
 
@@ -921,7 +951,7 @@ public final class DialogUtil {
 				public void handleImageFolder(final String imageFolder) {
 					mFolderCount++;
 					if (mMessageView != null) {
-						mMessageView.setText(mFolderCount + ": " + imageFolder);
+						mMessageView.setText(mFolderCount + "\n" + imageFolder);
 					}
 				}
 			});
@@ -933,6 +963,18 @@ public final class DialogUtil {
 		public final void onSaveInstanceState(final Bundle outState) {
 			outState.putBoolean(PREVENT_RECREATION, true);
 			super.onSaveInstanceState(outState);
+		}
+
+		/**
+		 * A callback handler for the dialog.
+		 */
+		public interface SearchImageFoldersDialogListener {
+			/**
+			 * Callback method called after the folder search is finished.
+			 *
+			 * @param dialog the dialog fragment.
+			 */
+			void onDialogFinished(DialogFragment dialog);
 		}
 	}
 }

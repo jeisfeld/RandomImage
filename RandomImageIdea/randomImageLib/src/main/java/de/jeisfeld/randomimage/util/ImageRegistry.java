@@ -1,5 +1,8 @@
 package de.jeisfeld.randomimage.util;
 
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -8,9 +11,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import android.os.Environment;
-import android.util.Log;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageList.ImageListInfo;
@@ -218,8 +218,8 @@ public final class ImageRegistry {
 				File newFile = getFileForListName(name);
 				mImageListInfoMap.put(name, new ImageListInfo(name, newFile, StandardImageList.class));
 				mCurrentImageList =
-						new StandardImageList(newFile, name, creationStyle == CreationStyle.CREATE_EMPTY ? null
-								: getConfigFile(getCurrentListName()));
+						new StandardImageList(newFile, name,
+								creationStyle == CreationStyle.CLONE_CURRENT ? getConfigFile(getCurrentListName()) : null);
 				PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, name);
 				return true;
 			}
@@ -526,25 +526,6 @@ public final class ImageRegistry {
 		}
 
 		return listName;
-	}
-
-	/**
-	 * Check if there is not yet any image list configured.
-	 *
-	 * @return true if there is no image list configured.
-	 */
-	public static boolean isAllEmpty() {
-		ArrayList<String> imageListNames = getImageListNames(ListFiltering.ALL_LISTS);
-		if (imageListNames == null || imageListNames.size() == 0) {
-			return true;
-		}
-		else if (imageListNames.size() > 1) {
-			return false;
-		}
-		else {
-			ImageList imageList = getCurrentImageList(false);
-			return imageList.isEmpty();
-		}
 	}
 
 	/**

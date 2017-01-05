@@ -11,19 +11,18 @@ import android.support.v4.content.ContextCompat;
 
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
  * An activity used for starting the app.
- *
- * <p>Here, potential version upgrade activities are done, and required app permissions are checked for Android 6.
+
+ * Here, potential version upgrade activities are done, and required app permissions are checked for Android 6.
  */
 public abstract class StartActivity extends Activity {
 	/**
 	 * The request code used to query for permission.
 	 */
-	private static final int REQUEST_CODE_PERMISSION = 3;
+	protected static final int REQUEST_CODE_PERMISSION = 3;
 
 	// OVERRIDABLE
 	@Override
@@ -38,7 +37,7 @@ public abstract class StartActivity extends Activity {
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog) {
 					ActivityCompat.requestPermissions(StartActivity.this,
-							new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
 							REQUEST_CODE_PERMISSION);
 				}
 
@@ -50,16 +49,24 @@ public abstract class StartActivity extends Activity {
 		}
 	}
 
+	// OVERRIDABLE
 	@Override
-	public final void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
 		if (requestCode == REQUEST_CODE_PERMISSION) {
 			// If request is cancelled, the result arrays are empty.
 			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
 				finish();
 			}
-			if (PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) == null) {
-				DialogUtil.displayInitialSearchForImageFolders(this);
-			}
+			DialogUtil.displaySearchForImageFoldersIfRequired(this, false, null);
 		}
 	}
+
+	/**
+	 * Activities to be done after the first image list has been automatically created.
+	 */
+	public void updateAfterFirstImageListCreated() {
+
+	}
+
+
 }

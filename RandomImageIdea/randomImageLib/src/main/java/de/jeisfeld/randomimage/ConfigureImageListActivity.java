@@ -166,14 +166,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			changeAction(mCurrentAction);
 		}
 
-		if (PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) == null) {
-			DialogUtil.displayInitialSearchForImageFolders(this);
-		}
-
-		if (savedInstanceState == null && isEmpty(mFileNames) && isEmpty(mFolderNames) && isEmpty(mNestedListNames)) {
-			DialogUtil.displayFirstUseMessageIfRequired(this);
-		}
-
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayall);
 	}
 
@@ -283,7 +275,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		reorderIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		Intent displayAllIntent = new Intent(this, ConfigureImageListActivity.class);
 		displayAllIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivities(new Intent[] {reorderIntent, displayAllIntent});
+		startActivities(new Intent[]{reorderIntent, displayAllIntent});
 	}
 
 	@Override

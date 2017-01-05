@@ -8,7 +8,7 @@
     <string name="mini_widget_name">Surprise Image Widget</string>
     <string name="image_widget_name">Surprise Image Frame</string>
     <string name="stacked_image_widget_name">Surprise Image Deck</string>
-    <string name="default_list_name">My first Image List</string>
+    <string name="default_list_name">My Image List</string>
     <string name="title_icon_main_configuration">Surprise Image Setup</string>
 
     <!-- Activity titles -->

@@ -210,6 +210,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Indicator if the activity was recreated after saving instance state.
 	 */
 	private boolean mRecreatedAfterSavingInstanceState = false;
+	/**
+	 * Flag indicating if a usage hint is still to be displayed.
+	 */
+	private boolean mDisplayHint = true;
 
 	/**
 	 * Static helper method to create an intent for this activity.
@@ -318,6 +322,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mTrackingTimestamp = savedInstanceState.getLong("trackingTimestamp");
 			mTrackingImages = savedInstanceState.getLong("trackingImages");
 			mRecreatedAfterSavingInstanceState = true;
+			mDisplayHint = false;
 		}
 		if (mListName == null) {
 			mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
@@ -426,6 +431,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		else {
 			mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
 			setContentView(mCurrentImageView);
+			displayHint();
 			if (mDoPreload && mRandomFileProvider.isReady()) {
 				mNextFileName = mRandomFileProvider.getRandomFileName();
 				if (mNextFileName != null) {
@@ -436,7 +442,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		if (savedInstanceState == null) {
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
-			DialogUtil.displayInfo(this, null, R.string.key_hint_display_image, R.string.dialog_hint_display_image);
 
 			// Trigger data updates that should be run every now and then for sanity reasons
 			NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
@@ -447,6 +452,19 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		test();
 	}
+
+	/**
+	 * Display the hint message if required.
+	 */
+	private void displayHint() {
+		if (mDisplayHint) {
+			DialogUtil.displayInfo(DisplayRandomImageActivity.this, null,
+					R.string.key_hint_display_image, R.string.dialog_hint_display_image);
+			DialogUtil.displayFirstUseMessageIfRequired(this);
+			mDisplayHint = false;
+		}
+	}
+
 
 	/**
 	 * Send the initial event to Google analytics.
@@ -628,7 +646,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 							if (mCurrentFileName == null) {
 								// Handle the case where the provider does not return any image.
 								if (mListName != null) {
-									ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName, "empty/Display");
+									if (DialogUtil.displaySearchForImageFoldersIfRequired(DisplayRandomImageActivity.this, false, null)) {
+										return;
+									}
 								}
 								finish();
 								return;
@@ -644,13 +664,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 							}
 						}
 						setContentView(mCurrentImageView);
+						displayHint();
 						mTrackingImages++;
 
 						if (mDoPreload) {
 							mNextFileName = mRandomFileProvider.getRandomFileName();
 							mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
 						}
-
 					}
 				}, null);
 
@@ -829,6 +849,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
 		finish();
+	}
+
+	@Override
+	public final void updateAfterFirstImageListCreated() {
+		mRandomFileProvider = ImageRegistry.getCurrentImageList(false);
+		displayRandomImage();
 	}
 
 	/**

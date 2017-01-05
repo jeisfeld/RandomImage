@@ -787,6 +787,20 @@ public abstract class ImageList extends RandomFileProvider {
 	}
 
 	/**
+	 * Add all SD root folders to the list.
+	 */
+	public final void addAllSdRoots() {
+		addFolder(FileUtil.SD_CARD_PATH + ImageUtil.RECURSIVE_SUFFIX);
+
+		for (String path : FileUtil.getExtSdCardPaths()) {
+			addFolder(path + ImageUtil.RECURSIVE_SUFFIX);
+		}
+		save();
+		init(false);
+		load(false);
+	}
+
+	/**
 	 * Get the list of all image files contained in the list.
 	 *
 	 * @return The list of all image files contained in the list.
