@@ -50,6 +50,11 @@ public final class FileUtil {
 			"/data/sdext4",
 	};
 
+	/**
+	 * The SD card path.
+	 */
+	public static final String SD_CARD_PATH = getSdCardPath();
+
 
 	/**
 	 * Hide default constructor.
@@ -326,7 +331,7 @@ public final class FileUtil {
 	 * null is returned.
 	 */
 
-	public static String getExtSdCardFolder(final File file) {
+	public static String getExtSdCardFolderUnmounted(final File file) {
 		// Do not use Kitkat API, as it is unreliable for unmounted paths.
 		for (String path : EXT_SD_PATHS) {
 			if (file.getAbsolutePath().toLowerCase(Locale.getDefault()).startsWith(path.toLowerCase(Locale.getDefault()))) {
@@ -341,7 +346,7 @@ public final class FileUtil {
 	 *
 	 * @return The SD card directory.
 	 */
-	public static String getSdCardPath() {
+	private static String getSdCardPath() {
 		String sdCardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
 
 		try {
@@ -391,7 +396,7 @@ public final class FileUtil {
 			return getUnmountedSdCardPathLollipop(file);
 		}
 
-		String path = getExtSdCardFolder(file);
+		String path = getExtSdCardFolderUnmounted(file);
 		if (path == null) {
 			return null;
 		}

@@ -522,7 +522,7 @@ public final class ImageUtil {
 				final ArrayList<String> imageFolders = new ArrayList<>();
 
 				long timestamp = System.currentTimeMillis();
-				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.getSdCardPath()), handler, listener));
+				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.SD_CARD_PATH), handler, listener));
 
 				for (String path : FileUtil.getExtSdCardPaths()) {
 					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
@@ -733,7 +733,13 @@ public final class ImageUtil {
 	 */
 	public static String getImageFolderShortName(final String folderName) {
 		if (folderName.endsWith(RECURSIVE_SUFFIX)) {
-			return new File(folderName).getParentFile().getName();
+			String shortName = new File(folderName).getParentFile().getName();
+			if ((FileUtil.SD_CARD_PATH + RECURSIVE_SUFFIX).equals(folderName) && !shortName.toLowerCase().contains("sd")) {
+				return "SD Card";
+			}
+			else {
+				return shortName;
+			}
 		}
 		else {
 			return new File(folderName).getName();

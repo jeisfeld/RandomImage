@@ -147,7 +147,7 @@ public class SelectDirectoryActivity extends Activity {
 			dirFile = new File(mCurrentFolder);
 
 			if (!dirFile.exists() || !dirFile.isDirectory()) {
-				mCurrentFolder = FileUtil.getSdCardPath();
+				mCurrentFolder = FileUtil.SD_CARD_PATH;
 			}
 		}
 
