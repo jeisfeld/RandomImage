@@ -2,13 +2,13 @@
 <resources>
 
     <!-- Basic application strings -->
-    <string name="app_name">Überraschungsbild</string>
-    <string name="app_name_short">Ü-Bild</string>
-    <string name="mini_widget_name">Überraschungsbild-Widget</string>
-    <string name="image_widget_name">Überraschungsbilderrahmen</string>
-    <string name="stacked_image_widget_name">Überraschungsbilderstapel</string>
+    <string name="app_name">Zufallsbild</string>
+    <string name="app_name_short">Zufallsbild</string>
+    <string name="mini_widget_name">Zufallsbild-Widget</string>
+    <string name="image_widget_name">Zufallsbilderrahmen</string>
+    <string name="stacked_image_widget_name">Zufallsbilderstapel</string>
     <string name="default_list_name">Meine Bildliste</string>
-    <string name="title_icon_main_configuration">Ü-Bild Einrichtung</string>
+    <string name="title_icon_main_configuration">Zufallsbild Einrichtung</string>
 
     <!-- Activity titles -->
     <string name="title_activity_display_image_details">Bildinformationen</string>
@@ -41,8 +41,8 @@
     <string name="button_purchased_item">%1$s (gekauft)</string>
     <string name="button_finish_widget_configuration">Widget-Konfiguration beenden</string>
     <string name="button_missing_images">Fehlende Bilder</string>
-    <string name="button_widgets">Überraschungsbild-Widgets</string>
-    <string name="button_notifications">Überraschungsbild-Benachrichtigungen</string>
+    <string name="button_widgets">Zufallsbild-Widgets</string>
+    <string name="button_notifications">Zufallsbild-Benachrichtigungen</string>
     <string name="button_clone_list">Liste klonen</string>
     <string name="button_rename_list">Liste umbenennen</string>
     <string name="button_delete_list">Liste löschen</string>
@@ -61,7 +61,7 @@
     <string name="text_info_select_images_for_remove">Wählen Sie die Verzeichnisse und Bilder, die Sie aus der Bildliste entfernen wollen.</string>
     <string name="text_info_image_lists">Meine Bildlisten</string>
     <string name="text_info_image_list_backups">Vorhandene Sicherungkopien</string>
-    <string name="text_info_empty_list">Ihre Überraschungsbildliste ist leer. Bitte nutzen Sie das Symbol „+” am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
+    <string name="text_info_empty_list">Ihre Zufallsbildliste ist leer. Bitte nutzen Sie das Symbol „+” am oberen Rand, um Bilder oder Verzeichnisse zur Liste hinzuzufügen.</string>
 
     <!-- Other texts -->
     <string name="text_initializing">Ladevorgang&#8230;</string>

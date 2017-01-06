@@ -2,14 +2,14 @@
 <resources>
 
     <!-- Basic application strings -->
-    <string name="app_name">Surprise Image</string>
-    <string name="app_name_short">Surprise Image</string>
+    <string name="app_name">Random Image</string>
+    <string name="app_name_short">Random Image</string>
     <string name="has_premium" translatable="false">false</string>
-    <string name="mini_widget_name">Surprise Image Widget</string>
-    <string name="image_widget_name">Surprise Image Frame</string>
-    <string name="stacked_image_widget_name">Surprise Image Deck</string>
+    <string name="mini_widget_name">Random Image Widget</string>
+    <string name="image_widget_name">Random Image Frame</string>
+    <string name="stacked_image_widget_name">Random Image Deck</string>
     <string name="default_list_name">My Image List</string>
-    <string name="title_icon_main_configuration">Surprise Image Setup</string>
+    <string name="title_icon_main_configuration">Random Image Setup</string>
 
     <!-- Activity titles -->
     <string name="title_activity_display_image_details">Image Details</string>
@@ -42,8 +42,8 @@
     <string name="button_purchased_item">%1$s (bought)</string>
     <string name="button_finish_widget_configuration">Finish Widget Configuration</string>
     <string name="button_missing_images">Missing images</string>
-    <string name="button_widgets">Surprise Image Widgets</string>
-    <string name="button_notifications">Surprise Image Notifications</string>
+    <string name="button_widgets">Random Image Widgets</string>
+    <string name="button_notifications">Random Image Notifications</string>
     <string name="button_clone_list">Clone List</string>
     <string name="button_rename_list">Rename List</string>
     <string name="button_delete_list">Delete List</string>
@@ -62,7 +62,7 @@
     <string name="text_info_select_images_for_remove">Select the folders and images that you want to remove from the image list.</string>
     <string name="text_info_image_lists">My image lists</string>
     <string name="text_info_image_list_backups">Existing backups</string>
-    <string name="text_info_empty_list">Your surprise image list is empty. Please press the “+” symbol on top in order to add images or folders to the list.</string>
+    <string name="text_info_empty_list">Your random image list is empty. Please press the “+” symbol on top in order to add images or folders to the list.</string>
 
     <!-- Other texts -->
     <string name="text_initializing">Initializing&#8230;</string>

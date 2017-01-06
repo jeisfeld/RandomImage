@@ -31,9 +31,9 @@
     <string name="toast_added_images_none">Alle ausgewählten Bilder waren bereits in der Liste.</string>
     <string name="toast_added_folder_none">Das Verzeichnis „%1$s” war bereits in der Liste.</string>
     <string name="toast_added_folders_none">Alle ausgewählten Verzeichnisse waren bereits in der Liste.</string>
-    <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Überraschungsbildliste „%2$s” hinzugefügt</string>
-    <string name="toast_added_images_single_external">Das Bild „%1$s” wurde zur Überraschungsbildliste „%2$s” hinzugefügt</string>
-    <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Überraschungsbildliste „%1$s”</string>
+    <string name="toast_added_images_count_external">Es wurden %1$d Bilder zur Zufallsbildliste „%2$s” hinzugefügt</string>
+    <string name="toast_added_images_single_external">Das Bild „%1$s” wurde zur Zufallsbildliste „%2$s” hinzugefügt</string>
+    <string name="toast_added_images_none_external">Alle ausgewählten Bilder waren bereits in der Zufallsbildliste „%1$s”</string>
     <string name="toast_add_no_folder_selected">Es wurden kein Verzeichnis zum Hinzufügen ausgewählt</string>
     <string name="toast_removed_multiple">Es wurden %1$s aus der Liste entfernt</string>
     <string name="toast_removed_single">%1$s wurde aus der Liste entfernt</string>
@@ -61,7 +61,7 @@
     <string name="dialog_hint_first_use_2">2. Legen Sie ein Widget auf ihren Startbildschirm, um zufällige Bilder aus Ihrer Liste anzuschauen.</string>
     <string name="dialog_hint_first_use_upgrade">Danke für die Installation von %1$s!\n\nSie können Ihre Bildlisten wie folgt aus der bisher genutzten App-Version übertragen:\n\n1. Öffnen Sie die Konfiguration der bisher genutzten App-Version, und machen Sie ein Backup Ihrer Bildlisten.\n\n2. Öffnen Sie die Konfiguration der App %1$s und Importieren Sie Ihre Bildlisten (über „wiederherstellen”).</string>
     <string name="dialog_hint_select_folder">Hier können Sie\n\n- Ein Bildverzeichnis (gelb) auswählen, aus dem Sie Bilder zu Ihrer Bildliste hinzufügen wollen\n\n- Ein Verzeichnis (orange) samt aller Unterverzeichnisse hinzufügen\n\n- Eine andere Bildliste (blau) zur aktuellen Liste hinzufügen\n\n- Mehrere Verzeichnisse/Listen auswählen und zu Ihrer Bildliste hinzufügen</string>
-    <string name="dialog_hint_add_images">Hier können Sie\n\n- Das ganze Bildverzeichnis zu Ihrer Bildliste hinzufügen\n\n- einzelne Bilder auswählen und hinzufügen\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Überraschungsbild-App senden.</string>
+    <string name="dialog_hint_add_images">Hier können Sie\n\n- Das ganze Bildverzeichnis zu Ihrer Bildliste hinzufügen\n\n- einzelne Bilder auswählen und hinzufügen\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Zufallsbild-App senden.</string>
     <string name="dialog_hint_display_image">- Sie können das Bild zoomen und bewegen.\n\n- Schnippen Sie das Bild weg, um ein anderes zu sehen.\n\n- Tippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\n\n- Ein langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_hint_main_configuration">Dies ist die Hauptkonfigurationsseite der App. Hier können Sie\n\n- Bildlisten bearbeiten\n\n- Bildlisten sichern und wiederherstellen\n\n- Widgets konfigurieren\n\n- Bildbenachrichtigungen hinzufügen und bearbeiten.</string>
 
