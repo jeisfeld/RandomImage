@@ -112,7 +112,7 @@ public class SettingsFragment extends PreferenceFragment {
 		searchPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
-				DialogUtil.displaySearchForImageFoldersIfRequired(getActivity(), true, null);
+				DialogUtil.displaySearchForImageFoldersIfRequired(getActivity(), true);
 				return true;
 			}
 		});

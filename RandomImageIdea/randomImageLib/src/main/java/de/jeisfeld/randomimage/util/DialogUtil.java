@@ -36,7 +36,6 @@ import de.jeisfeld.randomimage.StartActivity;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
-import de.jeisfeld.randomimage.util.DialogUtil.SearchImageFoldersDialogFragment.SearchImageFoldersDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimagelib.R;
 
@@ -417,18 +416,15 @@ public final class DialogUtil {
 	 *
 	 * @param activity The calling activity.
 	 * @param reparse  flag indicating if the folders should be reparsed if this was already done before.
-	 * @param listener The listener called after finishing.
 	 * @return true if the dialog was started.
 	 */
-	public static boolean displaySearchForImageFoldersIfRequired(final Activity activity, final boolean reparse,
-																 final SearchImageFoldersDialogListener listener) {
+	public static boolean displaySearchForImageFoldersIfRequired(final Activity activity, final boolean reparse) {
 		if (!reparse && PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) != null) {
 			return false;
 		}
 		activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 		SearchImageFoldersDialogFragment fragment = new SearchImageFoldersDialogFragment();
 		fragment.setCancelable(false);
-		fragment.setListener(listener);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
 		return true;
 	}
@@ -891,15 +887,6 @@ public final class DialogUtil {
 	 */
 	public static class SearchImageFoldersDialogFragment extends DialogFragment {
 		/**
-		 * The listener called when the dialog is ended.
-		 */
-		private SearchImageFoldersDialogListener mListener = null;
-
-		public final void setListener(final SearchImageFoldersDialogListener listener) {
-			mListener = listener;
-		}
-
-		/**
 		 * The view displaying folders while searching.
 		 */
 		private TextView mMessageView;
@@ -941,10 +928,6 @@ public final class DialogUtil {
 						}
 					}
 
-					if (mListener != null) {
-						mListener.onDialogFinished(SearchImageFoldersDialogFragment.this);
-					}
-
 					try {
 						getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 						dismiss();
@@ -970,18 +953,6 @@ public final class DialogUtil {
 		public final void onSaveInstanceState(final Bundle outState) {
 			outState.putBoolean(PREVENT_RECREATION, true);
 			super.onSaveInstanceState(outState);
-		}
-
-		/**
-		 * A callback handler for the dialog.
-		 */
-		public interface SearchImageFoldersDialogListener {
-			/**
-			 * Callback method called after the folder search is finished.
-			 *
-			 * @param dialog the dialog fragment.
-			 */
-			void onDialogFinished(DialogFragment dialog);
 		}
 	}
 }

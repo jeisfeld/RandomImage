@@ -646,7 +646,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							if (mCurrentFileName == null) {
 								// Handle the case where the provider does not return any image.
 								if (mListName != null) {
-									if (DialogUtil.displaySearchForImageFoldersIfRequired(DisplayRandomImageActivity.this, false, null)) {
+									if (DialogUtil.displaySearchForImageFoldersIfRequired(DisplayRandomImageActivity.this, false)) {
 										return;
 									}
 								}

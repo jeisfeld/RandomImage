@@ -57,7 +57,7 @@ public abstract class StartActivity extends Activity {
 			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
 				finish();
 			}
-			DialogUtil.displaySearchForImageFoldersIfRequired(this, false, null);
+			DialogUtil.displaySearchForImageFoldersIfRequired(this, false);
 		}
 	}
 

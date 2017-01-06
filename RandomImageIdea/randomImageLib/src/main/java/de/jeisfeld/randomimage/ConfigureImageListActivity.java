@@ -576,6 +576,11 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	public final void updateAfterFirstImageListCreated() {
+		fillListOfImages();
+	}
+
+	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		boolean needsRefresh = false;
 

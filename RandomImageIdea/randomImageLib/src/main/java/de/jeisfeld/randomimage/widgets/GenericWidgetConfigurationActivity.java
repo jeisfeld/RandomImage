@@ -1,15 +1,14 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-import de.jeisfeld.randomimage.ConfigureImageListActivity;
+import java.util.ArrayList;
+
+import de.jeisfeld.randomimage.StartActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -20,7 +19,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Generic activity for the configuration of widgets. First select the image list, then continue initialization.
  */
-public abstract class GenericWidgetConfigurationActivity extends Activity {
+public abstract class GenericWidgetConfigurationActivity extends StartActivity {
 	/**
 	 * Resource name for the flag to indicate if the widget should just be reconfigured.
 	 */
@@ -74,7 +73,7 @@ public abstract class GenericWidgetConfigurationActivity extends Activity {
 				String listName = ImageRegistry.getCurrentListName();
 
 				initialize(savedInstanceState, appWidgetId, listName);
-				ConfigureImageListActivity.startActivity(this, listName, "empty/Widget");
+				DialogUtil.displaySearchForImageFoldersIfRequired(this, false);
 			}
 			else if (listNames.size() == 1) {
 				initialize(savedInstanceState, appWidgetId, listNames.get(0));

@@ -90,7 +90,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		if (mListNames.size() == 1) {
 			ImageList imageList = ImageRegistry.getCurrentImageList(false);
 			if (imageList.isEmpty()) {
-				if (DialogUtil.displaySearchForImageFoldersIfRequired(this, false, null)) {
+				if (DialogUtil.displaySearchForImageFoldersIfRequired(this, false)) {
 					return;
 				}
 			}
