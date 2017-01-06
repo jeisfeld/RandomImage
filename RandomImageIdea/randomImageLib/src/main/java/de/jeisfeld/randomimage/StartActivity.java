@@ -16,7 +16,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * An activity used for starting the app.
 
- * Here, potential version upgrade activities are done, and required app permissions are checked for Android 6.
+ * Here, required app permissions are checked for Android 6.
  */
 public abstract class StartActivity extends Activity {
 	/**
