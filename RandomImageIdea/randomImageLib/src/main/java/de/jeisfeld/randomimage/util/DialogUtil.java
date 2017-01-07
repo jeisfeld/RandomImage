@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -422,7 +421,7 @@ public final class DialogUtil {
 		if (!reparse && PreferenceUtil.getSharedPreferenceString(R.string.key_all_image_folders) != null) {
 			return false;
 		}
-		activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+		SystemUtil.lockOrientation(activity, true);
 		SearchImageFoldersDialogFragment fragment = new SearchImageFoldersDialogFragment();
 		fragment.setCancelable(false);
 		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
@@ -929,7 +928,7 @@ public final class DialogUtil {
 					}
 
 					try {
-						getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+						SystemUtil.lockOrientation(getActivity(), false);
 						dismiss();
 					}
 					catch (Exception e) {

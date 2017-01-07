@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Zufallsbild Pro</string>
-    <string name="app_name_short">Zufallsbild Pro</string>
-    <string name="title_icon_main_configuration">Z-Bild Pro Einrichtung</string>
+    <string name="app_name">Zufallsbild+</string>
+    <string name="app_name_short">Zufallsbild+</string>
+    <string name="title_icon_main_configuration">ZufallsBild+ Einrichtung</string>
 
 </resources>

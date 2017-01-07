@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
@@ -120,4 +122,29 @@ public final class SystemUtil {
 
 		return manager.getLargeMemoryClass();
 	}
+
+	/**
+	 * Lock or unlock the screen orientation programmatically.
+	 *
+	 * @param activity The triggering activity.
+	 * @param lock     if true, the orientation is locked, otherwise it's unlocked.
+	 */
+	public static void lockOrientation(final Activity activity, final boolean lock) {
+		if (activity == null) {
+			return;
+		}
+		if (lock) {
+			int currentOrientation = activity.getResources().getConfiguration().orientation;
+			if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+			}
+			else {
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+			}
+		}
+		else {
+			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		}
+	}
+
 }
