@@ -277,6 +277,9 @@ public class PinchImageView extends ImageView {
 	 * Scale the image to fit into the view.
 	 */
 	public final void doScalingToFit() {
+		if (mBitmap == null) {
+			return;
+		}
 		mPosX = ONE_HALF;
 		mPosY = ONE_HALF;
 		rotateIfRequired();
@@ -740,7 +743,7 @@ public class PinchImageView extends ImageView {
 		 * @param resourceScaleType The scale type, as defined in the preference resource array.
 		 * @return The corresponding ScaleType.
 		 */
-		public static final ScaleType fromResourceScaleType(final int resourceScaleType) {
+		public static ScaleType fromResourceScaleType(final int resourceScaleType) {
 			switch (resourceScaleType) {
 			case 0:
 				return FIT;
