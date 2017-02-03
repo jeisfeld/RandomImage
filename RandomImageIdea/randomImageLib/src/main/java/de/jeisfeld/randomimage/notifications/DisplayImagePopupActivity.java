@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import de.jeisfeld.randomimage.DisplayImageDetailsActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
@@ -80,7 +81,7 @@ public class DisplayImagePopupActivity extends Activity {
 	 * @param notificationId the id of the notification triggering this activity.
 	 * @return the intent.
 	 */
-	public static final Intent createIntent(final Context context, final String listName, final String fileName, final Integer notificationId) {
+	public static Intent createIntent(final Context context, final String listName, final String fileName, final Integer notificationId) {
 		Intent intent = new Intent(context, DisplayImagePopupActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
@@ -171,6 +172,12 @@ public class DisplayImagePopupActivity extends Activity {
 				finish();
 				return true;
 			}
+
+			@Override
+			public void onLongPress(final MotionEvent e) {
+				DisplayImageDetailsActivity.startActivity(DisplayImagePopupActivity.this, mFileName, mListName, true,
+						"Display image popup");
+			}
 		});
 	}
 
@@ -220,7 +227,7 @@ public class DisplayImagePopupActivity extends Activity {
 	 * @param context        The context.
 	 * @param notificationId The notificationId that has triggered the activity.
 	 */
-	public static final void finishActivity(final Context context, final int notificationId) {
+	public static void finishActivity(final Context context, final int notificationId) {
 		DisplayImagePopupActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Popup");
