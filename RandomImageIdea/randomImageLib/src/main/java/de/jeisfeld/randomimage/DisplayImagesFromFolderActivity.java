@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -134,7 +133,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemClick(final ItemType itemType, final String name) {
 		// itemType is always file.
-		DisplayRandomImageActivity.startActivityForFolder(this, new File(name).getParent(), name);
+		DisplayRandomImageActivity.startActivityForFolder(this, mFolderName, name);
 	}
 
 	@Override
