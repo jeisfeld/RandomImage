@@ -1,8 +1,5 @@
 package de.jeisfeld.randomimage.view;
 
-import java.util.Arrays;
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -12,6 +9,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import java.util.Arrays;
+import java.util.Locale;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimagelib.R;
@@ -78,7 +78,7 @@ public class TimeSelectorPreference extends DialogPreference {
 		mEditText = (EditText) view.findViewById(R.id.editTextUnits);
 		mSpinner = (Spinner) view.findViewById(R.id.spinnerUnits);
 
-		ArrayAdapter<SpinnerEntry> dataAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, mSpinnerEntries);
+		ArrayAdapter<SpinnerEntry> dataAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, mSpinnerEntries);
 		mSpinner.setAdapter(dataAdapter);
 
 		String oldValue = getSharedPreferences().getString(getKey(), null);
