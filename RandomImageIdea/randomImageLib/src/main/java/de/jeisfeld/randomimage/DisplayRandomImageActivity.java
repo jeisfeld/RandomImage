@@ -444,8 +444,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 
 			// Trigger data updates that should be run every now and then for sanity reasons
-			NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
-			ImageUtil.refreshStoredImageFoldersIfApplicable();
+			if (mNotificationId == null) {
+				NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
+				ImageUtil.refreshStoredImageFoldersIfApplicable();
+			}
 		}
 
 		sendInitialTrackingEvent(savedInstanceState != null, folderName != null);
