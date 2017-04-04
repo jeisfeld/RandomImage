@@ -1,14 +1,5 @@
 package de.jeisfeld.randomimage.notifications;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import android.app.Notification;
 import android.app.Notification.BigPictureStyle;
 import android.app.Notification.Builder;
@@ -24,6 +15,15 @@ import android.os.Build.VERSION_CODES;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
@@ -339,6 +339,10 @@ public final class NotificationUtil {
 		int ledColor = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, 0);
 		if (ledColor > 0) {
 			notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
+			notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
+			if (!vibrate) {
+				notificationBuilder.setVibrate(new long[]{0, 0, 0});
+			}
 		}
 
 		if (vibrate) {
