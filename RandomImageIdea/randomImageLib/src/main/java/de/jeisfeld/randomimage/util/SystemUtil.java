@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
@@ -212,9 +213,10 @@ public final class SystemUtil {
 	 *
 	 * @return The usage statistics from the last day.
 	 */
-	@RequiresApi(api = VERSION_CODES.LOLLIPOP_MR1)
+	@RequiresApi(VERSION_CODES.LOLLIPOP)
 	public static List<UsageStats> getUsageStats() {
 		Context context = Application.getAppContext();
+		@SuppressLint("InlinedApi")
 		UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
 		long time = System.currentTimeMillis();
 		List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - TimeUnit.DAYS.toMillis(1), time);
@@ -241,7 +243,7 @@ public final class SystemUtil {
 	 *
 	 * @return The package name of the last used app.
 	 */
-	@RequiresApi(api = VERSION_CODES.LOLLIPOP_MR1)
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 	public static String getLastPackageUsed() {
 		List<UsageStats> usageStats = getUsageStats();
 		if (usageStats == null || usageStats.size() == 0) {

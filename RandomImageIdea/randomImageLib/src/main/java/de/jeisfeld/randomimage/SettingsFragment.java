@@ -1,6 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -211,7 +211,7 @@ public class SettingsFragment extends PreferenceFragment {
 	private void addRestrictPopupNotificationsListener() {
 		final DynamicMultiSelectListPreference restrictPopupNotificationsPreference =
 				(DynamicMultiSelectListPreference) findPreference(getString(R.string.key_pref_apps_without_popup_notifications));
-		if (android.os.Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP_MR1) {
+		if (android.os.Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
 			((PreferenceCategory) findPreference(getString(R.string.key_pref_category_other))).removePreference(restrictPopupNotificationsPreference);
 			return;
 		}
@@ -224,7 +224,7 @@ public class SettingsFragment extends PreferenceFragment {
 					restrictPopupNotificationsPreference.setEntryValues(new String[0]);
 
 					DialogUtil.displayConfirmationMessage(getActivity(), new ConfirmDialogListener() {
-						@TargetApi(VERSION_CODES.LOLLIPOP_MR1)
+						@RequiresApi(VERSION_CODES.LOLLIPOP)
 						@Override
 						public void onDialogPositiveClick(final DialogFragment dialog) {
 							Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
