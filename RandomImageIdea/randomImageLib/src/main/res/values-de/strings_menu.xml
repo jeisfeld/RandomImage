@@ -12,6 +12,8 @@
     <string name="menu_select_folder">Verzeichnis wählen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>
+    <string name="menu_add_only_this_folder">Nur dieses Bildverzeichnis hinzufügen</string>
+    <string name="menu_add_all_subfolders">Alle Unterverzeichnisse hinzufügen</string>
     <string name="menu_manage_lists">Bildlisten verwalten</string>
     <string name="menu_backup_lists">Bildlisten sichern</string>
     <string name="menu_backup">Sichern</string>
