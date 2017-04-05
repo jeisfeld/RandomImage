@@ -1,12 +1,12 @@
 package de.jeisfeld.randomimage.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.File;
@@ -273,7 +273,7 @@ public final class FileUtil {
 	 *
 	 * @return A list of external SD card paths.
 	 */
-	@TargetApi(Build.VERSION_CODES.KITKAT)
+	@RequiresApi(Build.VERSION_CODES.KITKAT)
 	private static String[] getExtSdCardPathsForKitkat() {
 		List<String> paths = new ArrayList<>();
 		for (File file : Application.getAppContext().getExternalFilesDirs("external")) {
@@ -364,7 +364,7 @@ public final class FileUtil {
 	 * @param file The file
 	 * @return the unmounted SD card path, if existing. Otherwise null.
 	 */
-	@TargetApi(VERSION_CODES.LOLLIPOP)
+	@RequiresApi(VERSION_CODES.LOLLIPOP)
 	public static String getUnmountedSdCardPathLollipop(final File file) {
 		File currentFile = file;
 		String mountStatus = Environment.getExternalStorageState(file);
