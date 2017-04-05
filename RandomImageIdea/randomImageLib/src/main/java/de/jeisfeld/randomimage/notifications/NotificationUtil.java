@@ -36,6 +36,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
@@ -242,6 +243,16 @@ public final class NotificationUtil {
 		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
 				notificationId, false);
 		if (isActivityNotificationStyle(notificationStyle)) {
+			if (SystemUtil.isUsageStatsAvailable() && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+				String lastPackageUsed = SystemUtil.getLastPackageUsed();
+				Set<String> packages = PreferenceUtil.getSharedPreferenceStringSet(R.string.key_pref_apps_without_popup_notifications);
+				if (packages != null && packages.contains(lastPackageUsed)) {
+					// skip notification and restart timer
+					NotificationAlarmReceiver.setAlarm(context, notificationId, false);
+					return;
+				}
+			}
+
 			// open activity instead of notification
 			if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
 				context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,

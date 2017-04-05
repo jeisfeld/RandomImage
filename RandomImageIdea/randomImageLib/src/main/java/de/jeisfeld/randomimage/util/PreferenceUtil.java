@@ -1,13 +1,15 @@
 package de.jeisfeld.randomimage.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimagelib.R;
@@ -196,6 +198,17 @@ public final class PreferenceUtil {
 		editor.putLong(Application.getAppContext().getString(preferenceId), i);
 		editor.apply();
 	}
+
+	/**
+	 * Get a String set shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static Set<String> getSharedPreferenceStringSet(final int preferenceId) {
+		return getSharedPreferences().getStringSet(Application.getAppContext().getString(preferenceId), new HashSet<String>());
+	}
+
 
 	/**
 	 * Retrieve a long from a shared preference string.

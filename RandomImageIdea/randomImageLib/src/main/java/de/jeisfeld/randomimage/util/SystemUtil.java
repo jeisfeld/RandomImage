@@ -8,7 +8,6 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
@@ -19,9 +18,9 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -165,18 +164,26 @@ public final class SystemUtil {
 	/**
 	 * Get information about the list of applications installed on the device.
 	 *
-	 * @return The map from package name to application label, for non-system apps.
+	 * @return The list of application information.
 	 */
-	public static Map<String, String> getInstalledApplications() {
+	public static List<ApplicationInfo> getInstalledApplications() {
 		Context context = Application.getAppContext();
 		PackageManager pm = context.getPackageManager();
-		Map<String, String> result = new HashMap<>();
+		List<ApplicationInfo> result = new ArrayList<>();
 
-		for (ApplicationInfo appInfo : pm.getInstalledApplications(PackageManager.GET_META_DATA)) {
-			if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
-				result.put(appInfo.packageName, appInfo.loadLabel(pm).toString());
+		for (android.content.pm.ApplicationInfo appInfo : pm.getInstalledApplications(PackageManager.GET_META_DATA)) {
+			if (pm.getLaunchIntentForPackage(appInfo.packageName) != null) {
+				result.add(new ApplicationInfo(appInfo.packageName, appInfo.loadLabel(pm).toString()));
 			}
 		}
+
+		Collections.sort(result, new Comparator<ApplicationInfo>() {
+			@Override
+			public int compare(final ApplicationInfo o1, final ApplicationInfo o2) {
+				return o1.mLabelName.toUpperCase().compareTo(o2.mLabelName.toUpperCase());
+			}
+		});
+
 		return result;
 	}
 
@@ -245,4 +252,36 @@ public final class SystemUtil {
 		}
 	}
 
+	/**
+	 * Bean to store information about an application.
+	 */
+	public static final class ApplicationInfo {
+		/**
+		 * The package name of the application.
+		 */
+		private String mPackageName;
+		/**
+		 * The label name of the application.
+		 */
+		private String mLabelName;
+
+		/**
+		 * Standard constructor, passing package name and label name.
+		 *
+		 * @param packageName The package name.
+		 * @param labelName   The label name.
+		 */
+		private ApplicationInfo(final String packageName, final String labelName) {
+			this.mPackageName = packageName;
+			this.mLabelName = labelName;
+		}
+
+		public String getPackageName() {
+			return mPackageName;
+		}
+
+		public String getLabelName() {
+			return mLabelName;
+		}
+	}
 }

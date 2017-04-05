@@ -1,25 +1,35 @@
 package de.jeisfeld.randomimage;
 
+import android.annotation.TargetApi;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
+import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
 import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference;
+import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference.DynamicListPreferenceOnClickListener;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -73,8 +83,10 @@ public class SettingsFragment extends PreferenceFragment {
 		addDonationListener();
 		addDeveloperContactListener();
 		addProAppButtonListener();
+		addRestrictPopupNotificationsListener();
 		updateRegexpPreferences(getActivity());
 		updateShowHiddenFoldersPreference(getActivity());
+
 
 		if (Boolean.parseBoolean(Application.getResourceString(R.string.has_premium))) {
 			getPreferenceScreen().removePreference(findPreference(getString(R.string.key_pref_category_premium)));
@@ -191,6 +203,58 @@ public class SettingsFragment extends PreferenceFragment {
 			}
 		});
 		unlockPreference.setEnabled(!SystemUtil.isAppInstalled("de.jeisfeld.randomimagepro"));
+	}
+
+	/**
+	 * Add an entry for variable donation.
+	 */
+	private void addRestrictPopupNotificationsListener() {
+		final DynamicMultiSelectListPreference restrictPopupNotificationsPreference =
+				(DynamicMultiSelectListPreference) findPreference(getString(R.string.key_pref_apps_without_popup_notifications));
+		if (android.os.Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP_MR1) {
+			((PreferenceCategory) findPreference(getString(R.string.key_pref_category_other))).removePreference(restrictPopupNotificationsPreference);
+			return;
+		}
+
+		restrictPopupNotificationsPreference.setOnClickListener(new DynamicListPreferenceOnClickListener() {
+			@Override
+			public boolean onClick(final DynamicMultiSelectListPreference preference) {
+				if (!SystemUtil.isUsageStatsAvailable()) {
+					restrictPopupNotificationsPreference.setEntries(new String[0]);
+					restrictPopupNotificationsPreference.setEntryValues(new String[0]);
+
+					DialogUtil.displayConfirmationMessage(getActivity(), new ConfirmDialogListener() {
+						@TargetApi(VERSION_CODES.LOLLIPOP_MR1)
+						@Override
+						public void onDialogPositiveClick(final DialogFragment dialog) {
+							Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivityForResult(intent, 0);
+						}
+
+						@Override
+						public void onDialogNegativeClick(final DialogFragment dialog) {
+						}
+					}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_usage_access);
+					return false;
+				}
+
+				List<ApplicationInfo> applicationInfoList = SystemUtil.getInstalledApplications();
+				String[] entries = new String[applicationInfoList.size()];
+				String[] entryValues = new String[applicationInfoList.size()];
+				int i = 0;
+
+				for (ApplicationInfo applicationInfo : applicationInfoList) {
+					entries[i] = applicationInfo.getLabelName();
+					entryValues[i] = applicationInfo.getPackageName();
+					i++;
+				}
+
+				restrictPopupNotificationsPreference.setEntries(entries);
+				restrictPopupNotificationsPreference.setEntryValues(entryValues);
+				return true;
+			}
+		});
 	}
 
 	/**

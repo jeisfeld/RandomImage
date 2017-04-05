@@ -14,7 +14,9 @@
     <!-- Dummy keys only required as menu reference -->
 
     <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>
+    <string name="key_pref_category_other" translatable="false">pref_category_other</string>
     <string name="key_pref_search_image_folders" translatable="false">pref_search_image_folders</string>
+    <string name="key_pref_apps_without_popup_notifications" translatable="false">pref_apps_without_popup_notifications</string>
     <string name="key_pref_show_info" translatable="false">pref_show_info</string>
     <string name="key_pref_hide_info" translatable="false">pref_hide_info</string>
     <string name="key_pref_donation" translatable="false">pref_variable_donation</string>
@@ -69,6 +71,8 @@
     <string name="pref_title_hidden_folders_pattern">Hide folders (Regexp)</string>
     <string name="pref_default_language" translatable="false">0</string>
     <string name="pref_default_folder_selection_mechanism" translatable="false">0</string>
+    <string name="pref_hint_hidden_lists_pattern">[Enter regular expression]</string>
+    <string name="pref_hint_hidden_folders_pattern">[Enter regular expression]</string>
 
     <!-- Strings related to Setting arrays -->
 

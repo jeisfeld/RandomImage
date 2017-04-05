@@ -32,6 +32,7 @@
 
     <string name="menu_hide_all_info">Hinweise nicht mehr zeigen</string>
     <string name="menu_search_image_Folders">Bildverzeichnisse suchen</string>
+    <string name="menu_apps_without_popup_notifications">Apps ohne Popup-Benachrichtigungen</string>
     <string name="menu_show_all_info">Alle Hinweise zeigen</string>
     <string name="menu_title_donation">Spenden</string>
     <string name="menu_detail_donation">über PayPal im Browser</string>

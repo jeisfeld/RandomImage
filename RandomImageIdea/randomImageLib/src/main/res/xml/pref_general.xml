@@ -22,7 +22,9 @@
             android:summary="@string/menu_detail_contact_developer"
             android:title="@string/menu_title_contact_developer"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_other">
+    <PreferenceCategory
+        android:key="@string/key_pref_category_other"
+        android:title="@string/pref_category_other">
         <ListPreference
             android:defaultValue="@string/pref_default_folder_selection_mechanism"
             android:entries="@array/pref_list_titles_folder_selection_mechanism"
@@ -38,6 +40,9 @@
             android:defaultValue="false"
             android:key="@string/key_pref_show_hidden_folders"
             android:title="@string/pref_title_show_hidden_folders"/>
+        <de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference
+            android:key="@string/key_pref_apps_without_popup_notifications"
+            android:title="@string/menu_apps_without_popup_notifications"/>
         <ListPreference
             android:defaultValue="@string/pref_default_language"
             android:entries="@array/pref_list_titles_language"
@@ -57,12 +62,12 @@
             android:title="@string/pref_title_use_regex_filter"/>
 
         <EditTextPreference
-            android:defaultValue=""
+            android:hint="@string/pref_hint_hidden_folders_pattern"
             android:inputType="text"
             android:key="@string/key_pref_hidden_folders_pattern"
             android:title="@string/pref_title_hidden_folders_pattern"/>
         <EditTextPreference
-            android:defaultValue=""
+            android:hint="@string/pref_hint_hidden_lists_pattern"
             android:inputType="text"
             android:key="@string/key_pref_hidden_lists_pattern"
             android:title="@string/pref_title_hidden_lists_pattern"/>

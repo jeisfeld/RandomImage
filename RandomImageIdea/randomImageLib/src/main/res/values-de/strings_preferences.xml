@@ -13,6 +13,8 @@
     <string name="pref_title_use_regex_filter">Regexp-Filter verwenden</string>
     <string name="pref_title_hidden_lists_pattern">Listen verstecken (Regexp)</string>
     <string name="pref_title_hidden_folders_pattern">Verzeichnisse verstecken (Regexp)</string>
+    <string name="pref_hint_hidden_lists_pattern">[Regulären Ausdruck eingeben]</string>
+    <string name="pref_hint_hidden_folders_pattern">[Regulären Ausdruck eingeben]</string>
 
     <!-- Strings related to Setting arrays -->
 
