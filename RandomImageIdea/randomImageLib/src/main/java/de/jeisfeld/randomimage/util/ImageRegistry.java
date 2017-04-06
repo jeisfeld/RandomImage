@@ -5,11 +5,10 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import de.jeisfeld.randomimage.Application;
@@ -135,12 +134,7 @@ public final class ImageRegistry {
 	 * @return The filtered list.
 	 */
 	private static ArrayList<String> filterNameList(final ArrayList<String> nameList, final ListFiltering listFiltering) {
-		Collections.sort(nameList, new Comparator<String>() {
-			@Override
-			public int compare(final String lhs, final String rhs) {
-				return lhs.toLowerCase(Locale.getDefault()).compareTo(rhs.toLowerCase(Locale.getDefault()));
-			}
-		});
+		Collections.sort(nameList, Collator.getInstance());
 		switch (listFiltering) {
 		case ALL_LISTS:
 			return nameList;
@@ -174,7 +168,7 @@ public final class ImageRegistry {
 			}
 		}
 
-		Collections.sort(nameList);
+		Collections.sort(nameList, Collator.getInstance());
 		return nameList;
 	}
 

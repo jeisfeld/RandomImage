@@ -18,10 +18,14 @@ import android.support.annotation.RequiresApi;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.text.CollationKey;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -178,10 +182,16 @@ public final class SystemUtil {
 			}
 		}
 
+		Collator collator = Collator.getInstance();
+		final Map<ApplicationInfo, CollationKey> collationMap = new HashMap<>();
+		for (ApplicationInfo applicationInfo : result) {
+			collationMap.put(applicationInfo, collator.getCollationKey(applicationInfo.mLabelName));
+		}
+
 		Collections.sort(result, new Comparator<ApplicationInfo>() {
 			@Override
 			public int compare(final ApplicationInfo o1, final ApplicationInfo o2) {
-				return o1.mLabelName.toUpperCase().compareTo(o2.mLabelName.toUpperCase());
+				return collationMap.get(o1).compareTo(collationMap.get(o2));
 			}
 		});
 

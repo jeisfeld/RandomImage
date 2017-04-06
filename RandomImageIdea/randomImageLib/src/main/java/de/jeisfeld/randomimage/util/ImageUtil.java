@@ -24,6 +24,7 @@ import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -495,7 +496,7 @@ public final class ImageUtil {
 			}
 		}
 
-		Collections.sort(fileNames);
+		Collections.sort(fileNames, Collator.getInstance());
 		return fileNames;
 	}
 

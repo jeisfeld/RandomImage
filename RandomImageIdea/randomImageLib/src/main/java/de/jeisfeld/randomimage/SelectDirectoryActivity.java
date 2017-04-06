@@ -24,9 +24,9 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -262,12 +262,7 @@ public class SelectDirectoryActivity extends Activity {
 			Log.e(Application.TAG, "Could not get directories", e);
 		}
 
-		Collections.sort(dirs, new Comparator<String>() {
-			@Override
-			public int compare(final String o1, final String o2) {
-				return o1.compareTo(o2);
-			}
-		});
+		Collections.sort(dirs, Collator.getInstance());
 
 		return dirs;
 	}
