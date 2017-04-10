@@ -1,9 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.text.DecimalFormat;
-import java.util.Collections;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -14,6 +10,10 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.Locale;
 
 import de.jeisfeld.randomimage.MainConfigurationActivity.ListAction;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
@@ -28,7 +28,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display the info for an image list.
  */
-public class DisplayListInfoActivity extends Activity {
+public class DisplayListInfoActivity extends BaseActivity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */
@@ -67,7 +67,7 @@ public class DisplayListInfoActivity extends Activity {
 	 * @param listName       The name of the list whose details should be displayed.
 	 * @param parentListName The name of the parent list from which this is a nested list.
 	 */
-	public static final void startActivity(final Activity activity, final String listName, final String parentListName) {
+	public static void startActivity(final Activity activity, final String listName, final String parentListName) {
 		Intent intent = new Intent(activity, DisplayListInfoActivity.class);
 		intent.putExtra(STRING_EXTRA_LIST_NAME, listName);
 		if (parentListName != null) {
@@ -271,7 +271,7 @@ public class DisplayListInfoActivity extends Activity {
 	 * @param probability The probability.
 	 * @return The percentage String.
 	 */
-	public static final String getPercentageString(final double probability) {
+	public static String getPercentageString(final double probability) {
 		if (probability >= 0.1) { // MAGIC_NUMBER
 			return new DecimalFormat("###.#").format(probability * HUNDRED);
 		}
@@ -287,7 +287,7 @@ public class DisplayListInfoActivity extends Activity {
 	 * @param data       The activity response data.
 	 * @return the name of the list.
 	 */
-	public static final String getResultListName(final int resultCode, final Intent data) {
+	public static String getResultListName(final int resultCode, final Intent data) {
 		return data == null ? null : data.getStringExtra(STRING_RESULT_LIST_NAME);
 	}
 
@@ -298,7 +298,7 @@ public class DisplayListInfoActivity extends Activity {
 	 * @param data       The activity response data.
 	 * @return the action to be done.
 	 */
-	public static final ListAction getResultListAction(final int resultCode, final Intent data) {
+	public static ListAction getResultListAction(final int resultCode, final Intent data) {
 		if (data == null) {
 			return ListAction.NONE;
 		}

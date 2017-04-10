@@ -1,6 +1,5 @@
 package de.jeisfeld.randomimage.notifications;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +7,7 @@ import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import de.jeisfeld.randomimage.BaseActivity;
 import de.jeisfeld.randomimage.DisplayImageDetailsActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -20,7 +20,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * An activity which is intended as a popup with an image. Used in notifications.
  */
-public class DisplayImagePopupActivity extends Activity {
+public class DisplayImagePopupActivity extends BaseActivity {
 	/**
 	 * The resource key for the image list.
 	 */

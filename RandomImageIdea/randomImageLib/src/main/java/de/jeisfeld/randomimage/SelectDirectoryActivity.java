@@ -45,7 +45,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Add images to the list via browsing folders.
  */
-public class SelectDirectoryActivity extends Activity {
+public class SelectDirectoryActivity extends BaseActivity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */

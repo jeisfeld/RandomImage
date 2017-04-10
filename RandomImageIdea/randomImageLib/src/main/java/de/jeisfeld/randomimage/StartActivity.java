@@ -1,7 +1,6 @@
 package de.jeisfeld.randomimage;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import de.jeisfeld.randomimagelib.R;
 
  * Here, required app permissions are checked for Android 6.
  */
-public abstract class StartActivity extends Activity {
+public abstract class StartActivity extends BaseActivity {
 	/**
 	 * The request code used to query for permission.
 	 */

@@ -54,7 +54,7 @@
     <string name="button_send_to">Send to&#8230;</string>
 
     <!-- Info texts shown in activities. -->
-    <string name="text_info_select_image_folder_for_add">Select the folder fron which you want to add images to the image list.</string>
+    <string name="text_info_select_image_folder_for_add">Select the folder from which you want to add images to the image list.</string>
     <string name="text_info_select_image_folders_for_add">Select the folders which you want to add to the image list.</string>
     <string name="text_info_select_lists_for_backup">Select the image lists that you want to back up.</string>
     <string name="text_info_select_lists_for_restore">Select the image lists that you want to restore.</string>

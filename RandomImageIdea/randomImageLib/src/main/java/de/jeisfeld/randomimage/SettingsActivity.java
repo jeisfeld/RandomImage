@@ -13,7 +13,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display the settings page.
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends BaseActivity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */
@@ -32,7 +32,7 @@ public class SettingsActivity extends Activity {
 	 *
 	 * @param activity The activity from which the activity is started.
 	 */
-	public static final void startActivity(final Activity activity) {
+	public static void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, SettingsActivity.class);
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
@@ -67,7 +67,7 @@ public class SettingsActivity extends Activity {
 	 *
 	 * @param context The Context in which the preferences should be set.
 	 */
-	public static final void setDefaultSharedPreferences(final Context context) {
+	public static void setDefaultSharedPreferences(final Context context) {
 		PreferenceManager.setDefaultValues(Application.getAppContext(), R.xml.pref_general, false);
 	}
 
@@ -78,7 +78,7 @@ public class SettingsActivity extends Activity {
 	 * @param data       The activity response data.
 	 * @return the flag if a premium pack has been bought.
 	 */
-	public static final boolean getResultBoughtPremium(final int resultCode, final Intent data) {
+	public static boolean getResultBoughtPremium(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
 			return res.getBoolean(STRING_RESULT_BOUGHT_PREMIUM);

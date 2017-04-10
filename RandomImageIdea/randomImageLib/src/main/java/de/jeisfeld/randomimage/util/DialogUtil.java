@@ -12,6 +12,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.RequiresApi;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -460,15 +461,35 @@ public final class DialogUtil {
 	 * @param html The html
 	 * @return the text
 	 */
-	@SuppressWarnings("deprecation")
 	public static Spanned fromHtml(final String html) {
 		if (VERSION.SDK_INT >= VERSION_CODES.N) {
-			return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+			return fromHtml24(html);
 		}
 		else {
-			// noinspection deprecation
-			return Html.fromHtml(html);
+			return fromHtml23(html);
 		}
+	}
+
+	/**
+	 * Convert a html String into a text (Android version below N).
+	 *
+	 * @param html The html
+	 * @return the text
+	 */
+	@SuppressWarnings("deprecation")
+	private static Spanned fromHtml23(final String html) {
+		return Html.fromHtml(html);
+	}
+
+	/**
+	 * Convert a html String into a text (Android version N or higher).
+	 *
+	 * @param html The html
+	 * @return the text
+	 */
+	@RequiresApi(api = VERSION_CODES.N)
+	private static Spanned fromHtml24(final String html) {
+		return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
 	}
 
 	/**

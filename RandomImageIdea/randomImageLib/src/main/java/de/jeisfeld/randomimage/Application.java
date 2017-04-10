@@ -1,8 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +7,18 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.util.DisplayMetrics;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Locale;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -172,13 +173,38 @@ public class Application extends android.app.Application {
 	 *
 	 * @param locale The locale to be set.
 	 */
-	@SuppressWarnings("deprecation")
 	private static void setLocale(final Locale locale) {
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+			setLocale17(locale);
+		}
+		else {
+			setLocale16(locale);
+		}
+	}
+
+	/**
+	 * Set the locale for Android version below Jelly Bean.
+	 *
+	 * @param locale The locale to be set.
+	 */
+	@RequiresApi(api = VERSION_CODES.JELLY_BEAN_MR1)
+	private static void setLocale17(final Locale locale) {
+		Configuration conf = getAppContext().getResources().getConfiguration();
+		conf.setLocale(locale);
+		Application.mContext = getAppContext().createConfigurationContext(conf);
+	}
+
+	/**
+	 * Set the locale for Android version above Jelly Bean.
+	 *
+	 * @param locale The locale to be set.
+	 */
+	@SuppressWarnings("deprecation")
+	private static void setLocale16(final Locale locale) {
 		Resources res = getAppContext().getResources();
-		DisplayMetrics dm = res.getDisplayMetrics();
 		Configuration conf = res.getConfiguration();
 		conf.locale = locale;
-		res.updateConfiguration(conf, dm);
+		res.updateConfiguration(conf, res.getDisplayMetrics());
 	}
 
 	/**
@@ -186,7 +212,7 @@ public class Application extends android.app.Application {
 	 *
 	 * @param triggeringActivity triggeringActivity the triggering activity.
 	 */
-	public static final void startApplication(final Activity triggeringActivity) {
+	public static void startApplication(final Activity triggeringActivity) {
 		Intent intent = new Intent(triggeringActivity, MainConfigurationActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		triggeringActivity.startActivity(intent);

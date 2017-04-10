@@ -34,7 +34,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display the details of an image.
  */
-public class DisplayImageDetailsActivity extends Activity {
+public class DisplayImageDetailsActivity extends BaseActivity {
 	/**
 	 * The request code used to finish the triggering activity.
 	 */

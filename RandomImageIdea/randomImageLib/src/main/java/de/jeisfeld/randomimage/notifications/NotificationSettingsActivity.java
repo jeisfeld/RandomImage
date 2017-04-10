@@ -1,15 +1,15 @@
 package de.jeisfeld.randomimage.notifications;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.util.SparseArray;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.BasePreferenceActivity;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -17,7 +17,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display the settings page.
  */
-public class NotificationSettingsActivity extends PreferenceActivity {
+public class NotificationSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * Resource String for the hash code parameter used to identify the instance of the activity.
 	 */
@@ -43,7 +43,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 *
 	 * @param activity The activity from which the activity is started.
 	 */
-	public static final void startActivity(final Activity activity) {
+	public static void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, NotificationSettingsActivity.class);
 		activity.startActivity(intent);
 	}
@@ -91,7 +91,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 *
 	 * @return The notification ids.
 	 */
-	public static final List<Integer> getNotificationIds() {
+	public static List<Integer> getNotificationIds() {
 		List<String> notificationIdStrings = PreferenceUtil.getSharedPreferenceStringList(R.string.key_notification_ids);
 		List<Integer> notificationIds = new ArrayList<>();
 		for (String idString : notificationIdStrings) {
@@ -118,7 +118,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 *
 	 * @param notificationId The notificationId to be added.
 	 */
-	protected static final void addNotificationId(final int notificationId) {
+	protected static void addNotificationId(final int notificationId) {
 		List<Integer> notificationIds = getNotificationIds();
 		if (!notificationIds.contains(notificationId)) {
 			notificationIds.add(notificationId);
@@ -131,7 +131,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 	 *
 	 * @param notificationId The notificationId to be removed.
 	 */
-	protected static final void removeNotificationId(final int notificationId) {
+	protected static void removeNotificationId(final int notificationId) {
 		List<Integer> notificationIds = getNotificationIds();
 		// Type cast required in order to access object instead of index.
 		notificationIds.remove((Integer) notificationId);

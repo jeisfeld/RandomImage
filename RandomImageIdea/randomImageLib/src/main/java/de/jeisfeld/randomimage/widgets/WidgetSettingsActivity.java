@@ -1,15 +1,15 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.util.SparseArray;
 
+import java.util.Arrays;
+import java.util.List;
+
+import de.jeisfeld.randomimage.BasePreferenceActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -20,7 +20,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Activity to display the settings page.
  */
-public class WidgetSettingsActivity extends PreferenceActivity {
+public class WidgetSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * Resource String for the hash code parameter used to identify the instance of the activity.
 	 */
@@ -36,7 +36,7 @@ public class WidgetSettingsActivity extends PreferenceActivity {
 	 *
 	 * @param activity The activity from which the activity is started.
 	 */
-	public static final void startActivity(final Activity activity) {
+	public static void startActivity(final Activity activity) {
 		Intent intent = new Intent(activity, WidgetSettingsActivity.class);
 		activity.startActivity(intent);
 	}
