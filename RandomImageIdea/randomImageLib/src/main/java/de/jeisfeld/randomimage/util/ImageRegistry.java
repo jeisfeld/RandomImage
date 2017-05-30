@@ -315,26 +315,33 @@ public final class ImageRegistry {
 	}
 
 	/**
-	 * Rename the current list.
+	 * Rename an image list.
 	 *
+	 * @param oldName The name of the image list to be renamed.
 	 * @param newName The new name.
 	 * @return true if successful.
 	 */
-	public static boolean renameCurrentList(final String newName) {
-		String currentName = getCurrentListName();
+	public static boolean renameImageList(final String oldName, final String newName) {
 		if (newName == null) {
 			return false;
 		}
-		if (newName.equals(currentName)) {
+		if (newName.equals(oldName)) {
 			return true;
 		}
+		ImageList imageList = getImageListByName(oldName, false);
+		if (imageList == null) {
+			return false;
+		}
+
 		File newConfigFile = getFileForListName(newName);
-		boolean success = mCurrentImageList.changeListName(newName, newConfigFile);
+		boolean success = imageList.changeListName(newName, newConfigFile);
 		if (success) {
 			mImageListInfoMap.put(newName, new ImageListInfo(newName, newConfigFile,
-					mImageListInfoMap.get(currentName).getListClass()));
-			mImageListInfoMap.remove(currentName);
-			PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
+					mImageListInfoMap.get(oldName).getListClass()));
+			mImageListInfoMap.remove(oldName);
+			if (oldName.equals(mCurrentImageList.getListName())) {
+				PreferenceUtil.setSharedPreferenceString(R.string.key_current_list_name, newName);
+			}
 		}
 		return success;
 	}

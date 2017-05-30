@@ -441,7 +441,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 									}, 0, R.string.dialog_info_name_already_existing, name);
 								}
 								else {
-									ImageRegistry.renameCurrentList(name);
+									ImageRegistry.renameImageList(currentImageList, name);
 									fillListOfLists();
 								}
 							}
