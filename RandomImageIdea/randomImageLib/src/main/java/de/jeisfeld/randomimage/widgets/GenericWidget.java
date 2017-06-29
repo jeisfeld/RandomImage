@@ -1,11 +1,5 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
@@ -19,6 +13,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.RemoteViews;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -102,8 +102,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @param appWidgetId      The appWidgetId for which an update is needed.
 	 * @param updateType       flag indicating what should be updated.
 	 */
-	protected abstract void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager,
-										   final int appWidgetId, final UpdateType updateType);
+	protected abstract void onUpdateWidget(Context context, AppWidgetManager appWidgetManager,
+										   int appWidgetId, UpdateType updateType);
 
 	// OVERRIDABLE
 	@Override
