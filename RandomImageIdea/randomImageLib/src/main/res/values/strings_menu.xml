@@ -42,7 +42,7 @@
     <string name="menu_title_contact_developer">Contact the developer</string>
     <string name="menu_detail_contact_developer">via email in case of problems or questions</string>
     <string name="menu_email_contact_developer" translatable="false">Jörg Eisfeld &lt;randomimage@jeisfeld.de&gt;</string>
-    <string name="menu_subject_contact_developer">Question on Eye Diagnosis App</string>
+    <string name="menu_subject_contact_developer">Question on Random Image App</string>
     <string name="menu_title_help_page">Help Page</string>
     <string name="menu_detail_help_page">Open the help page in your browser</string>
     <string name="menu_target_help_page">http://randomimage.jeisfeld.de/?lang=en&amp;page=overview</string>
