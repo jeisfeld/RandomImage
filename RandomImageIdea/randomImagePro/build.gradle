@@ -23,5 +23,5 @@ android {
 }
 
 dependencies {
-    compile project(':randomImageLib')
+    implementation project(':randomImageLib')
 }
