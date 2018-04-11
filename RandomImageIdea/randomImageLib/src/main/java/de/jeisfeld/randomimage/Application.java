@@ -183,19 +183,20 @@ public class Application extends android.app.Application {
 	}
 
 	/**
-	 * Set the locale for Android version below Jelly Bean.
+	 * Set the locale for Android version above Jelly Bean.
 	 *
 	 * @param locale The locale to be set.
 	 */
 	@RequiresApi(api = VERSION_CODES.JELLY_BEAN_MR1)
 	private static void setLocale17(final Locale locale) {
-		Configuration conf = getAppContext().getResources().getConfiguration();
+		Resources res = getAppContext().getResources();
+		Configuration conf = res.getConfiguration();
 		conf.setLocale(locale);
-		Application.mContext = getAppContext().createConfigurationContext(conf);
+		res.updateConfiguration(conf, res.getDisplayMetrics());
 	}
 
 	/**
-	 * Set the locale for Android version above Jelly Bean.
+	 * Set the locale for Android version below Jelly Bean.
 	 *
 	 * @param locale The locale to be set.
 	 */
