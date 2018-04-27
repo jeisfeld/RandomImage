@@ -710,9 +710,11 @@ public final class DialogUtil {
 
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
+			// VARIABLE_DISTANCE:OFF
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int confirmButtonResource = getArguments().getInt(PARAM_BUTTON_RESOURCE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
+			// VARIABLE_DISTANCE:ON
 
 			final EditText input = new EditText(getActivity());
 			input.setText(getArguments().getString(PARAM_TEXT_VALUE));
@@ -808,8 +810,11 @@ public final class DialogUtil {
 		@SuppressLint("InflateParams")
 		@Override
 		public final Dialog onCreateDialog(final Bundle savedInstanceState) {
+			// VARIABLE_DISTANCE:OFF
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
+			// VARIABLE_DISTANCE:ON
+
 			ArrayList<String> itemList = getArguments().getStringArrayList(PARAM_LIST_ITEMS);
 			final String[] items = itemList == null ? new String[0] : itemList.toArray(new String[itemList.size()]);
 			final int iconId = getArguments().getInt(PARAM_ICON);

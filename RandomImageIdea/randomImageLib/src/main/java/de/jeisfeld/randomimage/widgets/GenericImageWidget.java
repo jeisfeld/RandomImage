@@ -1,8 +1,5 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -13,6 +10,9 @@ import android.graphics.Color;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.RemoteViews;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -79,7 +79,9 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 */
 	protected final void configureButtons(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
 										  final boolean setBackgroundColor) {
+		// VARIABLE_DISTANCE:OFF
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId)); // STORE_PROPERTY
+		// VARIABLE_DISTANCE:ON
 
 		// Set the onClick intent for the "next" button
 		Intent nextIntent = new Intent(context, getClass());
