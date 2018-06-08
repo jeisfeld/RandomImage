@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -317,11 +318,13 @@ public class SettingsFragment extends PreferenceFragment {
 			if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_language))) {
 
 				if (mLanguageString == null || !mLanguageString.equals(value)) {
-					Application.setLanguage();
 					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, stringValue);
+					Application.setLanguage();
 
 					Application.startApplication(getActivity());
-					System.exit(0);
+					if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
+						System.exit(0);
+					}
 				}
 			}
 			// show/hide regex preferences in dependence of main setting
