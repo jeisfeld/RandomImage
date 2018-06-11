@@ -1,16 +1,16 @@
 package de.jeisfeld.randomimage.notifications;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+
+import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.SdMountReceiver;
@@ -87,7 +87,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 * @param notificationId   the notification id.
 	 * @param useLastAlarmTime flag indicating if the last existing alarm time should be re-used.
 	 */
-	public static final void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
+	public static void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
 		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, 0);
 		if (frequency == 0) {
 			cancelAlarm(context, notificationId, false);
@@ -215,7 +215,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 * @param context        The context in which the alarm is set.
 	 * @param notificationId the notification id.
 	 */
-	public static final void setCancellationAlarm(final Context context, final int notificationId) {
+	public static void setCancellationAlarm(final Context context, final int notificationId) {
 		long expectedDuration = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_duration, notificationId, 0);
 		if (expectedDuration == 0) {
 			return;
@@ -259,7 +259,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 * @param notificationId      the notification id.
 	 * @param isCancellationAlarm flag indicating if the regular alarm or the cancellation alarm should be cancelled.
 	 */
-	public static final void cancelAlarm(final Context context, final int notificationId, final boolean isCancellationAlarm) {
+	public static void cancelAlarm(final Context context, final int notificationId, final boolean isCancellationAlarm) {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		alarmMgr.cancel(createAlarmIntent(context, notificationId, isCancellationAlarm, false));
 
@@ -288,7 +288,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 */
 	private static PendingIntent createAlarmIntent(final Context context, final int notificationId,
 												   final boolean isCancellation, final boolean isNew) {
-		Intent intent = new Intent("de.jeisfeld.randomimage.NOTIFICATION_ALARM_RECEIVER");
+		Intent intent = new Intent(context, NotificationAlarmReceiver.class);
 		intent.putExtra(STRING_NOTIFICATION_ID, notificationId);
 		if (isCancellation) {
 			intent.putExtra(STRING_IS_CANCELLATION, true);

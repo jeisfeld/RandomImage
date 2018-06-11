@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage.notifications;
 import android.app.Notification;
 import android.app.Notification.BigPictureStyle;
 import android.app.Notification.Builder;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.media.AudioManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Vibrator;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -81,6 +83,15 @@ public final class NotificationUtil {
 	public static final String EXTRA_NOTIFICATION_TAG = "de.jeisfeld.randomimage.NOTIFICATION_TAG";
 
 	/**
+	 * Notification channel for random image notifications.
+	 */
+	private static final String PRIMARY_NOTIFICATION_CHANNEL = "ChannelPrimary";
+	/**
+	 * Notification channel for support notifications.
+	 */
+	private static final String SECONDARY_NOTIFICATION_CHANNEL = "ChannelSecondary";
+
+	/**
 	 * A map storing information on mounting issues while loading image lists.
 	 */
 	private static Map<String, Set<String>> mMountingIssues = new HashMap<>();
@@ -144,12 +155,17 @@ public final class NotificationUtil {
 		String message = DialogUtil.capitalizeFirst(context.getString(messageResource, args));
 		String title = context.getString(titleResource, notificationTag);
 
-		Notification.Builder notificationBuilder =
-				new Notification.Builder(context)
-						.setSmallIcon(R.drawable.ic_notification_white)
-						.setContentTitle(title)
-						.setContentText(message)
-						.setStyle(new Notification.BigTextStyle().bigText(message));
+		Notification.Builder notificationBuilder;
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			notificationBuilder = new Notification.Builder(context, SECONDARY_NOTIFICATION_CHANNEL);
+		}
+		else {
+			notificationBuilder = new Notification.Builder(context);
+		}
+		notificationBuilder.setSmallIcon(R.drawable.ic_notification_white)
+				.setContentTitle(title)
+				.setContentText(message)
+				.setStyle(new Notification.BigTextStyle().bigText(message));
 
 		if (notificationType == NotificationType.MISSING_FILES || notificationType == NotificationType.UPDATED_LIST
 				|| notificationType == NotificationType.ERROR_LOADING_LIST || notificationType == NotificationType.ERROR_SAVING_LIST) {
@@ -243,7 +259,7 @@ public final class NotificationUtil {
 		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
 				notificationId, false);
 		if (isActivityNotificationStyle(notificationStyle)) {
-			if (SystemUtil.isUsageStatsAvailable() && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+			if (SystemUtil.isUsageStatsAvailable() && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
 				String lastPackageUsed = SystemUtil.getLastPackageUsed();
 				Set<String> packages = PreferenceUtil.getSharedPreferenceStringSet(R.string.key_pref_apps_without_popup_notifications);
 				if (packages != null && packages.contains(lastPackageUsed)) {
@@ -275,10 +291,16 @@ public final class NotificationUtil {
 			return;
 		}
 
+		Builder notificationBuilder;
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			notificationBuilder = new Builder(context, PRIMARY_NOTIFICATION_CHANNEL);
+		}
+		else {
+			notificationBuilder = new Builder(context);
+		}
 		boolean coloredIcon = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon,
 				notificationId, false);
-		Builder notificationBuilder = new Builder(context)
-				.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+		notificationBuilder.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
 				.setAutoCancel(true);
 
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
@@ -386,7 +408,7 @@ public final class NotificationUtil {
 	 * @return The dismissal intent.
 	 */
 	private static PendingIntent createDismissalIntent(final Context context, final NotificationType notificationType, final String notificationTag) {
-		Intent dismissalIntent = new Intent("de.jeisfeld.randomimage.NOTIFICATION_BROADCAST_RECEIVER");
+		Intent dismissalIntent = new Intent(context, NotificationBroadcastReceiver.class);
 		dismissalIntent.putExtra(EXTRA_NOTIFICATION_TYPE, notificationType);
 		int uniqueId = getUniqueId(notificationTag, notificationType);
 		if (notificationTag != null) {
@@ -611,9 +633,6 @@ public final class NotificationUtil {
 	private static void restoreMountingIssues() {
 		ArrayList<String> storageArray = PreferenceUtil.getSharedPreferenceStringList(R.string.key_image_list_mount_issues);
 		mMountingIssues = new HashMap<>();
-		if (storageArray == null) {
-			return;
-		}
 		String listName = null;
 		for (String entry : storageArray) {
 			if (entry.startsWith(LIST_PREFIX)) {
@@ -641,6 +660,28 @@ public final class NotificationUtil {
 	protected static void cleanupMountingIssues() {
 		mMountingIssues = new HashMap<>();
 		PreferenceUtil.removeSharedPreference(R.string.key_image_list_mount_issues);
+	}
+
+	/**
+	 * Create the notification channels required for the app.
+	 *
+	 * @param context The context.
+	 */
+	@RequiresApi(VERSION_CODES.O)
+	public static void createNotificationChannels(final Context context) {
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		NotificationChannel notificationChannelPrimary = new NotificationChannel(
+				PRIMARY_NOTIFICATION_CHANNEL, PRIMARY_NOTIFICATION_CHANNEL, NotificationManager.IMPORTANCE_HIGH);
+		notificationChannelPrimary.setLightColor(Color.TRANSPARENT);
+		notificationChannelPrimary.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+		notificationManager.createNotificationChannel(notificationChannelPrimary);
+
+		NotificationChannel notificationChannelSecondary = new NotificationChannel(
+				SECONDARY_NOTIFICATION_CHANNEL, SECONDARY_NOTIFICATION_CHANNEL, NotificationManager.IMPORTANCE_MIN);
+		notificationChannelSecondary.setLightColor(Color.TRANSPARENT);
+		notificationChannelSecondary.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+		notificationManager.createNotificationChannel(notificationChannelSecondary);
 	}
 
 	/**

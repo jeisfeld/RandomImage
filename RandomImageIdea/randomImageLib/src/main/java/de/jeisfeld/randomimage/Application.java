@@ -16,6 +16,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Locale;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -41,7 +42,7 @@ public class Application extends android.app.Application {
 	private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
 	@Override
-	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+	@SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
 			justification = "Make some context visible statically (no matter which one)")
 	public final void onCreate() {
 		super.onCreate();
@@ -50,6 +51,9 @@ public class Application extends android.app.Application {
 		MigrationUtil.migrateAppVersion();
 		setLanguage();
 		setExceptionHandler();
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			NotificationUtil.createNotificationChannels(this);
+		}
 
 		// Set statistics
 		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);

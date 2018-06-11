@@ -1,9 +1,5 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -12,6 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.SdMountReceiver;
@@ -65,7 +65,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 	 * @param appWidgetId the widget id.
 	 * @param interval    the interval (in milliseconds) in which the alarm triggers.
 	 */
-	public static final void setAlarm(final Context context, final int appWidgetId, final long interval) {
+	public static void setAlarm(final Context context, final int appWidgetId, final long interval) {
 		if (interval <= 0) {
 			return;
 		}
@@ -118,7 +118,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 	 * @param appWidgetId the widget id.
 	 * @param isCancellationAlarm flag indicating if the regular alarm or the cancellation alarm should be cancelled.
 	 */
-	public static final void cancelAlarm(final Context context, final int appWidgetId, final boolean isCancellationAlarm) {
+	public static void cancelAlarm(final Context context, final int appWidgetId, final boolean isCancellationAlarm) {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		alarmMgr.cancel(createAlarmIntent(context, appWidgetId, isCancellationAlarm));
 
@@ -143,7 +143,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 	 * @param context     The context in which the alarm is set.
 	 * @param appWidgetId the widget id.
 	 */
-	public static final void setCancellationAlarm(final Context context, final int appWidgetId) {
+	public static void setCancellationAlarm(final Context context, final int appWidgetId) {
 		long timeout = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, appWidgetId, 0);
 		if (timeout == 0) {
 			return;
@@ -164,7 +164,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 	 * @return The PendingIntent.
 	 */
 	private static PendingIntent createAlarmIntent(final Context context, final int appWidgetId, final boolean isCancellation) {
-		Intent intent = new Intent("de.jeisfeld.randomimage.WIDGET_ALARM_RECEIVER");
+		Intent intent = new Intent(context, WidgetAlarmReceiver.class);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		if (isCancellation) {
 			intent.putExtra(STRING_IS_CANCELLATION, true);
