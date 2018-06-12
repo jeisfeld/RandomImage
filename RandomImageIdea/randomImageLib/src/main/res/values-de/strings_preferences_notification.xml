@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Strings related to Settings -->
+    <!-- Strings related to Notification Settings -->
 
     <string name="pref_heading_notifcation">Benachrichtigung</string>
     <string name="pref_heading_create_new_notifcation">Neue Benachrichtigung erstellen</string>
@@ -27,6 +27,11 @@
     <string name="pref_title_notification_detail_background">Hintergrund in Detailansicht</string>
     <string name="pref_title_notification_detail_flip_behavior">Verhalten beim Schnippen</string>
     <string name="pref_title_cancel_notification">Benachrichtigung entfernen</string>
+    <string name="notification_channel_system">Systembenachrichtigungen</string>
+    <string name="notification_channel_image">Bildbenachrichtigungen</string>
+    <string name="notification_channel_with_vibration">mit Vibration</string>
+    <string name="notification_channel_without_vibration">ohne Vibration</string>
+    <string name="notification_channel_led">LED</string>
 
     <!-- String arrays -->
     <string-array name="notification_timer_variance_names">

@@ -1,9 +1,5 @@
 package de.jeisfeld.randomimage.notifications;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,6 +10,10 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.DateUtil;
@@ -274,6 +274,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		}
 		NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
 		updateHeader();
+		NotificationUtil.createImageNotificationChannels();
 	}
 
 	/**
@@ -457,19 +458,25 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 						Integer.parseInt(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_style))) {
+				NotificationUtil.deleteImageNotificationChannels();
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, Integer.parseInt(stringValue));
+				NotificationUtil.createImageNotificationChannels();
 				updatePropertyEnablement();
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_led_color))) {
+				NotificationUtil.deleteImageNotificationChannels();
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_led_color, mNotificationId, Integer.parseInt(stringValue));
+				NotificationUtil.createImageNotificationChannels();
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_vibration))) {
-				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, mNotificationId,
-						Boolean.parseBoolean(stringValue));
+				NotificationUtil.deleteImageNotificationChannels();
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
+						mNotificationId, Boolean.parseBoolean(stringValue));
+				NotificationUtil.createImageNotificationChannels();
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_colored_icon))) {
-				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon, mNotificationId,
-						Boolean.parseBoolean(stringValue));
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_colored_icon,
+						mNotificationId, Boolean.parseBoolean(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_display_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_display_name, mNotificationId, stringValue);

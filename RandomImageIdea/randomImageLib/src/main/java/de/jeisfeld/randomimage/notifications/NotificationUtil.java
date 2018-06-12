@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.Notification.BigPictureStyle;
 import android.app.Notification.Builder;
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -71,6 +72,10 @@ public final class NotificationUtil {
 	 * The vibration pattern.
 	 */
 	private static final long[] VIBRATION_PATTERN = {0, 100, 200, 100, 200, 100, 200, 1000};
+	/**
+	 * The empty vibration pattern.
+	 */
+	private static final long[] VIBRATION_PATTERN_EMPTY = {0, 0, 0};
 
 	/**
 	 * Key for the notification id within intent.
@@ -85,11 +90,15 @@ public final class NotificationUtil {
 	/**
 	 * Notification channel for random image notifications.
 	 */
-	private static final String PRIMARY_NOTIFICATION_CHANNEL = "ChannelPrimary";
+	private static final String IMAGE_NOTIFICATION_CHANNEL = "ImageNotification";
+	/**
+	 * Notification channel for random image notifications.
+	 */
+	private static final String IMAGE_NOTIFICATION_CHANNEL_GROUP = "ImageNotificationGroup";
 	/**
 	 * Notification channel for support notifications.
 	 */
-	private static final String SECONDARY_NOTIFICATION_CHANNEL = "ChannelSecondary";
+	private static final String SYSTEM_NOTIFICATION_CHANNEL = "SystemNotification";
 
 	/**
 	 * A map storing information on mounting issues while loading image lists.
@@ -157,7 +166,7 @@ public final class NotificationUtil {
 
 		Notification.Builder notificationBuilder;
 		if (VERSION.SDK_INT >= VERSION_CODES.O) {
-			notificationBuilder = new Notification.Builder(context, SECONDARY_NOTIFICATION_CHANNEL);
+			notificationBuilder = new Notification.Builder(context, SYSTEM_NOTIFICATION_CHANNEL);
 		}
 		else {
 			notificationBuilder = new Notification.Builder(context);
@@ -214,7 +223,6 @@ public final class NotificationUtil {
 			// Fatal error - it does not make sense to re-create the alarm.
 			return;
 		}
-
 		imageList.executeWhenReady(null,
 				new Runnable() {
 					@Override
@@ -235,7 +243,6 @@ public final class NotificationUtil {
 						NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 					}
 				});
-
 	}
 
 	/**
@@ -293,7 +300,7 @@ public final class NotificationUtil {
 
 		Builder notificationBuilder;
 		if (VERSION.SDK_INT >= VERSION_CODES.O) {
-			notificationBuilder = new Builder(context, PRIMARY_NOTIFICATION_CHANNEL);
+			notificationBuilder = new Builder(context, getNotificationChannelId(notificationId));
 		}
 		else {
 			notificationBuilder = new Builder(context);
@@ -374,7 +381,7 @@ public final class NotificationUtil {
 			notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
 			notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
 			if (!vibrate) {
-				notificationBuilder.setVibrate(new long[]{0, 0, 0});
+				notificationBuilder.setVibrate(VIBRATION_PATTERN_EMPTY);
 			}
 		}
 
@@ -669,19 +676,135 @@ public final class NotificationUtil {
 	 */
 	@RequiresApi(VERSION_CODES.O)
 	public static void createNotificationChannels(final Context context) {
+		NotificationChannel systemNotificationChannel = new NotificationChannel(
+				SYSTEM_NOTIFICATION_CHANNEL, context.getString(R.string.notification_channel_system), NotificationManager.IMPORTANCE_MIN);
+		systemNotificationChannel.setLightColor(Color.TRANSPARENT);
+		systemNotificationChannel.setShowBadge(true);
+		systemNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.createNotificationChannel(systemNotificationChannel);
+		notificationManager.createNotificationChannelGroup(
+				new NotificationChannelGroup(IMAGE_NOTIFICATION_CHANNEL_GROUP, context.getString(R.string.notification_channel_image)));
 
-		NotificationChannel notificationChannelPrimary = new NotificationChannel(
-				PRIMARY_NOTIFICATION_CHANNEL, PRIMARY_NOTIFICATION_CHANNEL, NotificationManager.IMPORTANCE_HIGH);
-		notificationChannelPrimary.setLightColor(Color.TRANSPARENT);
-		notificationChannelPrimary.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-		notificationManager.createNotificationChannel(notificationChannelPrimary);
+		createImageNotificationChannels();
+	}
 
-		NotificationChannel notificationChannelSecondary = new NotificationChannel(
-				SECONDARY_NOTIFICATION_CHANNEL, SECONDARY_NOTIFICATION_CHANNEL, NotificationManager.IMPORTANCE_MIN);
-		notificationChannelSecondary.setLightColor(Color.TRANSPARENT);
-		notificationChannelSecondary.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-		notificationManager.createNotificationChannel(notificationChannelSecondary);
+	/**
+	 * Create the image notification channels currently required.
+	 */
+	public static void createImageNotificationChannels() {
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			List<Integer> notificationIds = NotificationSettingsActivity.getNotificationIds();
+			for (int notificationId : notificationIds) {
+				createImageNotificationChannel(notificationId);
+			}
+		}
+	}
+
+	/**
+	 * Create a notification channel for a specific notification.
+	 *
+	 * @param notificationId the notification id
+	 */
+	@RequiresApi(api = VERSION_CODES.O)
+	private static void createImageNotificationChannel(final int notificationId) {
+		String channelId = getNotificationChannelId(notificationId);
+		if (channelId == null) {
+			// Do not create anything in case of activity notifications.
+			return;
+		}
+		String name = getNotificationChannelName(Application.getAppContext(), notificationId);
+
+		NotificationChannel imageNotificationChannel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH);
+		imageNotificationChannel.setShowBadge(false);
+		imageNotificationChannel.setSound(null, null);
+		imageNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+		imageNotificationChannel.setGroup(IMAGE_NOTIFICATION_CHANNEL_GROUP);
+
+		int ledColorResource = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, -1);
+		imageNotificationChannel.enableLights(ledColorResource > 0);
+		imageNotificationChannel.setLightColor(LedColor.getLedColor(ledColorResource));
+
+		boolean isVibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
+		imageNotificationChannel.enableVibration(isVibrate);
+		imageNotificationChannel.setVibrationPattern(isVibrate ? VIBRATION_PATTERN : VIBRATION_PATTERN_EMPTY);
+
+		NotificationManager notificationManager = (NotificationManager) Application.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.createNotificationChannel(imageNotificationChannel);
+	}
+
+	/**
+	 * Delete the image notification channels currently used.
+	 */
+	protected static void deleteImageNotificationChannels() {
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			List<Integer> notificationIds = NotificationSettingsActivity.getNotificationIds();
+			for (int notificationId : notificationIds) {
+				deleteImageNotificationChannel(notificationId);
+			}
+		}
+	}
+
+	/**
+	 * Delete a notification channel for a specific notification.
+	 *
+	 * @param notificationId the notification id
+	 */
+	@RequiresApi(api = VERSION_CODES.O)
+	private static void deleteImageNotificationChannel(final int notificationId) {
+		String name = getNotificationChannelId(notificationId);
+		if (name != null) {
+			NotificationManager notificationManager =
+					(NotificationManager) Application.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.deleteNotificationChannel(name);
+		}
+	}
+
+	/**
+	 * Get a notification channel id for image notifications based on LED color resource value and vibration enablement.
+	 *
+	 * @param ledColorResource the LED color resource value.
+	 * @param isVibrate        The vibration enablement.
+	 * @return The notification channel ID.
+	 */
+	private static String getNotificationChannelId(final int ledColorResource, final boolean isVibrate) {
+		return IMAGE_NOTIFICATION_CHANNEL + "_" + ledColorResource + "_" + (isVibrate ? 1 : 0);
+	}
+
+	/**
+	 * Get the notificationChannelId for a notification based on notificationId.
+	 *
+	 * @param notificationId The notificationId
+	 * @return The notificationChannelId or null in case of an activity based notification
+	 */
+	private static String getNotificationChannelId(final int notificationId) {
+		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
+		if (isActivityNotificationStyle(notificationStyle)) {
+			return null;
+		}
+
+		int ledColorResource = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, -1);
+		boolean isVibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
+		return getNotificationChannelId(ledColorResource, isVibrate);
+	}
+
+	/**
+	 * Get a notification channel name for image notifications based on notificationId.
+	 *
+	 * @param context        the context
+	 * @param notificationId The notificationId
+	 * @return The notification channel ID.
+	 */
+	private static String getNotificationChannelName(final Context context, final int notificationId) {
+		int ledColorResource = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_led_color, notificationId, -1);
+		boolean isVibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration, notificationId, false);
+		String ledName = "";
+		if (ledColorResource >= 0) {
+			ledName = " " + context.getResources().getStringArray(R.array.notification_led_color_names)[ledColorResource];
+		}
+		return context.getString(R.string.notification_channel_led) + ledName + " "
+				+ context.getString(isVibrate ? R.string.notification_channel_with_vibration : R.string.notification_channel_without_vibration);
 	}
 
 	/**

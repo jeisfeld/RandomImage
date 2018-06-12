@@ -252,6 +252,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	 * @param notificationId The id of the notification to be canceled.
 	 */
 	protected static void cancelNotification(final int notificationId) {
+		NotificationUtil.deleteImageNotificationChannels();
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_list_name, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_duration, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_timer_variance, notificationId);
@@ -268,6 +269,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_background, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_flip_behavior, notificationId);
 		NotificationSettingsActivity.removeNotificationId(notificationId);
+		NotificationUtil.createImageNotificationChannels();
 
 		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId, false);
 		NotificationAlarmReceiver.cancelAlarm(Application.getAppContext(), notificationId, true);

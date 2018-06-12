@@ -67,6 +67,11 @@
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
     <string name="pref_default_notification_detail_flip_behavior" translatable="false">2</string>
     <string name="pref_title_cancel_notification">Remove Notification</string>
+    <string name="notification_channel_system">System notifications</string>
+    <string name="notification_channel_image">Image notifications</string>
+    <string name="notification_channel_with_vibration">with vibration</string>
+    <string name="notification_channel_without_vibration">without vibration</string>
+    <string name="notification_channel_led">LED</string>
 
     <!-- String arrays -->
     <string-array name="notification_timer_variance_names">
