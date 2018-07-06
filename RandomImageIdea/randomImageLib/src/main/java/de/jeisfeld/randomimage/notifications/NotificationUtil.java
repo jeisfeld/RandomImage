@@ -677,7 +677,7 @@ public final class NotificationUtil {
 	@RequiresApi(VERSION_CODES.O)
 	public static void createNotificationChannels(final Context context) {
 		NotificationChannel systemNotificationChannel = new NotificationChannel(
-				SYSTEM_NOTIFICATION_CHANNEL, context.getString(R.string.notification_channel_system), NotificationManager.IMPORTANCE_MIN);
+				SYSTEM_NOTIFICATION_CHANNEL, context.getString(R.string.notification_channel_system), NotificationManager.IMPORTANCE_DEFAULT);
 		systemNotificationChannel.setLightColor(Color.TRANSPARENT);
 		systemNotificationChannel.setShowBadge(true);
 		systemNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
