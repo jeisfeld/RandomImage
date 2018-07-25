@@ -120,7 +120,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 			configureBackground(context, remoteViews, appWidgetManager, appWidgetId);
 		}
 
-		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
+		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
 		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 			new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
@@ -159,8 +159,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 */
-	protected static final void configureBackground(final Context context, final RemoteViews remoteViews, final AppWidgetManager appWidgetManager,
-													final int appWidgetId) {
+	protected static void configureBackground(final Context context, final RemoteViews remoteViews, final AppWidgetManager appWidgetManager,
+											  final int appWidgetId) {
 		BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(appWidgetId);
 
 		switch (backgroundColor) {

@@ -53,7 +53,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
 	 * complete the animation.
 	 */
-	private static Map<Integer, ButtonAnimator> mButtonAnimators = new HashMap<>();
+	private static final Map<Integer, ButtonAnimator> BUTTON_ANIMATORS = new HashMap<>();
 
 	/**
 	 * A temporary storage for the update types of the widgets.
@@ -125,7 +125,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @param appWidgetId The app widget id.
 	 * @return The list name.
 	 */
-	protected static final String getListName(final int appWidgetId) {
+	protected static String getListName(final int appWidgetId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
 		if (listName == null || listName.length() == 0) {
 			listName = ImageRegistry.getCurrentListName();
@@ -140,7 +140,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @param listName    The list name to be used by the widget.
 	 * @param interval    The update interval.
 	 */
-	public static final void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
+	public static void doBaseConfiguration(final int appWidgetId, final String listName, final long interval) {
 		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, listName);
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, interval);
@@ -159,8 +159,8 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @param updateType  flag indicating what should be updated.
 	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	protected static final void updateInstances(final Class<? extends GenericWidget> widgetClass, final UpdateType updateType,
-												final int... appWidgetId) {
+	protected static void updateInstances(final Class<? extends GenericWidget> widgetClass, final UpdateType updateType,
+										  final int... appWidgetId) {
 		if (widgetClass == null) {
 			return;
 		}
@@ -185,7 +185,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Update all instances of all widgets.
 	 */
-	public static final void updateAllInstances() {
+	public static void updateAllInstances() {
 		for (Class<? extends GenericWidget> widgetType : WIDGET_TYPES) {
 			updateInstances(widgetType, UpdateType.NEW_LIST);
 		}
@@ -197,7 +197,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @param widgetClass  the widget class
 	 * @param appWidgetIds the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	protected static final void updateTimers(final Class<? extends GenericWidget> widgetClass, final int... appWidgetIds) {
+	protected static void updateTimers(final Class<? extends GenericWidget> widgetClass, final int... appWidgetIds) {
 		Context context = Application.getAppContext();
 		int[] ids;
 		if (appWidgetIds.length == 0) {
@@ -324,10 +324,12 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 */
 		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager,
 								 final int appWidgetId, final int widgetResource, final int... buttonIds) {
-			if (mButtonAnimators.containsKey(appWidgetId)) {
-				return;
+			synchronized (BUTTON_ANIMATORS) {
+				if (BUTTON_ANIMATORS.containsKey(appWidgetId)) {
+					return;
+				}
+				BUTTON_ANIMATORS.put(appWidgetId, this);
 			}
-			mButtonAnimators.put(appWidgetId, this);
 
 			this.mAppWidgetId = appWidgetId;
 			this.mAppWidgetManager = appWidgetManager;
@@ -355,12 +357,14 @@ public abstract class GenericWidget extends AppWidgetProvider {
 					for (int buttonId : buttonIds) {
 						mRemoteViews.setViewVisibility(buttonId, View.INVISIBLE);
 					}
-					mButtonAnimators.remove(appWidgetId);
+					synchronized (BUTTON_ANIMATORS) {
+						BUTTON_ANIMATORS.remove(appWidgetId);
+					}
 				}
 
 				@Override
 				public void onAnimationCancel(final Animator animation) {
-					// do nothing
+					onAnimationEnd(animation);
 				}
 			});
 
@@ -379,7 +383,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				mRemoteViews.setInt(buttonId, "setAlpha", alpha);
 				mRemoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
 			}
-			mAppWidgetManager.partiallyUpdateAppWidget(mAppWidgetId, mRemoteViews);
+			mAppWidgetManager.updateAppWidget(mAppWidgetId, mRemoteViews);
 		}
 
 		/**
@@ -406,10 +410,11 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 * @param appWidgetId The app widget id of the widget to be interrupted.
 		 */
 		public static void interrupt(final int appWidgetId) {
-			ButtonAnimator instance = mButtonAnimators.get(appWidgetId);
-			if (instance != null) {
-				instance.interrupt();
-				mButtonAnimators.remove(appWidgetId);
+			synchronized (BUTTON_ANIMATORS) {
+				ButtonAnimator instance = BUTTON_ANIMATORS.get(appWidgetId);
+				if (instance != null) {
+					instance.interrupt();
+				}
 			}
 		}
 	}
