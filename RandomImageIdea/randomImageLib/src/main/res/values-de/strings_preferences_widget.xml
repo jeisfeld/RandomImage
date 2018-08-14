@@ -20,6 +20,7 @@
     <string name="pref_title_widget_display_name">Name des Widgets</string>
     <string name="pref_title_widget_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_widget_detail_background">Hintergrund in Detailansicht</string>
+    <string name="pref_title_widget_detail_flip_behavior">Verhalten beim Schnippen</string>
     <string name="pref_title_widget_timeout">Nutzungsdauer des Widgets</string>
     <string name="pref_indefinite_value_widget_timeout">unbegrenzt</string>
     <string name="pref_title_widget_allowed_call_frequency">Sperrdauer des Widgets</string>
@@ -77,5 +78,13 @@
         <item>Farbe aus dem Bildrand</item>
         <item>Durchschnittliche Bildfarbe</item>
     </string-array>
-
+    <string-array name="detail_flip_behavior_names">
+        <item>Immer neues Zufallsbild</item>
+        <item>Ein Bild rückwärts möglich</item>
+        <item>Mehrere Bilder rückwärts möglich</item>
+        <item>Rückwärts möglich, Wiederholungen vermeiden</item>
+        <item>Alle Bilder zyklisch zeigen</item>
+        <item>Keine Änderung</item>
+        <item>Ansicht schließen</item>
+    </string-array>
 </resources>

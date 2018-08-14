@@ -76,6 +76,10 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, getAppWidgetId(),
 							Integer.parseInt(stringValue));
 				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_flip_behavior))) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, getAppWidgetId(),
+							Integer.parseInt(stringValue));
+				}
 
 				return true;
 			}

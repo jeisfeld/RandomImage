@@ -26,6 +26,7 @@
     <string name="pref_title_notification_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_notification_detail_background">Hintergrund in Detailansicht</string>
     <string name="pref_title_notification_detail_flip_behavior">Verhalten beim Schnippen</string>
+    <string name="pref_title_notification_detail_show_cyclically">Zyklisch zeigen in Detailansicht</string>
     <string name="pref_title_cancel_notification">Benachrichtigung entfernen</string>
     <string name="notification_channel_system">Systembenachrichtigungen</string>
     <string name="notification_channel_image">Bildbenachrichtigungen</string>
@@ -74,7 +75,11 @@
         <item>Blau-Rot</item>
     </string-array>
     <string-array name="notification_detail_flip_behavior_names">
-        <item>Bild wechseln (Standard)</item>
+        <item>Immer neues Zufallsbild</item>
+        <item>Ein Bild rückwärts möglich</item>
+        <item>Mehrere Bilder rückwärts möglich</item>
+        <item>Rückwärts möglich, Wiederholungen vermeiden</item>
+        <item>Alle Bilder zyklisch zeigen</item>
         <item>Keine Änderung</item>
         <item>Ansicht schließen</item>
     </string-array>

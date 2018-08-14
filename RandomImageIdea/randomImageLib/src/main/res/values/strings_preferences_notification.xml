@@ -65,7 +65,7 @@
     <string name="pref_title_notification_detail_background">Background in detail view</string>
     <string name="pref_default_notification_detail_background" translatable="false">3</string>
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
-    <string name="pref_default_notification_detail_flip_behavior" translatable="false">2</string>
+    <string name="pref_default_notification_detail_flip_behavior" translatable="false">3</string>
     <string name="pref_title_cancel_notification">Remove Notification</string>
     <string name="notification_channel_system">System notifications</string>
     <string name="notification_channel_image">Image notifications</string>
@@ -153,7 +153,11 @@
         <item>7</item>
     </string-array>
     <string-array name="notification_detail_flip_behavior_names">
-        <item>Change image (Standard)</item>
+        <item>Always new random image</item>
+        <item>Allow to go one image back</item>
+        <item>Allow to go multiple images back</item>
+        <item>Allow to go back, avoid repetitions</item>
+        <item>Display all images cyclically</item>
         <item>No change</item>
         <item>Close screen</item>
     </string-array>
@@ -161,6 +165,10 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
     </string-array>
 
 </resources>

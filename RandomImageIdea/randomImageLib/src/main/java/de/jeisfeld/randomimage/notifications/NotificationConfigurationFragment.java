@@ -368,7 +368,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_notification_duration) {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mNotificationId, -1));
 		}
-		else if (preferenceKey == R.string.key_notification_vibration || preferenceKey == R.string.key_notification_colored_icon) {
+		else if (preferenceKey == R.string.key_notification_vibration
+				|| preferenceKey == R.string.key_notification_colored_icon) {
 			value = "";
 		}
 		else {

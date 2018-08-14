@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -178,9 +179,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 */
 	private ScaleType mScaleType = ScaleType.FIT;
 	/**
-	 * The background color.
+	 * The way in which the background color is selected.
 	 */
 	private BackgroundColor mBackgroundColor = BackgroundColor.AVERAGE_IMAGE_COLOR;
+	/**
+	 * The way in which the new random image is selected on flipping.
+	 */
+	private FlipType mFlipType = FlipType.AVOID_REPETITIONS;
 
 	/**
 	 * Flag helping to detect if a destroy is final or only temporary.
@@ -225,12 +230,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Static helper method to create an intent for this activity.
 	 *
-	 * @param context The context in which this activity is started.
-	 * @param listName the image list which should be taken.
-	 * @param fileName the image file name which should be displayed first.
+	 * @param context              The context in which this activity is started.
+	 * @param listName             the image list which should be taken.
+	 * @param fileName             the image file name which should be displayed first.
 	 * @param allowDisplayMultiple flag indicating if the activity can be opened on top of existing activities.
-	 * @param appWidgetId the id of the widget triggering this activity.
-	 * @param notificationId the id of the notification triggering this activity.
+	 * @param appWidgetId          the id of the widget triggering this activity.
+	 * @param notificationId       the id of the notification triggering this activity.
 	 * @return the intent.
 	 */
 	public static Intent createIntent(final Context context, final String listName, final String fileName,
@@ -268,7 +273,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Finish the activity started from a certain notification.
 	 *
-	 * @param context The context.
+	 * @param context        The context.
 	 * @param notificationId The notificationId that has triggered the activity.
 	 */
 	public static void finishActivityForNotification(final Context context, final int notificationId) {
@@ -283,7 +288,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Finish the activity started from a certain widget.
 	 *
-	 * @param context The context.
+	 * @param context     The context.
 	 * @param appWidgetId The appWidgetId that has triggered the activity.
 	 */
 	public static void finishActivityForWidget(final Context context, final int appWidgetId) {
@@ -298,9 +303,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Static helper method to start the activity for the contents of an image folder.
 	 *
-	 * @param context The context starting this activity.
+	 * @param context    The context starting this activity.
 	 * @param folderName the name of the folder whose images should be displayed.
-	 * @param fileName the name of the file that should be displayed first
+	 * @param fileName   the name of the file that should be displayed first
 	 */
 	public static void startActivityForFolder(final Context context, final String folderName,
 											  final String fileName) {
@@ -320,9 +325,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mListName = savedInstanceState.getString("listName");
 			mCurrentFileName = savedInstanceState.getString("currentFileName");
 			mPreviousFileName = savedInstanceState.getString("previousFileName");
-			mLastFlingDirection =
-					new FlingDirection(savedInstanceState.getFloat("lastFlingX", 0),
-							savedInstanceState.getFloat("lastFlingY", 0));
+			mLastFlingDirection = new FlingDirection(savedInstanceState.getFloat("lastFlingX", 0),
+					savedInstanceState.getFloat("lastFlingY", 0));
 			mPreviousCacheIndex = savedInstanceState.getInt("previousCacheIndex");
 			mCurrentCacheIndex = savedInstanceState.getInt("currentCacheIndex");
 			mNextCacheIndex = savedInstanceState.getInt("nextCacheIndex");
@@ -353,46 +357,18 @@ public class DisplayRandomImageActivity extends StartActivity {
 				mNotificationId = null;
 			}
 			else {
-				NOTIFICATION_MAP.put(mNotificationId, this);
-				mScaleType = ScaleType.fromResourceScaleType(
-						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
-				mBackgroundColor = BackgroundColor.fromResourceValue(
-						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
-
-				if (!NotificationUtil.isActivityNotificationStyle(
-						PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1))) {
-					// Stop auto-cancellation if a normal notification has been actively clicked
-					NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
-				}
+				configureNotificationProperties();
 			}
 		}
 		else {
-			long lastClickTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, -1);
-			long allowedCallFrequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0);
-			long nextAllowedTime = lastClickTime + TimeUnit.SECONDS.toMillis(allowedCallFrequency);
-			long currentTime = System.currentTimeMillis();
-
-			if (allowedCallFrequency > 0 && currentTime < nextAllowedTime) {
-				mIsLocked = true;
-				DialogUtil.displayToast(this, R.string.toast_widget_locked, DateUtil.format(new Date(nextAllowedTime)));
-				finish();
-				return;
-			}
-			WIDGET_MAP.put(mAppWidgetId, this);
-
-			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
-			mScaleType = ScaleType.fromResourceScaleType(
-					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
-			mBackgroundColor = BackgroundColor.fromResourceValue(
-					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
-
-			WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);
+			configureWidgetProperties();
 		}
 
 		if (mScaleType == ScaleType.TURN_FIT || mScaleType == ScaleType.TURN_STRETCH) {
 			int orientation = getResources().getConfiguration().orientation;
 			setRequestedOrientation(orientation == Configuration.ORIENTATION_LANDSCAPE
-					? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+					: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 
 		createGestureDetector();
@@ -468,6 +444,56 @@ public class DisplayRandomImageActivity extends StartActivity {
 	}
 
 	/**
+	 * Configure the properties defined by the notification that triggered this activity.
+	 */
+	private void configureNotificationProperties() {
+		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
+
+		// configurations if triggered from notification
+		NOTIFICATION_MAP.put(mNotificationId, this);
+		mScaleType = ScaleType.fromResourceScaleType(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
+		mBackgroundColor = BackgroundColor.fromResourceValue(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
+		mFlipType = FlipType.fromResourceValue(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+
+		if (!NotificationUtil.isActivityNotificationStyle(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1))) {
+			// Stop auto-cancellation if a normal notification has been actively clicked
+			NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
+		}
+	}
+
+	/**
+	 * Configure the properties defined by the widget that triggered this activity.
+	 */
+	private void configureWidgetProperties() {
+		long lastClickTime = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, -1);
+		long allowedCallFrequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0);
+		long nextAllowedTime = lastClickTime + TimeUnit.SECONDS.toMillis(allowedCallFrequency);
+		long currentTime = System.currentTimeMillis();
+
+		if (allowedCallFrequency > 0 && currentTime < nextAllowedTime) {
+			mIsLocked = true;
+			DialogUtil.displayToast(this, R.string.toast_widget_locked, DateUtil.format(new Date(nextAllowedTime)));
+			finish();
+			return;
+		}
+		WIDGET_MAP.put(mAppWidgetId, this);
+
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
+		mScaleType = ScaleType.fromResourceScaleType(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+		mBackgroundColor = BackgroundColor.fromResourceValue(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
+		mFlipType = FlipType.fromResourceValue(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+
+		WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);
+	}
+
+	/**
 	 * Display the hint message if required.
 	 */
 	private void displayHint() {
@@ -478,7 +504,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mDisplayHint = false;
 		}
 	}
-
 
 	/**
 	 * Send the initial event to Google analytics.
@@ -590,7 +615,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Create a PinchImageView displaying a given file.
 	 *
-	 * @param fileName The name of the file.
+	 * @param fileName   The name of the file.
 	 * @param cacheIndex an index helping for caching the image for orientation change.
 	 * @return The PinchImageView.
 	 */
@@ -715,14 +740,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Create the gesture detector handling flinging and double tapping.
 	 */
 	private void createGestureDetector() {
-		final int flingType;
-		if (mNotificationId == null) {
-			flingType = 0;
-		}
-		else {
-			flingType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, 0);
-		}
-
 		mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 			/**
 			 * The speed which is accepted as fling.
@@ -744,7 +761,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			@Override
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-				if (flingType == 1) {
+				if (mFlipType == FlipType.NO_CHANGE) {
 					return false;
 				}
 
@@ -752,12 +769,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 					Runnable runnable = new Runnable() {
 						@Override
 						public void run() {
-							if (flingType == 2) {
+							if (mFlipType == FlipType.CLOSE) {
 								finish();
 								return;
 							}
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
-							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null) {
+							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
 								String tempFileName = mCurrentFileName;
 								mCurrentFileName = mPreviousFileName;
 								mPreviousFileName = tempFileName;
@@ -885,7 +902,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Static helper method to extract the result flag.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data The activity response data.
+	 * @param data       The activity response data.
 	 * @return the flag if the parent activity should be refreshed.
 	 */
 	public static boolean getResult(final int resultCode, final Intent data) {
@@ -941,7 +958,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * Constructor initializing with the folder name.
 		 *
-		 * @param folderName The folder name.
+		 * @param folderName      The folder name.
 		 * @param defaultFileName The file name returned if there is no image file in the folder.
 		 */
 		private FolderRandomFileProvider(final String folderName, final String defaultFileName) {
@@ -971,6 +988,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 		@Override
 		public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
 			afterLoading.run();
+		}
+
+		@Override
+		public List<String> getAllImageFiles() {
+			return mFileNames;
 		}
 	}
 
@@ -1087,4 +1109,55 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 	}
 
+	/**
+	 * Helper class containing constants for flip types.
+	 */
+	public enum FlipType {
+
+		// JAVADOC:OFF
+		NEW_IMAGE(0),
+		ONE_BACK(1),
+		MULTIPLE_BACK(2),
+		AVOID_REPETITIONS(3),
+		CYCLICAL(4),
+		NO_CHANGE(5),
+		CLOSE(6);
+		// JAVADOC:ON
+
+		/**
+		 * The value by which the color is specified in the resources.
+		 */
+		private final int mResourceValue;
+
+		/**
+		 * A map from the resourceValue to the color.
+		 */
+		private static final SparseArray<FlipType> FLIP_TYPE_MAP = new SparseArray<>();
+
+		static {
+			for (FlipType flipType : FlipType.values()) {
+				FLIP_TYPE_MAP.put(flipType.mResourceValue, flipType);
+			}
+		}
+
+		/**
+		 * Constructor giving only the resourceValue (for random colors).
+		 *
+		 * @param resourceValue The resource value.
+		 */
+		FlipType(final int resourceValue) {
+			mResourceValue = resourceValue;
+		}
+
+		/**
+		 * Get the color from its resource value.
+		 *
+		 * @param resourceValue The resource value.
+		 * @return The corresponding BackgroundColor.
+		 */
+		public static FlipType fromResourceValue(final int resourceValue) {
+			FlipType result = FLIP_TYPE_MAP.get(resourceValue);
+			return result == null ? FlipType.AVOID_REPETITIONS : result;
+		}
+	}
 }

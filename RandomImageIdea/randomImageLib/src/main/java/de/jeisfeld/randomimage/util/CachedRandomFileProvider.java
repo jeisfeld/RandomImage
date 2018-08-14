@@ -13,7 +13,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	/**
 	 * Creator used for creating the object from a Parcel.
 	 */
-	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+	public static final Parcelable.Creator<CachedRandomFileProvider> CREATOR = new Parcelable.Creator<CachedRandomFileProvider>() {
 		@Override
 		public CachedRandomFileProvider createFromParcel(final Parcel in) {
 			return new CachedRandomFileProvider(in);
@@ -161,6 +161,11 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	@Override
 	public final void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
 		mProvider.executeWhenReady(whileLoading, afterLoading, ifError);
+	}
+
+	@Override
+	public final List<String> getAllImageFiles() {
+		return mProvider.getAllImageFiles();
 	}
 
 	@Override

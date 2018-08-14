@@ -58,5 +58,11 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_detail_background"/>
-
+    <ListPreference
+        android:entries="@array/detail_flip_behavior_names"
+        android:entryValues="@array/detail_flip_behavior_values"
+        android:key="@string/key_widget_detail_flip_behavior"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_widget_detail_flip_behavior"/>
 </PreferenceScreen>

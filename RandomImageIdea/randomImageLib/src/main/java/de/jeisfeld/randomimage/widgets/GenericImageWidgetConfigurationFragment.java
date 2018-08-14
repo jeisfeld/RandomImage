@@ -1,7 +1,5 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-
 import android.appwidget.AppWidgetManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -13,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -77,6 +77,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
 		addEditListListener();
 
 		updatePropertyEnablement();
@@ -176,6 +177,12 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_background,
 							R.string.pref_default_widget_detail_background));
 		}
+		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_flip_behavior,
+							R.string.pref_default_widget_detail_flip_behavior));
+		}
 		return isUpdated;
 	}
 
@@ -203,6 +210,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_background,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_flip_behavior,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
 	}
 
 	/**
@@ -241,7 +250,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				|| preferenceKey == R.string.key_widget_button_style
 				|| preferenceKey == R.string.key_widget_button_color
 				|| preferenceKey == R.string.key_widget_detail_scale_type
-				|| preferenceKey == R.string.key_widget_detail_background) {
+				|| preferenceKey == R.string.key_widget_detail_background
+				|| preferenceKey == R.string.key_widget_detail_flip_behavior) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
 		else if (preferenceKey == R.string.key_widget_show_cyclically

@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.util;
 
+import java.util.List;
+
 /**
  * An interface that may provide random files from some list.
  */
@@ -10,6 +12,13 @@ public interface RandomFileProvider {
 	 * @return A random file name.
 	 */
 	String getRandomFileName();
+
+	/**
+	 * Get the list of all image files contained in the list.
+	 *
+	 * @return The list of all image files contained in the list.
+	 */
+	List<String> getAllImageFiles();
 
 	/**
 	 * Get information if files can be provided.

@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import de.jeisfeld.randomimage.BaseActivity;
 import de.jeisfeld.randomimage.DisplayImageDetailsActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity.FlipType;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
@@ -112,7 +113,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 		}
 		NOTIFICATION_MAP.put(mNotificationId, this);
 
-		mImageView = (PinchImageView) findViewById(R.id.imageViewMicroImage);
+		mImageView = findViewById(R.id.imageViewMicroImage);
 		mImageView.setScaleType(ScaleType.HALF_SIZE);
 		mImageView.setImage(mFileName, this, 0);
 		mImageView.setGestureDetector(getGestureDetector());
@@ -124,7 +125,11 @@ public class DisplayImagePopupActivity extends BaseActivity {
 	 * @return the gesture detector.
 	 */
 	private GestureDetector getGestureDetector() {
-		final int flingType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, 0);
+		final FlipType flingType = FlipType.fromResourceValue(
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+
+
+		PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, 0);
 
 		return new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 			/**
@@ -134,7 +139,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 
 			@Override
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-				if (flingType == 1) {
+				if (flingType == FlipType.NO_CHANGE) {
 					return false;
 				}
 
@@ -142,11 +147,10 @@ public class DisplayImagePopupActivity extends BaseActivity {
 					Runnable runnable = new Runnable() {
 						@Override
 						public void run() {
-							if (flingType == 0) {
+							if (flingType != FlipType.CLOSE) {
 								DisplayImagePopupActivity.this.startActivity(
-										// do not pass file name, in order to get new image.
 										DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
-												mListName, null, true, null, mNotificationId));
+												mListName, mFileName, true, null, mNotificationId));
 								mUserStartedRandomImageActivity = true;
 							}
 							finish();

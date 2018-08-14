@@ -66,6 +66,9 @@ public final class MigrationUtil {
 		case 21: // MAGIC_NUMBER
 			doMigrationToVersion21();
 			break;
+		case 26: // MAGIC_NUMBER
+			doMigrationToVersion26();
+			break;
 		default:
 			break;
 		}
@@ -117,5 +120,27 @@ public final class MigrationUtil {
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_hint_first_use, true);
 	}
 
+	/**
+	 * Do the migration steps for migration into app version 21.
+	 */
+	private static void doMigrationToVersion26() {
+		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+			int flipBehavior = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, notificationId, -1);
+			switch (flipBehavior) {
+			case 0:
+				flipBehavior = 3; // MAGIC_NUMBER
+				break;
+			case 1:
+				flipBehavior = 5; // MAGIC_NUMBER
+				break;
+			case 2:
+				flipBehavior = 6; // MAGIC_NUMBER
+				break;
+			default:
+				// do nothing
+			}
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, notificationId, flipBehavior);
+		}
+	}
 
 }

@@ -103,7 +103,7 @@ public final class StandardImageList extends ImageList {
 	 * @return The list of file names.
 	 */
 	public ArrayList<String> getShuffledFileNames() {
-		ArrayList<String> clonedList = getAllImageFiles();
+		ArrayList<String> clonedList = new ArrayList<>(getAllImageFiles());
 		Collections.shuffle(clonedList);
 		return clonedList;
 	}
@@ -185,7 +185,7 @@ public final class StandardImageList extends ImageList {
 	 * @return A random file name.
 	 */
 	private String getRandomFileNameFromAllFiles() {
-		ArrayList<String> allImageFiles = getAllImageFiles();
+		List<String> allImageFiles = getAllImageFiles();
 		if (allImageFiles != null && allImageFiles.size() > 0) {
 			return allImageFiles.get(mRandom.nextInt(allImageFiles.size()));
 		}
@@ -229,7 +229,7 @@ public final class StandardImageList extends ImageList {
 	}
 
 	@Override
-	public ArrayList<String> getAllImageFiles() {
+	public List<String> getAllImageFiles() {
 		mAsyncLoader.waitUntilReady();
 		return mAllImageFilesInList;
 	}

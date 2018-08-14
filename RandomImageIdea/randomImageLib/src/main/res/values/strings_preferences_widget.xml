@@ -21,6 +21,7 @@
     <string name="key_widget_display_name" translatable="false">widget_display_name</string>
     <string name="key_widget_detail_scale_type" translatable="false">widget_detail_scale_type</string>
     <string name="key_widget_detail_background" translatable="false">widget_detail_background</string>
+    <string name="key_widget_detail_flip_behavior" translatable="false">key_widget_detail_flip_behavior</string>
     <string name="key_widget_current_file_name" translatable="false">widget_current_file_name</string>
     <string name="key_widget_current_list_of_file_names" translatable="false">widget_current_list_of_file_names</string>
     <string name="key_widget_requires_update" translatable="false">widget_requires_update</string>
@@ -45,6 +46,7 @@
     <string name="pref_title_widget_display_name">Widget Name</string>
     <string name="pref_title_widget_detail_scale_type">Scaling in detail view</string>
     <string name="pref_title_widget_detail_background">Background in detail view</string>
+    <string name="pref_title_widget_detail_flip_behavior">Action when flipping</string>
     <string name="pref_title_widget_timeout">Widget usage time</string>
     <string name="pref_indefinite_value_widget_timeout">indefinite</string>
     <string name="pref_title_widget_allowed_call_frequency">Widget locking time</string>
@@ -55,6 +57,7 @@
     <string name="pref_default_widget_button_color" translatable="false">2</string>
     <string name="pref_default_widget_detail_scale_type" translatable="false">0</string>
     <string name="pref_default_widget_detail_background" translatable="false">3</string>
+    <string name="pref_default_widget_detail_flip_behavior" translatable="false">3</string>
 
     <!-- String arrays -->
     <string-array name="background_style_names">
@@ -159,5 +162,22 @@
         <item>2</item>
         <item>3</item>
     </string-array>
-
+    <string-array name="detail_flip_behavior_names">
+        <item>Always new random image</item>
+        <item>Allow to go one image back</item>
+        <item>Allow to go multiple images back</item>
+        <item>Allow to go back, avoid repetitions</item>
+        <item>Display all images cyclically</item>
+        <item>No change</item>
+        <item>Close screen</item>
+    </string-array>
+    <string-array name="detail_flip_behavior_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
 </resources>

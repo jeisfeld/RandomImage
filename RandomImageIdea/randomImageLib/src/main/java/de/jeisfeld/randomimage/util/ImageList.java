@@ -801,13 +801,6 @@ public abstract class ImageList implements RandomFileProvider {
 	}
 
 	/**
-	 * Get the list of all image files contained in the list.
-	 *
-	 * @return The list of all image files contained in the list.
-	 */
-	public abstract ArrayList<String> getAllImageFiles();
-
-	/**
 	 * Get the probability that the given file or folder is selected as random imiage.
 	 *
 	 * @param fileName The requested file or folder name.
