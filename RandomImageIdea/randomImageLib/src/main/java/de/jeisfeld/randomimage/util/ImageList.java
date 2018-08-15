@@ -28,7 +28,7 @@ import de.jeisfeld.randomimagelib.R;
 /**
  * Utility class for storing and persisting a list of image file names plus additional display information.
  */
-public abstract class ImageList extends RandomFileProvider {
+public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Separator for properties in the file.
 	 */
@@ -48,18 +48,18 @@ public abstract class ImageList extends RandomFileProvider {
 	 * The regex pattern used to identify embedded list properties.
 	 */
 	private static final Pattern PROP_NESTED_LIST_PATTERN =
-			Pattern.compile("^" + PROP_NESTED_LIST_PREFIX + "\\[(\\d+)\\]");
+			Pattern.compile("^" + PROP_NESTED_LIST_PREFIX + "\\[(\\d+)]");
 
 	/**
-	 * Prefix for the property used for embedded lists.
+	 * Prefix for the sub property used for embedded lists.
 	 */
 	private static final String PROP_NESTED_PROPERTY_PREFIX = "nestedList";
 
 	/**
-	 * The regex pattern used to identify embedded list properties.
+	 * The regex pattern used to identify embedded list sub properties.
 	 */
 	private static final Pattern PROP_NESTED_PROPERTY_PATTERN =
-			Pattern.compile("^" + PROP_NESTED_PROPERTY_PREFIX + "\\.([^\\[]*)\\[(\\d+)\\]");
+			Pattern.compile("^" + PROP_NESTED_PROPERTY_PREFIX + "\\.([^\\[]*)\\[(\\d+)]");
 
 	/**
 	 * The list of image files.
@@ -84,7 +84,7 @@ public abstract class ImageList extends RandomFileProvider {
 	/**
 	 * The config file where the list of files is stored.
 	 */
-	private File mConfigFile = null;
+	private File mConfigFile;
 
 	/**
 	 * Configuration properties of the file list.

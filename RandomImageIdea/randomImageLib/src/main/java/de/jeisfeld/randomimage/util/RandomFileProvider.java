@@ -1,33 +1,27 @@
 package de.jeisfeld.randomimage.util;
 
 /**
- * A class that may provide random files from some list.
+ * An interface that may provide random files from some list.
  */
-public abstract class RandomFileProvider {
+public interface RandomFileProvider {
 	/**
 	 * Get a random file name.
 	 *
 	 * @return A random file name.
 	 */
-	public abstract String getRandomFileName();
+	String getRandomFileName();
 
 	/**
 	 * Get information if files can be provided.
 	 *
 	 * @return true if files can be provided.
 	 */
-	// OVERRIDABLE
-	public boolean isReady() {
-		return true;
-	}
+	boolean isReady();
 
 	/**
 	 * Wait until the provider is ready.
 	 */
-	// OVERRIDABLE
-	public void waitUntilReady() {
-	}
-
+	void waitUntilReady();
 
 	/**
 	 * Execute actions when provider is ready.
@@ -36,8 +30,5 @@ public abstract class RandomFileProvider {
 	 * @param afterLoading Actions to be done when ready.
 	 * @param ifError      Actions to be done in case of loading error.
 	 */
-	// OVERRIDABLE
-	public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
-		afterLoading.run();
-	}
+	void executeWhenReady(Runnable whileLoading, Runnable afterLoading, Runnable ifError);
 }

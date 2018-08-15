@@ -868,7 +868,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * A class allowing to select a random file name out of an image folder.
 	 */
-	private final class FolderRandomFileProvider extends RandomFileProvider {
+	private final class FolderRandomFileProvider implements RandomFileProvider {
 		/**
 		 * The list of files in the folder, being the base of the provider.
 		 */
@@ -898,6 +898,20 @@ public class DisplayRandomImageActivity extends StartActivity {
 			else {
 				return mDefaultFileName;
 			}
+		}
+
+		@Override
+		public boolean isReady() {
+			return true;
+		}
+
+		@Override
+		public void waitUntilReady() {
+		}
+
+		@Override
+		public void executeWhenReady(final Runnable whileLoading, final Runnable afterLoading, final Runnable ifError) {
+			afterLoading.run();
 		}
 	}
 
