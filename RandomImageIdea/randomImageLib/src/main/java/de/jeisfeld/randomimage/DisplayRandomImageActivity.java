@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
+import de.jeisfeld.randomimage.util.CachedRandomFileProvider;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.ImageAnalyzer;
@@ -29,6 +30,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.RandomFileListProvider;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
@@ -117,6 +119,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private boolean mDoPreload = SystemUtil.getLargeMemoryClass() >= 256; // MAGIC_NUMBER
 
 	/**
+	 * Flag indicating if the list is currently parsed backward.
+	 */
+	private boolean mIsGoingBackward = false;
+
+	/**
 	 * The view displaying the current file.
 	 */
 	private PinchImageView mCurrentImageView = null;
@@ -192,7 +199,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * The imageList used by the activity.
 	 */
-	private RandomFileProvider mRandomFileProvider;
+	private RandomFileListProvider mRandomFileProvider = null;
 
 	/**
 	 * Duration of usage of the screen.
@@ -323,6 +330,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mTrackingImages = savedInstanceState.getLong("trackingImages");
 			mRecreatedAfterSavingInstanceState = true;
 			mDisplayHint = false;
+			mIsGoingBackward = savedInstanceState.getBoolean("isGoingBackward");
+			mRandomFileProvider = savedInstanceState.getParcelable("randomFileProvider");
 		}
 		if (mListName == null) {
 			mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
@@ -391,7 +400,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
 			// If folderName is provided, then use the list of images in this folder.
-			mRandomFileProvider = new FolderRandomFileProvider(folderName, mCurrentFileName);
+			mRandomFileProvider = new CachedRandomFileProvider(new FolderRandomFileProvider(folderName, mCurrentFileName),
+					mCurrentFileName, mRandomFileProvider);
 		}
 		else {
 			// Otherwise, use the imageList.
@@ -422,7 +432,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			mListName = imageList.getListName();
 
-			mRandomFileProvider = imageList;
+			mRandomFileProvider = new CachedRandomFileProvider(imageList, mCurrentFileName, mRandomFileProvider);
 		}
 
 		if (mCurrentFileName == null) {
@@ -433,10 +443,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 			setContentView(mCurrentImageView);
 			displayHint();
 			if (mDoPreload && mRandomFileProvider.isReady()) {
-				mNextFileName = mRandomFileProvider.getRandomFileName();
+				mRandomFileProvider.goForward();
+				mNextFileName = mRandomFileProvider.getCurrentFileName();
 				if (mNextFileName != null) {
 					mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
 				}
+				mRandomFileProvider.goBackward();
 			}
 		}
 
@@ -640,8 +652,17 @@ public class DisplayRandomImageActivity extends StartActivity {
 							tempCacheIndex = mPreviousCacheIndex;
 							mPreviousCacheIndex = mCurrentCacheIndex;
 						}
+						if (mCurrentFileName != null) {
+							// Except in very initial call, go one further
+							if (mIsGoingBackward) {
+								mRandomFileProvider.goBackward();
+							}
+							else {
+								mRandomFileProvider.goForward();
+							}
+						}
 						if (mNextImageView == null) {
-							mCurrentFileName = mRandomFileProvider.getRandomFileName();
+							mCurrentFileName = mRandomFileProvider.getCurrentFileName();
 							if (mDoPreload) {
 								mCurrentCacheIndex = tempCacheIndex;
 							}
@@ -670,8 +691,20 @@ public class DisplayRandomImageActivity extends StartActivity {
 						mTrackingImages++;
 
 						if (mDoPreload) {
-							mNextFileName = mRandomFileProvider.getRandomFileName();
+							if (mIsGoingBackward) {
+								mRandomFileProvider.goBackward();
+							}
+							else {
+								mRandomFileProvider.goForward();
+							}
+							mNextFileName = mRandomFileProvider.getCurrentFileName();
 							mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
+							if (mIsGoingBackward) {
+								mRandomFileProvider.goForward();
+							}
+							else {
+								mRandomFileProvider.goBackward();
+							}
 						}
 					}
 				}, null);
@@ -741,7 +774,31 @@ public class DisplayRandomImageActivity extends StartActivity {
 								else {
 									mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
 								}
+								mIsGoingBackward = !mIsGoingBackward;
 								setContentView(mCurrentImageView);
+
+								// need to move mRandomFileProvider to new position.
+								if (mIsGoingBackward) {
+									mRandomFileProvider.goBackward();
+								}
+								else {
+									mRandomFileProvider.goForward();
+								}
+
+								if (mDoPreload) {
+									if (mIsGoingBackward) {
+										mRandomFileProvider.goBackward();
+										mNextFileName = mRandomFileProvider.getCurrentFileName();
+										mRandomFileProvider.goForward();
+									}
+									else {
+										mRandomFileProvider.goForward();
+										mNextFileName = mRandomFileProvider.getCurrentFileName();
+										mRandomFileProvider.goBackward();
+									}
+									mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
+								}
+
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 							}
 							else {
@@ -795,6 +852,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 			outState.putInt("nextCacheIndex", mNextCacheIndex);
 			outState.putLong("trackingImages", mTrackingImages);
 			outState.putLong("trackingTimestamp", mTrackingTimestamp);
+			outState.putBoolean("isGoingBackward", mIsGoingBackward);
+			outState.putParcelable("randomFileProvider", mRandomFileProvider);
 		}
 	}
 
@@ -855,7 +914,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 	@Override
 	public final void updateAfterFirstImageListCreated() {
-		mRandomFileProvider = ImageRegistry.getCurrentImageList(false);
+		mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false));
 		displayRandomImage();
 	}
 
