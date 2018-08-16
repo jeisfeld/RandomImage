@@ -377,7 +377,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		if (folderName != null) {
 			// If folderName is provided, then use the list of images in this folder.
 			mRandomFileProvider = new CachedRandomFileProvider(new FolderRandomFileProvider(folderName, mCurrentFileName),
-					mCurrentFileName, mRandomFileProvider);
+					mCurrentFileName, mFlipType, mRandomFileProvider);
 		}
 		else {
 			// Otherwise, use the imageList.
@@ -408,7 +408,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			mListName = imageList.getListName();
 
-			mRandomFileProvider = new CachedRandomFileProvider(imageList, mCurrentFileName, mRandomFileProvider);
+			mRandomFileProvider = new CachedRandomFileProvider(imageList, mCurrentFileName, mFlipType, mRandomFileProvider);
 		}
 
 		if (mCurrentFileName == null) {
@@ -1113,7 +1113,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Helper class containing constants for flip types.
 	 */
 	public enum FlipType {
-
 		// JAVADOC:OFF
 		NEW_IMAGE(0),
 		ONE_BACK(1),
@@ -1158,6 +1157,15 @@ public class DisplayRandomImageActivity extends StartActivity {
 		public static FlipType fromResourceValue(final int resourceValue) {
 			FlipType result = FLIP_TYPE_MAP.get(resourceValue);
 			return result == null ? FlipType.AVOID_REPETITIONS : result;
+		}
+
+		/**
+		 * Get the resource value.
+		 *
+		 * @return The resource value.
+		 */
+		public int getResourceValue() {
+			return mResourceValue;
 		}
 	}
 }
