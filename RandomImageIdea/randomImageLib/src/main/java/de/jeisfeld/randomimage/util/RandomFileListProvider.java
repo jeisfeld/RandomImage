@@ -24,9 +24,9 @@ public interface RandomFileListProvider extends RandomFileProvider, Parcelable {
 	void goBackward();
 
 	/**
-	 * Update the current file name with a new file.
+	 * Remove the current file from the list.
 	 *
-	 * @return The current file name of the list, after update.
+	 * @return The current file name of the list, after removing the old one.
 	 */
-	String updateCurrentFileName();
+	String removeCurrentFileName();
 }

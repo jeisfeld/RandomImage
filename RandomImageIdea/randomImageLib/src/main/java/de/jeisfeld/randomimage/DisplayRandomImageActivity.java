@@ -412,7 +412,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 
 		if (mCurrentFileName == null) {
-			displayRandomImage();
+			displayRandomImage(false);
 		}
 		else {
 			mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
@@ -658,8 +658,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 	/**
 	 * Display a random image.
+	 *
+	 * @param goToNextImage flag indicating if the next image in the list should be selected.
 	 */
-	private void displayRandomImage() {
+	private void displayRandomImage(final boolean goToNextImage) {
 		mRandomFileProvider.executeWhenReady(
 				new Runnable() {
 					@Override
@@ -677,7 +679,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							tempCacheIndex = mPreviousCacheIndex;
 							mPreviousCacheIndex = mCurrentCacheIndex;
 						}
-						if (mCurrentFileName != null) {
+						if (goToNextImage) {
 							// Except in very initial call, go one further
 							if (mIsGoingBackward) {
 								mRandomFileProvider.goBackward();
@@ -819,7 +821,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 							}
 							else {
-								displayRandomImage();
+								displayRandomImage(true);
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
 							}
 
@@ -890,7 +892,18 @@ public class DisplayRandomImageActivity extends StartActivity {
 				returnResult(fileRemoved);
 			}
 			else if (fileRemoved) {
-				displayRandomImage();
+				if (mCurrentFileName.equals(mNextFileName)) {
+					mNextImageView = null;
+					mNextFileName = null;
+				}
+				if (mCurrentFileName.equals(mPreviousFileName)) {
+					mPreviousImageView = null;
+					mPreviousFileName = null;
+				}
+				mCurrentImageView = null;
+				mCurrentFileName = null;
+				mRandomFileProvider.removeCurrentFileName();
+				displayRandomImage(false);
 			}
 			break;
 		default:
@@ -932,7 +945,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	public final void updateAfterFirstImageListCreated() {
 		mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false));
-		displayRandomImage();
+		displayRandomImage(false);
 	}
 
 	/**

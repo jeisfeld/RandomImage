@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -259,7 +260,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 		case ONE_BACK:
 			return 3; // MAGIC_NUMBER
 		case MULTIPLE_BACK:
-			return getAllImageFiles().size() / 2;
+			return (getAllImageFiles().size() + 1) / 2;
 		case AVOID_REPETITIONS:
 			return getAllImageFiles().size() * 9 / 10; // MAGIC_NUMBER
 		case CYCLICAL:
@@ -270,13 +271,24 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	}
 
 	@Override
-	public final String updateCurrentFileName() {
+	public final String removeCurrentFileName() {
+		if (mProvider instanceof ImageList) {
+			((ImageList) mProvider).load(false);
+		}
+
 		if (!mHasFile) {
 			return getCurrentFileName();
 		}
 
 		synchronized (mCachedFileNames) {
-			mCachedFileNames.set(mCurrentPosition, getRandomFileName());
+			mCachedFileNames.removeAll(Arrays.asList(mCachedFileNames.get(mCurrentPosition)));
+			if (mCurrentPosition >= mCachedFileNames.size()) {
+				mCurrentPosition = mCachedFileNames.size() - 1;
+			}
+			if (mCurrentPosition < 0) {
+				mCurrentPosition = 0;
+				mCachedFileNames.add(getRandomFileName());
+			}
 			return getCurrentFileName();
 		}
 	}
