@@ -164,8 +164,8 @@
     </string-array>
     <string-array name="detail_flip_behavior_names">
         <item>Always new random image</item>
-        <item>Allow to go one image back</item>
-        <item>Allow to go multiple images back</item>
+        <item>Allow to go back one image</item>
+        <item>Allow to go back multiple images</item>
         <item>Allow to go back, avoid repetitions</item>
         <item>Display all images cyclically</item>
         <item>No change</item>
