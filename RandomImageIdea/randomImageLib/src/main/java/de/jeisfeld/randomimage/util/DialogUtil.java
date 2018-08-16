@@ -935,7 +935,7 @@ public final class DialogUtil {
 			@SuppressLint("InflateParams")
 			View view = inflater.inflate(R.layout.dialog_searching_images, null);
 
-			mMessageView = (TextView) view.findViewById(R.id.textViewImageFolder);
+			mMessageView = view.findViewById(R.id.textViewImageFolder);
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.title_dialog_searching_image_folders) //
@@ -966,7 +966,7 @@ public final class DialogUtil {
 				public void handleImageFolder(final String imageFolder) {
 					mFolderCount++;
 					if (mMessageView != null) {
-						mMessageView.setText(mFolderCount + "\n" + imageFolder);
+						mMessageView.setText(mFolderCount + "\n\n" + imageFolder);
 					}
 				}
 			});
