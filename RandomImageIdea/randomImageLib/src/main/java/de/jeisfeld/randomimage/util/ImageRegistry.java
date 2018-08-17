@@ -157,9 +157,10 @@ public final class ImageRegistry {
 	/**
 	 * Get the names of all available standard image lists.
 	 *
+	 * @param listFiltering The way in which the list should be filtered.
 	 * @return The names of all available standard image lists.
 	 */
-	public static ArrayList<String> getStandardImageListNames() {
+	public static ArrayList<String> getStandardImageListNames(final ListFiltering listFiltering) {
 		ArrayList<String> nameList = new ArrayList<>();
 
 		for (String name : mImageListInfoMap.keySet()) {
@@ -169,7 +170,7 @@ public final class ImageRegistry {
 		}
 
 		Collections.sort(nameList, Collator.getInstance());
-		return nameList;
+		return filterNameList(nameList, listFiltering);
 	}
 
 	/**
@@ -483,10 +484,10 @@ public final class ImageRegistry {
 	private static File getFileForListName(final String name) {
 		String baseName =
 				CONFIG_FILE_PREFIX
-						+ name.replaceAll("[\\.]", ",")
+						+ name.replaceAll("[.]", ",")
 						.replaceAll("[\\s]", " ")
 						.replaceAll(
-								"[^A-Za-z0-9äöüßÄÖÜáàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ \\-_%&\\?!\\$\\(\\),;:]",
+								"[^A-Za-z0-9äöüßÄÖÜáàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ \\-_%&?!$(),;:]",
 								"");
 		if (baseName.length() > MAX_NAME_LENGTH) {
 			baseName = baseName.substring(0, MAX_NAME_LENGTH);

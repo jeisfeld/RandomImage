@@ -1,10 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -12,11 +7,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimagelib.R;
 
@@ -29,7 +30,7 @@ public class AddSentImagesActivity extends Activity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		ArrayList<String> imageListsNames = ImageRegistry.getStandardImageListNames();
+		ArrayList<String> imageListsNames = ImageRegistry.getStandardImageListNames(ListFiltering.HIDE_BY_REGEXP);
 
 		if (imageListsNames == null || imageListsNames.size() == 0) {
 			DialogUtil.displayToast(AddSentImagesActivity.this, R.string.toast_aborted_add_images_no_list);

@@ -1,10 +1,11 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-
 import android.preference.PreferenceFragment;
 
+import java.util.ArrayList;
+
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 
 /**
  * Activity for the configuration of the MiniWidget.
@@ -22,6 +23,6 @@ public class StackedImageWidgetConfigurationActivity extends GenericWidgetConfig
 
 	@Override
 	protected final ArrayList<String> getImageListNames() {
-		return ImageRegistry.getStandardImageListNames();
+		return ImageRegistry.getStandardImageListNames(ListFiltering.HIDE_BY_REGEXP);
 	}
 }
