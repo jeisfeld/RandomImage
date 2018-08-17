@@ -355,6 +355,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 		}
 
+		mScaleType = ScaleType.fromResourceScaleType(
+				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_scale_type, R.string.pref_default_detail_scale_type));
+		mBackgroundColor = BackgroundColor.fromResourceValue(
+				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background, R.string.pref_default_detail_background));
+		mFlipType = FlipType.fromResourceValue(
+				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, R.string.pref_default_detail_flip_behavior));
+		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
+
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
 
 		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);

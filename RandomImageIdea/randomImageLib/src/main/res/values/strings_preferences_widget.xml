@@ -36,6 +36,8 @@
 
     <!-- Strings related to Settings -->
 
+    <string name="pref_category_widget_timing">Widget Timing</string>
+    <string name="pref_category_widget_appearance">Widget Appearance</string>
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_timer_duration">Change Frequency</string>
     <string name="pref_indefinite_value_widget_timer_duration">never</string>
@@ -57,9 +59,6 @@
     <string name="pref_default_widget_background_style" translatable="false">2</string>
     <string name="pref_default_widget_button_style" translatable="false">0</string>
     <string name="pref_default_widget_button_color" translatable="false">2</string>
-    <string name="pref_default_widget_detail_scale_type" translatable="false">0</string>
-    <string name="pref_default_widget_detail_background" translatable="false">3</string>
-    <string name="pref_default_widget_detail_flip_behavior" translatable="false">3</string>
 
     <!-- String arrays -->
     <string-array name="background_style_names">
@@ -140,46 +139,5 @@
         <item>9</item>
         <item>10</item>
     </string-array>
-    <string-array name="detail_scale_type_names">
-        <item>Fit into window</item>
-        <item>Stretch to fill window</item>
-        <item>Rotate and fit</item>
-        <item>Rotate and stretch</item>
-    </string-array>
-    <string-array name="detail_scale_type_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-    <string-array name="detail_background_names">
-        <item>Dark</item>
-        <item>Light</item>
-        <item>Color from image border</item>
-        <item>Average image color</item>
-    </string-array>
-    <string-array name="detail_background_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-    <string-array name="detail_flip_behavior_names">
-        <item>Always new random image</item>
-        <item>Allow to go back one image</item>
-        <item>Allow to go back multiple images</item>
-        <item>Allow to go back, avoid repetitions</item>
-        <item>Display all images cyclically</item>
-        <item>No change</item>
-        <item>Close screen</item>
-    </string-array>
-    <string-array name="detail_flip_behavior_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-    </string-array>
+
 </resources>

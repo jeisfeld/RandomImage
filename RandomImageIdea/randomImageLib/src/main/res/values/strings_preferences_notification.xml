@@ -35,10 +35,8 @@
 
     <string name="pref_heading_notifcation">Notification</string>
     <string name="pref_heading_create_new_notifcation">Create new notification</string>
-    <string name="pref_group_title_image_list">Image List</string>
-    <string name="pref_group_title_timing">Notification Timing</string>
-    <string name="pref_group_title_appearance">Notification Appearance</string>
-    <string name="pref_group_title_other">Other Settings</string>
+    <string name="pref_category_notification_timing">Notification Timing</string>
+    <string name="pref_category_notification_appearance">Notification Appearance</string>
     <string name="pref_title_notification_list_name">List Name</string>
     <string name="pref_title_notification_timer_duration">Notification frequency</string>
     <string name="pref_default_notification_timer_duration" translatable="false">86400</string>
@@ -62,11 +60,8 @@
     <string name="pref_title_notification_colored_icon">Colored icon</string>
     <string name="pref_title_notification_display_name">Notification name</string>
     <string name="pref_title_notification_detail_scale_type">Scaling in detail view</string>
-    <string name="pref_default_notification_detail_scale_type" translatable="false">0</string>
     <string name="pref_title_notification_detail_background">Background in detail view</string>
-    <string name="pref_default_notification_detail_background" translatable="false">3</string>
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
-    <string name="pref_default_notification_detail_flip_behavior" translatable="false">3</string>
     <string name="pref_title_notification_detail_change_with_tap">Use tap instead of flipping</string>
     <string name="pref_title_cancel_notification">Remove Notification</string>
     <string name="notification_channel_system">System notifications</string>
@@ -153,24 +148,6 @@
         <item>5</item>
         <item>6</item>
         <item>7</item>
-    </string-array>
-    <string-array name="notification_detail_flip_behavior_names">
-        <item>Always new random image</item>
-        <item>Allow to go back one image</item>
-        <item>Allow to go back multiple images</item>
-        <item>Allow to go back, avoid repetitions</item>
-        <item>Display all images cyclically</item>
-        <item>No change</item>
-        <item>Close screen</item>
-    </string-array>
-    <string-array name="notification_detail_flip_behavior_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
     </string-array>
 
 </resources>

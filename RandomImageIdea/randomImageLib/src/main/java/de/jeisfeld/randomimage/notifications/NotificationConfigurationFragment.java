@@ -202,20 +202,25 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_detail_scale_type,
-							R.string.pref_default_notification_detail_scale_type));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_scale_type,
+							R.string.pref_default_detail_scale_type));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_detail_background,
-							R.string.pref_default_notification_detail_background));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background,
+							R.string.pref_default_detail_background));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_detail_flip_behavior,
-							R.string.pref_default_notification_detail_flip_behavior));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
+							R.string.pref_default_detail_flip_behavior));
+		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_detail_change_with_tap, mNotificationId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
 
 		return isUpdated;

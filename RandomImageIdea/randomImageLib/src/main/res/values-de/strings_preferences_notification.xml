@@ -5,10 +5,8 @@
 
     <string name="pref_heading_notifcation">Benachrichtigung</string>
     <string name="pref_heading_create_new_notifcation">Neue Benachrichtigung erstellen</string>
-    <string name="pref_group_title_image_list">Bildliste</string>
-    <string name="pref_group_title_timing">Benachrichtigungszeiten</string>
-    <string name="pref_group_title_appearance">Erscheinungsbild</string>
-    <string name="pref_group_title_other">Andere Einstellungen</string>
+    <string name="pref_category_notification_timing">Benachrichtigungszeiten</string>
+    <string name="pref_category_notification_appearance">Erscheinungsbild</string>
     <string name="pref_title_notification_list_name">Listenname</string>
     <string name="pref_title_notification_timer_duration">Häufigkeit der Benachrichtigung</string>
     <string name="pref_indefinite_value_notification_timer_duration">nie</string>
@@ -73,15 +71,6 @@
         <item>Rot-Grün</item>
         <item>Grün-Blau</item>
         <item>Blau-Rot</item>
-    </string-array>
-    <string-array name="notification_detail_flip_behavior_names">
-        <item>Immer neues Zufallsbild</item>
-        <item>Ein Bild rückwärts möglich</item>
-        <item>Mehrere Bilder rückwärts möglich</item>
-        <item>Rückwärts möglich, Wiederholungen vermeiden</item>
-        <item>Alle Bilder zyklisch zeigen</item>
-        <item>Keine Änderung</item>
-        <item>Ansicht schließen</item>
     </string-array>
 
 </resources>

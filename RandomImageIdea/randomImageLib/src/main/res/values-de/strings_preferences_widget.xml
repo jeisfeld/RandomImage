@@ -9,6 +9,8 @@
 
     <!-- Strings related to Settings -->
 
+    <string name="pref_category_widget_timing">Widget-Timing</string>
+    <string name="pref_category_widget_appearance">Erscheinungsbild</string>
     <string name="pref_title_widget_list_name">Listenname</string>
     <string name="pref_title_widget_timer_duration">Wechselhäufigkeit</string>
     <string name="pref_indefinite_value_widget_timer_duration">nie</string>
@@ -67,25 +69,5 @@
         <item>Zufällig (schwarzweißer Pfeil)</item>
         <item>Zufällig (bunter Pfeil)</item>
     </string-array>
-    <string-array name="detail_scale_type_names">
-        <item>Ins Fenster einpassen</item>
-        <item>Das Fenster ausfüllen</item>
-        <item>Drehen und einpassen</item>
-        <item>Drehen und ausfüllen</item>
-    </string-array>
-    <string-array name="detail_background_names">
-        <item>Dunkel</item>
-        <item>Hell</item>
-        <item>Farbe aus dem Bildrand</item>
-        <item>Durchschnittliche Bildfarbe</item>
-    </string-array>
-    <string-array name="detail_flip_behavior_names">
-        <item>Immer neues Zufallsbild</item>
-        <item>Ein Bild rückwärts möglich</item>
-        <item>Mehrere Bilder rückwärts möglich</item>
-        <item>Rückwärts möglich, Wiederholungen vermeiden</item>
-        <item>Alle Bilder zyklisch zeigen</item>
-        <item>Keine Änderung</item>
-        <item>Ansicht schließen</item>
-    </string-array>
+
 </resources>

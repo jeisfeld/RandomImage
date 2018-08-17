@@ -3,8 +3,10 @@
 
     <!-- Strings related to Settings -->
 
+    <string name="pref_category_image_list">Bildliste</string>
     <string name="pref_category_premium">Premium-Version</string>
     <string name="pref_category_support">Unterstützung</string>
+    <string name="pref_category_random_image_view">Zufallsbild-Ansicht</string>
     <string name="pref_category_other">Weitere Einstellungen</string>
     <string name="pref_title_language">Sprache</string>
     <string name="pref_title_folder_selection_mechanism">Verzeichnisauswahl über &#8230;</string>
@@ -13,6 +15,10 @@
     <string name="pref_title_use_regex_filter">Regexp-Filter verwenden</string>
     <string name="pref_title_hidden_lists_pattern">Listen verstecken (Regexp)</string>
     <string name="pref_title_hidden_folders_pattern">Verzeichnisse verstecken (Regexp)</string>
+    <string name="pref_title_detail_scale_type">Skalierung in Detailansicht</string>
+    <string name="pref_title_detail_background">Hintergrund in Detailansicht</string>
+    <string name="pref_title_detail_flip_behavior">Verhalten beim Schnippen</string>
+    <string name="pref_title_detail_change_with_tap">Tippen statt Schnippen</string>
     <string name="pref_hint_hidden_lists_pattern">[Regulären Ausdruck eingeben]</string>
     <string name="pref_hint_hidden_folders_pattern">[Regulären Ausdruck eingeben]</string>
 
@@ -28,5 +34,25 @@
         <item>Dateibrowser</item>
         <item>Galerie</item>
     </string-array>
-
+    <string-array name="detail_scale_type_names">
+        <item>Ins Fenster einpassen</item>
+        <item>Das Fenster ausfüllen</item>
+        <item>Drehen und einpassen</item>
+        <item>Drehen und ausfüllen</item>
+    </string-array>
+    <string-array name="detail_background_names">
+        <item>Dunkel</item>
+        <item>Hell</item>
+        <item>Farbe aus dem Bildrand</item>
+        <item>Durchschnittliche Bildfarbe</item>
+    </string-array>
+    <string-array name="detail_flip_behavior_names">
+        <item>Immer neues Zufallsbild</item>
+        <item>Ein Bild rückwärts möglich</item>
+        <item>Mehrere Bilder rückwärts möglich</item>
+        <item>Rückwärts möglich, Wiederholungen vermeiden</item>
+        <item>Alle Bilder zyklisch zeigen</item>
+        <item>Keine Änderung</item>
+        <item>Ansicht schließen</item>
+    </string-array>
 </resources>

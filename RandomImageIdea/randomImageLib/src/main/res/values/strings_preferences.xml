@@ -10,6 +10,10 @@
     <string name="key_pref_use_regex_filter" translatable="false">pref_use_regex_filter</string>
     <string name="key_pref_hidden_lists_pattern" translatable="false">pref_hidden_lists_pattern</string>
     <string name="key_pref_hidden_folders_pattern" translatable="false">pref_hidden_folders_pattern</string>
+    <string name="key_pref_detail_scale_type" translatable="false">pref_detail_scale_type</string>
+    <string name="key_pref_detail_background" translatable="false">pref_detail_background</string>
+    <string name="key_pref_detail_flip_behavior" translatable="false">pref_detail_flip_behavior</string>
+    <string name="key_pref_detail_change_with_tap" translatable="false">pref_detail_change_with_tap</string>
 
     <!-- Dummy keys only required as menu reference -->
 
@@ -59,8 +63,10 @@
     <string name="key_statistics_countsettings" translatable="false">statistics_countsettings</string>
 
     <!-- Strings related to Settings -->
+    <string name="pref_category_image_list">Image List</string>
     <string name="pref_category_premium">Premium Version</string>
     <string name="pref_category_support">Support</string>
+    <string name="pref_category_random_image_view">Random Image View</string>
     <string name="pref_category_other">Other settings</string>
     <string name="pref_title_language">Language</string>
     <string name="pref_title_folder_selection_mechanism">Folder selection via &#8230;</string>
@@ -69,8 +75,15 @@
     <string name="pref_title_use_regex_filter">Use regexp filter</string>
     <string name="pref_title_hidden_lists_pattern">Hide lists (Regexp)</string>
     <string name="pref_title_hidden_folders_pattern">Hide folders (Regexp)</string>
+    <string name="pref_title_detail_scale_type">Scaling in detail view</string>
+    <string name="pref_title_detail_background">Background in detail view</string>
+    <string name="pref_title_detail_flip_behavior">Action when flipping</string>
+    <string name="pref_title_detail_change_with_tap">Use tap instead of flipping</string>
     <string name="pref_default_language" translatable="false">0</string>
     <string name="pref_default_folder_selection_mechanism" translatable="false">0</string>
+    <string name="pref_default_detail_scale_type" translatable="false">0</string>
+    <string name="pref_default_detail_background" translatable="false">3</string>
+    <string name="pref_default_detail_flip_behavior" translatable="false">3</string>
     <string name="pref_hint_hidden_lists_pattern">[Enter regular expression]</string>
     <string name="pref_hint_hidden_folders_pattern">[Enter regular expression]</string>
 
@@ -96,5 +109,46 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-
+    <string-array name="detail_scale_type_names">
+        <item>Fit into window</item>
+        <item>Stretch to fill window</item>
+        <item>Rotate and fit</item>
+        <item>Rotate and stretch</item>
+    </string-array>
+    <string-array name="detail_scale_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="detail_background_names">
+        <item>Dark</item>
+        <item>Light</item>
+        <item>Color from image border</item>
+        <item>Average image color</item>
+    </string-array>
+    <string-array name="detail_background_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="detail_flip_behavior_names">
+        <item>Always new random image</item>
+        <item>Allow to go back one image</item>
+        <item>Allow to go back multiple images</item>
+        <item>Allow to go back, avoid repetitions</item>
+        <item>Display all images cyclically</item>
+        <item>No change</item>
+        <item>Close screen</item>
+    </string-array>
+    <string-array name="detail_flip_behavior_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
 </resources>

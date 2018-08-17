@@ -76,6 +76,10 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_pref_use_regex_filter);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_folders_pattern);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_lists_pattern);
+		bindPreferenceSummaryToValue(R.string.key_pref_detail_scale_type);
+		bindPreferenceSummaryToValue(R.string.key_pref_detail_background);
+		bindPreferenceSummaryToValue(R.string.key_pref_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_pref_detail_change_with_tap);
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);

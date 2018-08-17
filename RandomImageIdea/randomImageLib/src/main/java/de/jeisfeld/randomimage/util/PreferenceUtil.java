@@ -459,6 +459,17 @@ public final class PreferenceUtil {
 	}
 
 	/**
+	 * Check the existence of an indexed shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param index        The index
+	 * @return True if the preference exists.
+	 */
+	public static boolean hasIndexedSharedPreference(final int preferenceId, final Object index) {
+		return getSharedPreferences().contains(getIndexedPreferenceKey(preferenceId, index));
+	}
+
+	/**
 	 * Set all hint preferences to the given value.
 	 *
 	 * @param value The value.

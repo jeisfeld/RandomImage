@@ -22,6 +22,36 @@
             android:summary="@string/menu_detail_contact_developer"
             android:title="@string/menu_title_contact_developer"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_random_image_view">
+        <ListPreference
+            android:defaultValue="@string/pref_default_detail_scale_type"
+            android:entries="@array/detail_scale_type_names"
+            android:entryValues="@array/detail_scale_type_values"
+            android:key="@string/key_pref_detail_scale_type"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_detail_scale_type"/>
+        <ListPreference
+            android:defaultValue="@string/pref_default_detail_background"
+            android:entries="@array/detail_background_names"
+            android:entryValues="@array/detail_background_values"
+            android:key="@string/key_pref_detail_background"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_detail_background"/>
+        <ListPreference
+            android:defaultValue="@string/pref_default_detail_flip_behavior"
+            android:entries="@array/detail_flip_behavior_names"
+            android:entryValues="@array/detail_flip_behavior_values"
+            android:key="@string/key_pref_detail_flip_behavior"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_detail_flip_behavior"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_pref_detail_change_with_tap"
+            android:title="@string/pref_title_detail_change_with_tap"/>
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/key_pref_category_other"
         android:title="@string/pref_category_other">

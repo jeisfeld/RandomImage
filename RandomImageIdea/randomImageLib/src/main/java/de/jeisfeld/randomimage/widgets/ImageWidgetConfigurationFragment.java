@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceGroup;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
@@ -22,8 +23,9 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget Config", "ImageWidget");
 
 		// Do not offer cyclic change and list view in ImageWidget.
-		getPreferenceScreen().removePreference(findPreference(getString(R.string.key_widget_show_cyclically)));
-		getPreferenceScreen().removePreference(findPreference(getString(R.string.key_widget_view_as_list)));
+		PreferenceGroup groupAppearance = (PreferenceGroup) findPreference(getString(R.string.key_dummy_pref_group_appearance));
+		groupAppearance.removePreference(findPreference(getString(R.string.key_widget_show_cyclically)));
+		groupAppearance.removePreference(findPreference(getString(R.string.key_widget_view_as_list)));
 	}
 
 	@Override

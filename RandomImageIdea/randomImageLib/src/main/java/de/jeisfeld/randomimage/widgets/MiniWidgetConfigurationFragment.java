@@ -114,20 +114,25 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
-							R.string.pref_default_widget_detail_scale_type));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_scale_type,
+							R.string.pref_default_detail_scale_type));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_background,
-							R.string.pref_default_widget_detail_background));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background,
+							R.string.pref_default_detail_background));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId,
-					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_detail_flip_behavior,
-							R.string.pref_default_widget_detail_flip_behavior));
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
+							R.string.pref_default_detail_flip_behavior));
+		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_change_with_tap, mAppWidgetId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
 		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
