@@ -78,6 +78,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
 		addEditListListener();
 
 		updatePropertyEnablement();
@@ -212,6 +213,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_flip_behavior,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
 	}
 
 	/**
@@ -255,7 +258,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
 		else if (preferenceKey == R.string.key_widget_show_cyclically
-				|| preferenceKey == R.string.key_widget_view_as_list) {
+				|| preferenceKey == R.string.key_widget_view_as_list
+				|| preferenceKey == R.string.key_widget_detail_change_with_tap) {
 			value = "";
 		}
 		else {

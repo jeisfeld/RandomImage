@@ -178,19 +178,27 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * The way in which the image gets initially scaled.
 	 */
 	private ScaleType mScaleType = ScaleType.FIT;
+
 	/**
 	 * The way in which the background color is selected.
 	 */
 	private BackgroundColor mBackgroundColor = BackgroundColor.AVERAGE_IMAGE_COLOR;
+
 	/**
 	 * The way in which the new random image is selected on flipping.
 	 */
 	private FlipType mFlipType = FlipType.AVOID_REPETITIONS;
 
 	/**
+	 * Flag indicating if change of image should be possible via single tap.
+	 */
+	private boolean mChangeImageWithSingleTap = false;
+
+	/**
 	 * Flag helping to detect if a destroy is final or only temporary.
 	 */
 	private boolean mSavingInstanceState = false;
+
 	/**
 	 * Flag helping to detect if the user puts the activity into the background.
 	 */
@@ -457,6 +465,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
 		mFlipType = FlipType.fromResourceValue(
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+		mChangeImageWithSingleTap =
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false);
 
 		if (!NotificationUtil.isActivityNotificationStyle(
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1))) {
@@ -489,6 +499,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 		mFlipType = FlipType.fromResourceValue(
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+		mChangeImageWithSingleTap = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
 
 		WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);
 	}
@@ -763,7 +774,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			@Override
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-				if (mFlipType == FlipType.NO_CHANGE) {
+				if (mFlipType == FlipType.NO_CHANGE || mChangeImageWithSingleTap) {
 					return false;
 				}
 
@@ -777,46 +788,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							}
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
-								String tempFileName = mCurrentFileName;
-								mCurrentFileName = mPreviousFileName;
-								mPreviousFileName = tempFileName;
-								if (mDoPreload) {
-									int tempCacheIndex = mCurrentCacheIndex;
-									mCurrentCacheIndex = mPreviousCacheIndex;
-									mPreviousCacheIndex = tempCacheIndex;
-								}
-								if (mDoPreload && mPreviousImageView != null) {
-									PinchImageView tempImageView = mCurrentImageView;
-									mCurrentImageView = mPreviousImageView;
-									mPreviousImageView = tempImageView;
-								}
-								else {
-									mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
-								}
-								mIsGoingBackward = !mIsGoingBackward;
-								setContentView(mCurrentImageView);
-
-								// need to move mRandomFileProvider to new position.
-								if (mIsGoingBackward) {
-									mRandomFileProvider.goBackward();
-								}
-								else {
-									mRandomFileProvider.goForward();
-								}
-
-								if (mDoPreload) {
-									if (mIsGoingBackward) {
-										mRandomFileProvider.goBackward();
-										mNextFileName = mRandomFileProvider.getCurrentFileName();
-										mRandomFileProvider.goForward();
-									}
-									else {
-										mRandomFileProvider.goForward();
-										mNextFileName = mRandomFileProvider.getCurrentFileName();
-										mRandomFileProvider.goBackward();
-									}
-									mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
-								}
+								displayLastImage();
 
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 							}
@@ -844,11 +816,89 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 
 			@Override
+			public boolean onSingleTapUp(final MotionEvent e) {
+				if (!mChangeImageWithSingleTap) {
+					return false;
+				}
+
+				if (mFlipType == FlipType.CLOSE) {
+					finish();
+					return true;
+				}
+
+				float velocityX = e.getX() - mCurrentImageView.getWidth() / 2;
+				float velocityY = e.getY() - mCurrentImageView.getHeight() / 2;
+				FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
+
+				if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
+					displayLastImage();
+					TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
+				}
+				else {
+					displayRandomImage(true);
+					TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
+				}
+
+				if (mPreviousImageView != null) {
+					mPreviousImageView.doScalingToFit();
+				}
+
+				mLastFlingDirection = newFlingDirection;
+
+				return true;
+			}
+
+			@Override
 			public void onLongPress(final MotionEvent e) {
 				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName, mPreventDisplayAll,
 						"Display random image");
 			}
 
+			/**
+			 * Display the last image.
+			 */
+			private void displayLastImage() {
+				String tempFileName = mCurrentFileName;
+				mCurrentFileName = mPreviousFileName;
+				mPreviousFileName = tempFileName;
+				if (mDoPreload) {
+					int tempCacheIndex = mCurrentCacheIndex;
+					mCurrentCacheIndex = mPreviousCacheIndex;
+					mPreviousCacheIndex = tempCacheIndex;
+				}
+				if (mDoPreload && mPreviousImageView != null) {
+					PinchImageView tempImageView = mCurrentImageView;
+					mCurrentImageView = mPreviousImageView;
+					mPreviousImageView = tempImageView;
+				}
+				else {
+					mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
+				}
+				mIsGoingBackward = !mIsGoingBackward;
+				setContentView(mCurrentImageView);
+
+				// need to move mRandomFileProvider to new position.
+				if (mIsGoingBackward) {
+					mRandomFileProvider.goBackward();
+				}
+				else {
+					mRandomFileProvider.goForward();
+				}
+
+				if (mDoPreload) {
+					if (mIsGoingBackward) {
+						mRandomFileProvider.goBackward();
+						mNextFileName = mRandomFileProvider.getCurrentFileName();
+						mRandomFileProvider.goForward();
+					}
+					else {
+						mRandomFileProvider.goForward();
+						mNextFileName = mRandomFileProvider.getCurrentFileName();
+						mRandomFileProvider.goBackward();
+					}
+					mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
+				}
+			}
 		});
 	}
 

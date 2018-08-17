@@ -56,6 +56,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
 		bindPreferenceSummaryToValue(R.string.key_widget_timeout);
 		bindPreferenceSummaryToValue(R.string.key_widget_allowed_call_frequency);
 		addEditListListener();
@@ -157,6 +158,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0));
 		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_allowed_call_frequency,
 				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
 	}
 
 	/**
@@ -197,6 +200,9 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_widget_allowed_call_frequency) {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
 		}
+		else if (preferenceKey == R.string.key_widget_detail_change_with_tap) {
+			value = "";
+		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mAppWidgetId);
 		}
@@ -235,6 +241,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_flip_behavior))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId,
 						Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_change_with_tap))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
+						Boolean.parseBoolean(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_timeout))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, Long.parseLong(stringValue));

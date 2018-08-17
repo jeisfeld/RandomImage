@@ -75,6 +75,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_notification_detail_change_with_tap);
 		addEditListListener();
 		addCancelNotificationListener();
 		updatePropertyEnablement();
@@ -311,6 +312,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_detail_flip_behavior,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false));
 	}
 
 	/**
@@ -369,7 +372,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mNotificationId, -1));
 		}
 		else if (preferenceKey == R.string.key_notification_vibration
-				|| preferenceKey == R.string.key_notification_colored_icon) {
+				|| preferenceKey == R.string.key_notification_colored_icon
+				|| preferenceKey == R.string.key_notification_detail_change_with_tap) {
 			value = "";
 		}
 		else {
@@ -494,6 +498,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_flip_behavior))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId,
 						Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_change_with_tap))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
+						mNotificationId, Boolean.parseBoolean(stringValue));
 			}
 
 			return true;

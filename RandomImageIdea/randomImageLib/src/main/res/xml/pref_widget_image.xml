@@ -65,4 +65,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_widget_detail_flip_behavior"/>
+    <CheckBoxPreference
+        android:key="@string/key_widget_detail_change_with_tap"
+        android:title="@string/pref_title_widget_detail_change_with_tap"/>
 </PreferenceScreen>

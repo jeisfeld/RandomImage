@@ -100,6 +100,9 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_detail_flip_behavior"/>
+        <CheckBoxPreference
+            android:key="@string/key_notification_detail_change_with_tap"
+            android:title="@string/pref_title_notification_detail_change_with_tap"/>
         <Preference
             android:key="@string/key_dummy_cancel_notification"
             android:title="@string/pref_title_cancel_notification"/>

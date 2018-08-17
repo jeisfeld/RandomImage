@@ -263,7 +263,7 @@ public final class NotificationUtil {
 			return;
 		}
 		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, notificationId, -1);
-		boolean vibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
+		boolean isVibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
 				notificationId, false);
 		if (isActivityNotificationStyle(notificationStyle)) {
 			if (SystemUtil.isUsageStatsAvailable() && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
@@ -286,7 +286,7 @@ public final class NotificationUtil {
 				context.startActivity(DisplayImagePopupActivity.createIntent(context, listName, fileName, notificationId));
 				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Popup");
 			}
-			if (vibrate) {
+			if (isVibrate) {
 				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 				if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
 					Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -380,12 +380,12 @@ public final class NotificationUtil {
 		if (ledColor > 0) {
 			notificationBuilder.setLights(LedColor.getLedColor(ledColor), 1500, 3000); // MAGIC_NUMBER
 			notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
-			if (!vibrate) {
+			if (!isVibrate) {
 				notificationBuilder.setVibrate(VIBRATION_PATTERN_EMPTY);
 			}
 		}
 
-		if (vibrate) {
+		if (isVibrate) {
 			notificationBuilder.setVibrate(VIBRATION_PATTERN);
 		}
 

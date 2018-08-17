@@ -268,6 +268,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_background, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_flip_behavior, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_change_with_tap, notificationId);
 		NotificationSettingsActivity.removeNotificationId(notificationId);
 		NotificationUtil.createImageNotificationChannels();
 
