@@ -147,12 +147,6 @@ public class DisplayImagePopupActivity extends BaseActivity {
 					Runnable runnable = new Runnable() {
 						@Override
 						public void run() {
-							if (flingType != FlipType.CLOSE) {
-								DisplayImagePopupActivity.this.startActivity(
-										DisplayRandomImageActivity.createIntent(DisplayImagePopupActivity.this,
-												mListName, mFileName, true, null, mNotificationId));
-								mUserStartedRandomImageActivity = true;
-							}
 							finish();
 						}
 					};
