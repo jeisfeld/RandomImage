@@ -53,6 +53,9 @@
             android:title="@string/pref_title_widget_button_color"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_random_image_view">
+        <CheckBoxPreference
+            android:key="@string/key_widget_detail_use_default"
+            android:title="@string/pref_title_widget_detail_use_default"/>
         <ListPreference
             android:entries="@array/detail_scale_type_names"
             android:entryValues="@array/detail_scale_type_values"

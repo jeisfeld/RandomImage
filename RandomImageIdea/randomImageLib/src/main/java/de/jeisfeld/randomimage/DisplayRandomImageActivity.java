@@ -467,14 +467,17 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		// configurations if triggered from notification
 		NOTIFICATION_MAP.put(mNotificationId, this);
-		mScaleType = ScaleType.fromResourceScaleType(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
-		mBackgroundColor = BackgroundColor.fromResourceValue(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
-		mFlipType = FlipType.fromResourceValue(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
-		mChangeImageWithSingleTap =
-				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false);
+
+		if (!PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, mNotificationId, false)) {
+			mScaleType = ScaleType.fromResourceScaleType(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId, -1));
+			mBackgroundColor = BackgroundColor.fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
+			mFlipType = FlipType.fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+			mChangeImageWithSingleTap =
+					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false);
+		}
 
 		if (!NotificationUtil.isActivityNotificationStyle(
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1))) {
@@ -501,13 +504,17 @@ public class DisplayRandomImageActivity extends StartActivity {
 		WIDGET_MAP.put(mAppWidgetId, this);
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
-		mScaleType = ScaleType.fromResourceScaleType(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
-		mBackgroundColor = BackgroundColor.fromResourceValue(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
-		mFlipType = FlipType.fromResourceValue(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
-		mChangeImageWithSingleTap = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
+
+		if (!PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false)) {
+			mScaleType = ScaleType.fromResourceScaleType(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
+			mBackgroundColor = BackgroundColor.fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
+			mFlipType = FlipType.fromResourceValue(
+					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+			mChangeImageWithSingleTap =
+					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
+		}
 
 		WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);
 	}

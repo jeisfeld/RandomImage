@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.util;
 
+import android.content.Context;
+
 import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
@@ -69,6 +71,9 @@ public final class MigrationUtil {
 		case 26: // MAGIC_NUMBER
 			doMigrationToVersion26();
 			break;
+		case 27: // MAGIC_NUMBER
+			doMigrationToVersion27();
+			break;
 		default:
 			break;
 		}
@@ -121,7 +126,7 @@ public final class MigrationUtil {
 	}
 
 	/**
-	 * Do the migration steps for migration into app version 21.
+	 * Do the migration steps for migration into app version 26.
 	 */
 	private static void doMigrationToVersion26() {
 		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
@@ -143,4 +148,34 @@ public final class MigrationUtil {
 		}
 	}
 
+	/**
+	 * Do the migration steps for migration into app version 27.
+	 */
+	private static void doMigrationToVersion27() {
+		Context context = Application.getAppContext();
+
+		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+			boolean isUndefined = !PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_detail_scale_type, notificationId);
+			boolean isDefault = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, notificationId, 0)
+					== Integer.parseInt(context.getString(R.string.pref_default_detail_scale_type))
+					&& PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, notificationId, -1)
+					== Integer.parseInt(context.getString(R.string.pref_default_detail_background))
+					&& PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, notificationId, -1)
+					== Integer.parseInt(context.getString(R.string.pref_default_detail_flip_behavior))
+					&& !PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, notificationId, false);
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, notificationId, isDefault || isUndefined);
+		}
+
+		for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
+			boolean isUndefined = !PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_scale_type, appWidgetId);
+			boolean isDefault = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId, 0)
+					== Integer.parseInt(context.getString(R.string.pref_default_detail_scale_type))
+					&& PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, appWidgetId, -1)
+					== Integer.parseInt(context.getString(R.string.pref_default_detail_background))
+					&& PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, appWidgetId, -1)
+					== Integer.parseInt(context.getString(R.string.pref_default_detail_flip_behavior))
+					&& !PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, appWidgetId, false);
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, isDefault || isUndefined);
+		}
+	}
 }

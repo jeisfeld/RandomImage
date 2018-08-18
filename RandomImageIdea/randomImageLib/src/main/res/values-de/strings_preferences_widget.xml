@@ -20,6 +20,7 @@
     <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_button_color">Button-Farbe</string>
     <string name="pref_title_widget_display_name">Name des Widgets</string>
+    <string name="pref_title_widget_detail_use_default">Standardeinstellungen verwenden</string>
     <string name="pref_title_widget_detail_scale_type">Skalierung in Detailansicht</string>
     <string name="pref_title_widget_detail_background">Hintergrund in Detailansicht</string>
     <string name="pref_title_widget_detail_flip_behavior">Verhalten beim Schnippen</string>

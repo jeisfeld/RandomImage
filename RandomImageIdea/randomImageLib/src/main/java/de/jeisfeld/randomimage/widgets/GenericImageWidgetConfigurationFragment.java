@@ -75,12 +75,12 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_button_style);
 		bindPreferenceSummaryToValue(R.string.key_widget_button_color);
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_use_default);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
 		addEditListListener();
-
 		updatePropertyEnablement();
 	}
 
@@ -91,8 +91,14 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(mAppWidgetId);
 		Preference buttonColorPreference = findPreference(getString(R.string.key_widget_button_color));
 		buttonColorPreference.setEnabled(buttonStyle != ButtonStyle.GONE);
-	}
 
+		boolean useDefaultSettings =
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false);
+		findPreference(getString(R.string.key_widget_detail_scale_type)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_background)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_flip_behavior)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_change_with_tap)).setEnabled(!useDefaultSettings);
+	}
 
 	@Override
 	public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -166,6 +172,10 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_widget_button_color, R.string.pref_default_widget_button_color));
 		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_use_default, mAppWidgetId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, true);
+		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
@@ -212,6 +222,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_button_color, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_use_default,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_background,
@@ -264,6 +276,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		}
 		else if (preferenceKey == R.string.key_widget_show_cyclically
 				|| preferenceKey == R.string.key_widget_view_as_list
+				|| preferenceKey == R.string.key_widget_detail_use_default
 				|| preferenceKey == R.string.key_widget_detail_change_with_tap) {
 			value = "";
 		}

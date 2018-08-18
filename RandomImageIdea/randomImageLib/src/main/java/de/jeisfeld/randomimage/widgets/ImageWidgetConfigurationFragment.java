@@ -64,6 +64,11 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_display_name, getAppWidgetId(), stringValue);
 					WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), getAppWidgetId());
 				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_use_default))) {
+					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, getAppWidgetId(),
+							Boolean.parseBoolean(stringValue));
+					updatePropertyEnablement();
+				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, getAppWidgetId(),
 							Integer.parseInt(stringValue));

@@ -53,6 +53,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_use_default);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
@@ -60,6 +61,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_widget_timeout);
 		bindPreferenceSummaryToValue(R.string.key_widget_allowed_call_frequency);
 		addEditListListener();
+		updatePropertyEnablement();
 	}
 
 	@Override
@@ -111,6 +113,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	 */
 	protected final boolean setDefaultValues() {
 		boolean isUpdated = false;
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_use_default, mAppWidgetId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, true);
+		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
@@ -153,18 +159,32 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_use_default,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_background,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_flip_behavior,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_timeout,
 				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0));
 		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_allowed_call_frequency,
 				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, mAppWidgetId, 0));
-		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
-				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
+	}
+
+	/**
+	 * Enable or disable properties in dependence of other properties.
+	 */
+	protected final void updatePropertyEnablement() {
+		boolean useDefaultSettings =
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false);
+		findPreference(getString(R.string.key_widget_detail_scale_type)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_background)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_flip_behavior)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_change_with_tap)).setEnabled(!useDefaultSettings);
 	}
 
 	/**
@@ -205,7 +225,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_widget_allowed_call_frequency) {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
 		}
-		else if (preferenceKey == R.string.key_widget_detail_change_with_tap) {
+		else if (preferenceKey == R.string.key_widget_detail_use_default
+				|| preferenceKey == R.string.key_widget_detail_change_with_tap) {
 			value = "";
 		}
 		else {
@@ -234,6 +255,11 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId, stringValue);
 				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
 				MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_use_default))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId,
+						Boolean.parseBoolean(stringValue));
+				updatePropertyEnablement();
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId,
