@@ -49,8 +49,8 @@
     <string name="pref_title_widget_button_color">Button Color</string>
     <string name="pref_title_widget_display_name">Widget Name</string>
     <string name="pref_title_widget_detail_use_default">Use default settings</string>
-    <string name="pref_title_widget_detail_scale_type">Scaling in detail view</string>
-    <string name="pref_title_widget_detail_background">Background in detail view</string>
+    <string name="pref_title_widget_detail_scale_type">Image scaling</string>
+    <string name="pref_title_widget_detail_background">Background color</string>
     <string name="pref_title_widget_detail_flip_behavior">Action when flipping</string>
     <string name="pref_title_widget_detail_change_with_tap">Use tap instead of flipping</string>
     <string name="pref_title_widget_timeout">Widget usage time</string>

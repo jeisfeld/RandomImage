@@ -75,8 +75,8 @@
     <string name="pref_title_use_regex_filter">Use regexp filter</string>
     <string name="pref_title_hidden_lists_pattern">Hide lists (Regexp)</string>
     <string name="pref_title_hidden_folders_pattern">Hide folders (Regexp)</string>
-    <string name="pref_title_detail_scale_type">Scaling in detail view</string>
-    <string name="pref_title_detail_background">Background in detail view</string>
+    <string name="pref_title_detail_scale_type">Image scaling</string>
+    <string name="pref_title_detail_background">Background color</string>
     <string name="pref_title_detail_flip_behavior">Action when flipping</string>
     <string name="pref_title_detail_change_with_tap">Use tap instead of flipping</string>
     <string name="pref_default_language" translatable="false">0</string>
