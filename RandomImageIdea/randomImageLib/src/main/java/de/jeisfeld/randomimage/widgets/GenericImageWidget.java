@@ -120,7 +120,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 			configureBackground(context, remoteViews, appWidgetManager, appWidgetId);
 		}
 
-		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+		appWidgetManager.partiallyUpdateAppWidget(appWidgetId, remoteViews);
 
 		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 			new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),

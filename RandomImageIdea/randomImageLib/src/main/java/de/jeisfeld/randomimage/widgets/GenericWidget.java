@@ -11,6 +11,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -86,11 +88,20 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	public final void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-		for (int appWidgetId : appWidgetIds) {
-			UpdateType updateType = mWidgetUpdateTypes.get(appWidgetId);
+		for (final int appWidgetId : appWidgetIds) {
+			final UpdateType updateType = mWidgetUpdateTypes.get(appWidgetId);
 			mWidgetUpdateTypes.remove(appWidgetId);
 
-			onUpdateWidget(context, appWidgetManager, appWidgetId, updateType);
+			final PendingResult result = goAsync();
+			new Thread() {
+				public void run() {
+					Looper.prepare();
+					onUpdateWidget(context, appWidgetManager, appWidgetId, updateType);
+					if (result != null) {
+						result.finish();
+					}
+				}
+			}.start();
 		}
 	}
 
@@ -350,6 +361,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 					for (int buttonId : buttonIds) {
 						mRemoteViews.setViewVisibility(buttonId, View.VISIBLE);
 					}
+					setAlpha(255); // MAGIC_NUMBER
 				}
 
 				@Override
@@ -359,9 +371,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 				@Override
 				public void onAnimationEnd(final Animator animation) {
-					for (int buttonId : buttonIds) {
-						mRemoteViews.setViewVisibility(buttonId, View.INVISIBLE);
-					}
+					setAlpha(0);
 					synchronized (BUTTON_ANIMATORS) {
 						BUTTON_ANIMATORS.remove(appWidgetId);
 					}
@@ -388,7 +398,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				mRemoteViews.setInt(buttonId, "setAlpha", alpha);
 				mRemoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
 			}
-			mAppWidgetManager.updateAppWidget(mAppWidgetId, mRemoteViews);
+			mAppWidgetManager.partiallyUpdateAppWidget(mAppWidgetId, mRemoteViews);
 		}
 
 		/**
@@ -396,7 +406,12 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		 */
 		public void start() {
 			if (mAnimatorSet != null) {
-				mAnimatorSet.start();
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+					@Override
+					public void run() {
+						mAnimatorSet.start();
+					}
+				});
 			}
 		}
 
