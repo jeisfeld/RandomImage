@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,6 +49,11 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	private boolean mHasFile = false;
 
 	/**
+	 * Flag indicating if the cache size has been determined already.
+	 */
+	private boolean mHasCachSizeDetermined = false;
+
+	/**
 	 * The flipType defining the rules how new file names are provided.
 	 */
 	private FlipType mFlipType = FlipType.AVOID_REPETITIONS;
@@ -85,7 +89,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 									final FlipType flipType, final RandomFileListProvider initData) {
 		mProvider = provider;
 		mFlipType = flipType;
-		mCacheSize = getCacheSizeFromFlipType();
+		determineCacheSize();
 
 		if (initData != null && initData instanceof CachedRandomFileProvider) {
 			CachedRandomFileProvider initData2 = (CachedRandomFileProvider) initData;
@@ -94,16 +98,6 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 			mCachedFileNames.addAll(initData2.mCachedFileNames);
 			mFlipType = initData2.mFlipType;
 			mCacheSize = initData2.mCacheSize;
-		}
-		else if (mFlipType == FlipType.CYCLICAL) {
-			mCachedFileNames.addAll(getAllImageFiles());
-			Collections.shuffle(mCachedFileNames);
-			mHasFile = true;
-
-			if (firstFileName != null) {
-				mCachedFileNames.remove(firstFileName);
-				mCachedFileNames.add(0, firstFileName);
-			}
 		}
 		else if (firstFileName != null) {
 			mCachedFileNames.add(firstFileName);
@@ -122,6 +116,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 		in.readStringList(mCachedFileNames);
 		mFlipType = FlipType.fromResourceValue(in.readInt());
 		mCacheSize = in.readInt();
+		mHasCachSizeDetermined = in.readByte() > 0;
 	}
 
 	@Override
@@ -139,8 +134,12 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	@Override
 	public final void goForward() {
 		if (!mHasFile) {
-			mCachedFileNames.add(getRandomFileName());
+			synchronized (mCachedFileNames) {
+				mCachedFileNames.add(getRandomFileName());
+				mHasFile = true;
+			}
 		}
+		determineCacheSize();
 
 		synchronized (mCachedFileNames) {
 			switch (mFlipType) {
@@ -186,8 +185,12 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	@Override
 	public final void goBackward() {
 		if (!mHasFile) {
-			mCachedFileNames.add(getRandomFileName());
+			synchronized (mCachedFileNames) {
+				mCachedFileNames.add(getRandomFileName());
+				mHasFile = true;
+			}
 		}
+		determineCacheSize();
 
 		synchronized (mCachedFileNames) {
 			switch (mFlipType) {
@@ -250,23 +253,58 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 
 	/**
 	 * Retrieve the cache size from the flip type.
-	 *
-	 * @return the cach size.
 	 */
-	private int getCacheSizeFromFlipType() {
+	private void determineCacheSize() {
+		if (mHasCachSizeDetermined) {
+			return;
+		}
 		switch (mFlipType) {
 		case NEW_IMAGE:
-			return 2;
+			mHasCachSizeDetermined = true;
+			mCacheSize = 2;
+			return;
 		case ONE_BACK:
-			return 3; // MAGIC_NUMBER
+			mHasCachSizeDetermined = true;
+			mCacheSize = 3; // MAGIC_NUMBER
+			return;
 		case MULTIPLE_BACK:
-			return (getAllImageFiles().size() + 1) / 2;
+			if (mProvider.isReady()) {
+				mHasCachSizeDetermined = true;
+				mCacheSize = (getAllImageFiles().size() + 1) / 2;
+			}
+			else {
+				mCacheSize = 10; // MAGIC_NUMBER
+			}
+			return;
 		case AVOID_REPETITIONS:
-			return getAllImageFiles().size() * 9 / 10; // MAGIC_NUMBER
+			if (mProvider.isReady()) {
+				mHasCachSizeDetermined = true;
+				mCacheSize = getAllImageFiles().size() * 9 / 10; // MAGIC_NUMBER
+			}
+			else {
+				mCacheSize = 10; // MAGIC_NUMBER
+			}
+			return;
 		case CYCLICAL:
-			return getAllImageFiles().size();
+			if (mProvider.isReady()) {
+				mCacheSize = getAllImageFiles().size();
+				mCachedFileNames.addAll(getAllImageFiles());
+				Collections.shuffle(mCachedFileNames);
+
+				if (mCachedFileNames.size() > 0) {
+					String firstFileName = mCachedFileNames.get(0);
+					mCachedFileNames.remove(firstFileName);
+					mCachedFileNames.add(0, firstFileName);
+				}
+				mHasFile = true;
+				mHasCachSizeDetermined = true;
+			}
+			else {
+				mCacheSize = 10; // MAGIC_NUMBER
+			}
+			return;
 		default:
-			return 0;
+			mCacheSize = 0;
 		}
 	}
 
@@ -281,7 +319,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 		}
 
 		synchronized (mCachedFileNames) {
-			mCachedFileNames.removeAll(Arrays.asList(mCachedFileNames.get(mCurrentPosition)));
+			mCachedFileNames.removeAll(Collections.singletonList(mCachedFileNames.get(mCurrentPosition)));
 			if (mCurrentPosition >= mCachedFileNames.size()) {
 				mCurrentPosition = mCachedFileNames.size() - 1;
 			}
@@ -330,5 +368,6 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 		dest.writeStringList(mCachedFileNames);
 		dest.writeInt(mFlipType.getResourceValue());
 		dest.writeInt(mCacheSize);
+		dest.writeByte((byte) (mHasCachSizeDetermined ? 1 : 0));
 	}
 }

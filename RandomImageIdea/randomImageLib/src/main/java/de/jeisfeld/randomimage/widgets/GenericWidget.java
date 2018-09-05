@@ -94,6 +94,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 			final PendingResult result = goAsync();
 			new Thread() {
+				@Override
 				public void run() {
 					Looper.prepare();
 					onUpdateWidget(context, appWidgetManager, appWidgetId, updateType);
