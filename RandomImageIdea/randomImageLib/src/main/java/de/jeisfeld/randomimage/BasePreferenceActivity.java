@@ -15,7 +15,7 @@ import android.util.Log;
 public abstract class BasePreferenceActivity extends PreferenceActivity {
 	@Override
 	protected final void attachBaseContext(final Context newBase) {
-		super.attachBaseContext(Application.getAppContext());
+		super.attachBaseContext(Application.createContextWrapperForLocale(newBase));
 	}
 
 	// OVERRIDABLE

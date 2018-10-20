@@ -14,7 +14,7 @@ import android.util.Log;
 public abstract class BaseActivity extends Activity {
 	@Override
 	protected final void attachBaseContext(final Context newBase) {
-		super.attachBaseContext(Application.getAppContext());
+		super.attachBaseContext(Application.createContextWrapperForLocale(newBase));
 	}
 
 	// OVERRIDABLE

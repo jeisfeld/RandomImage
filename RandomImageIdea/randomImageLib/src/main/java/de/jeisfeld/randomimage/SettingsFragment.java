@@ -323,7 +323,6 @@ public class SettingsFragment extends PreferenceFragment {
 
 				if (mLanguageString == null || !mLanguageString.equals(value)) {
 					PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, stringValue);
-					Application.setLanguage();
 
 					Application.startApplication(getActivity());
 					if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {

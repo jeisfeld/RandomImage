@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -9,7 +10,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.support.annotation.RequiresApi;
+import android.os.LocaleList;
 import android.util.Log;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -36,10 +37,6 @@ public class Application extends android.app.Application {
 	 * The default tag for logging.
 	 */
 	public static final String TAG = "Randomimage.JE";
-	/**
-	 * The system default locale.
-	 */
-	private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
 	@Override
 	@SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
@@ -49,7 +46,6 @@ public class Application extends android.app.Application {
 		Application.mContext = getApplicationContext();
 
 		MigrationUtil.migrateAppVersion();
-		setLanguage();
 		setExceptionHandler();
 		if (VERSION.SDK_INT >= VERSION_CODES.O) {
 			NotificationUtil.createNotificationChannels(this);
@@ -149,9 +145,11 @@ public class Application extends android.app.Application {
 	}
 
 	/**
-	 * Set the language.
+	 * Get the configured application locale.
+	 *
+	 * @return The configured application locale.
 	 */
-	public static void setLanguage() {
+	private static Locale getApplicationLocale() {
 		String languageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
 		if (languageString == null || languageString.length() == 0) {
 			languageString = "0";
@@ -159,64 +157,50 @@ public class Application extends android.app.Application {
 		}
 
 		int languageSetting = Integer.parseInt(languageString);
-		if (languageSetting == 0 && VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
-			return;
-		}
 		switch (languageSetting) {
 		case 0:
-			setLocale(DEFAULT_LOCALE);
-			break;
+			return Locale.getDefault();
 		case 1:
-			setLocale(Locale.ENGLISH);
-			break;
+			return Locale.ENGLISH;
 		case 2:
-			setLocale(Locale.GERMAN);
-			break;
-		case 3: // MAGIC_NUMBER
-			setLocale(new Locale("es"));
-			break;
+			return Locale.GERMAN;
 		default:
+			return Locale.getDefault();
 		}
 	}
 
 	/**
-	 * Set the locale.
+	 * Create a ContextWrapper, wrappint the context with a specific locale.
 	 *
-	 * @param locale The locale to be set.
+	 * @param context The original context.
+	 * @return The context wrapper.
 	 */
-	private static void setLocale(final Locale locale) {
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-			setLocale17(locale);
+	public static ContextWrapper createContextWrapperForLocale(final Context context) {
+		Resources res = context.getResources();
+		Configuration configuration = res.getConfiguration();
+		Locale newLocale = getApplicationLocale();
+		Context newContext = context;
+
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			configuration.setLocale(newLocale);
+
+			LocaleList localeList = new LocaleList(newLocale);
+			LocaleList.setDefault(localeList);
+			configuration.setLocales(localeList);
+
+			newContext = context.createConfigurationContext(configuration);
+
+		}
+		else if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+			configuration.setLocale(newLocale);
+			newContext = context.createConfigurationContext(configuration);
+
 		}
 		else {
-			setLocale16(locale);
+			configuration.locale = newLocale;
+			res.updateConfiguration(configuration, res.getDisplayMetrics());
 		}
-	}
-
-	/**
-	 * Set the locale for Android version above Jelly Bean.
-	 *
-	 * @param locale The locale to be set.
-	 */
-	@RequiresApi(api = VERSION_CODES.JELLY_BEAN_MR1)
-	private static void setLocale17(final Locale locale) {
-		Resources res = getAppContext().getResources();
-		Configuration conf = res.getConfiguration();
-		conf.setLocale(locale);
-		res.updateConfiguration(conf, res.getDisplayMetrics());
-	}
-
-	/**
-	 * Set the locale for Android version below Jelly Bean.
-	 *
-	 * @param locale The locale to be set.
-	 */
-	@SuppressWarnings("deprecation")
-	private static void setLocale16(final Locale locale) {
-		Resources res = getAppContext().getResources();
-		Configuration conf = res.getConfiguration();
-		conf.locale = locale;
-		res.updateConfiguration(conf, res.getDisplayMetrics());
+		return new ContextWrapper(newContext);
 	}
 
 	/**
