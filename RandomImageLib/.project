@@ -71,7 +71,7 @@
 		<link>
 			<name>genref/de/jeisfeld/randomimagelib/R.java</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/RandomImageIdea/randomImageLib/build/generated/source/r/debug/de/jeisfeld/randomimagelib/R.java</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/RandomImageIdea/randomImageLib/build/generated/not_namespaced_r_class_sources/debug/generateDebugRFile/out/de/jeisfeld/randomimagelib/R.java</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
