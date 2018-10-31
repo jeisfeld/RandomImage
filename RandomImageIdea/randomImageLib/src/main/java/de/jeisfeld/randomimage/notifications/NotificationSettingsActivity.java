@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage.notifications;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -166,7 +167,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 		else {
 			String notificationName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
 			header.title = notificationName == null ? getString(R.string.pref_heading_notifcation) + " " + (index + 1) : notificationName;
-			header.summary = getHeaderSummary(notificationId);
+			header.summary = getHeaderSummary(this, notificationId);
 		}
 		return header;
 	}
@@ -202,12 +203,13 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * Get the summary of the header entry for a notification.
 	 *
+	 * @param context the context.
 	 * @param notificationId The notification id.
 	 * @return The header summary
 	 */
-	private static String getHeaderSummary(final int notificationId) {
+	private static String getHeaderSummary(final Context context, final int notificationId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
-		String frequencyString = NotificationConfigurationFragment.getNotificationFrequencyHeaderString(notificationId);
+		String frequencyString = NotificationConfigurationFragment.getNotificationFrequencyHeaderString(context, notificationId);
 		if (frequencyString == null) {
 			return listName;
 		}

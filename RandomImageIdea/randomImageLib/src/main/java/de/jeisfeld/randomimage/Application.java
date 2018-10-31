@@ -37,6 +37,10 @@ public class Application extends android.app.Application {
 	 * The default tag for logging.
 	 */
 	public static final String TAG = "Randomimage.JE";
+	/**
+	 * The default locale.
+	 */
+	private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
 	@Override
 	@SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
@@ -44,11 +48,13 @@ public class Application extends android.app.Application {
 	public final void onCreate() {
 		super.onCreate();
 		Application.mContext = getApplicationContext();
+		Application.mContext = createContextWrapperForLocale(getApplicationContext());
 
 		MigrationUtil.migrateAppVersion();
+		SettingsActivity.setDefaultSharedPreferences(getAppContext());
 		setExceptionHandler();
 		if (VERSION.SDK_INT >= VERSION_CODES.O) {
-			NotificationUtil.createNotificationChannels(this);
+			NotificationUtil.createNotificationChannels(mContext);
 		}
 
 		// Set statistics
@@ -118,7 +124,7 @@ public class Application extends android.app.Application {
 	public static int getVersion() {
 		PackageInfo pInfo;
 		try {
-			pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
+			pInfo = getAppContext().getPackageManager().getPackageInfo(getAppContext().getPackageName(), 0);
 			return pInfo.versionCode;
 		}
 		catch (NameNotFoundException e) {
@@ -135,7 +141,7 @@ public class Application extends android.app.Application {
 	public static String getVersionString() {
 		PackageInfo pInfo;
 		try {
-			pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
+			pInfo = getAppContext().getPackageManager().getPackageInfo(getAppContext().getPackageName(), 0);
 			return pInfo.versionName;
 		}
 		catch (NameNotFoundException e) {
@@ -159,13 +165,13 @@ public class Application extends android.app.Application {
 		int languageSetting = Integer.parseInt(languageString);
 		switch (languageSetting) {
 		case 0:
-			return Locale.getDefault();
+			return DEFAULT_LOCALE;
 		case 1:
 			return Locale.ENGLISH;
 		case 2:
 			return Locale.GERMAN;
 		default:
-			return Locale.getDefault();
+			return DEFAULT_LOCALE;
 		}
 	}
 

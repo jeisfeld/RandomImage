@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.widgets;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -128,7 +129,7 @@ public class WidgetSettingsActivity extends BasePreferenceActivity {
 
 		Header header = new Header();
 		header.title = title;
-		header.summary = getHeaderSummary(widgetClass, appWidgetId);
+		header.summary = getHeaderSummary(this, widgetClass, appWidgetId);
 		header.fragment = fragmentString;
 		header.id = appWidgetId;
 
@@ -162,13 +163,14 @@ public class WidgetSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * Get the summary of the header entry for a widget.
 	 *
+	 * @param context the context.
 	 * @param widgetClass The widget class.
 	 * @param appWidgetId The widget id.
 	 * @return The header summary
 	 */
-	private static String getHeaderSummary(final Class<? extends GenericWidget> widgetClass, final int appWidgetId) {
+	private static String getHeaderSummary(final Context context, final Class<? extends GenericWidget> widgetClass, final int appWidgetId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
-		String timerString = GenericImageWidgetConfigurationFragment.getAlarmIntervalHeaderString(appWidgetId);
+		String timerString = GenericImageWidgetConfigurationFragment.getAlarmIntervalHeaderString(context, appWidgetId);
 		if (widgetClass.equals(MiniWidget.class) || timerString == null) {
 			return listName;
 		}

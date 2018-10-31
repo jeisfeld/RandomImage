@@ -353,7 +353,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		ListPreference preference = (ListPreference) findPreference(getString(R.string.key_notification_list_name));
 
 		ArrayList<String> listNameList = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-		String[] listNames = listNameList.toArray(new String[listNameList.size()]);
+		String[] listNames = listNameList.toArray(new String[0]);
 
 		preference.setEntries(listNames);
 		preference.setEntryValues(listNames);
@@ -414,12 +414,13 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * Get the frequency of a notification as String.
 	 *
+	 * @param context the context.
 	 * @param notificationId The notification id
 	 * @return The frequency as String.
 	 */
-	public static String getNotificationFrequencyHeaderString(final int notificationId) {
+	public static String getNotificationFrequencyHeaderString(final Context context, final int notificationId) {
 		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, 0);
-		return TimeSelectorPreference.getDefaultSummaryFromValue(Long.toString(frequency));
+		return TimeSelectorPreference.getDefaultSummaryFromValue(context, Long.toString(frequency));
 	}
 
 	/**

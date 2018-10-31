@@ -1,6 +1,7 @@
 package de.jeisfeld.randomimage.widgets;
 
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -241,7 +242,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		ListPreference preference = (ListPreference) findPreference(getString(R.string.key_widget_list_name));
 
 		ArrayList<String> listNameList = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-		String[] listNames = listNameList.toArray(new String[listNameList.size()]);
+		String[] listNames = listNameList.toArray(new String[0]);
 
 		preference.setEntries(listNames);
 		preference.setEntryValues(listNames);
@@ -291,12 +292,13 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	/**
 	 * Get the alarm interval of a Widget as String.
 	 *
+	 * @param context the context.
 	 * @param appWidgetId The widget id.
 	 * @return The alarm interval as String.
 	 */
-	public static String getAlarmIntervalHeaderString(final int appWidgetId) {
+	public static String getAlarmIntervalHeaderString(final Context context, final int appWidgetId) {
 		long alarmInterval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, -1);
-		return TimeSelectorPreference.getDefaultSummaryFromValue(Long.toString(alarmInterval));
+		return TimeSelectorPreference.getDefaultSummaryFromValue(context, Long.toString(alarmInterval));
 	}
 
 	/**

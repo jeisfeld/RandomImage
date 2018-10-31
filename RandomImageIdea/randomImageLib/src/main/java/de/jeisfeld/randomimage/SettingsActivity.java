@@ -68,7 +68,7 @@ public class SettingsActivity extends BaseActivity {
 	 * @param context The Context in which the preferences should be set.
 	 */
 	public static void setDefaultSharedPreferences(final Context context) {
-		PreferenceManager.setDefaultValues(Application.getAppContext(), R.xml.pref_general, false);
+		PreferenceManager.setDefaultValues(Application.getAppContext(), R.xml.pref_general, true);
 	}
 
 	/**

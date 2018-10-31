@@ -23,7 +23,7 @@ public class TimeSelectorPreference extends DialogPreference {
 	/**
 	 * The standard entries of the Spinner.
 	 */
-	private static final SpinnerEntry[] SPINNER_ENTRIES;
+	private static final SpinnerEntry[] DEFAULT_SPINNER_ENTRIES;
 	/**
 	 * The current entries of the Spinner.
 	 */
@@ -38,7 +38,7 @@ public class TimeSelectorPreference extends DialogPreference {
 	private Spinner mSpinner;
 
 	static {
-		SPINNER_ENTRIES = SpinnerEntry.getDefaultSpinnerEntries(Application.getAppContext());
+		DEFAULT_SPINNER_ENTRIES = SpinnerEntry.getDefaultSpinnerEntries(Application.getAppContext());
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class TimeSelectorPreference extends DialogPreference {
 		boolean allowSeconds = a.getBoolean(R.styleable.TimeSelectorPreference_allowSeconds, true);
 		a.recycle();
 
-		mSpinnerEntries = SpinnerEntry.setIndefiniteValue(SPINNER_ENTRIES, indefiniteValue);
+		mSpinnerEntries = SpinnerEntry.setIndefiniteValue(SpinnerEntry.getDefaultSpinnerEntries(context), indefiniteValue);
 		if (!allowSeconds) {
 			mSpinnerEntries = SpinnerEntry.hideSeconds(mSpinnerEntries);
 		}
@@ -75,8 +75,8 @@ public class TimeSelectorPreference extends DialogPreference {
 	protected final void onBindDialogView(final View view) {
 		super.onBindDialogView(view);
 
-		mEditText = (EditText) view.findViewById(R.id.editTextUnits);
-		mSpinner = (Spinner) view.findViewById(R.id.spinnerUnits);
+		mEditText = view.findViewById(R.id.editTextUnits);
+		mSpinner = view.findViewById(R.id.spinnerUnits);
 
 		ArrayAdapter<SpinnerEntry> dataAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, mSpinnerEntries);
 		mSpinner.setAdapter(dataAdapter);
@@ -129,11 +129,12 @@ public class TimeSelectorPreference extends DialogPreference {
 	/**
 	 * Get the summary text from the value.
 	 *
+	 * @param context the context.
 	 * @param value The value.
 	 * @return The summary text.
 	 */
-	public static String getDefaultSummaryFromValue(final String value) {
-		DialogData dialogData = DialogData.fromValue(SPINNER_ENTRIES, Long.parseLong(value));
+	public static String getDefaultSummaryFromValue(final Context context, final String value) {
+		DialogData dialogData = DialogData.fromValue(DEFAULT_SPINNER_ENTRIES, Long.parseLong(value));
 		return dialogData.getValue() == 0 ? null : dialogData.getDisplayText();
 	}
 
@@ -263,7 +264,7 @@ public class TimeSelectorPreference extends DialogPreference {
 
 			if (result.mUnitsEntry == 0) {
 				result.mUnitsEntry = 1;
-				spinner.setSelection(SPINNER_ENTRIES.length - 1);
+				spinner.setSelection(DEFAULT_SPINNER_ENTRIES.length - 1);
 			}
 
 			result.mSpinnerEntry = (SpinnerEntry) spinner.getSelectedItem();
@@ -325,7 +326,7 @@ public class TimeSelectorPreference extends DialogPreference {
 				}
 			}
 			else {
-				unitName = originalUnitName.replaceAll("[\\(\\)]", "");
+				unitName = originalUnitName.replaceAll("[()]", "");
 			}
 			return Long.toString(mUnitsEntry) + " " + unitName;
 		}
