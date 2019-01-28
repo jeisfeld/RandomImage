@@ -20,6 +20,7 @@
     <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_button_color">Button-Farbe</string>
     <string name="pref_title_widget_display_name">Name des Widgets</string>
+    <string name="pref_title_widget_icon_image">Icon des Widgets</string>
     <string name="pref_title_widget_detail_use_default">Standardeinstellungen verwenden</string>
     <string name="pref_title_widget_detail_scale_type">Bildskalierung</string>
     <string name="pref_title_widget_detail_background">Hintergrundfarbe</string>
@@ -31,6 +32,10 @@
     <string name="pref_indefinite_value_widget_allowed_call_frequency">keine Sperre</string>
 
     <!-- String arrays -->
+    <string-array name="icon_image_names">
+        <item>Standard</item>
+        <item>Eigenes Bild</item>
+    </string-array>
     <string-array name="background_style_names">
         <item>Rahmen mit Bild füllen</item>
         <item>Kein Hintergrund</item>

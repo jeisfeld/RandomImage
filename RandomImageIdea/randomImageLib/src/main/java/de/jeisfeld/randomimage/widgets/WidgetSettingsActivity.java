@@ -11,17 +11,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.jeisfeld.randomimage.BasePreferenceActivity;
+import de.jeisfeld.randomimage.SelectDirectoryActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
+import de.jeisfeld.randomimage.view.ImageSelectionPreference.ChosenImageListener;
+import de.jeisfeld.randomimage.view.ImageSelectionPreference.ChosenImageListenerActivity;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
 /**
  * Activity to display the settings page.
  */
-public class WidgetSettingsActivity extends BasePreferenceActivity {
+public class WidgetSettingsActivity extends BasePreferenceActivity implements ChosenImageListenerActivity {
 	/**
 	 * Resource String for the hash code parameter used to identify the instance of the activity.
 	 */
@@ -31,6 +34,11 @@ public class WidgetSettingsActivity extends BasePreferenceActivity {
 	 * A map allowing to get the activity from its hashCode.
 	 */
 	private static SparseArray<WidgetSettingsActivity> mActivityMap = new SparseArray<>();
+
+	/**
+	 * A listener called when an image has been selected via ImageSelectionPreference.
+	 */
+	private ChosenImageListener mChosenImageListener = null;
 
 	/**
 	 * Utility method to start the activity.
@@ -163,7 +171,7 @@ public class WidgetSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * Get the summary of the header entry for a widget.
 	 *
-	 * @param context the context.
+	 * @param context     the context.
 	 * @param widgetClass The widget class.
 	 * @param appWidgetId The widget id.
 	 * @return The header summary
@@ -179,4 +187,24 @@ public class WidgetSettingsActivity extends BasePreferenceActivity {
 		}
 	}
 
+	@Override
+	public final void setChosenImageListener(final ChosenImageListener listener) {
+		mChosenImageListener = listener;
+	}
+
+	@Override
+	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+		case SelectDirectoryActivity.REQUEST_CODE:
+			if (resultCode == RESULT_OK) {
+				String selectedImage = SelectDirectoryActivity.getSelectedImage(resultCode, data);
+				if (mChosenImageListener != null) {
+					mChosenImageListener.onChosenImage(selectedImage);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }

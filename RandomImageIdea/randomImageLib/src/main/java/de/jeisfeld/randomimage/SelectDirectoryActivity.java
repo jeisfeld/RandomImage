@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
@@ -43,7 +44,7 @@ import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
- * Add images to the list via browsing folders.
+ * Add images to the list via browsing folders. Alternative use: select one image via browsing folders.
  */
 public class SelectDirectoryActivity extends BaseActivity {
 	/**
@@ -55,9 +56,17 @@ public class SelectDirectoryActivity extends BaseActivity {
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 	/**
+	 * The resource key for the flag if just an image should be selected.
+	 */
+	private static final String STRING_EXTRA_SELECT_IMAGE = "de.jeisfeld.randomimage.SELECT_IMAGE";
+	/**
 	 * The resource key for the flag indicating that the list was updated.
 	 */
 	private static final String STRING_RESULT_UPDATED = "de.jeisfeld.randomimage.UPDATED";
+	/**
+	 * The resource key for the selected image.
+	 */
+	private static final String STRING_RESULT_SELECTED_IMAGE = "de.jeisfeld.randomimage.SELECTED_IMAGE";
 	/**
 	 * The size of the displayed thumbnails.
 	 */
@@ -109,6 +118,11 @@ public class SelectDirectoryActivity extends BaseActivity {
 	private String mListName;
 
 	/**
+	 * The flag indicating if an image should be selected instead of updating an image list.
+	 */
+	private boolean mSelectImage = false;
+
+	/**
 	 * Flag indicating if the current folder is an image folder.
 	 */
 	private boolean mIsImageFolder;
@@ -127,10 +141,22 @@ public class SelectDirectoryActivity extends BaseActivity {
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
+	/**
+	 * Static helper method to start the activity.
+	 *
+	 * @param activity The activity starting this activity.
+	 */
+	public static void startActivity(final Activity activity) {
+		Intent intent = new Intent(activity, SelectDirectoryActivity.class);
+		intent.putExtra(STRING_EXTRA_SELECT_IMAGE, true);
+		activity.startActivityForResult(intent, REQUEST_CODE);
+	}
+
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+		mSelectImage = getIntent().getBooleanExtra(STRING_EXTRA_SELECT_IMAGE, false);
 		setContentView(R.layout.activity_select_directory);
 
 		if (savedInstanceState != null) {
@@ -160,12 +186,12 @@ public class SelectDirectoryActivity extends BaseActivity {
 
 		mSubdirs = getDirectories(mCurrentFolder);
 
-		mCurrentFolderView = (TextView) findViewById(R.id.textCurrentFolder);
+		mCurrentFolderView = findViewById(R.id.textCurrentFolder);
 		mCurrentFolderView.setText(mCurrentFolder);
-		mListView = (ListView) findViewById(R.id.listViewSubfolders);
+		mListView = findViewById(R.id.listViewSubfolders);
 		mListAdapter = createListAdapter(mSubdirs);
 		mListView.setAdapter(mListAdapter);
-		mGridView = (GridView) findViewById(R.id.gridViewImages);
+		mGridView = findViewById(R.id.gridViewImages);
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -348,6 +374,10 @@ public class SelectDirectoryActivity extends BaseActivity {
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
+		if (mSelectImage) {
+			return super.onCreateOptionsMenu(menu);
+		}
+
 		getMenuInflater().inflate(R.menu.select_directory, menu);
 
 		if (!mIsImageFolder) {
@@ -423,7 +453,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 	}
 
 	/**
-	 * Static helper method to extract the selected folder.
+	 * Static helper method to get information if the list was updated.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
 	 * @param data       The activity response data.
@@ -432,10 +462,27 @@ public class SelectDirectoryActivity extends BaseActivity {
 	public static boolean getUpdatedFlag(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_UPDATED, false);
+			return res != null && res.getBoolean(STRING_RESULT_UPDATED, false);
 		}
 		else {
 			return false;
+		}
+	}
+
+	/**
+	 * Static helper method to retrieve the selected image.
+	 *
+	 * @param resultCode The result code indicating if the response was successful.
+	 * @param data       The activity response data.
+	 * @return the selected image.
+	 */
+	public static String getSelectedImage(final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			Bundle res = data.getExtras();
+			return res == null ? null : res.getString(STRING_RESULT_SELECTED_IMAGE);
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -444,9 +491,23 @@ public class SelectDirectoryActivity extends BaseActivity {
 	 *
 	 * @param isUpdated The flag indicating that the list was updated.
 	 */
-	protected final void returnResult(final boolean isUpdated) {
+	private void returnResult(final boolean isUpdated) {
 		Bundle resultData = new Bundle();
 		resultData.putBoolean(STRING_RESULT_UPDATED, mUpdatedList || isUpdated);
+		Intent intent = new Intent();
+		intent.putExtras(resultData);
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+
+	/**
+	 * Helper method: Return the selected image.
+	 *
+	 * @param selectedImage The selected image.
+	 */
+	private void returnResult(final String selectedImage) {
+		Bundle resultData = new Bundle();
+		resultData.putString(STRING_RESULT_SELECTED_IMAGE, selectedImage);
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
@@ -502,6 +563,16 @@ public class SelectDirectoryActivity extends BaseActivity {
 
 			imageView.setAdjustViewBounds(true);
 			imageView.setLayoutParams(new LayoutParams(GRIDVIEW_THUMB_SIZE, GRIDVIEW_THUMB_SIZE));
+
+			if (mSelectImage) {
+				imageView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						returnResult(mFileNames.get(position));
+						finish();
+					}
+				});
+			}
 
 			new Thread() {
 				@Override

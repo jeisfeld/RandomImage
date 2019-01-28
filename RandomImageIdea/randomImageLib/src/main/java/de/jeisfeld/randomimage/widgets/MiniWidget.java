@@ -4,9 +4,12 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -14,6 +17,12 @@ import de.jeisfeld.randomimagelib.R;
  * The base widget, allowing to open the app for a specific list.
  */
 public class MiniWidget extends GenericWidget {
+	/**
+	 * The size of the image in the heading.
+	 */
+	private static final int LAUNCHER_IMAGE_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48,
+			Application.getAppContext().getResources().getDisplayMetrics());
+
 	@Override
 	public final void onUpdateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
 									 final UpdateType updateType) {
@@ -26,6 +35,14 @@ public class MiniWidget extends GenericWidget {
 		}
 		else {
 			remoteViews.setTextViewText(R.id.textViewWidget, listName);
+		}
+
+		final String widgetIcon = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_icon_image, appWidgetId);
+		if (widgetIcon == null || context.getResources().getStringArray(R.array.icon_image_values)[0].equals(widgetIcon)) {
+			remoteViews.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_launcher);
+		}
+		else {
+			remoteViews.setImageViewBitmap(R.id.imageViewWidget, ImageUtil.getImageBitmap(widgetIcon, LAUNCHER_IMAGE_SIZE));
 		}
 
 		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, false, appWidgetId, null);
@@ -42,7 +59,7 @@ public class MiniWidget extends GenericWidget {
 	 * @param appWidgetId The widget id.
 	 * @param listName    The list name to be used by the widget.
 	 */
-	public static final void configure(final int appWidgetId, final String listName) {
+	public static void configure(final int appWidgetId, final String listName) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreateminiwidget);
 		doBaseConfiguration(appWidgetId, listName, 0);
 		updateInstances(UpdateType.NEW_LIST, appWidgetId);
@@ -54,7 +71,7 @@ public class MiniWidget extends GenericWidget {
 	 * @param updateType  flag indicating what should be updated.
 	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateInstances(final UpdateType updateType, final int... appWidgetId) {
+	public static void updateInstances(final UpdateType updateType, final int... appWidgetId) {
 		updateInstances(MiniWidget.class, updateType, appWidgetId);
 	}
 
@@ -64,6 +81,7 @@ public class MiniWidget extends GenericWidget {
 		for (int appWidgetId : appWidgetIds) {
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timeout, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_allowed_call_frequency, appWidgetId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_icon_image, appWidgetId);
 		}
 	}
 }

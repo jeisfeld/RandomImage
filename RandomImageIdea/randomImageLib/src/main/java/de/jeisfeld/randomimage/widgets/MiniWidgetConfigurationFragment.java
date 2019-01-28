@@ -53,6 +53,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
+		bindPreferenceSummaryToValue(R.string.key_widget_icon_image);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_use_default);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
@@ -113,6 +114,11 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	 */
 	protected final boolean setDefaultValues() {
 		boolean isUpdated = false;
+		if (PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId) == null) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId,
+					getString(R.string.pref_default_widget_icon_image));
+		}
 		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_use_default, mAppWidgetId)) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, true);
@@ -159,6 +165,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_display_name,
 				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId));
+		PreferenceUtil.setSharedPreferenceString(R.string.key_widget_icon_image,
+				PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_use_default,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_scale_type,
@@ -194,7 +202,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		ListPreference preference = (ListPreference) findPreference(getString(R.string.key_widget_list_name));
 
 		ArrayList<String> listNameList = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-		String[] listNames = listNameList.toArray(new String[listNameList.size()]);
+		String[] listNames = listNameList.toArray(new String[0]);
 
 		preference.setEntries(listNames);
 		preference.setEntryValues(listNames);
@@ -229,6 +237,12 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_widget_detail_change_with_tap) {
 			value = "";
 		}
+		else if (preferenceKey == R.string.key_widget_icon_image) {
+			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mAppWidgetId);
+			if (getActivity().getResources().getStringArray(R.array.icon_image_values)[0].equals(value)) {
+				value = getActivity().getResources().getStringArray(R.array.icon_image_names)[0];
+			}
+		}
 		else {
 			value = PreferenceUtil.getIndexedSharedPreferenceString(preferenceKey, mAppWidgetId);
 		}
@@ -254,6 +268,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_display_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId, stringValue);
 				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
+				MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_icon_image))) {
+				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, stringValue);
 				MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_use_default))) {
