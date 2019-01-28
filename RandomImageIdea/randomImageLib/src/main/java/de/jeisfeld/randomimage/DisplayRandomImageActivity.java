@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import android.app.DialogFragment;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -25,9 +26,12 @@ import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.CachedRandomFileProvider;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageAnalyzer;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
+import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -389,7 +393,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		createGestureDetector();
 
-		String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
+		final String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
 			// If folderName is provided, then use the list of images in this folder.
 			mRandomFileProvider = new CachedRandomFileProvider(new FolderRandomFileProvider(folderName, mCurrentFileName),
@@ -398,12 +402,39 @@ public class DisplayRandomImageActivity extends StartActivity {
 		else {
 			// Otherwise, use the imageList.
 			ImageList imageList;
-
 			if (mListName == null) {
-				mListName = ImageRegistry.getCurrentListName();
 				if (mCurrentFileName == null) {
-					// Reload the file when starting the activity.
-					imageList = ImageRegistry.getCurrentImageListRefreshed(false);
+					ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
+					if (listNames.size() == 0) {
+						// On first startup need to create default list.
+						imageList = ImageRegistry.getCurrentImageListRefreshed(true);
+						mListName = ImageRegistry.getCurrentListName();
+					}
+					else if (listNames.size() == 1) {
+						mListName = listNames.get(0);
+						imageList = ImageRegistry.getCurrentImageListRefreshed(false);
+					}
+					else {
+						DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+								mListName = text;
+								ImageRegistry.switchToImageList(mListName, CreationStyle.NONE, true);
+								mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false),
+										mCurrentFileName, mFlipType, mRandomFileProvider);
+								displayImageListOnCreate(savedInstanceState, folderName);
+							}
+
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								mListName = ImageRegistry.getCurrentListName();
+								mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageListRefreshed(false),
+										mCurrentFileName, mFlipType, mRandomFileProvider);
+								displayImageListOnCreate(savedInstanceState, folderName);
+							}
+						}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
+						return;
+					}
 				}
 				else {
 					imageList = ImageRegistry.getCurrentImageList(false);
@@ -423,10 +454,21 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 
 			mListName = imageList.getListName();
-
 			mRandomFileProvider = new CachedRandomFileProvider(imageList, mCurrentFileName, mFlipType, mRandomFileProvider);
 		}
 
+		displayImageListOnCreate(savedInstanceState, folderName);
+
+		test();
+	}
+
+	/**
+	 * Final action on creation of activity - display the image list.
+	 *
+	 * @param savedInstanceState The saved instance state from onCreate
+	 * @param folderName         The folder name if existing
+	 */
+	private void displayImageListOnCreate(final Bundle savedInstanceState, final String folderName) {
 		if (mCurrentFileName == null) {
 			displayRandomImage(false);
 		}
@@ -455,9 +497,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 
 		sendInitialTrackingEvent(savedInstanceState != null, folderName != null);
-
-		test();
 	}
+
 
 	/**
 	 * Configure the properties defined by the notification that triggered this activity.
@@ -841,8 +882,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 					return true;
 				}
 
-				float velocityX = e.getX() - mCurrentImageView.getWidth() / 2;
-				float velocityY = e.getY() - mCurrentImageView.getHeight() / 2;
+				float velocityX = e.getX() - mCurrentImageView.getWidth() / 2f;
+				float velocityY = e.getY() - mCurrentImageView.getHeight() / 2f;
 				FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 
 				if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
@@ -986,7 +1027,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public static boolean getResult(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_REFRESH_PARENT);
+			return res != null && res.getBoolean(STRING_RESULT_REFRESH_PARENT);
 		}
 		else {
 			return false;
