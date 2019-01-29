@@ -24,6 +24,7 @@
     <string name="title_activity_display_images_from_folder">Display image folder</string>
     <string name="title_activity_add_images">Add images</string>
     <string name="title_activity_add_folders">Add folders</string>
+    <string name="title_activity_select_widget_icon">Select Widget Icon</string>
     <string name="title_activity_remove_images">Remove images</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_widget_settings">Widget Settings</string>
@@ -56,6 +57,7 @@
     <!-- Info texts shown in activities. -->
     <string name="text_info_select_image_folder_for_add">Select the folder from which you want to add images to the image list.</string>
     <string name="text_info_select_image_folders_for_add">Select the folders which you want to add to the image list.</string>
+    <string name="text_info_select_widget_icon">Select the image that you want to use as widget icon.</string>
     <string name="text_info_select_lists_for_backup">Select the image lists that you want to back up.</string>
     <string name="text_info_select_lists_for_restore">Select the image lists that you want to restore.</string>
     <string name="text_info_select_lists_for_delete">Select the image lists that you want to delete.</string>

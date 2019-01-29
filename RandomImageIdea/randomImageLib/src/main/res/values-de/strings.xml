@@ -23,6 +23,7 @@
     <string name="title_activity_display_images_from_folder">Bildverzeichnis anzeigen</string>
     <string name="title_activity_add_images">Bilder hinzufügen</string>
     <string name="title_activity_add_folders">Verzeichnisse hinzufügen</string>
+    <string name="title_activity_select_widget_icon">Widget-Icon auswählen</string>
     <string name="title_activity_remove_images">Bilder entfernen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_widget_settings">Widget-Einstellungen</string>
@@ -55,6 +56,7 @@
     <!-- Info texts shown in activities. -->
     <string name="text_info_select_image_folder_for_add">Wählen Sie ein Verzeichnis, aus dem Sie Bilder zur Liste hinzufügen wollen.</string>
     <string name="text_info_select_image_folders_for_add">Wählen Sie die Verzeichnisse, die Sie zur Liste hinzufügen wollen.</string>
+    <string name="text_info_select_widget_icon">Wählen Sie das Bild, das Sie als Widget-Icon verwenden wollen.</string>
     <string name="text_info_select_lists_for_backup">Wählen Sie die Bildlisten, die Sie sichern wollen.</string>
     <string name="text_info_select_lists_for_restore">Wählen Sie die Bildlisten, die Sie wiederherstellen wollen.</string>
     <string name="text_info_select_lists_for_delete">Wählen Sie die Bildlisten, die Sie löschen wollen.</string>

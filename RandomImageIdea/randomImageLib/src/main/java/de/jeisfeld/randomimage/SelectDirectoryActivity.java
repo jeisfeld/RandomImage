@@ -167,6 +167,11 @@ public class SelectDirectoryActivity extends BaseActivity {
 			mCurrentFolder = PreferenceUtil.getSharedPreferenceString(R.string.key_directory_chooser_last_folder);
 		}
 
+		if (mSelectImage) {
+			setTitle(R.string.title_activity_select_widget_icon);
+			((TextView) findViewById(R.id.textViewMessage)).setText(R.string.text_info_select_widget_icon);
+		}
+
 		File dirFile = mCurrentFolder == null ? null : new File(mCurrentFolder);
 		if (dirFile == null || !dirFile.exists() || !dirFile.isDirectory()) {
 			mCurrentFolder = FileUtil.getDefaultCameraFolder();
@@ -242,6 +247,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 			}
 		});
 
+		updateListLayout();
 		fillGridView();
 	}
 
@@ -332,6 +338,8 @@ public class SelectDirectoryActivity extends BaseActivity {
 
 		mSubdirs.clear();
 		mSubdirs.addAll(getDirectories(mCurrentFolder));
+		updateListLayout();
+
 		mCurrentFolderView.setText(mCurrentFolder);
 
 		mListAdapter.notifyDataSetChanged();
@@ -339,6 +347,23 @@ public class SelectDirectoryActivity extends BaseActivity {
 
 		fillGridView();
 	}
+
+	/**
+	 * Update the layout of the list, either to have its own natural size or to fill same space as gridview, based on the number of entries.
+	 */
+	private void updateListLayout() {
+		android.widget.LinearLayout.LayoutParams layoutParams = (android.widget.LinearLayout.LayoutParams) mListView.getLayoutParams();
+		if (mSubdirs.size() > 3) { // MAGIC_NUMBER
+			layoutParams.height = 0;
+			layoutParams.weight = 1;
+		}
+		else {
+			layoutParams.height = LayoutParams.WRAP_CONTENT;
+			layoutParams.weight = 0;
+		}
+		mListView.requestLayout();
+	}
+
 
 	/**
 	 * Fill the GridView to display the images.
@@ -375,26 +400,27 @@ public class SelectDirectoryActivity extends BaseActivity {
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		if (mSelectImage) {
-			return super.onCreateOptionsMenu(menu);
+			getMenuInflater().inflate(R.menu.select_icon, menu);
 		}
+		else {
+			getMenuInflater().inflate(R.menu.select_directory, menu);
 
-		getMenuInflater().inflate(R.menu.select_directory, menu);
-
-		if (!mIsImageFolder) {
-			MenuItem menuItemOkay = menu.findItem(R.id.action_select_folder);
-			MenuItem menuItemAddThisFolder = menu.findItem(R.id.action_add_only_this_folder);
-
-			menuItemOkay.setEnabled(false);
-			menuItemAddThisFolder.setEnabled(false);
-			menuItemOkay.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_okay));
-		}
-		if (!FileUtil.hasSubfolders(mCurrentFolder)) {
-			MenuItem menuItemAddThis = menu.findItem(R.id.action_add_only_this_folder);
-			menuItemAddThis.setEnabled(false);
 			if (!mIsImageFolder) {
-				MenuItem menuItemAddFolder = menu.findItem(R.id.action_add_image_folder);
-				menuItemAddFolder.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_add_folder));
-				menuItemAddFolder.setEnabled(false);
+				MenuItem menuItemOkay = menu.findItem(R.id.action_select_folder);
+				MenuItem menuItemAddThisFolder = menu.findItem(R.id.action_add_only_this_folder);
+
+				menuItemOkay.setEnabled(false);
+				menuItemAddThisFolder.setEnabled(false);
+				menuItemOkay.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_okay));
+			}
+			if (!FileUtil.hasSubfolders(mCurrentFolder)) {
+				MenuItem menuItemAddThis = menu.findItem(R.id.action_add_only_this_folder);
+				menuItemAddThis.setEnabled(false);
+				if (!mIsImageFolder) {
+					MenuItem menuItemAddFolder = menu.findItem(R.id.action_add_image_folder);
+					menuItemAddFolder.setIcon(ImageUtil.getTransparentIcon(R.drawable.ic_action_add_folder));
+					menuItemAddFolder.setEnabled(false);
+				}
 			}
 		}
 
@@ -406,7 +432,12 @@ public class SelectDirectoryActivity extends BaseActivity {
 		int menuId = item.getItemId();
 
 		if (menuId == R.id.action_cancel) {
-			returnResult(false);
+			if (mSelectImage) {
+				returnResult(null);
+			}
+			else {
+				returnResult(false);
+			}
 			return true;
 		}
 		else if (menuId == R.id.action_add_only_this_folder || menuId == R.id.action_add_all_subfolders || menuId == R.id.action_add_image_folder) {
@@ -568,6 +599,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 				imageView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(final View v) {
+						PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
 						returnResult(mFileNames.get(position));
 						finish();
 					}

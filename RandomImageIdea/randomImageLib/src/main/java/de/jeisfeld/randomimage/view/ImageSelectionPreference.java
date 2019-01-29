@@ -5,7 +5,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.ListPreference;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -87,7 +86,7 @@ public class ImageSelectionPreference extends ListPreference {
 
 		builder.setSingleChoiceItems(entries, clickedDialogEntryIndex, new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(@NonNull final DialogInterface dialog, final int which) {
+			public void onClick(final DialogInterface dialog, final int which) {
 				mSelectedCustomImage = null;
 
 				if (getEntryValues()[which].toString().equals(CUSTOM_IMAGE)) {
@@ -95,10 +94,14 @@ public class ImageSelectionPreference extends ListPreference {
 					ChosenImageListener listener = new ChosenImageListener() {
 						@Override
 						public void onChosenImage(final String chosenImage) {
-							mSelectedIndex = which;
-							mSelectedCustomImage = chosenImage;
-
-							ImageSelectionPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+							if (chosenImage == null) {
+								ImageSelectionPreference.this.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+							}
+							else {
+								mSelectedIndex = which;
+								mSelectedCustomImage = chosenImage;
+								ImageSelectionPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+							}
 							dialog.dismiss();
 						}
 					};

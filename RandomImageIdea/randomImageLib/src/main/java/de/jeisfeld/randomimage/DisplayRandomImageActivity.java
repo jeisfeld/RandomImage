@@ -432,7 +432,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 										mCurrentFileName, mFlipType, mRandomFileProvider);
 								displayImageListOnCreate(savedInstanceState, folderName);
 							}
-						}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_widget);
+						}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_display);
 						return;
 					}
 				}

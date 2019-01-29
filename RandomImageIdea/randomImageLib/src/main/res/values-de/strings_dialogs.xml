@@ -83,6 +83,7 @@
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>
     <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>
+    <string name="dialog_select_list_for_display">Bitte wählen Sie die Bildliste, aus der Sie Bilder ansehen wollen.</string>
     <string name="dialog_select_list_for_switch">Bitte wählen Sie die Bildliste, zu der Sie wechseln wollen.</string>
     <string name="dialog_select_list_for_delete">Bitte wählen Sie die Bildliste, die Sie löschen wollen.</string>
     <string name="dialog_select_list_for_backup">Bitte wählen Sie die Bildliste, die Sie sichern wollen.</string>

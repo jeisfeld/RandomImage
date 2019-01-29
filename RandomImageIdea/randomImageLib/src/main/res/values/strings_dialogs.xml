@@ -83,6 +83,7 @@
     <string name="dialog_input_enter_list_name_new">Please enter a name for the new list.</string>
     <string name="dialog_input_enter_list_name_cloned">Please enter a name for the cloned list.</string>
     <string name="dialog_input_enter_list_name_changed">Please enter the new name of the list.</string>
+    <string name="dialog_select_list_for_display">Please select the image list from which you want to see images.</string>
     <string name="dialog_select_list_for_switch">Please select the image list to which you want to switch.</string>
     <string name="dialog_select_list_for_delete">Please select the image list which you want to delete.</string>
     <string name="dialog_select_list_for_backup">Please select the image list which you want to backup.</string>
