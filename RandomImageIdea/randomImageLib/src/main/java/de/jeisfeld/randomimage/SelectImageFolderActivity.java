@@ -109,7 +109,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		super.onCreate(savedInstanceState);
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 
-		mEditTextFilter = (EditText) findViewById(R.id.editTextFilterString);
+		mEditTextFilter = findViewById(R.id.editTextFilterString);
 		String lastFilterValue = PreferenceUtil.getSharedPreferenceString(R.string.key_folder_selection_filter);
 		if (lastFilterValue != null) {
 			mEditTextFilter.setText(lastFilterValue);
@@ -173,7 +173,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		switch (itemType) {
 		case FOLDER:
-			DisplayImageDetailsActivity.startActivity(this, name, null, true, "Select Image Folder");
+			DisplayImageDetailsActivity.startActivity(this, name, null, null, true, "Select Image Folder");
 			break;
 		default:
 			break;
@@ -425,7 +425,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private void changeAction(final CurrentAction action) {
 		if (action != null) {
 			mCurrentAction = action;
-			TextView textViewInfo = (TextView) findViewById(R.id.textViewMessage);
+			TextView textViewInfo = findViewById(R.id.textViewMessage);
 
 			switch (action) {
 			case DISPLAY:
@@ -586,7 +586,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	public static boolean getUpdatedFlag(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_UPDATED, false);
+			return res != null && res.getBoolean(STRING_RESULT_UPDATED, false);
 		}
 		else {
 			return false;

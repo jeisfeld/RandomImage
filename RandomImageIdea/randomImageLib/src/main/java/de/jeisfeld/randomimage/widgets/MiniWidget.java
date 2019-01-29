@@ -84,4 +84,14 @@ public class MiniWidget extends GenericWidget {
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_icon_image, appWidgetId);
 		}
 	}
+
+	/**
+	 * Check if there is a MiniWidget of this id.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @return true if there is a MiniWidget of this id.
+	 */
+	public static boolean hasWidgetOfId(final int appWidgetId) {
+		return hasWidgetOfId(MiniWidget.class, appWidgetId);
+	}
 }

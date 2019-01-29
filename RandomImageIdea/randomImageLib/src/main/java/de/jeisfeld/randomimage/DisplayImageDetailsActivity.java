@@ -26,9 +26,13 @@ import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDial
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
+import de.jeisfeld.randomimage.widgets.ImageWidget;
+import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -47,6 +51,10 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	/**
+	 * The resource key for the name of the image list to be displayed.
+	 */
+	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
 	/**
 	 * The resource key for the flat indicating if it should be prevented to trigger the ConfigureImageListActivity.
 	 */
@@ -91,6 +99,11 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	private String mListName;
 
 	/**
+	 * The name of the widget from which the image was displayed.
+	 */
+	private int mAppWidgetId;
+
+	/**
 	 * flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 */
 	private boolean mPreventDisplayAll;
@@ -98,13 +111,14 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	/**
 	 * Static helper method to start the activity.
 	 *
-	 * @param activity The activity starting this activity.
-	 * @param fileName The name of the file whose details should be displayed.
-	 * @param listName The name of the list from which this file is taken.
+	 * @param activity          The activity starting this activity.
+	 * @param fileName          The name of the file whose details should be displayed.
+	 * @param listName          The name of the list from which this file is taken.
+	 * @param appWidgetId       The widget from which the image was displayed.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
-	 * @param trackingName A String indicating the starter of the activity.
+	 * @param trackingName      A String indicating the starter of the activity.
 	 */
-	public static void startActivity(final Activity activity, final String fileName, final String listName,
+	public static void startActivity(final Activity activity, final String fileName, final String listName, final Integer appWidgetId,
 									 final boolean preventDisplayAll, final String trackingName) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
@@ -113,6 +127,9 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 		if (trackingName != null) {
 			intent.putExtra(STRING_EXTRA_TRACKING, trackingName);
+		}
+		if (appWidgetId != null) {
+			intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
 		}
 		intent.putExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, preventDisplayAll);
 		activity.startActivityForResult(intent, REQUEST_CODE);
@@ -128,6 +145,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		mFileNameInList = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		mFileName = mFileNameInList;
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, -1);
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
 		File file = new File(mFileName);
@@ -151,7 +169,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		// Enable icon
-		final TextView title = (TextView) findViewById(android.R.id.title);
+		final TextView title = findViewById(android.R.id.title);
 		if (title != null) {
 			int horizontalMargin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
 			title.setPadding(horizontalMargin * 9 / 10, 0, 0, 0); // MAGIC_NUMBER
@@ -186,7 +204,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			galleryFileName = null;
 		}
 		if (galleryFileName != null) {
-			Button btnViewInGallery = (Button) findViewById(R.id.buttonViewInGallery);
+			Button btnViewInGallery = findViewById(R.id.buttonViewInGallery);
 			btnViewInGallery.setVisibility(View.VISIBLE);
 			btnViewInGallery.setOnClickListener(new OnClickListener() {
 				@Override
@@ -198,7 +216,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		if (mFileType == FileType.FILE) {
-			Button btnSendTo = (Button) findViewById(R.id.buttonSendTo);
+			Button btnSendTo = findViewById(R.id.buttonSendTo);
 			btnSendTo.setVisibility(View.VISIBLE);
 			btnSendTo.setOnClickListener(new OnClickListener() {
 				@Override
@@ -229,7 +247,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	private void configureButtonsForImageList() {
 		final StandardImageList imageList = ImageRegistry.getStandardImageListByName(mListName, false);
 		if (imageList != null && imageList.contains(mFileNameInList)) {
-			Button btnRemoveFromList = (Button) findViewById(R.id.buttonRemoveFromList);
+			Button btnRemoveFromList = findViewById(R.id.buttonRemoveFromList);
 			btnRemoveFromList.setVisibility(View.VISIBLE);
 			btnRemoveFromList.setOnClickListener(new OnClickListener() {
 				@Override
@@ -277,7 +295,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		if (mListName != null && !mPreventDisplayAll) {
-			Button btnEditList = (Button) findViewById(R.id.buttonEditList);
+			Button btnEditList = findViewById(R.id.buttonEditList);
 			btnEditList.setVisibility(View.VISIBLE);
 			btnEditList.setOnClickListener(new OnClickListener() {
 				@Override
@@ -288,19 +306,47 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			});
 		}
 
+		if (mAppWidgetId >= 0) {
+			Button btnUseInWidget = findViewById(R.id.buttonUseInWidget);
+			if (MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+				btnUseInWidget.setVisibility(View.VISIBLE);
+				btnUseInWidget.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
+						MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+						DisplayImageDetailsActivity.this.finish();
+					}
+				});
+			}
+			else if (ImageWidget.hasWidgetOfId(mAppWidgetId)) {
+				btnUseInWidget.setVisibility(View.VISIBLE);
+				btnUseInWidget.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mFileName);
+						ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+						DisplayImageDetailsActivity.this.finish();
+					}
+				});
+			}
+		}
+
 	}
 
 	/**
 	 * Static helper method to extract the finishParent flag.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data The activity response data.
+	 * @param data       The activity response data.
 	 * @return the flag if the parent activity should be finished.
 	 */
 	public static boolean getResultFinishParent(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_FINISH_PARENT);
+			return res != null && res.getBoolean(STRING_RESULT_FINISH_PARENT);
 		}
 		else {
 			return false;
@@ -311,13 +357,13 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 * Static helper method to extract the fileRemoved flag.
 	 *
 	 * @param resultCode The result code indicating if the response was successful.
-	 * @param data The activity response data.
+	 * @param data       The activity response data.
 	 * @return the flag if the file was removed.
 	 */
 	public static boolean getResultFileRemoved(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_FILE_REMOVED);
+			return res != null && res.getBoolean(STRING_RESULT_FILE_REMOVED);
 		}
 		else {
 			return false;
@@ -328,7 +374,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 * Helper method: Return the flag if the parent activity should be finished.
 	 *
 	 * @param finishParent The flag if the parent activity should be finished.
-	 * @param fileRemoved The flag if the file has been removed from the list.
+	 * @param fileRemoved  The flag if the file has been removed from the list.
 	 */
 	private void returnResult(final boolean finishParent, final boolean fileRemoved) {
 		Bundle resultData = new Bundle();
@@ -346,13 +392,13 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	private void displayImageInfo() {
 		final File file = new File(mFileName);
 
-		TextView textViewFileName = (TextView) findViewById(R.id.textViewFileName);
+		TextView textViewFileName = findViewById(R.id.textViewFileName);
 		textViewFileName.setText(file.getName());
 
-		TextView textViewParentFolder = (TextView) findViewById(R.id.textViewParentFolder);
+		TextView textViewParentFolder = findViewById(R.id.textViewParentFolder);
 		textViewParentFolder.setText(DialogUtil.fromHtml(getString(R.string.info_parent_folder, file.getParent())));
 
-		TextView textViewImageDate = (TextView) findViewById(R.id.textViewImageDate);
+		TextView textViewImageDate = findViewById(R.id.textViewImageDate);
 		Date imageDate = ImageUtil.getExifDate(mFileName);
 		if (imageDate == null) {
 			textViewImageDate.setVisibility(View.GONE);
@@ -361,7 +407,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			textViewImageDate.setText(DialogUtil.fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
 		}
 
-		final TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
+		final TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
 		new Thread() {
 			@Override
 			public void run() {

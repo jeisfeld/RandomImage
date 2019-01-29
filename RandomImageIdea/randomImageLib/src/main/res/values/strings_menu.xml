@@ -25,6 +25,7 @@
     <string name="menu_include_other_list">Include other list in current list</string>
     <string name="menu_remove_from_list">Remove from list</string>
     <string name="menu_edit_list">Edit image list</string>
+    <string name="menu_display_in_widget">Display image in widget</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_browse_folders">Browse in file manager</string>
     <string name="menu_title_pro_app">Random Image Pro</string>

@@ -101,7 +101,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mTextViewFolderName = (TextView) findViewById(R.id.textViewTitle);
+		mTextViewFolderName = findViewById(R.id.textViewTitle);
 
 		mFolderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
@@ -139,7 +139,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		// itemType is always file.
-		DisplayImageDetailsActivity.startActivity(this, name, null, true, "Display folder");
+		DisplayImageDetailsActivity.startActivity(this, name, null, null, true, "Display folder");
 	}
 
 	@Override
@@ -331,7 +331,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	public static boolean getResultFilesAdded(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_FILES_ADDED);
+			return res != null && res.getBoolean(STRING_RESULT_FILES_ADDED);
 		}
 		else {
 			return false;

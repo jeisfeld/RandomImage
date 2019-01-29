@@ -133,8 +133,8 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		if (getActionBar() != null) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-		mTextViewListName = (TextView) findViewById(R.id.textViewTitle);
-		mTextViewMessage = (TextView) findViewById(R.id.textViewMessage);
+		mTextViewListName = findViewById(R.id.textViewTitle);
+		mTextViewMessage = findViewById(R.id.textViewMessage);
 
 		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
 		if (trackingName != null) {
@@ -195,7 +195,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		case FOLDER:
 		case FILE:
 		default:
-			DisplayImageDetailsActivity.startActivity(this, name, mListName, true, "Configure image list");
+			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, true, "Configure image list");
 			break;
 		}
 	}
@@ -237,7 +237,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * @param imageList the image list.
 	 */
 	private void configureMissingImagesButton(final ImageList imageList) {
-		Button missingImagesButton = (Button) findViewById(R.id.buttonShowMissing);
+		Button missingImagesButton = findViewById(R.id.buttonShowMissing);
 		boolean hasMissingImages = imageList.getMissingPathNames().size() > 0;
 		missingImagesButton.setVisibility(hasMissingImages ? View.VISIBLE : View.GONE);
 		if (hasMissingImages) {

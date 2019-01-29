@@ -173,7 +173,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayImageDetailsActivity.startActivity(DisplayImagePopupActivity.this, mFileName, mListName, true,
+				DisplayImageDetailsActivity.startActivity(DisplayImagePopupActivity.this, mFileName, mListName, null, true,
 						"Display image popup");
 			}
 		});

@@ -443,7 +443,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	/**
 	 * Types in which the widget can be updated.
 	 */
-	protected enum UpdateType {
+	public enum UpdateType {
 		/**
 		 * Update the image automatically.
 		 */

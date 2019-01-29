@@ -4,7 +4,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="0px"
         android:orientation="vertical"
         android:padding="0px">
@@ -66,6 +66,15 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/text_padding"
             android:text="@string/button_send_to"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/buttonUseInWidget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/menu_display_in_widget"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
