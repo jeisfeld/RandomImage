@@ -906,8 +906,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName, mAppWidgetId, mPreventDisplayAll,
-						"Display random image");
+				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName,
+						mAppWidgetId, mPreventDisplayAll, "Display random image");
 			}
 
 			/**

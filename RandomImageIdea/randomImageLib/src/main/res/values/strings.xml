@@ -53,6 +53,7 @@
     <string name="button_continue">Continue</string>
     <string name="button_view_in_gallery">View in gallery</string>
     <string name="button_send_to">Send to&#8230;</string>
+    <string name="button_show_on_map">Show on map</string>
 
     <!-- Info texts shown in activities. -->
     <string name="text_info_select_image_folder_for_add">Select the folder from which you want to add images to the image list.</string>
@@ -80,5 +81,6 @@
     <string name="info_number_of_images_and_proportion"><![CDATA[<b>Number of images:</b> %1$d (%2$s%%)]]></string>
     <string name="info_nested_list_view_frequency">View Frequency:</string>
     <string name="percent" translatable="false">%</string>
+    <string name="info_photo_location">Photo location</string>
 
 </resources>

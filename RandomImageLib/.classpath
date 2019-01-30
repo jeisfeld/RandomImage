@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="libs-local/google-analytics-9.6.1.jar"/>
 	<classpathentry kind="lib" path="libs-local/support-annotations-25.3.1.jar"/>
 	<classpathentry kind="lib" path="libs-local/support-compat-25.3.1.jar"/>
+	<classpathentry kind="lib" path="libs-local/exifinterface-26.0.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.media.ExifInterface;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -216,18 +217,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		if (mFileType == FileType.FILE) {
-			Button btnSendTo = findViewById(R.id.buttonSendTo);
-			btnSendTo.setVisibility(View.VISIBLE);
-			btnSendTo.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					Intent intent = new Intent(Intent.ACTION_SEND);
-					Uri uri = MediaStoreUtil.getUriFromFile(mFileName);
-					intent.putExtra(Intent.EXTRA_STREAM, uri);
-					intent.setType("image/*");
-					startActivity(intent);
-				}
-			});
+			configureButtonsForImage();
 		}
 
 		if (mListName != null) {
@@ -239,6 +229,67 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	protected final void onResume() {
 		super.onResume();
 		TrackingUtil.sendScreen(this);
+	}
+
+	/**
+	 * Configure the buttons related to a single image.
+	 */
+	private void configureButtonsForImage() {
+		Button btnSendTo = findViewById(R.id.buttonSendTo);
+		btnSendTo.setVisibility(View.VISIBLE);
+		btnSendTo.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				Uri uri = MediaStoreUtil.getUriFromFile(mFileName);
+				intent.putExtra(Intent.EXTRA_STREAM, uri);
+				intent.setType("image/*");
+				startActivity(intent);
+				returnResult(false, false);
+			}
+		});
+
+		Button btnDisplayMap = findViewById(R.id.buttonShowOnMap);
+		final Intent gpsIntent = getGpsIntent();
+		if (gpsIntent != null) {
+			btnDisplayMap.setVisibility(View.VISIBLE);
+			btnDisplayMap.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					startActivity(gpsIntent);
+					returnResult(false, false);
+				}
+			});
+		}
+
+
+		if (mAppWidgetId >= 0) {
+			Button btnUseInWidget = findViewById(R.id.buttonUseInWidget);
+			if (MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+				btnUseInWidget.setVisibility(View.VISIBLE);
+				btnUseInWidget.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
+						MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+						returnResult(false, false);
+					}
+				});
+			}
+			else if (ImageWidget.hasWidgetOfId(mAppWidgetId)) {
+				btnUseInWidget.setVisibility(View.VISIBLE);
+				btnUseInWidget.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mFileName);
+						ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+						returnResult(false, false);
+					}
+				});
+			}
+		}
 	}
 
 	/**
@@ -305,35 +356,6 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 				}
 			});
 		}
-
-		if (mAppWidgetId >= 0) {
-			Button btnUseInWidget = findViewById(R.id.buttonUseInWidget);
-			if (MiniWidget.hasWidgetOfId(mAppWidgetId)) {
-				btnUseInWidget.setVisibility(View.VISIBLE);
-				btnUseInWidget.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
-						MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
-						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
-						DisplayImageDetailsActivity.this.finish();
-					}
-				});
-			}
-			else if (ImageWidget.hasWidgetOfId(mAppWidgetId)) {
-				btnUseInWidget.setVisibility(View.VISIBLE);
-				btnUseInWidget.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mFileName);
-						ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
-						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
-						DisplayImageDetailsActivity.this.finish();
-					}
-				});
-			}
-		}
-
 	}
 
 	/**
@@ -408,10 +430,10 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		final TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
-		new Thread() {
-			@Override
-			public void run() {
-				if (mFileType == FileType.FOLDER || mFileType == FileType.FOLDER_RECURSIVE) {
+		if (mFileType == FileType.FOLDER || mFileType == FileType.FOLDER_RECURSIVE) {
+			new Thread() {
+				@Override
+				public void run() {
 					final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
 					double probability = -1;
 					if (mListName != null && mListName.equals(ImageRegistry.getCurrentListName())) {
@@ -432,17 +454,42 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 						}
 					});
 				}
-				else {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							textViewNumberOfImages.setVisibility(View.GONE);
-						}
-					});
-				}
-			}
-		}.start();
+			}.start();
+		}
+		else {
+			textViewNumberOfImages.setVisibility(View.GONE);
+		}
 
+		getGpsIntent();
+
+	}
+
+	/**
+	 * Get an intent for displaying the photo location on a map.
+	 *
+	 * @return The intent, if geo location is available, otherwise null.
+	 */
+	private Intent getGpsIntent() {
+		try {
+			ExifInterface exifInterface = new ExifInterface(mFileName);
+			double[] gpsCoordinates = exifInterface.getLatLong();
+
+			if (gpsCoordinates == null || gpsCoordinates.length < 2 || (gpsCoordinates[0] == 0 && gpsCoordinates[1] == 0)) {
+				return null;
+			}
+
+			String gpsString = "geo:" + gpsCoordinates[0] + "," + gpsCoordinates[1]
+					+ "?q=" + gpsCoordinates[0] + "," + gpsCoordinates[1] + "(" + getString(R.string.info_photo_location) + ")";
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(gpsString));
+
+			if (intent.resolveActivity(getPackageManager()) != null) {
+				return intent;
+			}
+			return null;
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**

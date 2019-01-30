@@ -70,6 +70,15 @@
             android:visibility="gone"/>
 
         <Button
+            android:id="@+id/buttonShowOnMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_show_on_map"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"/>
+
+        <Button
             android:id="@+id/buttonUseInWidget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
