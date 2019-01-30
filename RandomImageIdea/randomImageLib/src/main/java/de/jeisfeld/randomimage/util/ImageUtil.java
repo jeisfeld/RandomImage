@@ -16,9 +16,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.media.ExifInterface;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -304,7 +304,7 @@ public final class ImageUtil {
 		Bitmap targetBitmap = Bitmap.createBitmap(width, height, baseBitmap.getConfig());
 		Paint paint = new Paint();
 		Canvas canvas = new Canvas(targetBitmap);
-		canvas.drawBitmap(baseBitmap, (width - baseBitmap.getWidth()) / 2, (height - baseBitmap.getHeight()) / 2, paint);
+		canvas.drawBitmap(baseBitmap, (width - baseBitmap.getWidth()) / 2f, (height - baseBitmap.getHeight()) / 2f, paint);
 		return targetBitmap;
 	}
 
