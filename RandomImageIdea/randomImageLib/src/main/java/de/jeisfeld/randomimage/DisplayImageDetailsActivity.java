@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DateUtil;
@@ -478,8 +479,8 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 				return null;
 			}
 
-			String gpsString = "geo:" + gpsCoordinates[0] + "," + gpsCoordinates[1]
-					+ "?q=" + gpsCoordinates[0] + "," + gpsCoordinates[1] + "(" + getString(R.string.info_photo_location) + ")";
+			String gpsString = String.format(Locale.ENGLISH, "geo:%.6f,%.6f?q=%.6f,%.6f(%s)",
+					gpsCoordinates[0], gpsCoordinates[1], gpsCoordinates[0], gpsCoordinates[1], getString(R.string.info_photo_location));
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(gpsString));
 
 			if (intent.resolveActivity(getPackageManager()) != null) {
