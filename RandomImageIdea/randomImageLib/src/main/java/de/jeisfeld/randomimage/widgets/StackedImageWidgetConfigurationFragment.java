@@ -23,6 +23,15 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 	}
 
 	@Override
+	public final void onDetach() {
+		super.onDetach();
+		if (!isReconfigureWidget()) {
+			// After creation of stacked widget, ensure that list is refreshed
+			StackedImageWidget.updateInstances(UpdateType.NEW_LIST, getAppWidgetId());
+		}
+	}
+
+	@Override
 	protected final OnWidgetPreferenceChangeListener createOnPreferenceChangeListener() {
 		return new OnWidgetPreferenceChangeListener() {
 			@Override
