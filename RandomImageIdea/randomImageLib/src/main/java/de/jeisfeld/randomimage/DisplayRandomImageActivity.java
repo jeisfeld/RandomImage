@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -462,6 +465,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 		test();
 	}
 
+	@Override
+	public final void setContentView(final View view) {
+		super.setContentView(view);
+		if (view instanceof PinchImageView && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			getWindow().setNavigationBarColor(((PinchImageView) view).getBackgroundColor());
+		}
+	}
+
 	/**
 	 * Final action on creation of activity - display the image list.
 	 *
@@ -692,7 +703,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 		imageView.setGestureDetector(mGestureDetector);
 		imageView.setScaleType(mScaleType);
 		imageView.setImage(fileName, this, cacheIndex);
-		imageView.setBackgroundColor(getBackgroundColor(fileName));
+		int backgroundColor = getBackgroundColor(fileName);
+		imageView.setBackgroundColor(backgroundColor);
 
 		return imageView;
 	}

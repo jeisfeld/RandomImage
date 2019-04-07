@@ -144,6 +144,11 @@ public class PinchImageView extends ImageView {
 	private ScaleType mScaleType = ScaleType.FIT;
 
 	/**
+	 * The background color.
+	 */
+	private int mBackgroundColor;
+
+	/**
 	 * Standard constructor to be implemented for all views.
 	 *
 	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
@@ -426,7 +431,7 @@ public class PinchImageView extends ImageView {
 			Matrix matrix = new Matrix();
 			matrix.setTranslate(-mPosX * mBitmap.getWidth(), -mPosY * mBitmap.getHeight());
 			matrix.postScale(mScaleFactor, mScaleFactor);
-			matrix.postTranslate(getWidth() / 2, getHeight() / 2);
+			matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
 			setImageMatrix(matrix);
 		}
 	}
@@ -578,8 +583,8 @@ public class PinchImageView extends ImageView {
 			if (mScaleFactor != mLastScaleFactor) {
 				// When resizing, then position also changes
 				final float changeFactor = mScaleFactor / mLastScaleFactor;
-				mPosX = mPosX + (x0 - getWidth() / 2) * (changeFactor - 1) / mScaleFactor / mBitmap.getWidth();
-				mPosY = mPosY + (y0 - getHeight() / 2) * (changeFactor - 1) / mScaleFactor / mBitmap.getHeight();
+				mPosX = mPosX + (x0 - getWidth() / 2.0f) * (changeFactor - 1) / mScaleFactor / mBitmap.getWidth();
+				mPosY = mPosY + (y0 - getHeight() / 2.0f) * (changeFactor - 1) / mScaleFactor / mBitmap.getHeight();
 				mLastScaleFactor = mScaleFactor;
 				moved = true;
 			}
@@ -639,6 +644,16 @@ public class PinchImageView extends ImageView {
 			enhancedState = bundle.getParcelable("instanceState");
 		}
 		super.onRestoreInstanceState(enhancedState);
+	}
+
+	public final int getBackgroundColor() {
+		return mBackgroundColor;
+	}
+
+	@Override
+	public final void setBackgroundColor(final int backgroundColor) {
+		this.mBackgroundColor = backgroundColor;
+		super.setBackgroundColor(backgroundColor);
 	}
 
 	/**
