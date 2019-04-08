@@ -12,6 +12,8 @@
         <item name="android:navigationBarColor">@android:color/background_dark</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearanceLargeCustomOverflowMenu</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearanceSmallCustomOverflowMenu</item>
     </style>

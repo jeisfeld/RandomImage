@@ -11,6 +11,8 @@
         <item name="android:navigationBarColor">@android:color/background_dark</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
 </resources>
