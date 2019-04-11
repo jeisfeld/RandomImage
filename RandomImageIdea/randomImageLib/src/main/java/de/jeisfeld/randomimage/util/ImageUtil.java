@@ -520,10 +520,8 @@ public final class ImageUtil {
 		new Thread() {
 			@Override
 			public void run() {
-				final ArrayList<String> imageFolders = new ArrayList<>();
-
 				long timestamp = System.currentTimeMillis();
-				imageFolders.addAll(getAllImageSubfolders(new File(FileUtil.SD_CARD_PATH), handler, listener));
+				final ArrayList<String> imageFolders = new ArrayList<>(getAllImageSubfolders(new File(FileUtil.SD_CARD_PATH), handler, listener));
 
 				for (String path : FileUtil.getExtSdCardPaths()) {
 					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
@@ -584,6 +582,13 @@ public final class ImageUtil {
 				// do not consider .nomedia folders
 				return result;
 			}
+		}
+		// do not consider paths excluded via regexp
+		final String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
+		final boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
+				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
+		if (useRegexp && parentFolder.getAbsolutePath().matches(hiddenFoldersPattern)) {
+			return result;
 		}
 
 		int numberOfImageFolders = 0;
