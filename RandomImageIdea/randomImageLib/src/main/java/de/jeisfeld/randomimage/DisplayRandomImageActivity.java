@@ -48,6 +48,9 @@ import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
 import de.jeisfeld.randomimagelib.R;
 
+import static android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+import static android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+
 /**
  * Display a random image.
  */
@@ -469,7 +472,21 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public final void setContentView(final View view) {
 		super.setContentView(view);
 		if (view instanceof PinchImageView && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-			getWindow().setNavigationBarColor(((PinchImageView) view).getBackgroundColor());
+			// Update navigation bar color
+			int backgroundColor = ((PinchImageView) view).getBackgroundColor();
+
+			getWindow().setNavigationBarColor(backgroundColor);
+
+			if (VERSION.SDK_INT >= VERSION_CODES.O) {
+				boolean isDark = Color.red(backgroundColor) + Color.green(backgroundColor) + Color.blue(backgroundColor) <= 384; // MAGIC_NUMBER
+				View decorView = getWindow().getDecorView();
+				if (isDark) {
+					decorView.setSystemUiVisibility(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+				}
+				else {
+					decorView.setSystemUiVisibility(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS | SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+				}
+			}
 		}
 	}
 
