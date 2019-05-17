@@ -153,12 +153,12 @@ public class ImageWidget extends GenericImageWidget {
 		else {
 			String fileName = imageList.getRandomFileName();
 
-			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			RemoteViews remoteViews = setImage(context, appWidgetManager, appWidgetId, listName, fileName);
 			configureButtons(context, appWidgetManager, appWidgetId, true);
 
 			ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);
 			if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
-				new ButtonAnimator(context, appWidgetManager, appWidgetId, getWidgetLayoutId(appWidgetId),
+				new ButtonAnimator(context, appWidgetManager, appWidgetId, remoteViews, getWidgetLayoutId(appWidgetId),
 						R.id.buttonNextImage, R.id.buttonSettings).start();
 			}
 
@@ -177,16 +177,17 @@ public class ImageWidget extends GenericImageWidget {
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 * @param listName         The name of the image list from which the file is taken.
 	 * @param fileName         The filename of the image to be displayed.
+	 * @return the removeView where the image is set.
 	 */
-	private void setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-						  final String listName, final String fileName) {
+	private RemoteViews setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
+								 final String listName, final String fileName) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
 		int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
 		if (width <= 0 || height <= 0) {
-			return;
+			return null;
 		}
 
 		if (fileName == null) {
@@ -219,6 +220,7 @@ public class ImageWidget extends GenericImageWidget {
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+		return remoteViews;
 	}
 
 	/**

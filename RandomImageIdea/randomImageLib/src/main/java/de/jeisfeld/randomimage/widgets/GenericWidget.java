@@ -1,20 +1,11 @@
 package de.jeisfeld.randomimage.widgets;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,12 +41,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * The number of milliseconds per second.
 	 */
 	private static final int MILLIS_PER_SECOND = (int) TimeUnit.SECONDS.toMillis(1);
-
-	/**
-	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
-	 * complete the animation.
-	 */
-	private static final Map<Integer, ButtonAnimator> BUTTON_ANIMATORS = new HashMap<>();
 
 	/**
 	 * A temporary storage for the update types of the widgets.
@@ -299,145 +284,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		}
 
 		return widgetIdsForName;
-	}
-
-	/**
-	 * A class handling the animation of the widget buttons.
-	 */
-	protected static final class ButtonAnimator {
-		/**
-		 * The RemoteViews used for animating buttons.
-		 */
-		private RemoteViews mRemoteViews;
-
-		/**
-		 * A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-		 */
-		private AppWidgetManager mAppWidgetManager;
-
-		/**
-		 * The appWidgetId of the widget whose buttons should be animated.
-		 */
-		private int mAppWidgetId;
-
-		/**
-		 * The buttonIds to be animated.
-		 */
-		private int[] mButtonIds;
-
-		/**
-		 * The AnimatorSet running the animation.
-		 */
-		private AnimatorSet mAnimatorSet = null;
-
-		/**
-		 * Create and animate the ButtonAnimator.
-		 *
-		 * @param context          The {@link android.content.Context Context} in which this receiver is running.
-		 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
-		 * @param appWidgetId      The appWidgetId of the widget whose buttons should be animated.
-		 * @param widgetResource   The resourceId of the widget layout.
-		 * @param buttonIds        The buttonIds to be animated.
-		 */
-		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager,
-								 final int appWidgetId, final int widgetResource, final int... buttonIds) {
-			synchronized (BUTTON_ANIMATORS) {
-				if (BUTTON_ANIMATORS.containsKey(appWidgetId)) {
-					return;
-				}
-				BUTTON_ANIMATORS.put(appWidgetId, this);
-			}
-
-			this.mAppWidgetId = appWidgetId;
-			this.mAppWidgetManager = appWidgetManager;
-			this.mButtonIds = buttonIds;
-			mRemoteViews = new RemoteViews(context.getPackageName(), widgetResource);
-
-			final ObjectAnimator fadeOut =
-					ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
-			fadeOut.setDuration(1500); // MAGIC_NUMBER
-			fadeOut.addListener(new AnimatorListener() {
-				@Override
-				public void onAnimationStart(final Animator animation) {
-					for (int buttonId : buttonIds) {
-						mRemoteViews.setViewVisibility(buttonId, View.VISIBLE);
-					}
-					setAlpha(255); // MAGIC_NUMBER
-				}
-
-				@Override
-				public void onAnimationRepeat(final Animator animation) {
-					// do nothing
-				}
-
-				@Override
-				public void onAnimationEnd(final Animator animation) {
-					setAlpha(0);
-					synchronized (BUTTON_ANIMATORS) {
-						BUTTON_ANIMATORS.remove(appWidgetId);
-					}
-				}
-
-				@Override
-				public void onAnimationCancel(final Animator animation) {
-					onAnimationEnd(animation);
-				}
-			});
-
-			mAnimatorSet = new AnimatorSet();
-			mAnimatorSet.play(fadeOut);
-		}
-
-		/**
-		 * Set the opacity of the widget buttons.
-		 *
-		 * @param alpha The opacity.
-		 */
-		@SuppressWarnings("unused")
-		private void setAlpha(final int alpha) {
-			for (int buttonId : mButtonIds) {
-				mRemoteViews.setInt(buttonId, "setAlpha", alpha);
-				mRemoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
-			}
-			mAppWidgetManager.partiallyUpdateAppWidget(mAppWidgetId, mRemoteViews);
-		}
-
-		/**
-		 * Start the animation.
-		 */
-		public void start() {
-			if (mAnimatorSet != null) {
-				new Handler(Looper.getMainLooper()).post(new Runnable() {
-					@Override
-					public void run() {
-						mAnimatorSet.start();
-					}
-				});
-			}
-		}
-
-		/**
-		 * Interrupt the animation.
-		 */
-		public void interrupt() {
-			if (mAnimatorSet != null) {
-				mAnimatorSet.end();
-			}
-		}
-
-		/**
-		 * Interrupt an animator instance.
-		 *
-		 * @param appWidgetId The app widget id of the widget to be interrupted.
-		 */
-		public static void interrupt(final int appWidgetId) {
-			synchronized (BUTTON_ANIMATORS) {
-				ButtonAnimator instance = BUTTON_ANIMATORS.get(appWidgetId);
-				if (instance != null) {
-					instance.interrupt();
-				}
-			}
-		}
 	}
 
 	/**
