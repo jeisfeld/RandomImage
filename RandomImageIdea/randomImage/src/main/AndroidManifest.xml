@@ -2,6 +2,6 @@
 <manifest
     package="de.jeisfeld.randomimage"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:versionCode="32"
-    android:versionName="1.2.6">
+    android:versionCode="33"
+    android:versionName="1.2.7">
 </manifest>
