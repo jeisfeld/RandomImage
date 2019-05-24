@@ -41,8 +41,6 @@ public class StackedImageWidget extends GenericImageWidget {
 
 		determineWidgetDimensions(appWidgetManager, appWidgetId);
 
-		determineWidgetDimensions(appWidgetManager, appWidgetId);
-
 		intent.putExtra(STRING_EXTRA_LISTNAME, getListName(appWidgetId));
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 
@@ -88,7 +86,7 @@ public class StackedImageWidget extends GenericImageWidget {
 												final int appWidgetId, final Bundle newOptions) {
 		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
-		configureButtons(context, appWidgetManager, appWidgetId, false);
+		onUpdateWidget(context, appWidgetManager, appWidgetId, UpdateType.SCALING);
 
 		determineWidgetDimensions(appWidgetManager, appWidgetId);
 	}
@@ -120,7 +118,7 @@ public class StackedImageWidget extends GenericImageWidget {
 	 * @param listName    The list name to be used by the widget.
 	 * @param updateType  flag indicating what should be updated.
 	 */
-	public static final void configure(final int appWidgetId, final String listName, final UpdateType updateType) {
+	public static void configure(final int appWidgetId, final String listName, final UpdateType updateType) {
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countcreatestackedimagewidget);
 
 		long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId,
@@ -136,7 +134,7 @@ public class StackedImageWidget extends GenericImageWidget {
 	 * @param updateType  flag indicating what should be updated.
 	 * @param appWidgetId the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateInstances(final UpdateType updateType, final int... appWidgetId) {
+	public static void updateInstances(final UpdateType updateType, final int... appWidgetId) {
 		updateInstances(StackedImageWidget.class, updateType, appWidgetId);
 	}
 
@@ -145,7 +143,7 @@ public class StackedImageWidget extends GenericImageWidget {
 	 *
 	 * @param appWidgetIds the list of instances to be updated. If empty, then all instances will be updated.
 	 */
-	public static final void updateTimers(final int... appWidgetIds) {
+	public static void updateTimers(final int... appWidgetIds) {
 		updateTimers(StackedImageWidget.class, appWidgetIds);
 	}
 
