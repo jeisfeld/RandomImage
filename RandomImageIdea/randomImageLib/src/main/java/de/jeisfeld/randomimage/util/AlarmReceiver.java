@@ -38,7 +38,7 @@ public abstract class AlarmReceiver extends BroadcastReceiver {
 		if (VERSION.SDK_INT >= VERSION_CODES.M) {
 			switch (alarmType) {
 			case CLOCK:
-				alarmMgr.setAlarmClock(new AlarmClockInfo(alarmTime, null), alarmIntent);
+				alarmMgr.setAlarmClock(new AlarmClockInfo(alarmTime, alarmIntent), alarmIntent);
 				break;
 			case EXACT:
 				alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
