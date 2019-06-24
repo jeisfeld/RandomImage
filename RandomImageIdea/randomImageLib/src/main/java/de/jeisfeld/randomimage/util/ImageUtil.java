@@ -28,6 +28,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -150,7 +151,6 @@ public final class ImageUtil {
 	 * @return the bitmap.
 	 */
 	public static Bitmap getBitmapFromResource(final int resourceId) {
-		@SuppressWarnings("deprecation")
 		Drawable bitmapDrawable = Application.getAppContext().getResources().getDrawable(resourceId);
 
 		if (bitmapDrawable instanceof BitmapDrawable) {
@@ -616,6 +616,7 @@ public final class ImageUtil {
 		if (children == null) {
 			return result;
 		}
+		Arrays.sort(children, FileComparator.getInstance());
 
 		for (File aChildren : children) {
 			List<String> imageFolders = getAllImageSubfolders(aChildren, handler, listener);
@@ -820,7 +821,6 @@ public final class ImageUtil {
 	 * @param colorWhiteId The resourceId of the target color of the white parts
 	 * @return the colorized image bitmap
 	 */
-	@SuppressWarnings("deprecation")
 	public static Bitmap getColorizedBitmap(final int resourceId, final int colorBlackId, final int colorWhiteId) {
 		return changeBitmapColor(getBitmapFromResource(resourceId),
 				Application.getAppContext().getResources().getColor(colorBlackId),
@@ -857,6 +857,30 @@ public final class ImageUtil {
 		 * @param imageFolder The image folder found.
 		 */
 		void handleImageFolder(String imageFolder);
+	}
+
+	/**
+	 * A comparator comparing files by localized name.
+	 */
+	private static class FileComparator implements Comparator<File> {
+		/**
+		 * A singleton instance.
+		 */
+		private static final FileComparator INSTANCE = new FileComparator();
+
+		/**
+		 * Get the singleton instance.
+		 *
+		 * @return The singleton instance.
+		 */
+		private static FileComparator getInstance() {
+			return INSTANCE;
+		}
+
+		@Override
+		public int compare(final File o1, final File o2) {
+			return Collator.getInstance().compare(o1.getName(), o2.getName());
+		}
 	}
 
 }
