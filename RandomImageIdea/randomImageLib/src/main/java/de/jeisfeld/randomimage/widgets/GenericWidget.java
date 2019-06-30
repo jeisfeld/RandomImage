@@ -186,11 +186,20 @@ public abstract class GenericWidget extends AppWidgetProvider {
 
 	/**
 	 * Update all instances of all widgets.
+	 *
+	 * @param updateType flag indicating what should be updated.
+	 */
+	public static void updateAllInstances(final UpdateType updateType) {
+		for (Class<? extends GenericWidget> widgetType : WIDGET_TYPES) {
+			updateInstances(widgetType, updateType);
+		}
+	}
+
+	/**
+	 * Update all instances of all widgets.
 	 */
 	public static void updateAllInstances() {
-		for (Class<? extends GenericWidget> widgetType : WIDGET_TYPES) {
-			updateInstances(widgetType, UpdateType.NEW_LIST);
-		}
+		updateAllInstances(UpdateType.NEW_LIST);
 	}
 
 	/**

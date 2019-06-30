@@ -20,7 +20,6 @@
         android:text="@string/text_no_image"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:visibility="gone"/>
+        android:textStyle="bold"/>
 
 </merge>

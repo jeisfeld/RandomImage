@@ -114,6 +114,15 @@ public abstract class GenericImageWidget extends GenericWidget {
 				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
 
+		// Set the onClick intent for the view on empty widget
+		Intent refreshIntent = new Intent(context, getClass());
+		refreshIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
+		refreshIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.SCALING);
+		PendingIntent pendingRefreshIntent =
+				PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, PendingIntent.FLAG_ONE_SHOT);
+		remoteViews.setOnClickPendingIntent(R.id.textViewWidgetEmpty, pendingRefreshIntent);
+
 		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);
 		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 			int padding = context.getResources().getDimensionPixelSize(
