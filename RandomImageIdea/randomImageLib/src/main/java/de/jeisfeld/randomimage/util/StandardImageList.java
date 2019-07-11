@@ -118,7 +118,7 @@ public final class StandardImageList extends ImageList {
 		String nestedList = getRandomNestedList();
 
 		if (nestedList == null) {
-			Log.w(Application.TAG, "Tried to get random file before list was fully loaded.");
+			Log.w(Application.TAG, "Tried to get random file before list was fully loaded, or sum of weights is below 100%");
 			return getRandomFileNameFromAllFiles();
 		}
 
@@ -439,7 +439,9 @@ public final class StandardImageList extends ImageList {
 					}
 				}
 			}
-			mNestedListWeights.put("", remainingWeight * mImageFilesInList.size() / remainingPictures);
+			if (remainingPictures > 0) {
+				mNestedListWeights.put("", remainingWeight * mImageFilesInList.size() / remainingPictures);
+			}
 		}
 	}
 
@@ -460,15 +462,11 @@ public final class StandardImageList extends ImageList {
 				final Map<String, ImageList> nestedLists = new HashMap<>();
 
 				Set<String> imageFileSet = new HashSet<>();
-				Set<String> allImageFileSet = new HashSet<>();
-
 				for (String folderName : folderNames) {
 					imageFileSet.addAll(ImageUtil.getImagesInFolder(folderName));
 				}
-				for (String fileName : fileNames) {
-					imageFileSet.add(fileName);
-				}
-				allImageFileSet.addAll(imageFileSet);
+				imageFileSet.addAll(fileNames);
+				Set<String> allImageFileSet = new HashSet<>(imageFileSet);
 
 				for (String nestedListName : nestedListNames) {
 					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedListName, toastIfFilesMissing);
