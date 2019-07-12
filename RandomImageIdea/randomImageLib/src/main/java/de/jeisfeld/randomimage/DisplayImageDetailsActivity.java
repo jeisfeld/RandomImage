@@ -37,6 +37,9 @@ import de.jeisfeld.randomimage.widgets.ImageWidget;
 import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimagelib.R;
 
+import static de.jeisfeld.randomimage.util.ListElement.Type.FILE;
+import static de.jeisfeld.randomimage.util.ListElement.Type.FOLDER;
+
 /**
  * Activity to display the details of an image.
  */
@@ -317,17 +320,17 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 								@Override
 								public void onDialogPositiveClick(final DialogFragment dialog) {
 									if (mFileType == FileType.FOLDER) {
-										imageList.removeFolder(mFileNameInList);
+										imageList.remove(FOLDER, mFileNameInList);
 										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
 												null, Collections.singletonList(mFileName), null);
 									}
 									else if (mFileType == FileType.FOLDER_RECURSIVE) {
-										imageList.removeFolder(mFileNameInList);
+										imageList.remove(FOLDER, mFileNameInList);
 										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
 												null, Collections.singletonList(mFileName), null);
 									}
 									else {
-										imageList.removeFile(mFileNameInList);
+										imageList.remove(FILE, mFileNameInList);
 										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
 												null, null, Collections.singletonList(mFileName));
 									}

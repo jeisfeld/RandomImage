@@ -35,6 +35,12 @@ import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
+import static de.jeisfeld.randomimage.util.ListElement.Type.FILE;
+import static de.jeisfeld.randomimage.util.ListElement.Type.FOLDER;
+import static de.jeisfeld.randomimage.util.ListElement.Type.MISSING_PATH;
+import static de.jeisfeld.randomimage.util.ListElement.Type.NESTED_LIST;
+
+
 /**
  * Activity to display and configure the list of images in an image list.
  */
@@ -205,9 +211,10 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 */
 	private void fillListOfImages() {
 		ImageList imageList = ImageRegistry.getCurrentImageList(true);
-		mFileNames = imageList.getFileNames();
-		mFolderNames = imageList.getFolderNames();
-		mNestedListNames = imageList.getNestedListNames();
+		mFileNames = imageList.getElementNames(FILE);
+		mFolderNames = imageList.getElementNames(FOLDER);
+		mNestedListNames = imageList.getElementNames(NESTED_LIST);
+
 		if (getAdapter() != null) {
 			getAdapter().cleanupCache();
 		}
@@ -238,14 +245,14 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 */
 	private void configureMissingImagesButton(final ImageList imageList) {
 		Button missingImagesButton = findViewById(R.id.buttonShowMissing);
-		boolean hasMissingImages = imageList.getMissingPathNames().size() > 0;
+		boolean hasMissingImages = imageList.hasElements(MISSING_PATH);
 		missingImagesButton.setVisibility(hasMissingImages ? View.VISIBLE : View.GONE);
 		if (hasMissingImages) {
 			missingImagesButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					StringBuilder missingImagesString = new StringBuilder();
-					for (String pathName : imageList.getMissingPathNames()) {
+					for (String pathName : imageList.getElementNames(MISSING_PATH)) {
 						missingImagesString.append(pathName).append("\n");
 					}
 
@@ -397,19 +404,19 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 								ArrayList<String> removedFolders = new ArrayList<>();
 								ArrayList<String> removedImages = new ArrayList<>();
 								for (String nestedListName : nestedListsToBeRemoved) {
-									boolean isRemoved = imageList.removeNestedList(nestedListName);
+									boolean isRemoved = imageList.remove(NESTED_LIST, nestedListName);
 									if (isRemoved) {
 										removedNestedLists.add(nestedListName);
 									}
 								}
 								for (String removeFolderName : foldersToBeRemoved) {
-									boolean isRemoved = imageList.removeFolder(removeFolderName);
+									boolean isRemoved = imageList.remove(FOLDER, removeFolderName);
 									if (isRemoved) {
 										removedFolders.add(removeFolderName);
 									}
 								}
 								for (String fileName : imagesToBeRemoved) {
-									boolean isRemoved = imageList.removeFile(fileName);
+									boolean isRemoved = imageList.remove(FILE, fileName);
 									if (isRemoved) {
 										removedImages.add(fileName);
 									}

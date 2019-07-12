@@ -25,6 +25,8 @@ import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
+import static de.jeisfeld.randomimage.util.ListElement.Type.NESTED_LIST;
+
 /**
  * Activity to display the info for an image list.
  */
@@ -85,7 +87,7 @@ public class DisplayListInfoActivity extends BaseActivity {
 		setContentView(parentListName == null ? R.layout.activity_display_list_info : R.layout.activity_display_nested_list_info);
 
 		// Enable icon
-		final TextView title = (TextView) findViewById(android.R.id.title);
+		final TextView title = findViewById(android.R.id.title);
 		if (title != null) {
 			int horizontalMargin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
 			title.setPadding(horizontalMargin * 9 / 10, 0, 0, 0); // MAGIC_NUMBER
@@ -132,7 +134,7 @@ public class DisplayListInfoActivity extends BaseActivity {
 						new ConfirmDialogListener() {
 							@Override
 							public void onDialogPositiveClick(final DialogFragment dialog) {
-								imageList.removeNestedList(mListName);
+								imageList.remove(NESTED_LIST, mListName);
 								NotificationUtil.notifyUpdatedList(DisplayListInfoActivity.this, parentListName, true,
 										Collections.singletonList(mListName), null, null);
 								imageList.update(true);
@@ -158,7 +160,7 @@ public class DisplayListInfoActivity extends BaseActivity {
 										imageList.getNestedListImageCount(mListName),
 										getPercentageString(imageList.getImagePercentage(mListName)))));
 
-						final EditText editTextViewFrequency = (EditText) findViewById(R.id.editTextViewFrequency);
+						final EditText editTextViewFrequency = findViewById(R.id.editTextViewFrequency);
 						Double customNestedListWeight = imageList.getCustomNestedListWeight(mListName);
 						if (customNestedListWeight == null) {
 							double nestedListWeight = imageList.getNestedListWeight(mListName);
@@ -168,7 +170,7 @@ public class DisplayListInfoActivity extends BaseActivity {
 							editTextViewFrequency.setText(getPercentageString(customNestedListWeight));
 						}
 
-						ImageButton buttonSave = (ImageButton) findViewById(R.id.button_save);
+						ImageButton buttonSave = findViewById(R.id.button_save);
 
 						buttonSave.setOnClickListener(new OnClickListener() {
 							@Override
@@ -256,7 +258,7 @@ public class DisplayListInfoActivity extends BaseActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						TextView textViewNumberOfImages = (TextView) findViewById(R.id.textViewNumberOfImages);
+						TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
 						textViewNumberOfImages.setText(
 								DialogUtil.fromHtml(getString(R.string.info_number_of_images, Integer.toString(numberOfImages))));
 					}

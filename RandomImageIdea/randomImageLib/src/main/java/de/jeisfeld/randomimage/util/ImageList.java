@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
@@ -24,6 +23,11 @@ import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
+
+import static de.jeisfeld.randomimage.util.ListElement.Type.FILE;
+import static de.jeisfeld.randomimage.util.ListElement.Type.FOLDER;
+import static de.jeisfeld.randomimage.util.ListElement.Type.MISSING_PATH;
+import static de.jeisfeld.randomimage.util.ListElement.Type.NESTED_LIST;
 
 /**
  * Utility class for storing and persisting a list of image file names plus additional display information.
@@ -40,46 +44,9 @@ public abstract class ImageList implements RandomFileProvider {
 	private static final String PROP_LIST_NAME = "listName";
 
 	/**
-	 * Prefix for the property used for embedded lists.
+	 * The list of elements in the list.
 	 */
-	private static final String PROP_NESTED_LIST_PREFIX = "nestedList";
-
-	/**
-	 * The regex pattern used to identify embedded list properties.
-	 */
-	private static final Pattern PROP_NESTED_LIST_PATTERN =
-			Pattern.compile("^" + PROP_NESTED_LIST_PREFIX + "\\[(\\d+)]");
-
-	/**
-	 * Prefix for the sub property used for embedded lists.
-	 */
-	private static final String PROP_NESTED_PROPERTY_PREFIX = "nestedList";
-
-	/**
-	 * The regex pattern used to identify embedded list sub properties.
-	 */
-	private static final Pattern PROP_NESTED_PROPERTY_PATTERN =
-			Pattern.compile("^" + PROP_NESTED_PROPERTY_PREFIX + "\\.([^\\[]*)\\[(\\d+)]");
-
-	/**
-	 * The list of image files.
-	 */
-	private ArrayList<String> mFileNames = new ArrayList<>();
-
-	/**
-	 * The list of image folders.
-	 */
-	private ArrayList<String> mFolderNames = new ArrayList<>();
-
-	/**
-	 * Path names stored in the config file which currently cannot be loaded.
-	 */
-	private ArrayList<String> mMissingPathNames = new ArrayList<>();
-
-	/**
-	 * The list of nested image lists.
-	 */
-	private ArrayList<String> mNestedListNames = new ArrayList<>();
+	private final ArrayList<ListElement> mElements = new ArrayList<>();
 
 	/**
 	 * The config file where the list of files is stored.
@@ -90,11 +57,6 @@ public abstract class ImageList implements RandomFileProvider {
 	 * Configuration properties of the file list.
 	 */
 	private Properties mProperties = new Properties();
-
-	/**
-	 * Configuration properties of nested lists.
-	 */
-	private HashMap<String, Properties> mNestedListProperties = new HashMap<>();
 
 	/**
 	 * Create an image list and load it from its file, if existing.
@@ -134,6 +96,107 @@ public abstract class ImageList implements RandomFileProvider {
 	}
 
 	/**
+	 * Get the list elements (but not during update).
+	 *
+	 * @return The list elements.
+	 */
+	private ArrayList<ListElement> getElements() {
+		synchronized (mElements) {
+			return mElements;
+		}
+	}
+
+	/**
+	 * Get the list elements of a particular type.
+	 *
+	 * @param type The type.
+	 * @return The elements of this type.
+	 */
+	public ArrayList<ListElement> getElements(final ListElement.Type type) {
+		ArrayList<ListElement> result = new ArrayList<>();
+		synchronized (mElements) {
+			for (ListElement element : mElements) {
+				if (element.getType() == type) {
+					result.add(element);
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get the list elements of a particular type.
+	 *
+	 * @param type The type.
+	 * @return The names of elements of this type.
+	 */
+	public ArrayList<String> getElementNames(final ListElement.Type type) {
+		ArrayList<String> result = new ArrayList<>();
+		synchronized (mElements) {
+			for (ListElement element : mElements) {
+				if (element.getType() == type) {
+					result.add(element.getName());
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get an element from the list, if existing.
+	 *
+	 * @param type The element type.
+	 * @param name The element name.
+	 * @return The element instance.
+	 */
+	protected ListElement getElement(final ListElement.Type type, final String name) {
+		if (name == null) {
+			return null;
+		}
+		synchronized (mElements) {
+			for (ListElement element : mElements) {
+				if (type == element.getType() && name.equals(element.getName())) {
+					return element;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the instance of the element which is currently in the list.
+	 *
+	 * @param element The element to be found
+	 * @return The instance of this element in the list, if existing. Otherwise the given element.
+	 */
+	protected ListElement getElement(final ListElement element) {
+		ListElement foundElement = getElement(element.getType(), element.getName());
+		if (foundElement == null) {
+			return element;
+		}
+		else {
+			return foundElement;
+		}
+	}
+
+	/**
+	 * Find out if there is an element of a given type.
+	 *
+	 * @param type The type.
+	 * @return True if the list contains an element of this type.
+	 */
+	public boolean hasElements(final ListElement.Type type) {
+		synchronized (mElements) {
+			for (ListElement element : mElements) {
+				if (element.getType() == type) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Do initialization steps of the subclass of ImageList.
 	 *
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
@@ -165,18 +228,49 @@ public abstract class ImageList implements RandomFileProvider {
 	 * Remove missing files from the list.
 	 */
 	public final void cleanupMissingFiles() {
-		mMissingPathNames = new ArrayList<>();
+		ArrayList<ListElement> newElements = new ArrayList<>();
+		synchronized (mElements) {
+			for (ListElement element : mElements) {
+				if (element.getType() != MISSING_PATH) {
+					newElements.add(element);
+				}
+			}
+			mElements.clear();
+			mElements.addAll(newElements);
+		}
 		update(true);
 	}
 
 	/**
-	 * Check if the file or folder is contained in the list.
+	 * Check if the element is contained in the list.
 	 *
-	 * @param fileName The file name to be checked.
+	 * @param listElement The element to be checked.
 	 * @return true if contained in the list.
 	 */
-	public final boolean contains(final String fileName) {
-		return fileName != null && (mFileNames.contains(fileName) || mFolderNames.contains(fileName));
+	public final boolean contains(final ListElement listElement) {
+		synchronized (mElements) {
+			return listElement != null && mElements.contains(listElement);
+		}
+	}
+
+	/**
+	 * Check if the path is contained in the list.
+	 *
+	 * @param path The path to be checked.
+	 * @return true if contained in the list.
+	 */
+	public final boolean contains(final String path) {
+		if (path == null) {
+			return false;
+		}
+		synchronized (mElements) {
+			for (ListElement element : mElements) {
+				if (path.equals(element.getName()) && element.getType() != NESTED_LIST) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -187,14 +281,14 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @return true if it is contained in some way.
 	 */
 	public final boolean containsNestedList(final String listName, final boolean includeDeepNestings) {
-		if (mNestedListNames.contains(listName)) {
+		if (getElementNames(NESTED_LIST).contains(listName)) {
 			return true;
 		}
 		else if (!includeDeepNestings) {
 			return false;
 		}
 
-		for (String nestedListName : mNestedListNames) {
+		for (String nestedListName : getElementNames(NESTED_LIST)) {
 			ImageList nestedList = ImageRegistry.getImageListByName(nestedListName, true);
 			if (nestedList != null && nestedList.containsNestedList(listName, true)) {
 				return true;
@@ -275,124 +369,141 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	// OVERRIDABLE
-	public synchronized void load(final boolean toastIfFilesMissing) {
+	public void load(final boolean toastIfFilesMissing) {
 		if (!mConfigFile.exists()) {
 			return;
 		}
 		final long timestamp = System.currentTimeMillis();
 
-		mFileNames.clear();
-		mFolderNames.clear();
-		mNestedListNames.clear();
-		mNestedListProperties.clear();
-		mProperties.clear();
-		mMissingPathNames = new ArrayList<>();
+		synchronized (mElements) {
+			mElements.clear();
+			mProperties.clear();
 
-		SparseArray<Properties> nestedPropertiesArray = new SparseArray<>();
-		HashMap<String, Integer> nestedListIndices = new HashMap<>();
+			SparseArray<Properties> nestedPropertiesArray = new SparseArray<>();
+			HashMap<ListElement, Integer> indexMap = new HashMap<>();
+			ArrayList<String> missingPaths = new ArrayList<>();
 
-		try {
-			Scanner scanner = new Scanner(mConfigFile);
-			scanner.useDelimiter("\n");
-			while (scanner.hasNext()) {
-				String line = scanner.next();
+			try {
+				Scanner scanner = new Scanner(mConfigFile);
+				scanner.useDelimiter("\n");
+				while (scanner.hasNext()) {
+					String line = scanner.next();
 
-				// ignore comment lines
-				if (line == null || line.length() == 0 || line.startsWith("#")) {
-					continue;
-				}
-
-				// handle file names
-				if (line.startsWith(File.separator)) {
-					File file = new File(line);
-					if (file.getName().equals("*")) {
-						if (file.getParentFile().isDirectory()) {
-							mFolderNames.add(line);
-						}
-						else {
-							Log.w(Application.TAG, "Cannot find folder " + line);
-						}
+					// ignore comment lines
+					if (line == null || line.length() == 0 || line.startsWith("#")) {
+						continue;
 					}
-					else if (file.exists()) {
-						if (file.isDirectory()) {
-							mFolderNames.add(line);
-						}
-						else {
-							if (ImageUtil.isImage(file, false)) {
-								mFileNames.add(line);
+
+					// handle file names
+					if (line.startsWith(File.separator)) {
+						File file = new File(line);
+						if (file.getName().equals("*")) {
+							if (file.getParentFile().isDirectory()) {
+								mElements.add(new ListElement(FOLDER, line));
 							}
 							else {
-								Log.w(Application.TAG, "File " + line + " is not an image file");
+								Log.w(Application.TAG, "Cannot find folder " + line);
+							}
+						}
+						else if (file.exists()) {
+							if (file.isDirectory()) {
+								mElements.add(new ListElement(FOLDER, line));
+							}
+							else {
+								if (ImageUtil.isImage(file, false)) {
+									mElements.add(new ListElement(FILE, line));
+								}
+								else {
+									Log.w(Application.TAG, "File " + line + " is not an image file");
+								}
+							}
+						}
+						else {
+							Log.w(Application.TAG, "Cannot find file " + line);
+							mElements.add(new ListElement(MISSING_PATH, line));
+							missingPaths.add(line);
+						}
+						continue;
+					}
+
+					// handle properties
+					if (line.contains(PROPERTY_SEPARATOR)) {
+						int index = line.indexOf(PROPERTY_SEPARATOR);
+						String name = line.substring(0, index);
+						String value = line.substring(index + 1);
+
+						boolean found = false;
+						for (ListElement.Type type : ListElement.Type.values()) {
+							if (type.hasPrefix()) {
+								if (name.startsWith(type.getPrefix() + "[")) {
+									Matcher matcher = type.getElementPattern().matcher(name);
+									if (matcher.find()) {
+										int propertyIndex = Integer.parseInt(matcher.group(1));
+										ListElement element = new ListElement(type, value);
+										mElements.add(element);
+										indexMap.put(element, propertyIndex);
+									}
+									found = true;
+								}
+								else if (name.startsWith(type.getPrefix() + ".")) {
+									Matcher matcher = type.getPropertyPattern().matcher(name);
+									if (matcher.find()) {
+										String propertyName = matcher.group(1);
+										int propertyIndex = Integer.parseInt(matcher.group(2));
+										if (nestedPropertiesArray.get(propertyIndex) == null) { // SUPPRESS_CHECKSTYLE
+											nestedPropertiesArray.put(propertyIndex, new Properties());
+										}
+										nestedPropertiesArray.get(propertyIndex).setProperty(propertyName, value);
+									}
+									found = true;
+								}
+							}
+						}
+
+						if (!found) {
+							mProperties.setProperty(name, value);
+						}
+					}
+				}
+				scanner.close();
+			}
+			catch (FileNotFoundException e) {
+				Log.e(Application.TAG, "Could not find configuration file", e);
+			}
+
+			if (missingPaths.size() > 1) {
+				if (toastIfFilesMissing) {
+					DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, getListName(),
+							missingPaths.size());
+				}
+			}
+			else if (missingPaths.size() == 1) {
+				if (toastIfFilesMissing) {
+					DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single, getListName());
+				}
+			}
+			NotificationUtil.notifyNotFoundFiles(Application.getAppContext(), getListName(), missingPaths);
+
+			// Nested properties are filled now.
+
+			for (ListElement.Type type : ListElement.Type.values()) {
+				if (type.hasPrefix()) {
+					for (ListElement element : getElements(type)) {
+						Integer nestedElementIndex = indexMap.get(element);
+						if (nestedElementIndex != null) {
+							Properties nestedProperties = nestedPropertiesArray.get(nestedElementIndex);
+							if (nestedProperties == null) {
+								element.setProperties(new Properties());
+							}
+							else {
+								element.setProperties(nestedProperties);
 							}
 						}
 					}
-					else {
-						Log.w(Application.TAG, "Cannot find file " + line);
-						mMissingPathNames.add(file.getAbsolutePath());
-					}
-					continue;
-				}
-
-				// handle properties
-				if (line.contains(PROPERTY_SEPARATOR)) {
-					int index = line.indexOf(PROPERTY_SEPARATOR);
-					String name = line.substring(0, index);
-					String value = line.substring(index + 1);
-
-					// nested list names
-					if (name.startsWith(PROP_NESTED_LIST_PREFIX + "[")) {
-						Matcher matcher = PROP_NESTED_LIST_PATTERN.matcher(name);
-						if (matcher.find()) {
-							int propertyIndex = Integer.parseInt(matcher.group(1));
-							mNestedListNames.add(value);
-							nestedListIndices.put(value, propertyIndex);
-						}
-					}
-					else if (name.startsWith(PROP_NESTED_PROPERTY_PREFIX + ".")) {
-						Matcher matcher = PROP_NESTED_PROPERTY_PATTERN.matcher(name);
-						if (matcher.find()) {
-							String propertyName = matcher.group(1);
-							int propertyIndex = Integer.parseInt(matcher.group(2));
-							if (nestedPropertiesArray.get(propertyIndex) == null) {
-								nestedPropertiesArray.put(propertyIndex, new Properties());
-							}
-							nestedPropertiesArray.get(propertyIndex).setProperty(propertyName, value);
-						}
-					}
-					else {
-						mProperties.setProperty(name, value);
-					}
 				}
 			}
-			scanner.close();
-		}
-		catch (FileNotFoundException e) {
-			Log.e(Application.TAG, "Could not find configuration file", e);
 		}
 
-		if (mMissingPathNames.size() > 1) {
-			if (toastIfFilesMissing) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files, getListName(), mMissingPathNames.size());
-			}
-		}
-		else if (mMissingPathNames.size() == 1) {
-			if (toastIfFilesMissing) {
-				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_failed_to_load_files_single, getListName());
-			}
-		}
-		NotificationUtil.notifyNotFoundFiles(Application.getAppContext(), getListName(), mMissingPathNames);
-
-		// Nested properties are filled now.
-		for (String nestedListName : mNestedListNames) {
-			int nestedListIndex = nestedListIndices.get(nestedListName);
-			Properties nestedProperties = nestedPropertiesArray.get(nestedListIndex);
-			if (nestedProperties == null) {
-				mNestedListProperties.put(nestedListName, new Properties());
-			}
-			else {
-				mNestedListProperties.put(nestedListName, nestedProperties);
-			}
-		}
 		TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load image list", "config file", System.currentTimeMillis() - timestamp);
 	}
 
@@ -422,40 +533,34 @@ public abstract class ImageList implements RandomFileProvider {
 			for (String key : mProperties.stringPropertyNames()) {
 				writer.println(key + PROPERTY_SEPARATOR + mProperties.getProperty(key));
 			}
-			if (mNestedListNames.size() > 0) {
-				writer.println();
-				writer.println("# Nested List names");
-				for (int i = 0; i < mNestedListNames.size(); i++) {
-					String nestedListName = mNestedListNames.get(i);
-					writer.println(PROP_NESTED_LIST_PREFIX + "[" + i + "]" + PROPERTY_SEPARATOR + nestedListName);
-					Properties nestedProperties = mNestedListProperties.get(nestedListName);
-					if (nestedProperties != null) {
-						for (String nestedKey : nestedProperties.stringPropertyNames()) {
-							writer.println(PROP_NESTED_PROPERTY_PREFIX + "." + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
-									+ nestedProperties.getProperty(nestedKey));
+
+			for (ListElement.Type type : ListElement.Type.values()) {
+				if (type.hasPrefix()) {
+					ArrayList<ListElement> elements = getElements(type);
+					if (elements.size() > 0) {
+						writer.println();
+						writer.println("# " + type.getDescription() + " names");
+						for (int i = 0; i < elements.size(); i++) {
+							ListElement element = elements.get(i);
+							writer.println(type.getPrefix() + "[" + i + "]" + PROPERTY_SEPARATOR + element.getName());
+							Properties nestedProperties = element.getProperties();
+							if (nestedProperties != null) {
+								for (String nestedKey : nestedProperties.stringPropertyNames()) {
+									writer.println(type.getPrefix() + "." + nestedKey + "[" + i + "]" + PROPERTY_SEPARATOR
+											+ nestedProperties.getProperty(nestedKey));
+								}
+							}
 						}
 					}
 				}
-			}
-			if (mFolderNames.size() > 0) {
-				writer.println();
-				writer.println("# Folder names");
-				for (String folderName : mFolderNames) {
-					writer.println(folderName);
-				}
-			}
-			if (mFileNames.size() > 0) {
-				writer.println();
-				writer.println("# File names");
-				for (String fileName : mFileNames) {
-					writer.println(fileName);
-				}
-			}
-			if (mMissingPathNames.size() > 0) {
-				writer.println();
-				writer.println("# Missing path names");
-				for (String fileName : mMissingPathNames) {
-					writer.println(fileName);
+				else {
+					if (hasElements(type)) {
+						writer.println();
+						writer.println("# " + type.getDescription() + " names");
+						for (String name : getElementNames(type)) {
+							writer.println(name);
+						}
+					}
 				}
 			}
 
@@ -550,50 +655,14 @@ public abstract class ImageList implements RandomFileProvider {
 	}
 
 	/**
-	 * Get the list of file names in the list.
-	 *
-	 * @return The list of file names.
-	 */
-	public final ArrayList<String> getFileNames() {
-		return new ArrayList<>(mFileNames);
-	}
-
-	/**
-	 * Get the list of folder names in the list.
-	 *
-	 * @return The list of file names.
-	 */
-	public final ArrayList<String> getFolderNames() {
-		return new ArrayList<>(mFolderNames);
-	}
-
-	/**
-	 * Get the list of nested list names in the list.
-	 *
-	 * @return The list of nested list names.
-	 */
-	public final ArrayList<String> getNestedListNames() {
-		return new ArrayList<>(mNestedListNames);
-	}
-
-	/**
 	 * Check if the list has no elements yet.
 	 *
 	 * @return True if there are no elements in the list.
 	 */
 	public final boolean isEmpty() {
-		return (mFileNames == null || mFileNames.size() == 0) // BOOLEAN_EXPRESSION_COMPLEXITY
-				&& (mFolderNames == null || mFolderNames.size() == 0)
-				&& (mNestedListNames == null || mNestedListNames.size() == 0);
-	}
-
-	/**
-	 * Get the list of missing path names for the list.
-	 *
-	 * @return The list of missing path names.
-	 */
-	public final ArrayList<String> getMissingPathNames() {
-		return new ArrayList<>(mMissingPathNames);
+		synchronized (mElements) {
+			return mElements.size() == 0;
+		}
 	}
 
 	/**
@@ -611,13 +680,16 @@ public abstract class ImageList implements RandomFileProvider {
 		if (!file.exists() || file.isDirectory()) {
 			return false;
 		}
+		ListElement element = new ListElement(FILE, fileName);
 
-		if (mFileNames.contains(fileName)) {
-			return false;
-		}
-		else {
-			mFileNames.add(fileName);
-			return true;
+		synchronized (mElements) {
+			if (mElements.contains(element)) {
+				return false;
+			}
+			else {
+				mElements.add(element);
+				return true;
+			}
 		}
 	}
 
@@ -657,16 +729,19 @@ public abstract class ImageList implements RandomFileProvider {
 		if (!file.exists() || !file.isDirectory()) {
 			return false;
 		}
+		ListElement element = new ListElement(FOLDER, folderName);
 
-		if (mFolderNames.contains(folderName)) {
-			return false;
-		}
-		else {
-			mFolderNames.add(folderName);
-			if (isRecursive) {
-				ImageUtil.checkForQuickParsing(folderName);
+		synchronized (mElements) {
+			if (mElements.contains(element)) {
+				return false;
 			}
-			return true;
+			else {
+				mElements.add(element);
+				if (isRecursive) {
+					ImageUtil.checkForQuickParsing(folderName);
+				}
+				return true;
+			}
 		}
 	}
 
@@ -677,113 +752,39 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @return true if the given list was not included in the current list before and hence has been added.
 	 */
 	public final boolean addNestedList(final String nestedListName) {
-		if (nestedListName == null || nestedListName.equals(getListName()) || mNestedListNames.contains(nestedListName)) {
-			return false;
-		}
+		ListElement nestedList = new ListElement(NESTED_LIST, nestedListName);
 
-		if (!ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(nestedListName)) {
-			return false;
-		}
+		synchronized (mElements) {
+			if (nestedListName == null || nestedListName.equals(getListName()) || mElements.contains(nestedList)) {
+				return false;
+			}
 
-		ImageList otherImageList = ImageRegistry.getImageListByName(nestedListName, true);
-		if (otherImageList == null || otherImageList.containsNestedList(getListName(), true)) {
-			DialogUtil.displayToast(Application.getAppContext(), R.string.toast_cyclic_nesting, nestedListName);
-			return false;
-		}
+			if (!ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(nestedListName)) {
+				return false;
+			}
 
-		mNestedListNames.add(nestedListName);
-		mNestedListProperties.put(nestedListName, new Properties());
+			ImageList otherImageList = ImageRegistry.getImageListByName(nestedListName, true);
+			if (otherImageList == null || otherImageList.containsNestedList(getListName(), true)) {
+				DialogUtil.displayToast(Application.getAppContext(), R.string.toast_cyclic_nesting, nestedListName);
+				return false;
+			}
+
+			mElements.add(nestedList);
+		}
 		return true;
 	}
 
 	/**
-	 * Remove a single file name. This does not yet update the list of all images!
-	 *
-	 * @param fileName The file name to be removed.
-	 * @return true if the file was removed.
-	 */
-	public final boolean removeFile(final String fileName) {
-		return mFileNames.remove(fileName);
-	}
-
-	/**
-	 * Remove a single folder name. This does not yet update the list of all images!
-	 *
-	 * @param folderName The folder name to be removed.
-	 * @return true if the folder was removed.
-	 */
-	public final boolean removeFolder(final String folderName) {
-		return mFolderNames.remove(folderName);
-	}
-
-	/**
-	 * Remove a nested list name. This does not yet update the list of all images!
-	 *
-	 * @param nestedListName The nested list name to be removed.
-	 * @return true if the nested list was removed.
+	 * Remove a single element. This does not yet update the list of all images!
+	 * @param type The type of the element.
+	 * @param name The name of the element to be removed.
+	 * @return true if the element was removed.
 	 */
 	// OVERRIDABLE
-	public boolean removeNestedList(final String nestedListName) {
-		mNestedListProperties.remove(nestedListName);
-		return mNestedListNames.remove(nestedListName);
-	}
-
-	/**
-	 * Get a list property.
-	 *
-	 * @param key The property key.
-	 * @return The property value.
-	 */
-	protected final String getProperty(final String key) {
-		return mProperties.getProperty(key);
-	}
-
-	/**
-	 * Set a list property.
-	 *
-	 * @param key   The property key.
-	 * @param value The property value.
-	 */
-	protected final void setProperty(final String key, final String value) {
-		if (value == null) {
-			mProperties.remove(key);
+	public boolean remove(final ListElement.Type type, final String name) {
+		synchronized (mElements) {
+			return mElements.remove(new ListElement(type, name));
 		}
-		else {
-			mProperties.setProperty(key, value);
-		}
-		save();
-	}
-
-	/**
-	 * Get a list property of a nested list.
-	 *
-	 * @param nestedListName the name of the nested list.
-	 * @param key            The property key.
-	 * @return The property value.
-	 */
-	public final String getNestedListProperty(final String nestedListName, final String key) {
-		Properties nestedProperties = mNestedListProperties.get(nestedListName);
-		return nestedProperties == null ? null : nestedProperties.getProperty(key);
-	}
-
-	/**
-	 * Set a list property of a nested list.
-	 *
-	 * @param nestedListName the name of the nested list.
-	 * @param key            The property key.
-	 * @param value          The property value.
-	 */
-	public final void setNestedListProperty(final String nestedListName, final String key, final String value) {
-		Properties nestedProperties = mNestedListProperties.get(nestedListName);
-		if (nestedProperties != null) {
-			if (value == null) {
-				nestedProperties.remove(key);
-			}
-			else {
-				nestedProperties.setProperty(key, value);
-			}
-		}
-		save();
 	}
 
 	/**
