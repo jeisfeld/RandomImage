@@ -10,7 +10,7 @@ public class ListElement {
 	/**
 	 * The dummy nested list, containing all files and folders.
 	 */
-	public static final ListElement DUMMY_NESTED_LIST = new ListElement(Type.NESTED_LIST, "");
+	public static final ListElement DUMMY_NESTED_FOLDER = new ListElement(Type.FOLDER, "");
 
 	/**
 	 * The mType of a list element.
@@ -100,6 +100,18 @@ public class ListElement {
 		return true;
 	}
 
+	@Override
+	public final String toString() {
+		StringBuilder result = new StringBuilder(getType().toString());
+		result.append(":");
+		result.append(getName());
+		if (getProperties().size() > 0) {
+			result.append(":");
+			result.append(getProperties());
+		}
+		return result.toString();
+	}
+
 	/**
 	 * The types of list elements.
 	 */
@@ -111,7 +123,7 @@ public class ListElement {
 		/**
 		 * A folder.
 		 */
-		FOLDER("Folder"),
+		FOLDER("Folder", "folder"),
 		/**
 		 * A file.
 		 */

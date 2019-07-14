@@ -13,6 +13,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.File;
@@ -25,6 +27,8 @@ import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.FormattingUtil;
+import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -155,14 +159,14 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 
 		File file = new File(mFileName);
 		if (file.isFile()) {
-			mFileType = FileType.FILE;
+			mFileType = FileType.IMAGE_FILE;
 		}
 		else if (mFileName.endsWith(ImageUtil.RECURSIVE_SUFFIX) && file.getParentFile().isDirectory()) {
 			mFileType = FileType.FOLDER_RECURSIVE;
 			mFileName = file.getParent();
 		}
 		else if (file.isDirectory()) {
-			mFileType = FileType.FOLDER;
+			mFileType = FileType.FOLDER_SIMPLE;
 		}
 		else {
 			mFileType = FileType.UNKNOWN;
@@ -192,10 +196,10 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		displayImageInfo();
 
 		final String galleryFileName;
-		if (mFileType == FileType.FILE) {
+		if (mFileType == FileType.IMAGE_FILE) {
 			galleryFileName = mFileName;
 		}
-		else if (mFileType == FileType.FOLDER) {
+		else if (mFileType == FileType.FOLDER_SIMPLE) {
 			setTitle(R.string.title_activity_display_folder_details);
 			ArrayList<String> files = ImageUtil.getImagesInFolder(mFileName);
 			if (files.size() > 0) {
@@ -206,6 +210,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			}
 		}
 		else {
+			setTitle(R.string.title_activity_display_folder_details);
 			galleryFileName = null;
 		}
 		if (galleryFileName != null) {
@@ -220,7 +225,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			});
 		}
 
-		if (mFileType == FileType.FILE) {
+		if (mFileType == FileType.IMAGE_FILE) {
 			configureButtonsForImage();
 		}
 
@@ -308,7 +313,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 				@Override
 				public void onClick(final View v) {
 					final String filesString;
-					if (mFileType == FileType.FILE) {
+					if (mFileType == FileType.IMAGE_FILE) {
 						filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
 					}
 					else {
@@ -319,7 +324,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 							new ConfirmDialogListener() {
 								@Override
 								public void onDialogPositiveClick(final DialogFragment dialog) {
-									if (mFileType == FileType.FOLDER) {
+									if (mFileType == FileType.FOLDER_SIMPLE) {
 										imageList.remove(FOLDER, mFileNameInList);
 										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
 												null, Collections.singletonList(mFileName), null);
@@ -434,34 +439,76 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		final TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
-		if (mFileType == FileType.FOLDER || mFileType == FileType.FOLDER_RECURSIVE) {
-			new Thread() {
-				@Override
-				public void run() {
-					final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
-					double probability = -1;
-					if (mListName != null && mListName.equals(ImageRegistry.getCurrentListName())) {
-						probability = ImageRegistry.getCurrentImageList(false).getProbability(mFileNameInList);
+		final View layoutConfigureViewFrequency = findViewById(R.id.layoutConfigureViewFrequency);
+		final EditText editTextViewFrequency = findViewById(R.id.editTextViewFrequency);
+
+		if (mFileType == FileType.FOLDER_SIMPLE || mFileType == FileType.FOLDER_RECURSIVE) {
+			if (mListName != null && mListName.equals(ImageRegistry.getCurrentListName())) {
+				new Thread() {
+					@Override
+					public void run() {
+						final ImageList imageList = ImageRegistry.getCurrentImageList(false);
+						final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
+						final double percentage = imageList.getPercentage(FOLDER, mFileNameInList);
+						final double probability = imageList.getProbability(FOLDER, mFileNameInList);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								textViewNumberOfImages
+										.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images_and_proportion,
+												imageCount, FormattingUtil.getPercentageString(percentage))));
+								Double customNestedListWeight = null;
+								if (imageList instanceof StandardImageList) {
+									customNestedListWeight = ((StandardImageList) imageList).getCustomNestedElementWeight(FOLDER, mFileNameInList);
+								}
+								if (customNestedListWeight == null) {
+									editTextViewFrequency.setHint(FormattingUtil.getPercentageString(probability));
+								}
+								else {
+									editTextViewFrequency.setText(FormattingUtil.getPercentageString(customNestedListWeight));
+								}
+
+								if (imageList instanceof StandardImageList) {
+									ImageButton buttonSave = findViewById(R.id.button_save);
+									buttonSave.setOnClickListener(new OnClickListener() {
+										@Override
+										public void onClick(final View v) {
+											try {
+												((StandardImageList) imageList).setCustomWeight(
+														FOLDER, mFileNameInList, FormattingUtil.getPercentageValue(editTextViewFrequency));
+											}
+											catch (NumberFormatException e) {
+												// do not change weight
+											}
+											finish();
+										}
+									});
+								}
+							}
+						});
+
 					}
-					final String probabilityString;
-					if (probability > 0) {
-						probabilityString = " (" + DisplayListInfoActivity.getPercentageString(probability) + "%)";
+				}.start();
+			}
+			else {
+				layoutConfigureViewFrequency.setVisibility(View.GONE);
+				new Thread() {
+					@Override
+					public void run() {
+						final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								textViewNumberOfImages.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images, imageCount)));
+							}
+						});
 					}
-					else {
-						probabilityString = "";
-					}
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							textViewNumberOfImages
-									.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images, imageCount + probabilityString)));
-						}
-					});
-				}
-			}.start();
+				}.start();
+			}
 		}
 		else {
 			textViewNumberOfImages.setVisibility(View.GONE);
+			layoutConfigureViewFrequency.setVisibility(View.GONE);
 		}
 
 		getGpsIntent();
@@ -503,11 +550,11 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		/**
 		 * A file.
 		 */
-		FILE,
+		IMAGE_FILE,
 		/**
 		 * A folder.
 		 */
-		FOLDER,
+		FOLDER_SIMPLE,
 		/**
 		 * A recursive folder.
 		 */

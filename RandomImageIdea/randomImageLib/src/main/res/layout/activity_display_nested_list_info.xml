@@ -4,7 +4,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="0px"
         android:orientation="vertical"
         android:padding="0px">
@@ -13,73 +13,24 @@
             android:id="@+id/textViewNestedListName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/text_padding"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/text_padding"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/text_padding"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <TextView
             android:id="@+id/textViewNumberOfImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/text_padding"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/text_padding"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/text_padding"
             android:text="@string/info_number_of_images_loading"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/text_padding"
-            android:paddingTop="@dimen/text_padding">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingTop="0dp"
-                android:text="@string/info_nested_list_view_frequency"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"/>
-
-            <EditText
-                android:id="@+id/editTextViewFrequency"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:digits="01234567890,."
-                android:gravity="center_vertical"
-                android:inputType="number|numberDecimal|none"
-                android:maxLength="4"
-                android:paddingTop="0dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="0dp"
-                android:text="@string/percent"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-            <ImageButton
-                android:id="@+id/button_save"
-                style="@style/ActionBarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:contentDescription="@layout/text_view_initializing"
-                android:gravity="center_vertical"
-                android:padding="0px"
-                android:src="@drawable/ic_button_save"/>
-        </LinearLayout>
+        <include layout="@layout/layout_configure_view_frequency"/>
 
         <Button
             android:id="@+id/buttonRemove"

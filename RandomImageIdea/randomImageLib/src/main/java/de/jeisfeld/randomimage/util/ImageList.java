@@ -379,7 +379,11 @@ public abstract class ImageList implements RandomFileProvider {
 			mElements.clear();
 			mProperties.clear();
 
-			SparseArray<Properties> nestedPropertiesArray = new SparseArray<>();
+			HashMap<ListElement.Type, SparseArray<Properties>> nestedPropertiesMap = new HashMap<>();
+			for (ListElement.Type type : ListElement.Type.values()) {
+				nestedPropertiesMap.put(type, new SparseArray<Properties>());
+			}
+
 			HashMap<ListElement, Integer> indexMap = new HashMap<>();
 			ArrayList<String> missingPaths = new ArrayList<>();
 
@@ -448,6 +452,7 @@ public abstract class ImageList implements RandomFileProvider {
 								else if (name.startsWith(type.getPrefix() + ".")) {
 									Matcher matcher = type.getPropertyPattern().matcher(name);
 									if (matcher.find()) {
+										SparseArray<Properties> nestedPropertiesArray = nestedPropertiesMap.get(type);
 										String propertyName = matcher.group(1);
 										int propertyIndex = Integer.parseInt(matcher.group(2));
 										if (nestedPropertiesArray.get(propertyIndex) == null) { // SUPPRESS_CHECKSTYLE
@@ -491,7 +496,7 @@ public abstract class ImageList implements RandomFileProvider {
 					for (ListElement element : getElements(type)) {
 						Integer nestedElementIndex = indexMap.get(element);
 						if (nestedElementIndex != null) {
-							Properties nestedProperties = nestedPropertiesArray.get(nestedElementIndex);
+							Properties nestedProperties = nestedPropertiesMap.get(type).get(nestedElementIndex);
 							if (nestedProperties == null) {
 								element.setProperties(new Properties());
 							}
@@ -776,6 +781,7 @@ public abstract class ImageList implements RandomFileProvider {
 
 	/**
 	 * Remove a single element. This does not yet update the list of all images!
+	 *
 	 * @param type The type of the element.
 	 * @param name The name of the element to be removed.
 	 * @return true if the element was removed.
@@ -802,12 +808,22 @@ public abstract class ImageList implements RandomFileProvider {
 	}
 
 	/**
-	 * Get the probability that the given file or folder is selected as random imiage.
+	 * Get the probability that the given list element is selected as random image.
 	 *
-	 * @param fileName The requested file or folder name.
+	 * @param type The type of the list element.
+	 * @param name The name of the list element.
 	 * @return The probability.
 	 */
-	public abstract double getProbability(String fileName);
+	public abstract double getProbability(ListElement.Type type, String name);
+
+	/**
+	 * Get the percentage of all images contained in a nested list or folder.
+	 *
+	 * @param type The type of the list element.
+	 * @param name The name of the list element.
+	 * @return The percentage of all images contained in this list element.
+	 */
+	public abstract double getPercentage(ListElement.Type type, String name);
 
 	/**
 	 * Class holding information on an image file.

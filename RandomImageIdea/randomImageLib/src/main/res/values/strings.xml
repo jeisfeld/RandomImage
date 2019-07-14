@@ -76,7 +76,7 @@
     <!-- Strings for image info -->
     <string name="info_parent_folder"><![CDATA[<b>Location:</b> %1$s]]></string>
     <string name="info_file_date"><![CDATA[<b>Date:</b> %1$s]]></string>
-    <string name="info_number_of_images"><![CDATA[<b>Number of images:</b> %1$s]]></string>
+    <string name="info_number_of_images"><![CDATA[<b>Number of images:</b> %1$d]]></string>
     <string name="info_number_of_images_loading">Determining the number of images&#8230;</string>
     <string name="info_number_of_images_and_proportion"><![CDATA[<b>Number of images:</b> %1$d (%2$s%%)]]></string>
     <string name="info_nested_list_view_frequency">View Frequency:</string>
