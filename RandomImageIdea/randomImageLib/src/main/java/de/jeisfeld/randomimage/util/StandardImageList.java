@@ -127,7 +127,14 @@ public final class StandardImageList extends ImageList {
 		}
 
 		if (weightedElement.getType() == NESTED_LIST) {
-			return mNestedLists.get(weightedElement).getRandomFileName();
+			ImageList imageList = mNestedLists.get(weightedElement);
+			if (imageList != null) {
+				return imageList.getRandomFileName();
+			}
+			else {
+				Log.w(Application.TAG, "Tried to get random file while list was not available");
+				return getRandomFileNameFromAllFiles();
+			}
 		}
 		else {
 			// Folder or dummy
