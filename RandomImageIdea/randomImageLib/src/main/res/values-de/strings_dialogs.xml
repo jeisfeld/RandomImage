@@ -6,8 +6,6 @@
     <string name="title_dialog_confirmation">Bestätigung</string>
     <string name="title_dialog_enter_list_name">Eingabe des Listennamens</string>
     <string name="title_dialog_select_list_name">Auswahl des Listennamens</string>
-    <string name="title_dialog_select_change_frequency">Auswahl der Wechselhäufigkeit</string>
-    <string name="title_dialog_select_folder">Auswahl des Verzeichnisses</string>
     <string name="title_dialog_missing_images">Fehlende Bilder</string>
     <string name="title_dialog_add_list">Liste hinzufügen</string>
     <string name="title_dialog_add_folder">Verzeichnis hinzufügen</string>
@@ -43,7 +41,6 @@
     <string name="toast_delete_no_selection">Es wurde keine Liste zum Löschen ausgewählt</string>
     <string name="toast_failed_to_save_list">Fehler beim Schreiben der Liste „%1$s”</string>
     <string name="toast_failed_to_backup_list">Fehler beim Sichern der Liste „%1$s”</string>
-    <string name="toast_failed_to_restore_list">Fehler beim Wiederherstellen der Liste „%1$s”</string>
     <string name="toast_failed_to_delete_list">Fehler beim Löschen der Liste „%1$s”</string>
     <string name="toast_failed_to_load_files">%2$d Bilder oder Verzeichnisse der Bildliste „%1$s” wurden nicht gefunden</string>
     <string name="toast_failed_to_load_files_single">Ein Bild oder Verzeichnis der Bildliste „%1$s” wurde nicht gefunden</string>
@@ -85,16 +82,10 @@
     <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>
     <string name="dialog_select_list_for_display">Bitte wählen Sie die Bildliste, aus der Sie Bilder ansehen wollen.</string>
-    <string name="dialog_select_list_for_switch">Bitte wählen Sie die Bildliste, zu der Sie wechseln wollen.</string>
-    <string name="dialog_select_list_for_delete">Bitte wählen Sie die Bildliste, die Sie löschen wollen.</string>
-    <string name="dialog_select_list_for_backup">Bitte wählen Sie die Bildliste, die Sie sichern wollen.</string>
-    <string name="dialog_select_list_for_restore">Bitte wählen Sie die Bildliste, die Sie wiederherstellen wollen.</string>
     <string name="dialog_select_list_for_widget">Bitte wählen Sie die Bildliste, die Sie diesem Widget zuordnen wollen.</string>
     <string name="dialog_select_list_for_notification">Bitte wählen Sie die Bildliste, die Sie dieser Benachrichtigung zuordnen wollen.</string>
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
     <string name="dialog_select_list_for_inclusion">Bitte wählen Sie die Bildliste, die Sie zur aktuellen Liste hinzufügen wollen.</string>
-    <string name="dialog_select_image_change_frequency">Bitte wählen Sie, nach welcher Zeit das Bild im Widget wechseln soll.</string>
-    <string name="dialog_select_reshuffle_frequency">Bitte wählen Sie, nach welcher Zeit die Bildliste neu gemischt werden soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%2$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_delete_lists">Wollen Sie die %1$d ausgewählten Bildlisten wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s” entfernen?</string>
@@ -103,7 +94,6 @@
     <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s” zur Bildliste hinzufügen?</string>
     <string name="dialog_confirmation_add_folder_recursively">Wollen Sie das Verzeichnis „%1$s” samt aller Unterverzeichnisse zur Bildliste hinzufügen?</string>
     <string name="dialog_confirmation_add_nested_list">Wollen Sie die Bildliste „%1$s” zur Liste „%2$s” als Unterliste hinzufügen?</string>
-    <string name="dialog_confirmation_overwrite_list">Wollen Sie die Bildliste „%1$s” mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_list_single">Die Liste „%2$s” existiert bereits. Wollen Sie sie mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_list_multiple">%1$d der ausgewählen Listen existieren bereits. Wollen Sie diese mit dem Backup überschreiben?</string>
     <string name="dialog_confirmation_overwrite_backup_single">Das Backup von „%2$s” existiert bereits. Wollen Sie es überschreiben?</string>

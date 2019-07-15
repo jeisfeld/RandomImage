@@ -130,7 +130,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * Configure the buttons for Widget and Notification setup.
 	 */
 	private void configureButtons() {
-		Button buttonWidgets = (Button) findViewById(R.id.buttonWidgets);
+		Button buttonWidgets = findViewById(R.id.buttonWidgets);
 		buttonWidgets.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -138,7 +138,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			}
 		});
 
-		Button buttonNotifications = (Button) findViewById(R.id.buttonNotifications);
+		Button buttonNotifications = findViewById(R.id.buttonNotifications);
 		buttonNotifications.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -615,8 +615,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	private void changeAction(final CurrentAction action) {
 		if (action != null && action != mCurrentAction) {
-			TextView textViewInfo = (TextView) findViewById(R.id.textViewMessage);
-			LinearLayout layoutButtons = (LinearLayout) findViewById(R.id.layoutButtons);
+			TextView textViewInfo = findViewById(R.id.textViewMessage);
+			LinearLayout layoutButtons = findViewById(R.id.layoutButtons);
 
 			switch (action) {
 			case DISPLAY:

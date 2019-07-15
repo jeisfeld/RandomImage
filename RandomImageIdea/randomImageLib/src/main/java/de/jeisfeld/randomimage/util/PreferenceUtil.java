@@ -475,7 +475,7 @@ public final class PreferenceUtil {
 	 * @param value The value.
 	 */
 	public static void setAllHints(final boolean value) {
-		for (int preferenceId : Arrays.asList(HINT_PREFERENCES)) {
+		for (int preferenceId : HINT_PREFERENCES) {
 			setSharedPreferenceBoolean(preferenceId, value);
 		}
 	}

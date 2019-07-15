@@ -170,8 +170,8 @@ public class ThumbImageView extends FrameLayout {
 			((ImageView) findViewById(R.id.imageViewFolderForeground)).setImageBitmap(bitmapForeground);
 		}
 
-		mImageView = (ImageView) findViewById(R.id.imageViewThumb);
-		mCheckBoxMarked = (CheckBox) findViewById(R.id.checkBoxMark);
+		mImageView = findViewById(R.id.imageViewThumb);
+		mCheckBoxMarked = findViewById(R.id.checkBoxMark);
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class ThumbImageView extends FrameLayout {
 	 */
 	public final void setFolderName(final String folderName) {
 		if (mThumbStyle != ThumbStyle.IMAGE) {
-			TextView textViewName = (TextView) findViewById(R.id.textViewFolderName);
+			TextView textViewName = findViewById(R.id.textViewFolderName);
 			if (folderName.length() > 50) { // MAGIC_NUMBER
 				textViewName.setText(folderName.substring(0, 50)); // MAGIC_NUMBER
 			}

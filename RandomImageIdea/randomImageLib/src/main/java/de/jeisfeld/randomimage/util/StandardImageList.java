@@ -264,7 +264,8 @@ public final class StandardImageList extends ImageList {
 		if (nonNestedWeight == 0) {
 			return 0;
 		}
-		int unweightedSize = mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size();
+		int unweightedSize = mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()) == null ? 0
+				: mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size();
 
 		File file = new File(name);
 		if (file.getName().equals("*") || file.isDirectory()) {
@@ -446,17 +447,22 @@ public final class StandardImageList extends ImageList {
 			int remainingPictures = 0;
 			for (ListElement otherNestedList : mNestedLists.keySet()) {
 				if (!elementsWithCustomWeight.contains(otherNestedList)) {
-					remainingPictures += mNestedLists.get(otherNestedList).getAllImageFiles().size();
+					List<String> filesInOtherNestedList = mNestedLists.get(otherNestedList) == null ? null
+							: mNestedLists.get(otherNestedList).getAllImageFiles();
+					remainingPictures += filesInOtherNestedList == null ? 0 : filesInOtherNestedList.size();
 				}
 			}
-			int unweightedPictures = mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size();
+			int unweightedPictures = mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()) == null ? 0
+					: mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size();
 			remainingPictures += unweightedPictures;
 
 			if (remainingPictures > 0) {
 				for (ListElement otherNestedList : mNestedLists.keySet()) {
 					if (!elementsWithCustomWeight.contains(otherNestedList)) {
+						List<String> filesInOtherNestedList = mNestedLists.get(otherNestedList) == null ? null
+								: mNestedLists.get(otherNestedList).getAllImageFiles();
 						mNestedElementWeights.put(otherNestedList,
-								remainingWeight * mNestedLists.get(otherNestedList).getAllImageFiles().size() / remainingPictures);
+								filesInOtherNestedList == null ? 0 : remainingWeight * filesInOtherNestedList.size() / remainingPictures);
 					}
 				}
 				mNestedElementWeights.put(DUMMY_NESTED_FOLDER, remainingWeight * unweightedPictures / remainingPictures);

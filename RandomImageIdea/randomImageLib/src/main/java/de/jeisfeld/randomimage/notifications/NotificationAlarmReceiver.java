@@ -101,7 +101,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		double expectedDaysUntilAlarm = (double) frequency / SECONDS_PER_DAY;
 		if (frequency < DAY_THRESHOLD) {
 			// refer to hours rather than days if we are below six hours
-			expectedDaysUntilAlarm *= HOURS_PER_DAY / (dailyEndTime - dailyStartTime);
+			expectedDaysUntilAlarm *= ((double) HOURS_PER_DAY) / (dailyEndTime - dailyStartTime);
 		}
 
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, false, true);

@@ -30,11 +30,6 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <style name="MenuButton" parent="android:Widget.Holo.Light.ActionButton.Overflow">
-        <item name="android:gravity">center_vertical|start</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
     <style name="ActionBarButton">
         <item name="android:background">@drawable/actionbutton</item>
         <item name="android:ellipsize">end</item>

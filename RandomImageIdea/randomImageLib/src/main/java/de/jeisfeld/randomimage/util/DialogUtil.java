@@ -816,7 +816,7 @@ public final class DialogUtil {
 			// VARIABLE_DISTANCE:ON
 
 			ArrayList<String> itemList = getArguments().getStringArrayList(PARAM_LIST_ITEMS);
-			final String[] items = itemList == null ? new String[0] : itemList.toArray(new String[itemList.size()]);
+			final String[] items = itemList == null ? new String[0] : itemList.toArray(new String[0]);
 			final int iconId = getArguments().getInt(PARAM_ICON);
 
 			// setMessage is not combinable with setItems, therefore using setView for the list of names.

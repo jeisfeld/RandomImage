@@ -8,8 +8,8 @@
         android:id="@+id/textViewMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/info_message_margin"
         android:layout_marginTop="@dimen/info_message_margin"
+        android:layout_marginBottom="@dimen/info_message_margin"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:text="@string/text_info_select_image_folder_for_add"
@@ -19,7 +19,9 @@
         android:id="@+id/editTextFilterString"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_search_path"/>
+        android:hint="@string/hint_search_path"
+        android:importantForAutofill="no"
+        android:inputType="text"/>
 
     <GridView
         android:id="@+id/gridViewDisplayImages"

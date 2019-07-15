@@ -191,7 +191,12 @@ public final class SystemUtil {
 		Collections.sort(result, new Comparator<ApplicationInfo>() {
 			@Override
 			public int compare(final ApplicationInfo o1, final ApplicationInfo o2) {
-				return collationMap.get(o1).compareTo(collationMap.get(o2));
+				try {
+					return collationMap.get(o1).compareTo(collationMap.get(o2));
+				}
+				catch (NullPointerException e) {
+					return 0;
+				}
 			}
 		});
 
@@ -204,7 +209,7 @@ public final class SystemUtil {
 	 * @return true if usage statistics are available.
 	 */
 	public static boolean isUsageStatsAvailable() {
-		if (android.os.Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
+		if (android.os.Build.VERSION.SDK_INT < VERSION_CODES.M) {
 			return false;
 		}
 		Context context = Application.getAppContext();

@@ -381,7 +381,7 @@ public final class ImageRegistry {
 	public static StandardImageList getStandardImageListByName(final String name, final boolean toastIfFilesMissing) {
 		ImageList imageList = getImageListByName(name, toastIfFilesMissing);
 
-		if (imageList != null && imageList instanceof StandardImageList) {
+		if (imageList instanceof StandardImageList) {
 			return (StandardImageList) imageList;
 		}
 		else {
@@ -413,7 +413,9 @@ public final class ImageRegistry {
 	 * Get the list of available config files.
 	 */
 	public static void parseConfigFiles() {
-		mImageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
+		if (CONFIG_FILE_FOLDER != null) {
+			mImageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
+		}
 	}
 
 	/**

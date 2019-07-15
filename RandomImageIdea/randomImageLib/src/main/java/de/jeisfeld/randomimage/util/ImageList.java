@@ -61,7 +61,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Create an image list and load it from its file, if existing.
 	 *
-	 * @param configFile          the configuration file of this list.
+	 * @param configFile the configuration file of this list.
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	protected ImageList(final File configFile, final boolean toastIfFilesMissing) {
@@ -74,8 +74,8 @@ public abstract class ImageList implements RandomFileProvider {
 	 * Create a new image list.
 	 *
 	 * @param configFile the configuration file of this list.
-	 * @param listName   the name of the list.
-	 * @param cloneFile  If existing, then the new list will be cloned from this file.
+	 * @param listName the name of the list.
+	 * @param cloneFile If existing, then the new list will be cloned from this file.
 	 */
 	protected ImageList(final File configFile, final String listName, final File cloneFile) {
 		init(false); // OVERRIDABLE
@@ -92,17 +92,6 @@ public abstract class ImageList implements RandomFileProvider {
 			this.mConfigFile = configFile;
 			setListName(listName);
 			update(false); // OVERRIDABLE
-		}
-	}
-
-	/**
-	 * Get the list elements (but not during update).
-	 *
-	 * @return The list elements.
-	 */
-	private ArrayList<ListElement> getElements() {
-		synchronized (mElements) {
-			return mElements;
 		}
 	}
 
@@ -276,7 +265,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Check if the list contains the other list.
 	 *
-	 * @param listName            The list to be checked.
+	 * @param listName The list to be checked.
 	 * @param includeDeepNestings flag indicating if recursive nestings should be considered.
 	 * @return true if it is contained in some way.
 	 */
@@ -301,7 +290,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Get an ImageList out of a config file.
 	 *
-	 * @param configFile          the config file.
+	 * @param configFile the config file.
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list.
 	 */
@@ -455,10 +444,12 @@ public abstract class ImageList implements RandomFileProvider {
 										SparseArray<Properties> nestedPropertiesArray = nestedPropertiesMap.get(type);
 										String propertyName = matcher.group(1);
 										int propertyIndex = Integer.parseInt(matcher.group(2));
-										if (nestedPropertiesArray.get(propertyIndex) == null) { // SUPPRESS_CHECKSTYLE
-											nestedPropertiesArray.put(propertyIndex, new Properties());
+										if (nestedPropertiesArray != null) { // SUPPRESS_CHECKSTYLE
+											if (nestedPropertiesArray.get(propertyIndex) == null) { // SUPPRESS_CHECKSTYLE
+												nestedPropertiesArray.put(propertyIndex, new Properties());
+											}
+											nestedPropertiesArray.get(propertyIndex).setProperty(propertyName, value);
 										}
-										nestedPropertiesArray.get(propertyIndex).setProperty(propertyName, value);
 									}
 									found = true;
 								}
@@ -495,7 +486,7 @@ public abstract class ImageList implements RandomFileProvider {
 				if (type.hasPrefix()) {
 					for (ListElement element : getElements(type)) {
 						Integer nestedElementIndex = indexMap.get(element);
-						if (nestedElementIndex != null) {
+						if (nestedElementIndex != null && nestedPropertiesMap.get(type) != null) {
 							Properties nestedProperties = nestedPropertiesMap.get(type).get(nestedElementIndex);
 							if (nestedProperties == null) {
 								element.setProperties(new Properties());
@@ -632,7 +623,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Change the list name, also renaming the config file accordingly.
 	 *
-	 * @param listName      The new name of the list.
+	 * @param listName The new name of the list.
 	 * @param newConfigFile The new config file.
 	 * @return true if successful.
 	 */
@@ -859,9 +850,9 @@ public abstract class ImageList implements RandomFileProvider {
 		/**
 		 * Constructor for the class.
 		 *
-		 * @param name       The name of the image list.
+		 * @param name The name of the image list.
 		 * @param configFile The image list configuration file.
-		 * @param listClass  The class handling the image list.
+		 * @param listClass The class handling the image list.
 		 */
 		protected ImageListInfo(final String name, final File configFile, final Class<? extends ImageList> listClass) {
 			this.mName = name;

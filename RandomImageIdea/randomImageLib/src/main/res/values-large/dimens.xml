@@ -11,7 +11,6 @@
     <dimen name="widget_button_padding_narrow">4dp</dimen>
     <dimen name="widget_button_padding_wide">25dp</dimen>
     <dimen name="stack_image_widget_border_size">4dp</dimen>
-    <dimen name="micro_image_activity_padding">128dp</dimen>
     <dimen name="first_steps_image1_height">140dp</dimen>
     <dimen name="first_steps_image2_height">180dp</dimen>
 

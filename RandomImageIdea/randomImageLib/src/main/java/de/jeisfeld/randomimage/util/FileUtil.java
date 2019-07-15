@@ -294,7 +294,7 @@ public final class FileUtil {
 				}
 			}
 		}
-		return paths.toArray(new String[paths.size()]);
+		return paths.toArray(new String[0]);
 	}
 
 	/**
@@ -319,7 +319,7 @@ public final class FileUtil {
 				paths.remove("/mnt/extSdCard");
 			}
 
-			return paths.toArray(new String[paths.size()]);
+			return paths.toArray(new String[0]);
 		}
 	}
 

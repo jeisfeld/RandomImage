@@ -24,25 +24,25 @@ public class SdMountReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 
 		// Keep track of shutdown/startup period.
-		if (action.equals(Intent.ACTION_SHUTDOWN)) {
+		if (Intent.ACTION_SHUTDOWN.equals(action)) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, true);
 		}
 
 		// Re-create all timers after boot or installation.
-		if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+		if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, false);
 			triggerAllTimers();
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device Change", "Boot completed");
 		}
-		if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+		if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
 			triggerAllTimers();
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device Change", "Package replaced");
 		}
 
 		// Update widgets after changes in SD card availability.
-		if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
-				|| action.equals(Intent.ACTION_MEDIA_UNMOUNTED)
-				|| action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+		if (Intent.ACTION_MEDIA_MOUNTED.equals(action)
+				|| Intent.ACTION_MEDIA_UNMOUNTED.equals(action)
+				|| Intent.ACTION_BOOT_COMPLETED.equals(action)) {
 			ImageRegistry.getCurrentImageList(false).load(false);
 			GenericWidget.updateAllInstances();
 		}

@@ -287,7 +287,7 @@ public class TimeSelectorPreference extends DialogPreference {
 			}
 
 			for (int i = spinnerEntries.length - 2; i >= 0; i--) {
-				Long spinnerValue = spinnerEntries[i].getValue();
+				long spinnerValue = spinnerEntries[i].getValue();
 
 				if (value % spinnerValue == 0) {
 					result.mSpinnerEntry = spinnerEntries[i];
@@ -328,7 +328,7 @@ public class TimeSelectorPreference extends DialogPreference {
 			else {
 				unitName = originalUnitName.replaceAll("[()]", "");
 			}
-			return Long.toString(mUnitsEntry) + " " + unitName;
+			return mUnitsEntry + " " + unitName;
 		}
 	}
 }

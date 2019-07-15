@@ -7,8 +7,6 @@
     <string name="menu_add_folders">Gewählte Verzeichnisse hinzufügen</string>
     <string name="menu_cancel">Abbrechen</string>
     <string name="menu_select_all_images">Alle Bilder auswählen</string>
-    <string name="menu_select_all_folders">Alle Verzeichnisse auswählen</string>
-    <string name="menu_select_multiple">Mehrere Verzeichnisse wählen</string>
     <string name="menu_select_folder">Verzeichnis wählen</string>
     <string name="menu_add_images">Bilder hinzufügen</string>
     <string name="menu_add_image_folder">Ein Bild-Verzeichnis hinzufügen</string>
@@ -29,7 +27,6 @@
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_browse_folders">Im Dateimanager suchen</string>
     <string name="menu_title_pro_app">Zufallsbild Pro</string>
-    <string name="menu_finish_configuration">Konfiguration beenden</string>
 
     <!-- Entries related to buttons in the settings -->
 

@@ -428,7 +428,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 								ImageRegistry.switchToImageList(mListName, CreationStyle.NONE, true);
 								mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false),
 										mCurrentFileName, mFlipType, mRandomFileProvider);
-								displayImageListOnCreate(savedInstanceState, folderName);
+								displayImageListOnCreate(savedInstanceState, null);
 							}
 
 							@Override
@@ -436,7 +436,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 								mListName = ImageRegistry.getCurrentListName();
 								mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageListRefreshed(false),
 										mCurrentFileName, mFlipType, mRandomFileProvider);
-								displayImageListOnCreate(savedInstanceState, folderName);
+								displayImageListOnCreate(savedInstanceState, null);
 							}
 						}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_display);
 						return;

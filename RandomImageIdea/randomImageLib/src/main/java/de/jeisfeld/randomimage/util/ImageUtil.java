@@ -792,6 +792,9 @@ public final class ImageUtil {
 	 * @return the bitmap with the target color.
 	 */
 	public static Bitmap changeBitmapColor(final Bitmap sourceBitmap, final int colorBlack, final int colorWhite) {
+		if (sourceBitmap == null) {
+			return null;
+		}
 		Bitmap colouredBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(), sourceBitmap.getConfig());
 		float red = Color.red(colorBlack);
 		float green = Color.green(colorBlack);

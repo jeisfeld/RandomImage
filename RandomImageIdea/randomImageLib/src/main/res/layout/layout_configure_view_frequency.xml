@@ -27,7 +27,8 @@
         android:gravity="center_vertical"
         android:inputType="number|numberDecimal|none"
         android:maxLength="4"
-        android:paddingTop="0dp"/>
+        android:paddingTop="0dp"
+        android:importantForAutofill="no"/>
 
     <TextView
         android:layout_width="wrap_content"

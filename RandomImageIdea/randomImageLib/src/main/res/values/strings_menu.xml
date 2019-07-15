@@ -7,8 +7,6 @@
     <string name="menu_add_folders">Add selected folders</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_select_all_images">Select all images</string>
-    <string name="menu_select_all_folders">Select all folders</string>
-    <string name="menu_select_multiple">Select multiple folders</string>
     <string name="menu_select_folder">Select folder</string>
     <string name="menu_add_images">Add images</string>
     <string name="menu_add_image_folder">Add an image folder</string>
@@ -29,7 +27,6 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_browse_folders">Browse in file manager</string>
     <string name="menu_title_pro_app">Random Image Pro</string>
-    <string name="menu_finish_configuration">Finish configuration</string>
 
     <!-- Entries related to buttons in the settings -->
 

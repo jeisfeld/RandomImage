@@ -1,11 +1,11 @@
 package de.jeisfeld.randomimage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
@@ -54,7 +54,7 @@ public abstract class DisplayImageListActivity extends StartActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(getLayoutId());
-		mGridView = (GridView) findViewById(R.id.gridViewDisplayImages);
+		mGridView = findViewById(R.id.gridViewDisplayImages);
 
 		if (savedInstanceState != null) {
 			mSelectedFiles = savedInstanceState.getStringArrayList("selectedFiles");

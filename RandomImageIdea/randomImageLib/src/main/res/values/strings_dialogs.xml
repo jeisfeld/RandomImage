@@ -6,8 +6,6 @@
     <string name="title_dialog_confirmation">Confirmation</string>
     <string name="title_dialog_enter_list_name">Enter list name</string>
     <string name="title_dialog_select_list_name">Select list name</string>
-    <string name="title_dialog_select_change_frequency">Select change frequency</string>
-    <string name="title_dialog_select_folder">Select folder</string>
     <string name="title_dialog_missing_images">Missing images</string>
     <string name="title_dialog_add_list">Add list</string>
     <string name="title_dialog_add_folder">Add folder</string>
@@ -43,7 +41,6 @@
     <string name="toast_delete_no_selection">No list was selected for deletion</string>
     <string name="toast_failed_to_save_list">Failed to save list “%1$s”</string>
     <string name="toast_failed_to_backup_list">Failed to backup list “%1$s”</string>
-    <string name="toast_failed_to_restore_list">Failed to restore list “%1$s”</string>
     <string name="toast_failed_to_delete_list">Failed to delete list “%1$s”</string>
     <string name="toast_failed_to_load_files">%2$d files or folders of the image list “%1$s” could not be found</string>
     <string name="toast_failed_to_load_files_single">One file or folder of the image list “%1$s” could not be found</string>
@@ -85,16 +82,10 @@
     <string name="dialog_input_enter_list_name_cloned">Please enter a name for the cloned list.</string>
     <string name="dialog_input_enter_list_name_changed">Please enter the new name of the list.</string>
     <string name="dialog_select_list_for_display">Please select the image list from which you want to see images.</string>
-    <string name="dialog_select_list_for_switch">Please select the image list to which you want to switch.</string>
-    <string name="dialog_select_list_for_delete">Please select the image list which you want to delete.</string>
-    <string name="dialog_select_list_for_backup">Please select the image list which you want to backup.</string>
-    <string name="dialog_select_list_for_restore">Please select the image list which you want to restore.</string>
     <string name="dialog_select_list_for_widget">Please select the image list which you want to associate to this widget.</string>
     <string name="dialog_select_list_for_notification">Please select the image list which you want to associate to this notification.</string>
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
     <string name="dialog_select_list_for_inclusion">Please select the image list that you want to include in the current list.</string>
-    <string name="dialog_select_image_change_frequency">Please select after which time period the image in the widget should change.</string>
-    <string name="dialog_select_reshuffle_frequency">Please select after which time period the image list should be re-shuffled.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%2$s”?</string>
     <string name="dialog_confirmation_delete_lists">Do you really want to delete the %1$d selected image lists?</string>
     <string name="dialog_confirmation_remove">Do you really want to remove %2$s from the list “%1$s”?</string>
@@ -103,7 +94,6 @@
     <string name="dialog_confirmation_add_folder">Do you want to add the folder “%1$s” to the image list?</string>
     <string name="dialog_confirmation_add_folder_recursively">Do you want to add the folder “%1$s” and all its subfolders to the image list?</string>
     <string name="dialog_confirmation_add_nested_list">Do you want to add the image list “%1$s” to the list “%2$s” as nested list?</string>
-    <string name="dialog_confirmation_overwrite_list">Do you want to overwrite the image list “%1$s” with the backup?</string>
     <string name="dialog_confirmation_overwrite_list_single">The list “%2$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_list_multiple">%1$d of the selected lists exist already. Do you want to overwrite them with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup_single">The list “%2$s” has already a backup. Do you want to overwrite it?</string>

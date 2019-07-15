@@ -81,11 +81,11 @@ public class SettingsActivity extends BaseActivity {
 	public static boolean getResultBoughtPremium(final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			Bundle res = data.getExtras();
-			return res.getBoolean(STRING_RESULT_BOUGHT_PREMIUM);
+			if (res != null) {
+				return res.getBoolean(STRING_RESULT_BOUGHT_PREMIUM);
+			}
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	/**

@@ -56,7 +56,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	/**
 	 * The flipType defining the rules how new file names are provided.
 	 */
-	private FlipType mFlipType = FlipType.AVOID_REPETITIONS;
+	private FlipType mFlipType;
 
 	/**
 	 * The max size of the image cache.
@@ -91,7 +91,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 		mFlipType = flipType;
 		determineCacheSize();
 
-		if (initData != null && initData instanceof CachedRandomFileProvider) {
+		if (initData instanceof CachedRandomFileProvider) {
 			CachedRandomFileProvider initData2 = (CachedRandomFileProvider) initData;
 			mHasFile = initData2.mHasFile;
 			mCurrentPosition = initData2.mCurrentPosition;
