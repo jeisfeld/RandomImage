@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -190,8 +191,8 @@ public final class ImageUtil {
 			bitmap = BitmapFactory.decodeFile(path);
 		}
 		else {
-
-			if (maxWidth <= MediaStoreUtil.MINI_THUMB_SIZE || maxHeight <= MediaStoreUtil.MINI_THUMB_SIZE) {
+			if ((maxWidth <= MediaStoreUtil.MINI_THUMB_SIZE || maxHeight <= MediaStoreUtil.MINI_THUMB_SIZE)
+					&& !(path.toUpperCase().endsWith(".PNG") || path.toUpperCase().endsWith(".GIF"))) {
 				bitmap = MediaStoreUtil.getThumbnailFromPath(path);
 				if (bitmap != null) {
 					foundThumbInMediaStore = true;
@@ -201,6 +202,10 @@ public final class ImageUtil {
 			if (bitmap == null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inSampleSize = getBitmapFactor(path, maxWidth, maxHeight, rotation == ROTATION_90 || rotation == ROTATION_270, false);
+				if (path.toUpperCase().endsWith(".PNG") || path.toUpperCase().endsWith(".GIF")) {
+					options.inPreferredConfig = Config.ARGB_8888;
+				}
+
 				// options.inPurgeable = true;
 				bitmap = BitmapFactory.decodeFile(path, options);
 				if (bitmap == null) {
