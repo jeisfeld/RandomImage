@@ -34,9 +34,6 @@
     <string name="menu_search_image_Folders">Bildverzeichnisse suchen</string>
     <string name="menu_apps_without_popup_notifications">Apps ohne Popup-Benachrichtigungen</string>
     <string name="menu_show_all_info">Alle Hinweise zeigen</string>
-    <string name="menu_title_donation">Spenden</string>
-    <string name="menu_detail_donation">über PayPal im Browser</string>
-    <string name="menu_target_donation">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=CVPY85HARRCPQ</string>
     <string name="menu_title_contact_developer">Kontakt mit dem Entwickler</string>
     <string name="menu_detail_contact_developer">über E-Mail im Fall von Problemen oder Fragen</string>
     <string name="menu_subject_contact_developer">Frage zur Zufallsbild-App</string>

@@ -85,7 +85,6 @@ public class SettingsFragment extends PreferenceFragment {
 		addHintButtonListener(R.string.key_pref_hide_info, true);
 		addSearchImageFoldersListener();
 		addHelpPageListener();
-		addDonationListener();
 		addDeveloperContactListener();
 		addProAppButtonListener();
 		addRestrictPopupNotificationsListener();
@@ -130,23 +129,6 @@ public class SettingsFragment extends PreferenceFragment {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				DialogUtil.displaySearchForImageFoldersIfRequired(getActivity(), true);
-				return true;
-			}
-		});
-	}
-
-	/**
-	 * Add an entry for variable donation.
-	 */
-	private void addDonationListener() {
-		Preference variableDonationPreference = findPreference(getString(R.string.key_pref_donation));
-
-		variableDonationPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			@Override
-			public boolean onPreferenceClick(final Preference preference) {
-				Intent browserIntent =
-						new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.menu_target_donation)));
-				startActivity(browserIntent);
 				return true;
 			}
 		});
@@ -340,7 +322,6 @@ public class SettingsFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_lists_pattern))) {
 				if (mHiddenListsPattern == null || !mHiddenListsPattern.equals(stringValue)) {
 					try {
-						//noinspection ResultOfMethodCallIgnored
 						Pattern.compile(stringValue);
 					}
 					catch (PatternSyntaxException e) {
@@ -354,7 +335,6 @@ public class SettingsFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_hidden_folders_pattern))) {
 				if (mHiddenFoldersPattern == null || !mHiddenFoldersPattern.equals(stringValue)) {
 					try {
-						//noinspection ResultOfMethodCallIgnored
 						Pattern.compile(stringValue);
 					}
 					catch (PatternSyntaxException e) {

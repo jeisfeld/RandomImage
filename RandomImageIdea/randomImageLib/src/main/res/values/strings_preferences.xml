@@ -23,7 +23,6 @@
     <string name="key_pref_apps_without_popup_notifications" translatable="false">pref_apps_without_popup_notifications</string>
     <string name="key_pref_show_info" translatable="false">pref_show_info</string>
     <string name="key_pref_hide_info" translatable="false">pref_hide_info</string>
-    <string name="key_pref_donation" translatable="false">pref_variable_donation</string>
     <string name="key_pref_help_page" translatable="false">pref_help_page</string>
     <string name="key_pref_contact_developer" translatable="false">pref_contact_developer</string>
     <string name="key_pref_pro_app" translatable="false">pref_pro_app</string>

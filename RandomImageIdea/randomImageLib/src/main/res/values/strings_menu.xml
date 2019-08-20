@@ -34,9 +34,6 @@
     <string name="menu_search_image_Folders">Search image folders</string>
     <string name="menu_apps_without_popup_notifications">Apps preventing popup notifications</string>
     <string name="menu_show_all_info">Display all info messages</string>
-    <string name="menu_title_donation">Donation</string>
-    <string name="menu_detail_donation">via PayPal in browser</string>
-    <string name="menu_target_donation">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=PAGGKCYNR5FHC</string>
     <string name="menu_title_contact_developer">Contact the developer</string>
     <string name="menu_detail_contact_developer">via email in case of problems or questions</string>
     <string name="menu_email_contact_developer" translatable="false">Jörg Eisfeld &lt;randomimage@jeisfeld.de&gt;</string>
