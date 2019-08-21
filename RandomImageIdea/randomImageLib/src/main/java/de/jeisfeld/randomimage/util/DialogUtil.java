@@ -12,7 +12,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.RequiresApi;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.StartActivity;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
@@ -476,7 +476,6 @@ public final class DialogUtil {
 	 * @param html The html
 	 * @return the text
 	 */
-	@SuppressWarnings("deprecation")
 	private static Spanned fromHtml23(final String html) {
 		return Html.fromHtml(html);
 	}

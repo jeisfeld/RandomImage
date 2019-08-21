@@ -16,12 +16,12 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
 
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -100,7 +100,7 @@ public class SettingsFragment extends PreferenceFragment {
 	@Override
 	public final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
+		TrackingUtil.sendScreen(getActivity());
 	}
 
 	/**

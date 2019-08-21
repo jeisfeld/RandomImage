@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.File;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 
 /**

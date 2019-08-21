@@ -15,7 +15,6 @@ import android.media.AudioManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Vibrator;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
@@ -253,7 +253,6 @@ public final class NotificationUtil {
 	 * @param listName       the name of the image list
 	 * @param imageList      the image list
 	 */
-	@SuppressWarnings("deprecation")
 	private static void doDisplayRandomImageNotification(final Context context, final int notificationId,
 														 final String listName, final ImageList imageList) {
 		String fileName = imageList.getRandomFileName();
@@ -331,7 +330,6 @@ public final class NotificationUtil {
 				notificationBuilder.setCustomContentView(remoteViews);
 			}
 			else {
-				//noinspection deprecation
 				notificationBuilder.setContent(remoteViews);
 			}
 
@@ -346,7 +344,6 @@ public final class NotificationUtil {
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
 			else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-				//noinspection deprecation
 				Notification publicNotification = new Builder(context).setContent(remoteViews).build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}

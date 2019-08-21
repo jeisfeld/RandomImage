@@ -19,7 +19,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.media.ExifInterface;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import androidx.exifinterface.media.ExifInterface;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;

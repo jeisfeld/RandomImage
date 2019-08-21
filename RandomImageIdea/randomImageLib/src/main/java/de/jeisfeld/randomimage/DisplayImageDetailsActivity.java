@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.media.ExifInterface;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.exifinterface.media.ExifInterface;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;

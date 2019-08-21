@@ -3,7 +3,6 @@ package de.jeisfeld.randomimage.util;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import androidx.annotation.Nullable;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimagelib.R;
 

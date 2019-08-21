@@ -124,7 +124,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	@Override
 	public final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
+		TrackingUtil.sendScreen(getActivity());
 	}
 
 	/**

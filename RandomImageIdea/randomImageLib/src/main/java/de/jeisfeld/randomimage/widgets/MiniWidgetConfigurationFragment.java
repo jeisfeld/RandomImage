@@ -88,7 +88,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	@Override
 	public final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
+		TrackingUtil.sendScreen(getActivity());
 	}
 
 	/**

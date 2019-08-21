@@ -14,7 +14,6 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.support.annotation.RequiresApi;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -30,6 +29,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 
 /**
