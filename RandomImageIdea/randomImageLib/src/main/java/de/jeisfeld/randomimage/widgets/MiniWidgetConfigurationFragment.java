@@ -59,6 +59,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_prevent_screenlock);
 		bindPreferenceSummaryToValue(R.string.key_widget_timeout);
 		bindPreferenceSummaryToValue(R.string.key_widget_allowed_call_frequency);
 		addEditListListener();
@@ -146,6 +147,11 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+		}
 		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0);
@@ -177,6 +183,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_timeout,
 				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0));
 		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_allowed_call_frequency,
@@ -193,6 +201,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		findPreference(getString(R.string.key_widget_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_flip_behavior)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_change_with_tap)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_prevent_screenlock)).setEnabled(!useDefaultSettings);
 	}
 
 	/**
@@ -234,7 +243,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
 		}
 		else if (preferenceKey == R.string.key_widget_detail_use_default
-				|| preferenceKey == R.string.key_widget_detail_change_with_tap) {
+				|| preferenceKey == R.string.key_widget_detail_change_with_tap
+				|| preferenceKey == R.string.key_widget_detail_prevent_screenlock) {
 			value = "";
 		}
 		else if (preferenceKey == R.string.key_widget_icon_image) {
@@ -293,6 +303,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_change_with_tap))) {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
+						Boolean.parseBoolean(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_prevent_screenlock))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId,
 						Boolean.parseBoolean(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_timeout))) {

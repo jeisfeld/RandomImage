@@ -80,6 +80,7 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_change_with_tap);
+		bindPreferenceSummaryToValue(R.string.key_pref_detail_prevent_screenlock);
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);

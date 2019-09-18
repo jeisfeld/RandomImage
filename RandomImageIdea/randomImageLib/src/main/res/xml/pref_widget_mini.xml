@@ -49,6 +49,9 @@
         <CheckBoxPreference
             android:key="@string/key_widget_detail_change_with_tap"
             android:title="@string/pref_title_widget_detail_change_with_tap"/>
+        <CheckBoxPreference
+            android:key="@string/key_widget_detail_prevent_screenlock"
+            android:title="@string/pref_title_widget_detail_prevent_screenlock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_widget_timing">
         <de.jeisfeld.randomimage.view.TimeSelectorPreference

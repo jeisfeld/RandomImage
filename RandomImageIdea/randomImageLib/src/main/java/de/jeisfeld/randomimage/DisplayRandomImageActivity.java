@@ -16,6 +16,7 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -205,6 +206,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private boolean mChangeImageWithSingleTap = false;
 
 	/**
+	 * Flag indicating if screen lock should be prevented.
+	 */
+	private boolean mPreventScreenLock = false;
+
+	/**
 	 * Flag helping to detect if a destroy is final or only temporary.
 	 */
 	private boolean mSavingInstanceState = false;
@@ -372,6 +378,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		mFlipType = FlipType.fromResourceValue(
 				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, R.string.pref_default_detail_flip_behavior));
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
+		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock);
 
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
 
@@ -463,6 +470,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mRandomFileProvider = new CachedRandomFileProvider(imageList, mCurrentFileName, mFlipType, mRandomFileProvider);
 		}
 
+		if (mPreventScreenLock) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
+
 		displayImageListOnCreate(savedInstanceState, folderName);
 
 		test();
@@ -546,6 +557,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
 			mChangeImageWithSingleTap =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false);
+			mPreventScreenLock =
+					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId, false);
 		}
 
 		if (!NotificationUtil.isActivityNotificationStyle(
@@ -583,6 +596,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
 			mChangeImageWithSingleTap =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
+			mPreventScreenLock =
+					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId, false);
 		}
 
 		WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);

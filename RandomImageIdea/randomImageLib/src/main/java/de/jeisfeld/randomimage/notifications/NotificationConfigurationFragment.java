@@ -77,6 +77,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_change_with_tap);
+		bindPreferenceSummaryToValue(R.string.key_notification_detail_prevent_screenlock);
 		addEditListListener();
 		addCancelNotificationListener();
 		updatePropertyEnablement();
@@ -227,6 +228,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId,
 					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_detail_prevent_screenlock, mNotificationId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+		}
 
 		return isUpdated;
 	}
@@ -326,6 +332,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId, false));
 	}
 
 	/**
@@ -344,6 +352,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		findPreference(getString(R.string.key_notification_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_flip_behavior)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_change_with_tap)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_notification_detail_prevent_screenlock)).setEnabled(!useDefaultSettings);
 	}
 
 	/**
@@ -390,10 +399,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_notification_duration) {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mNotificationId, -1));
 		}
-		else if (preferenceKey == R.string.key_notification_vibration
+		else if (preferenceKey == R.string.key_notification_vibration // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| preferenceKey == R.string.key_notification_colored_icon
 				|| preferenceKey == R.string.key_notification_detail_use_default
-				|| preferenceKey == R.string.key_notification_detail_change_with_tap) {
+				|| preferenceKey == R.string.key_notification_detail_change_with_tap
+				|| preferenceKey == R.string.key_notification_detail_prevent_screenlock) {
 			value = "";
 		}
 		else {
@@ -527,6 +537,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_change_with_tap))) {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
+						mNotificationId, Boolean.parseBoolean(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_prevent_screenlock))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock,
 						mNotificationId, Boolean.parseBoolean(stringValue));
 			}
 

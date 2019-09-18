@@ -81,6 +81,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_prevent_screenlock);
 		addEditListListener();
 		updatePropertyEnablement();
 	}
@@ -99,6 +100,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		findPreference(getString(R.string.key_widget_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_flip_behavior)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_change_with_tap)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_prevent_screenlock)).setEnabled(!useDefaultSettings);
 	}
 
 	@Override
@@ -200,6 +202,11 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+		}
 		return isUpdated;
 	}
 
@@ -233,6 +240,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId, false));
 	}
 
 	/**
@@ -275,10 +284,11 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				|| preferenceKey == R.string.key_widget_detail_flip_behavior) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
 		}
-		else if (preferenceKey == R.string.key_widget_show_cyclically
+		else if (preferenceKey == R.string.key_widget_show_cyclically // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| preferenceKey == R.string.key_widget_view_as_list
 				|| preferenceKey == R.string.key_widget_detail_use_default
-				|| preferenceKey == R.string.key_widget_detail_change_with_tap) {
+				|| preferenceKey == R.string.key_widget_detail_change_with_tap
+				|| preferenceKey == R.string.key_widget_detail_prevent_screenlock) {
 			value = "";
 		}
 		else {
@@ -292,7 +302,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	/**
 	 * Get the alarm interval of a Widget as String.
 	 *
-	 * @param context the context.
+	 * @param context     the context.
 	 * @param appWidgetId The widget id.
 	 * @return The alarm interval as String.
 	 */
