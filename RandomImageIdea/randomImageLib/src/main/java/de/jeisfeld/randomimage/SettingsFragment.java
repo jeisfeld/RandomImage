@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import androidx.annotation.RequiresApi;
-import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
@@ -32,7 +31,6 @@ import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference.DynamicListPreferenceOnClickListener;
-import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -350,78 +348,6 @@ public class SettingsFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_folder_selection_mechanism))) {
 				PreferenceUtil.setSharedPreferenceString(R.string.key_pref_folder_selection_mechanism, stringValue);
 				updateShowHiddenFoldersPreference(preference.getContext());
-			}
-
-			// Cascade settings to widgets and notifications if applicable
-			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_detail_scale_type))) {
-				for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId,
-								Integer.parseInt(stringValue));
-					}
-				}
-				for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, notificationId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, notificationId,
-								Integer.parseInt(stringValue));
-					}
-				}
-			}
-			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_detail_background))) {
-				for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, appWidgetId,
-								Integer.parseInt(stringValue));
-					}
-				}
-				for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, notificationId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_background, notificationId,
-								Integer.parseInt(stringValue));
-					}
-				}
-			}
-			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_detail_flip_behavior))) {
-				for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, appWidgetId,
-								Integer.parseInt(stringValue));
-					}
-				}
-				for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, notificationId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, notificationId,
-								Integer.parseInt(stringValue));
-					}
-				}
-			}
-			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_detail_change_with_tap))) {
-				for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, appWidgetId,
-								Boolean.parseBoolean(stringValue));
-					}
-				}
-				for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, notificationId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, notificationId,
-								Boolean.parseBoolean(stringValue));
-					}
-				}
-			}
-			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_detail_prevent_screenlock))) {
-				for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, appWidgetId,
-								Boolean.parseBoolean(stringValue));
-					}
-				}
-				for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
-					if (PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, notificationId, false)) {
-						PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, notificationId,
-								Boolean.parseBoolean(stringValue));
-					}
-				}
 			}
 
 			setSummary(preference, stringValue);

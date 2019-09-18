@@ -81,36 +81,6 @@ public class StackedImageWidgetConfigurationFragment extends GenericImageWidgetC
 					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, getAppWidgetId(),
 							Boolean.parseBoolean(stringValue));
 					updatePropertyEnablement();
-
-					if (Boolean.parseBoolean(stringValue)) {
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, getAppWidgetId(),
-								PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_scale_type,
-										R.string.pref_default_detail_scale_type));
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, getAppWidgetId(),
-								PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background,
-										R.string.pref_default_detail_background));
-						PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, getAppWidgetId(),
-								PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
-										R.string.pref_default_detail_flip_behavior));
-						PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, getAppWidgetId(),
-								PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
-						PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, getAppWidgetId(),
-								PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
-
-						setSummary(findPreference(getString(R.string.key_widget_detail_scale_type)),
-								PreferenceUtil.getSharedPreferenceString(R.string.key_pref_detail_scale_type,
-										R.string.pref_default_detail_scale_type));
-						setSummary(findPreference(getString(R.string.key_widget_detail_background)),
-								PreferenceUtil.getSharedPreferenceString(R.string.key_pref_detail_background,
-										R.string.pref_default_detail_background));
-						setSummary(findPreference(getString(R.string.key_widget_detail_flip_behavior)),
-								PreferenceUtil.getSharedPreferenceString(R.string.key_pref_detail_flip_behavior,
-										R.string.pref_default_detail_flip_behavior));
-						((CheckBoxPreference) findPreference(getString(R.string.key_widget_detail_change_with_tap)))
-								.setChecked(PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
-						((CheckBoxPreference) findPreference(getString(R.string.key_widget_detail_prevent_screenlock)))
-								.setChecked(PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
-					}
 				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_scale_type))) {
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, getAppWidgetId(),
