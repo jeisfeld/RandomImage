@@ -77,7 +77,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_change_with_tap);
-		bindPreferenceSummaryToValue(R.string.key_notification_detail_prevent_screenlock);
+		bindPreferenceSummaryToValue(R.string.key_notification_detail_prevent_screen_timeout);
 		addEditListListener();
 		addCancelNotificationListener();
 		updatePropertyEnablement();
@@ -228,10 +228,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId,
 					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
-		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_detail_prevent_screenlock, mNotificationId)) {
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId)) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId,
-					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout));
 		}
 
 		return isUpdated;
@@ -332,8 +332,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false));
-		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock,
-				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId, false));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId, false));
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		findPreference(getString(R.string.key_notification_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_flip_behavior)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_change_with_tap)).setEnabled(!useDefaultSettings);
-		findPreference(getString(R.string.key_notification_detail_prevent_screenlock)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_notification_detail_prevent_screen_timeout)).setEnabled(!useDefaultSettings);
 	}
 
 	/**
@@ -403,7 +403,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_notification_colored_icon
 				|| preferenceKey == R.string.key_notification_detail_use_default
 				|| preferenceKey == R.string.key_notification_detail_change_with_tap
-				|| preferenceKey == R.string.key_notification_detail_prevent_screenlock) {
+				|| preferenceKey == R.string.key_notification_detail_prevent_screen_timeout) {
 			value = "";
 		}
 		else {
@@ -539,8 +539,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
 						mNotificationId, Boolean.parseBoolean(stringValue));
 			}
-			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_prevent_screenlock))) {
-				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock,
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_prevent_screen_timeout))) {
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout,
 						mNotificationId, Boolean.parseBoolean(stringValue));
 			}
 

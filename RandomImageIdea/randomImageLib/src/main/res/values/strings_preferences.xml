@@ -14,7 +14,7 @@
     <string name="key_pref_detail_background" translatable="false">pref_detail_background</string>
     <string name="key_pref_detail_flip_behavior" translatable="false">pref_detail_flip_behavior</string>
     <string name="key_pref_detail_change_with_tap" translatable="false">pref_detail_change_with_tap</string>
-    <string name="key_pref_detail_prevent_screenlock" translatable="false">pref_detail_prevent_screenlock</string>
+    <string name="key_pref_detail_prevent_screen_timeout" translatable="false">pref_detail_prevent_screen_timeout</string>
 
     <!-- Dummy keys only required as menu reference -->
 
@@ -79,7 +79,7 @@
     <string name="pref_title_detail_background">Background color</string>
     <string name="pref_title_detail_flip_behavior">Action when flipping</string>
     <string name="pref_title_detail_change_with_tap">Use tap instead of flipping</string>
-    <string name="pref_title_detail_prevent_screenlock">Prevent screen locking</string>
+    <string name="pref_title_detail_prevent_screen_timeout">Prevent screen timeout</string>
     <string name="pref_default_language" translatable="false">0</string>
     <string name="pref_default_folder_selection_mechanism" translatable="false">0</string>
     <string name="pref_default_detail_scale_type" translatable="false">0</string>

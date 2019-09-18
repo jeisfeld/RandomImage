@@ -81,7 +81,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
-		bindPreferenceSummaryToValue(R.string.key_widget_detail_prevent_screenlock);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_prevent_screen_timeout);
 		addEditListListener();
 		updatePropertyEnablement();
 	}
@@ -100,7 +100,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		findPreference(getString(R.string.key_widget_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_flip_behavior)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_change_with_tap)).setEnabled(!useDefaultSettings);
-		findPreference(getString(R.string.key_widget_detail_prevent_screenlock)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_prevent_screen_timeout)).setEnabled(!useDefaultSettings);
 	}
 
 	@Override
@@ -202,10 +202,10 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
 					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
 		}
-		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId)) {
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_prevent_screen_timeout, mAppWidgetId)) {
 			isUpdated = true;
-			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId,
-					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout));
 		}
 		return isUpdated;
 	}
@@ -240,8 +240,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
-		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock,
-				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId, false));
+		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout,
+				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout, mAppWidgetId, false));
 	}
 
 	/**
@@ -288,7 +288,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				|| preferenceKey == R.string.key_widget_view_as_list
 				|| preferenceKey == R.string.key_widget_detail_use_default
 				|| preferenceKey == R.string.key_widget_detail_change_with_tap
-				|| preferenceKey == R.string.key_widget_detail_prevent_screenlock) {
+				|| preferenceKey == R.string.key_widget_detail_prevent_screen_timeout) {
 			value = "";
 		}
 		else {

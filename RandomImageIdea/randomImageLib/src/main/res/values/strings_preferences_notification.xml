@@ -26,7 +26,7 @@
     <string name="key_notification_detail_background" translatable="false">notification_detail_background</string>
     <string name="key_notification_detail_flip_behavior" translatable="false">notification_detail_flip_behavior</string>
     <string name="key_notification_detail_change_with_tap" translatable="false">notification_detail_change_with_tap</string>
-    <string name="key_notification_detail_prevent_screenlock" translatable="false">notification_detail_prevent_screenlock</string>
+    <string name="key_notification_detail_prevent_screen_timeout" translatable="false">notification_detail_prevent_screen_timeout</string>
     <string name="key_notification_current_alarm_timestamp" translatable="false">notification_current_alarm_timestamp</string>
 
     <!-- Deprecated preferences from previous app versions -->
@@ -66,7 +66,7 @@
     <string name="pref_title_notification_detail_background">Background color</string>
     <string name="pref_title_notification_detail_flip_behavior">Action when flipping</string>
     <string name="pref_title_notification_detail_change_with_tap">Use tap instead of flipping</string>
-    <string name="pref_title_notification_detail_prevent_screenlock">Prevent screen locking</string>
+    <string name="pref_title_notification_detail_prevent_screen_timeout">Prevent screen timeout</string>
     <string name="pref_title_cancel_notification">Remove Notification</string>
     <string name="notification_channel_system">System notifications</string>
     <string name="notification_channel_image">Image notifications</string>

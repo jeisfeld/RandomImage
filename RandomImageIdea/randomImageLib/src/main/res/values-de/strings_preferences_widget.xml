@@ -26,7 +26,7 @@
     <string name="pref_title_widget_detail_background">Hintergrundfarbe</string>
     <string name="pref_title_widget_detail_flip_behavior">Verhalten beim Schnippen</string>
     <string name="pref_title_widget_detail_change_with_tap">Tippen statt Schnippen</string>
-    <string name="pref_title_widget_detail_prevent_screenlock">Bildschirmsperre verhindern</string>
+    <string name="pref_title_widget_detail_prevent_screen_timeout">Bildschirmtimeout verhindern</string>
     <string name="pref_title_widget_timeout">Nutzungsdauer des Widgets</string>
     <string name="pref_indefinite_value_widget_timeout">unbegrenzt</string>
     <string name="pref_title_widget_allowed_call_frequency">Sperrdauer des Widgets</string>

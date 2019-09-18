@@ -81,8 +81,8 @@
             android:key="@string/key_widget_detail_change_with_tap"
             android:title="@string/pref_title_widget_detail_change_with_tap"/>
         <CheckBoxPreference
-            android:key="@string/key_widget_detail_prevent_screenlock"
-            android:title="@string/pref_title_widget_detail_prevent_screenlock" />
+            android:key="@string/key_widget_detail_prevent_screen_timeout"
+            android:title="@string/pref_title_widget_detail_prevent_screen_timeout" />
     </PreferenceCategory>
 
 </PreferenceScreen>

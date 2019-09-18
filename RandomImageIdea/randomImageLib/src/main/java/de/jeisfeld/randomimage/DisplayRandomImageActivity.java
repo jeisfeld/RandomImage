@@ -378,7 +378,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		mFlipType = FlipType.fromResourceValue(
 				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, R.string.pref_default_detail_flip_behavior));
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
-		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock);
+		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
 
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
 
@@ -558,7 +558,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mChangeImageWithSingleTap =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false);
 			mPreventScreenLock =
-					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId, false);
+					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId, false);
 		}
 
 		if (!NotificationUtil.isActivityNotificationStyle(
@@ -597,7 +597,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mChangeImageWithSingleTap =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
 			mPreventScreenLock =
-					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, mAppWidgetId, false);
+					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout, mAppWidgetId, false);
 		}
 
 		WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);

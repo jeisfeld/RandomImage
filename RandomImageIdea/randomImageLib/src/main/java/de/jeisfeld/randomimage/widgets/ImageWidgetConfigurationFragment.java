@@ -85,8 +85,8 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, getAppWidgetId(),
 							Boolean.parseBoolean(stringValue));
 				}
-				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_prevent_screenlock))) {
-					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screenlock, getAppWidgetId(),
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_prevent_screen_timeout))) {
+					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout, getAppWidgetId(),
 							Boolean.parseBoolean(stringValue));
 				}
 
