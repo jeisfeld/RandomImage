@@ -24,11 +24,10 @@ import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
-import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
 /**
- * Fragment for displaying the settings of the image widget.
+ * Fragment for displaying the settings of the notification.
  */
 public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
@@ -49,7 +48,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	private OnWidgetPreferenceChangeListener mOnPreferenceChangeListener = new OnWidgetPreferenceChangeListener();
+	private OnNotificationPreferenceChangeListener mOnPreferenceChangeListener = new OnNotificationPreferenceChangeListener();
 
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
@@ -418,7 +417,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	 * Update the preference header after changing the settings.
 	 */
 	private void updateHeader() {
-		NotificationSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mNotificationId);
+		NotificationSettingsActivity.updateHeader(getArguments().getInt(NotificationSettingsActivity.STRING_HASH_CODE, 0), mNotificationId);
 	}
 
 	/**
@@ -436,7 +435,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	private class OnWidgetPreferenceChangeListener implements OnPreferenceChangeListener {
+	private class OnNotificationPreferenceChangeListener implements OnPreferenceChangeListener {
 		@Override
 		public boolean onPreferenceChange(final Preference preference, final Object value) {
 			String stringValue = value.toString();
@@ -522,6 +521,36 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default,
 						mNotificationId, Boolean.parseBoolean(stringValue));
 				updatePropertyEnablement();
+
+				if (Boolean.parseBoolean(stringValue)) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
+							PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_scale_type,
+									R.string.pref_default_detail_scale_type));
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId,
+							PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background,
+									R.string.pref_default_detail_background));
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId,
+							PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
+									R.string.pref_default_detail_flip_behavior));
+					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId,
+							PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
+					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screenlock, mNotificationId,
+							PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+
+					setSummary(findPreference(getString(R.string.key_notification_detail_scale_type)),
+							PreferenceUtil.getSharedPreferenceString(R.string.key_pref_detail_scale_type,
+									R.string.pref_default_detail_scale_type));
+					setSummary(findPreference(getString(R.string.key_notification_detail_background)),
+							PreferenceUtil.getSharedPreferenceString(R.string.key_pref_detail_background,
+									R.string.pref_default_detail_background));
+					setSummary(findPreference(getString(R.string.key_notification_detail_flip_behavior)),
+							PreferenceUtil.getSharedPreferenceString(R.string.key_pref_detail_flip_behavior,
+									R.string.pref_default_detail_flip_behavior));
+					((CheckBoxPreference) findPreference(getString(R.string.key_notification_detail_change_with_tap)))
+							.setChecked(PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
+					((CheckBoxPreference) findPreference(getString(R.string.key_notification_detail_prevent_screenlock)))
+							.setChecked(PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screenlock));
+				}
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_scale_type))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_scale_type, mNotificationId,
