@@ -396,6 +396,8 @@ public abstract class ImageList implements RandomFileProvider {
 							}
 							else {
 								Log.w(Application.TAG, "Cannot find folder " + line);
+								mElements.add(new ListElement(MISSING_PATH, line));
+								missingPaths.add(line);
 							}
 						}
 						else if (file.exists()) {
