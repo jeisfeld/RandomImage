@@ -850,7 +850,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	}
 
 	/**
-	 * Create the gesture detector handling flinging and double tapping.
+	 * Create the gesture detector handling flinging.
 	 */
 	private void createGestureDetector() {
 		mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
@@ -858,19 +858,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			 * The speed which is accepted as fling.
 			 */
 			private static final int FLING_SPEED = 3000;
-
-			@Override
-			public boolean onDoubleTap(final MotionEvent e) {
-				if (mPreventDisplayAll) {
-					if (mListName != null) {
-						finish();
-					}
-				}
-				else {
-					ConfigureImageListActivity.startActivity(DisplayRandomImageActivity.this, mListName, "via Double Tap");
-				}
-				return true;
-			}
 
 			@Override
 			public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
