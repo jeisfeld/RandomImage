@@ -49,6 +49,8 @@ import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
 import de.jeisfeld.randomimagelib.R;
 
+import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
 import static android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
 import static android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
 
@@ -164,6 +166,16 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * The cache index of the next image view.
 	 */
 	private int mNextCacheIndex = 2;
+
+	/**
+	 * Flag indicating if current view has dark background.
+	 */
+	private boolean mIsDark = false;
+
+	/**
+	 * Flag indicating if the navigation bar should be hidden.
+	 */
+	private boolean mHideNavigationBar = false;
 
 	/**
 	 * The direction of the last fling movement.
@@ -404,6 +416,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 					: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 
+		mHideNavigationBar = !mChangeImageWithSingleTap;
 		createGestureDetector();
 
 		final String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
@@ -488,16 +501,27 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 			getWindow().setNavigationBarColor(backgroundColor);
 
-			if (VERSION.SDK_INT >= VERSION_CODES.O) {
-				boolean isDark = Color.red(backgroundColor) + Color.green(backgroundColor) + Color.blue(backgroundColor) <= 384; // MAGIC_NUMBER
-				View decorView = getWindow().getDecorView();
-				if (isDark) {
-					decorView.setSystemUiVisibility(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-				}
-				else {
-					decorView.setSystemUiVisibility(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS | SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-				}
+			mIsDark = Color.red(backgroundColor) + Color.green(backgroundColor) + Color.blue(backgroundColor) <= 384; // MAGIC_NUMBER
+			setNavigationiBarFlags();
+		}
+	}
+
+	/**
+	 * Set system flags for navigation bar.
+	 */
+	private void setNavigationiBarFlags() {
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			int flag = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+
+			if (!mIsDark && VERSION.SDK_INT >= VERSION_CODES.O) {
+				flag |= SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
 			}
+
+			if (mHideNavigationBar) {
+				flag |= SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_IMMERSIVE;
+			}
+
+			getWindow().getDecorView().setSystemUiVisibility(flag);
 		}
 	}
 
@@ -905,7 +929,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 			@Override
 			public boolean onSingleTapUp(final MotionEvent e) {
 				if (!mChangeImageWithSingleTap) {
-					return false;
+					mHideNavigationBar = !mHideNavigationBar;
+					setNavigationiBarFlags();
+					return true;
 				}
 
 				if (mFlipType == FlipType.CLOSE) {
