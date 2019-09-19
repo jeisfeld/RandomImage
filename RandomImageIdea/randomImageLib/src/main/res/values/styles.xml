@@ -25,6 +25,11 @@
         -->
     </style>
 
+    <style name="AppTheme.Dialog" parent="android:Theme.Holo.Dialog" />
+
+    <style name="AppTheme.Dialog.NoActionBar.MinWidth" parent="android:Theme.Holo.Dialog.NoActionBar.MinWidth" />
+
+
     <!-- Application theme. -->
     <style name="AppTheme.Fullscreen" parent="AppBaseTheme.Fullscreen">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppBaseTheme" parent="android:Theme.Holo">
+
+    <style name="AppBaseTheme" parent="android:Theme.Material">
         <item name="android:navigationBarColor">@android:color/background_dark</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -8,7 +9,7 @@
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearanceSmallCustomOverflowMenu</item>
     </style>
 
-    <style name="AppBaseTheme.Fullscreen" parent="android:Theme.Holo.NoActionBar.Fullscreen">
+    <style name="AppBaseTheme.Fullscreen" parent="android:Theme.Material.NoActionBar.Fullscreen">
         <item name="android:navigationBarColor">@android:color/background_dark</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -18,11 +19,15 @@
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearanceSmallCustomOverflowMenu</item>
     </style>
 
-    <style name="TextAppearanceSmallCustomOverflowMenu" parent="@android:style/TextAppearance.Holo.Widget.PopupMenu.Small">
+    <style name="TextAppearanceSmallCustomOverflowMenu" parent="@android:style/TextAppearance.Material.Widget.PopupMenu.Small">
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="TextAppearanceLargeCustomOverflowMenu" parent="@android:style/TextAppearance.Holo.Widget.PopupMenu.Large">
+    <style name="TextAppearanceLargeCustomOverflowMenu" parent="@android:style/TextAppearance.Material.Widget.PopupMenu.Large">
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="AppTheme.Dialog" parent="android:Theme.Material.Dialog" />
+
+    <style name="AppTheme.Dialog.NoActionBar.MinWidth" parent="android:Theme.Material.Dialog.NoActionBar.MinWidth" />
 </resources>
