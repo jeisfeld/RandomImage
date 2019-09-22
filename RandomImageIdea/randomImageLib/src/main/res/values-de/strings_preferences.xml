@@ -29,6 +29,7 @@
         <item>Systemsprache</item>
         <item>English</item>
         <item>Deutsch</item>
+        <item>Español</item>
     </string-array>
     <string-array name="pref_list_titles_folder_selection_mechanism">
         <item>Liste aller Bildverzeichnisse</item>

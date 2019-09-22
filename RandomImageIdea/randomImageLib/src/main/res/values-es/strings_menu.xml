@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings for menus -->
+    <string name="menu_select_images_for_removal">Eliminar imágenes</string>
+    <string name="menu_remove_images">Borrar imágenes seleccionadas</string>
+    <string name="menu_add_folders">Agregar carpetas seleccionados</string>
+    <string name="menu_cancel">Abortar</string>
+    <string name="menu_select_all_images">Seleccionar todas las imágenes</string>
+    <string name="menu_select_folder">Seleccionar carpeta</string>
+    <string name="menu_add_images">Agregar fotos</string>
+    <string name="menu_add_image_folder">Agregar una carpeta de imágenes</string>
+    <string name="menu_add_only_this_folder">Simplemente agregue esta carpeta de imágenes</string>
+    <string name="menu_add_all_subfolders">Agregar todas las subcarpetas</string>
+    <string name="menu_manage_lists">Administrar listas de imágenes</string>
+    <string name="menu_backup_lists">Guardar listas de imágenes</string>
+    <string name="menu_backup">Guardar</string>
+    <string name="menu_restore_lists">Restaurar listas de imágenes</string>
+    <string name="menu_restore">Restaurar</string>
+    <string name="menu_delete_lists">Borrar listas de imágenes</string>
+    <string name="menu_delete">Borrar</string>
+    <string name="menu_create_list">Crea una nueva lista de imágenes</string>
+    <string name="menu_include_other_list">Agregar otra lista a la lista actual</string>
+    <string name="menu_remove_from_list">Eliminar de la lista</string>
+    <string name="menu_edit_list">Editar lista de imágenes</string>
+    <string name="menu_display_in_widget">Mostrar imagen en widget</string>
+    <string name="menu_settings">Ajustes</string>
+    <string name="menu_browse_folders">Buscar en el administrador de archivos</string>
+    <string name="menu_title_pro_app">Imagen Aleatoria Pro</string>
+
+    <!-- Entries related to buttons in the settings -->
+    <string name="menu_hide_all_info">No mostrar mensajes de información</string>
+    <string name="menu_search_image_Folders">Buscar carpetas de imágenes</string>
+    <string name="menu_apps_without_popup_notifications">Aplicaciones sin notificaciones emergentes</string>
+    <string name="menu_show_all_info">Mostrar todos los mensajes de información</string>
+    <string name="menu_title_contact_developer">Contacto con el desarrollador</string>
+    <string name="menu_detail_contact_developer">por correo electrónico en caso de problemas o preguntas</string>
+    <string name="menu_subject_contact_developer">Pregunta sobre la aplicación Imagen Aleatoria</string>
+    <string name="menu_title_help_page">Página de ayuda</string>
+    <string name="menu_detail_help_page">Abra la página de ayuda en el navegador</string>
+    <string name="menu_target_help_page">http://randomimage.jeisfeld.de/?lang=es&amp;page=overview</string>
+
+</resources>

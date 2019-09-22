@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Display names for widgets -->
+
+    <string name="mini_widget_display_name">Mini Widget</string>
+    <string name="image_widget_display_name">Marco de imágenes</string>
+    <string name="stacked_image_widget_display_name">Pila de imágenes</string>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_category_widget_timing">Tiempo de widget</string>
+    <string name="pref_category_widget_appearance">Apariencia</string>
+    <string name="pref_title_widget_list_name">Nombre de la lista</string>
+    <string name="pref_title_widget_timer_duration">Frecuencia de cambio</string>
+    <string name="pref_indefinite_value_widget_timer_duration">nunca</string>
+    <string name="pref_title_widget_view_as_list">Mostrar como lista</string>
+    <string name="pref_title_widget_show_cyclically">Mostrar todas las imágenes cíclicamente</string>
+    <string name="pref_title_widget_background_style">Fondo</string>
+    <string name="pref_title_widget_button_style">Estilo de botones</string>
+    <string name="pref_title_widget_display_name">Nombre del widget</string>
+    <string name="pref_title_widget_icon_image">Ícono del widget</string>
+    <string name="pref_title_widget_detail_use_default">Usar configuración predeterminada</string>
+    <string name="pref_title_widget_detail_scale_type">Escala de imagen</string>
+    <string name="pref_title_widget_detail_background">Color de fondo</string>
+    <string name="pref_title_widget_detail_flip_behavior">Comportamiento al lanzar</string>
+    <string name="pref_title_widget_detail_change_with_tap">Tocar en lugar de lanzar</string>
+    <string name="pref_title_widget_detail_prevent_screen_timeout">Prevenir el tiempo de espera de la pantalla</string>
+    <string name="pref_title_widget_timeout">Duración de uso del widget</string>
+    <string name="pref_indefinite_value_widget_timeout">ilimitado</string>
+    <string name="pref_title_widget_allowed_call_frequency">Duración de bloqueo del widget</string>
+    <string name="pref_indefinite_value_widget_allowed_call_frequency">sin bloqueo</string>
+
+    <!-- String arrays -->
+    <string-array name="icon_image_names">
+        <item>estándar</item>
+        <item>Foto propia</item>
+    </string-array>
+    <string-array name="background_style_names">
+        <item>Rellenar con imagen</item>
+        <item>Sin fondo</item>
+        <item>Sombra brillante</item>
+        <item>Sombra oscura</item>
+        <item>Gris claro</item>
+        <item>Gris oscuro</item>
+        <item>Azul</item>
+        <item>Rojo</item>
+        <item>Verde</item>
+        <item>Amarillo / Marrón</item>
+        <item>Turquesa</item>
+        <item>Rosa</item>
+        <item>Aleatorio</item>
+        <item>Aleatorio (transparente)</item>
+        <item>Aleatorio de la imagen</item>
+        <item>Color del borde de la imagen</item>
+        <item>Color de imagen promedio</item>
+    </string-array>
+    <string-array name="button_style_names">
+        <item>Siempre visible, debajo</item>
+        <item>Siempre visible, arriba</item>
+        <item>Oculto, estrecho</item>
+        <item>Oculto, ancho</item>
+        <item>Sin botones</item>
+    </string-array>
+    <string-array name="button_color_names">
+        <item>negro</item>
+        <item>blanco</item>
+        <item>azul</item>
+        <item>rojo</item>
+        <item>verde</item>
+        <item>amarillo</item>
+        <item>turquesa</item>
+        <item>rosa</item>
+        <item>marrón</item>
+        <item>Aleatorio (flecha en blanco y negro)</item>
+        <item>Aleatorio (flecha colorida)</item>
+    </string-array>
+
+</resources>

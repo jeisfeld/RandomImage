@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_category_image_list">Lista de imágenes</string>
+    <string name="pref_category_premium">Versión premium</string>
+    <string name="pref_category_support">Apoyo</string>
+    <string name="pref_category_random_image_view">Vista de Imagen aleatoria</string>
+    <string name="pref_category_other">Configuraciones adicionales</string>
+    <string name="pref_title_language">Idioma</string>
+    <string name="pref_title_folder_selection_mechanism">Selección de carpeta a través de &#8230;</string>
+    <string name="pref_title_show_hidden_folders">Mostrar carpetas ocultas</string>
+    <string name="pref_title_show_list_notification">Notificación sobre cambio de lista</string>
+    <string name="pref_title_use_regex_filter">Usar filtro de expresión regular</string>
+    <string name="pref_title_hidden_lists_pattern">Ocultar listas (expresión regular)</string>
+    <string name="pref_title_hidden_folders_pattern">Ocultar carpetas (expresión regular)</string>
+    <string name="pref_title_detail_scale_type">Escala de imagen</string>
+    <string name="pref_title_detail_background">Color de fondo</string>
+    <string name="pref_title_detail_flip_behavior">Comportamiento al lanzar</string>
+    <string name="pref_title_detail_change_with_tap">Tocar en lugar de lanzar</string>
+    <string name="pref_title_detail_prevent_screen_timeout">Prevenir el tempo de espera de la pantalla</string>
+    <string name="pref_hint_hidden_lists_pattern">[Ingrese una expresión regular]</string>
+    <string name="pref_hint_hidden_folders_pattern">[Ingrese una expresión regular]</string>
+
+    <!-- Strings related to Setting arrays -->
+
+    <string-array name="pref_list_titles_language">
+        <item>Idioma del sistema</item>
+        <item>English</item>
+        <item>Deutsch</item>
+        <item>Español</item>
+    </string-array>
+    <string-array name="pref_list_titles_folder_selection_mechanism">
+        <item>Lista de carpetas de imágenes.</item>
+        <item>Explorador de archivos</item>
+        <item>Galería</item>
+    </string-array>
+    <string-array name="detail_scale_type_names">
+        <item>Encajar en la ventana</item>
+        <item>Estirar para llenar la ventana</item>
+        <item>Girar y encajar</item>
+        <item>Girar y llenar</item>
+    </string-array>
+    <string-array name="detail_background_names">
+        <item>Oscuro</item>
+        <item>Brillante</item>
+        <item>Color del borde de la imagen</item>
+        <item>Color de imagen promedio</item>
+    </string-array>
+    <string-array name="detail_flip_behavior_names">
+        <item>Siempre nueva imagen aleatoria</item>
+        <item>Permitir retroceder una imagen</item>
+        <item>Permitir retroceder varias imágenes</item>
+        <item>Permitir retroceder, evitar repeticiones</item>
+        <item>Mostrar todas las imágenes cíclicamente</item>
+        <item>Sin cambios</item>
+        <item>Cerrar pantalla</item>
+    </string-array>
+</resources>

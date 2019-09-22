@@ -170,6 +170,8 @@ public class Application extends android.app.Application {
 			return Locale.ENGLISH;
 		case 2:
 			return Locale.GERMAN;
+		case 3: // MAGIC_NUMBER
+			return new Locale("es");
 		default:
 			return DEFAULT_LOCALE;
 		}

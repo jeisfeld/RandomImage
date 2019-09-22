@@ -11,7 +11,7 @@
     <string name="title_dialog_add_folder">Add folder</string>
     <string name="title_dialog_request_permission">Permission required</string>
     <string name="title_dialog_first_use">First Steps</string>
-    <string name="title_dialog_searching_image_folders">Searching image folders…</string>
+    <string name="title_dialog_searching_image_folders">Searching image folders&#8230;</string>
 
     <!-- Titles of notifications -->
 
@@ -60,8 +60,8 @@
     <string name="dialog_hint_first_use_upgrade">Thanks for installing %1$s!\n\nYou can migrate your image lists to this app version in the following way:\n\n1. Open the configuration of the previously used version of the app, and make a backup of your image lists.\n\n2. Open the configuration of this %1$s again and import all your image lists (via “restore”).</string>
     <string name="dialog_hint_select_folder">Here you can\n\n- Select an image folder (yellow) from which you want to add images to the Image List\n\n- Add a folder (orange) including all subfolders to the Image List\n\n- Add another image list (blue) to the current list\n\n- Select multiple items and add them to the Image List</string>
     <string name="dialog_hint_add_images">Here you can\n\n- add the complete image folder to your Image List\n\n- select individual images to add\n\nNote: you may also use your Gallery app and send images from there to the Random Image app.</string>
-    <string name="dialog_hint_display_image">You can zoom and move the image.\n\n- Flip the image to see another one.\n\n- Double tap to go to the image list configuration.\n\n- Long press for further options.</string>
-    <string name="dialog_hint_main_configuration">This is the main configuration page of the app. Here you can\n´n- Edit image lists\n\n- Backup and restore image lists\n\n- Configure widgets\n\n- Add and configure image notifications.</string>
+    <string name="dialog_hint_display_image">You can zoom and move the image.\n\n- Flip the image to see another one.\n\n- Long press for further options.</string>
+    <string name="dialog_hint_main_configuration">This is the main configuration page of the app. Here you can\n\n- Edit image lists\n\n- Backup and restore image lists\n\n- Configure widgets\n\n- Add and configure image notifications.</string>
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Please select a name of at least one character.</string>
@@ -100,7 +100,7 @@
     <string name="dialog_confirmation_overwrite_backup_multiple">For %1$d of the selected lists, there exist already backups. Do you want to overwrite them?</string>
     <string name="dialog_confirmation_missing_images">The following images of the list “%1$s” cannot be loaded.\n\n%2$s</string>
     <string name="dialog_confirmation_need_read_permission">This app needs to have permission on your external storage in order to access the images. Please provide this access - otherwise the app will not work.</string>
-    <string name="dialog_confirmation_need_usage_access">In order to prevent popup notifications for certain apps, RandomImage needs access to Usage Access data. Please grand this access on the following page.</string>
+    <string name="dialog_confirmation_need_usage_access">In order to prevent popup notifications for certain apps, RandomImage needs access to Usage Access data. Please grant this access on the following page.</string>
 
     <!-- Partial strings used to construct other strings -->
     <string name="partial_none">no images</string>

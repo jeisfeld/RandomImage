@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings related to Notification Settings -->
+
+    <string name="pref_heading_notifcation">Notificación</string>
+    <string name="pref_heading_create_new_notifcation">Crea una nueva notificación</string>
+    <string name="pref_category_notification_timing">Tiempo de notificación</string>
+    <string name="pref_category_notification_appearance">Apariencia</string>
+    <string name="pref_title_notification_list_name">Nombre de la lista</string>
+    <string name="pref_title_notification_timer_duration">Frecuencia de notificación</string>
+    <string name="pref_indefinite_value_notification_timer_duration">nunca</string>
+    <string name="pref_title_notification_timer_variance">Variabilidad de la notificación.</string>
+    <string name="pref_title_notification_daily_start_time">Hora de inicio para notificaciones</string>
+    <string name="pref_title_notification_daily_end_time">Hora de finalización para notificaciones</string>
+    <string name="pref_title_notification_duration">Duración</string>
+    <string name="pref_indefinite_value_notification_duration">ilimitado</string>
+    <string name="pref_title_notification_duration_variance">Variabilidad de la duración</string>
+    <string name="pref_title_notification_style">Estilo de notificación</string>
+    <string name="pref_title_notification_led_color">Color del LED</string>
+    <string name="pref_title_notification_vibration">Vibración</string>
+    <string name="pref_title_notification_colored_icon">Icono de color</string>
+    <string name="pref_title_notification_display_name">Nombre de la notificación</string>
+    <string name="pref_title_notification_detail_use_default">Usar configuración predeterminada</string>
+    <string name="pref_title_notification_detail_scale_type">Escala de imagen</string>
+    <string name="pref_title_notification_detail_background">Color de fondo</string>
+    <string name="pref_title_notification_detail_flip_behavior">Comportamiento al lanzar</string>
+    <string name="pref_title_notification_detail_change_with_tap">Tocar en lugar de lanzar</string>
+    <string name="pref_title_notification_detail_prevent_screen_timeout">Prevenir el tiempo de espera de la pantalla</string>
+    <string name="pref_title_cancel_notification">Borrar notificación</string>
+    <string name="notification_channel_system">Notificaciones del sistema</string>
+    <string name="notification_channel_image">Notificaciones de imagen</string>
+    <string name="notification_channel_with_vibration">con vibración</string>
+    <string name="notification_channel_without_vibration">sin vibración</string>
+    <string name="notification_channel_led">LED</string>
+
+    <!-- String arrays -->
+    <string-array name="notification_timer_variance_names">
+        <item>sin variación</item>
+        <item>ligera variación</item>
+        <item>gran variación</item>
+    </string-array>
+    <string-array name="notification_daily_start_time_names">
+        <item>00:00</item>
+        <item>05:00</item>
+        <item>06:00</item>
+        <item>07:00</item>
+        <item>08:00</item>
+        <item>09:00</item>
+        <item>10:00</item>
+    </string-array>
+    <string-array name="notification_daily_end_time_names">
+        <item>20:00</item>
+        <item>21:00</item>
+        <item>22:00</item>
+        <item>23:00</item>
+        <item>00:00</item>
+        <item>01:00</item>
+        <item>02:00</item>
+    </string-array>
+    <string-array name="notification_style_names">
+        <item>estándar</item>
+        <item>especial</item>
+        <item>música pop</item>
+        <item>pantalla completa</item>
+    </string-array>
+    <string-array name="notification_led_color_names">
+        <item>de</item>
+        <item>débil</item>
+        <item>rojo</item>
+        <item>verde</item>
+        <item>azul</item>
+        <item>Rojo-verde</item>
+        <item>Verde-azul</item>
+        <item>Azul-Rojo</item>
+    </string-array>
+
+</resources>

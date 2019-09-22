@@ -1,0 +1,83 @@
+<resources>
+
+    <!-- Basic application strings -->
+    <string name="app_name">Imagen Aleatoria</string>
+    <string name="app_name_short">Imagen Aleatoria</string>
+    <string name="mini_widget_name">Widget de imagen aleatoria</string>
+    <string name="image_widget_name">Marco de imagen aleatoria</string>
+    <string name="stacked_image_widget_name">Pila de imágenes aleatorias</string>
+    <string name="default_list_name">Mi lista de fotos</string>
+    <string name="title_icon_main_configuration">Configuración Imagen Aleatoria</string>
+
+    <!-- Activity titles -->
+    <string name="title_activity_display_image_details">Información de la imagen</string>
+    <string name="title_activity_display_folder_details">Información de la carpeta</string>
+    <string name="title_activity_display_list_info">Información de la lista</string>
+    <string name="title_activity_display_nested_list_info">Información de la lista anidada</string>
+    <string name="title_activity_main_configuration">Configurar listas de imágenes</string>
+    <string name="title_activity_main_configuration_backup">Copia de seguridad de listas</string>
+    <string name="title_activity_main_configuration_restore">Restaurar listas de imágenes</string>
+    <string name="title_activity_main_configuration_delete">Borrar listas de imágenes</string>
+    <string name="title_activity_configure_image_list">Configurar lista de imágenes</string>
+    <string name="title_activity_display_images_from_folder">Mostrar carpeta de imágenes</string>
+    <string name="title_activity_add_images">Agregar fotos</string>
+    <string name="title_activity_add_folders">Agregar carpetas</string>
+    <string name="title_activity_select_widget_icon">Seleccionar icono de widget</string>
+    <string name="title_activity_remove_images">Eliminar fotos</string>
+    <string name="title_activity_settings">Ajustes</string>
+    <string name="title_activity_widget_settings">Configuración de widgets</string>
+    <string name="title_activity_notification_settings">Configuración de notificaciónes</string>
+
+    <!-- Button texts -->
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Abortar</string>
+    <string name="button_delete">Borrar</string>
+    <string name="button_remove">Eliminar</string>
+    <string name="button_overwrite">Grabar encima</string>
+    <string name="button_dont_show">No mostrar de nuevo</string>
+    <string name="button_show_later">Mostrar más tarde</string>
+    <string name="button_add_folder">Agregar carpeta</string>
+    <string name="button_add_nested_list">Agregar lista</string>
+    <string name="button_finish_widget_configuration">Terminar la configuración del widget</string>
+    <string name="button_missing_images">Imágenes faltantes</string>
+    <string name="button_widgets">Widgets de imágenes</string>
+    <string name="button_notifications">Notificaciones de imágenes aleatorias</string>
+    <string name="button_clone_list">Clonar lista</string>
+    <string name="button_rename_list">Renombrar lista</string>
+    <string name="button_delete_list">Borrar lista</string>
+    <string name="button_backup_list">Guardar lista</string>
+    <string name="button_restore_list">Restaurar lista</string>
+    <string name="button_continue">Continuar</string>
+    <string name="button_view_in_gallery">Mostrar en la galería</string>
+    <string name="button_send_to">Enviar a&#8230;</string>
+    <string name="button_show_on_map">Mostrar en el mapa</string>
+
+    <!-- Info texts shown in activities. -->
+    <string name="text_info_select_image_folder_for_add">Seleccione una carpeta desde el que desea agregar imágenes a la lista.</string>
+    <string name="text_info_select_image_folders_for_add">Seleccione las carpetas que desea agregar a la lista.</string>
+    <string name="text_info_select_widget_icon">Seleccione la imagen que desea usar como icono de widget.</string>
+    <string name="text_info_select_lists_for_backup">Seleccione las listas de imágenes que desea guardar.</string>
+    <string name="text_info_select_lists_for_restore">Seleccione las listas de imágenes que desea restaurar.</string>
+    <string name="text_info_select_lists_for_delete">Seleccione las listas de imágenes que desea borrar.</string>
+    <string name="text_info_select_images_for_remove">Seleccione las carpetas e imágenes que desea eliminar de la lista de imágenes.</string>
+    <string name="text_info_image_lists">Mi listas de fotos</string>
+    <string name="text_info_image_list_backups">Copias de seguridad existentes</string>
+    <string name="text_info_empty_list">Su lista de imágenes al azar está vacía. Utilice el ícono «+» en la parte superior para agregar imágenes o carpetas a la lista.</string>
+
+    <!-- Other texts -->
+    <string name="text_initializing">Cargando&#8230;</string>
+    <string name="text_loading">Cargando lista de imágenes&#8230;</string>
+    <string name="text_no_image">No hay imagen disponible</string>
+    <string name="hint_search_path">Filtrar nombres</string>
+
+    <!-- Strings for image or list info -->
+    <string name="info_parent_folder"><![CDATA[<b>Ubicación:</b> %1$s]]></string>
+    <string name="info_file_date"><![CDATA[<b>Fecha:</b> %1$s]]></string>
+    <string name="info_number_of_images"><![CDATA[<b>Número de imágenes:</b> %1$d]]></string>
+    <string name="info_number_of_images_loading">Determinando el número de imágenes&#8230;</string>
+    <string name="info_number_of_images_and_proportion"><![CDATA[<b>Número de imágenes:</b> %1$d (%2$s%%)]]></string>
+    <string name="info_nested_list_view_frequency">Frecuencia de vista:</string>
+    <string name="info_photo_location">Ubicación de fotos</string>
+    <string name="pref_title_widget_button_color">Color de botones</string>
+
+</resources>

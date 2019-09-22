@@ -11,10 +11,9 @@
     <string name="title_dialog_add_folder">Verzeichnis hinzufügen</string>
     <string name="title_dialog_request_permission">Berechtigung erforderlich</string>
     <string name="title_dialog_first_use">Erste Schritte</string>
-    <string name="title_dialog_searching_image_folders">Suche Bildverzeichnisse…</string>
+    <string name="title_dialog_searching_image_folders">Suche Bildverzeichnisse&#8230;</string>
 
     <!-- Titles of notifications -->
-
     <string name="title_notification_updated_list">„%1$s” aktualisiert</string>
     <string name="title_notification_failed_loading">„%1$s” - Ladefehler</string>
     <string name="title_notification_failed_saving">„%1$s” - Speicherfehler</string>
@@ -60,7 +59,7 @@
     <string name="dialog_hint_first_use_upgrade">Danke für die Installation von %1$s!\n\nSie können Ihre Bildlisten wie folgt aus der bisher genutzten App-Version übertragen:\n\n1. Öffnen Sie die Konfiguration der bisher genutzten App-Version, und machen Sie ein Backup Ihrer Bildlisten.\n\n2. Öffnen Sie die Konfiguration der App %1$s und Importieren Sie Ihre Bildlisten (über „wiederherstellen”).</string>
     <string name="dialog_hint_select_folder">Hier können Sie\n\n- Ein Bildverzeichnis (gelb) auswählen, aus dem Sie Bilder zu Ihrer Bildliste hinzufügen wollen\n\n- Ein Verzeichnis (orange) samt aller Unterverzeichnisse hinzufügen\n\n- Eine andere Bildliste (blau) zur aktuellen Liste hinzufügen\n\n- Mehrere Verzeichnisse/Listen auswählen und zu Ihrer Bildliste hinzufügen</string>
     <string name="dialog_hint_add_images">Hier können Sie\n\n- Das ganze Bildverzeichnis zu Ihrer Bildliste hinzufügen\n\n- einzelne Bilder auswählen und hinzufügen\n\nHinweis: Sie können auch Ihre Galerie-App verwenden und Bilder von dort an die Zufallsbild-App senden.</string>
-    <string name="dialog_hint_display_image">- Sie können das Bild zoomen und bewegen.\n\n- Schnippen Sie das Bild weg, um ein anderes zu sehen.\n\n- Tippen Sie zweimal, um zur Konfiguration der Bildliste zu gelangen.\n\n- Ein langer Druck auf das Bild führt zu weiteren Optionen.</string>
+    <string name="dialog_hint_display_image">- Sie können das Bild zoomen und bewegen.\n\n- Schnippen Sie das Bild weg, um ein anderes zu sehen.\n\n- Ein langer Druck auf das Bild führt zu weiteren Optionen.</string>
     <string name="dialog_hint_main_configuration">Dies ist die Hauptkonfigurationsseite der App. Hier können Sie\n\n- Bildlisten bearbeiten\n\n- Bildlisten sichern und wiederherstellen\n\n- Widgets konfigurieren\n\n- Bildbenachrichtigungen hinzufügen und bearbeiten.</string>
 
     <!-- Messages of dialogs -->

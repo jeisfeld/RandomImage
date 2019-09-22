@@ -1,0 +1,127 @@
+<resources>
+
+    <!-- Titles of dialogs -->
+    <string name="title_dialog_info">Información</string>
+    <string name="title_dialog_confirmation">Confirmación</string>
+    <string name="title_dialog_enter_list_name">Ingrese el nombre de la lista</string>
+    <string name="title_dialog_select_list_name">Selección del nombre de la lista</string>
+    <string name="title_dialog_missing_images">Faltan imágenes</string>
+    <string name="title_dialog_add_list">Agregar lista</string>
+    <string name="title_dialog_add_folder">Agregar carpeta</string>
+    <string name="title_dialog_request_permission">Autorización requerida</string>
+    <string name="title_dialog_first_use">Primeros pasos</string>
+    <string name="title_dialog_searching_image_folders">Buscar carpetas de imágenes&#8230;</string>
+
+    <!-- Titles of notifications -->
+    <string name="title_notification_updated_list">Se actualizó «%1$s»</string>
+    <string name="title_notification_failed_loading">No se puedo cargar «%1$s»</string>
+    <string name="title_notification_failed_saving">No se puedo guardar «%1$s»</string>
+    <string name="title_notification_missing_files">«%1$s» tiene imágenes faltantes</string>
+    <string name="title_notification_unmounted_paths">«%1$s» no disponible</string>
+
+    <!-- Contents of toasts or notifications -->
+    <string name="notification_unmounted_path">No se puede acceder a la carpeta externa «%1$s». Por lo tanto, faltan imágenes en las listas de imágenes %2$s.</string>
+    <string name="toast_added_multiple">%1$s fueron agregadas a la lista</string>
+    <string name="toast_added_single">%1$s fue agregada a la lista</string>
+    <string name="toast_added_image_none">La imagen ya estaba en la lista.</string>
+    <string name="toast_added_images_none">Todas las imágenes seleccionadas ya estaban en la lista.</string>
+    <string name="toast_added_folder_none">La carpeta «%1$s» ya estaba en la lista.</string>
+    <string name="toast_added_folders_none">Todos las carpetas seleccionados ya estaban en la lista.</string>
+    <string name="toast_added_images_count_external">Se agregaron %1$d imágenes a la lista de imágenes aleatorias «%2$s»</string>
+    <string name="toast_added_images_single_external">La imagen «%1$s» se ha agregado a la lista «%2$s»</string>
+    <string name="toast_added_images_none_external">Todas las imágenes seleccionadas ya estaban en la lista «%1$s»</string>
+    <string name="toast_add_no_folder_selected">No se seleccionó ningúna carpeta para agregar</string>
+    <string name="toast_removed_multiple">%1$s ha sido eliminado de la lista</string>
+    <string name="toast_removed_single">%1$s fue eliminado de la lista</string>
+    <string name="toast_removed_no_image">No se seleccionó ninguna imagen para eliminar</string>
+    <string name="toast_backup_no_selection">No se seleccionó ninguna lista para guardar</string>
+    <string name="toast_restore_no_selection">No se seleccionó ninguna lista para restaurar</string>
+    <string name="toast_delete_no_selection">No se seleccionó ninguna lista para borrar</string>
+    <string name="toast_failed_to_save_list">Error al guardar la lista «%1$s»</string>
+    <string name="toast_failed_to_backup_list">Error al guardar la lista «%1$s»</string>
+    <string name="toast_failed_to_delete_list">Error al borrar la lista «%1$s»</string>
+    <string name="toast_failed_to_load_files">%2$d No se encontraron imágenes o carpetas de la lista de imágenes «%1$s»</string>
+    <string name="toast_failed_to_load_files_single">No se pudo encontrar una imagen o carpeta de la lista de imágenes «%1$s»</string>
+    <string name="toast_failed_to_open_google_play">Google Play no pudo iniciarse.</string>
+    <string name="toast_cyclic_nesting">La lista «%1$s» no se puede insertar porque contiene la lista actual.</string>
+    <string name="toast_cancelled_add_images">La adición de imágenes fue interrumpida.</string>
+    <string name="toast_error_while_saving">Error al guardar la lista de imágenes «%1$s»</string>
+    <string name="toast_error_while_loading">Error al cargar la lista de imágenes «%1$s»</string>
+    <string name="toast_error_select_folder">Error inesperado al intentar seleccionar una carpeta.</string>
+    <string name="toast_aborted_add_images_no_list">No se pudieron agregar las imágenes porque no se encontró una lista de imágenes.</string>
+    <string name="toast_widget_locked">El widget está bloqueado hasta %1$s.</string>
+    <string name="toast_widget_image_updated">La imagen del widget ha sido actualizada.</string>
+
+    <!-- Messages of hint dialogs -->
+    <string name="dialog_hint_first_use_1">1. Compile una lista de imágenes y carpetas de imágenes en su teléfono inteligente que desea mostrar.</string>
+    <string name="dialog_hint_first_use_2">2. Coloque un widget en su pantalla de inicio para ver imágenes aleatorias de su lista.</string>
+    <string name="dialog_hint_first_use_upgrade">¡Gracias por instalar %1$s!\n\nPuede transferir sus listas de imágenes desde la versión de la aplicación utilizada anteriormente de la siguiente manera:\n\n1. Abra la configuración de la versión de la aplicación utilizada anteriormente y haga una copia de seguridad de sus listas de imágenes.\n\n2. Abra la configuración de la aplicación %1$s e importe sus listas de imágenes (a través de «restaurar»).</string>
+    <string name="dialog_hint_select_folder">Aquí puede\n\n- Elijar una carpeta de imágenes (amarillo) desde el que desea agregar imágenes a su lista de imágenes\n\n- Agregar una carpeta (naranja) con todos los subcarpetas\n\n- Agregar otra lista de imágenes (azul) a la lista actual\n\n- Seleccionar múltiples carpetas / listas y agrégarlos a su lista de imágenes</string>
+    <string name="dialog_hint_add_images">Aquí puede\n\n- Agregar toda la carpeta de imágenes a su lista de imágenes\n\n- Seleccionar y agregar imágenes individuales\n\nNota: También puede usar su aplicación de galería y enviar imágenes desde allí a la aplicación de Imagen Aleatoria.</string>
+    <string name="dialog_hint_display_image">- Puede hacer zoom y mover la imagen.\n\n- Lanze la imagen para ver otra.\n\n- Una toque larga en la imagen lleva a más opciones.</string>
+    <string name="dialog_hint_main_configuration">Esta es la página de configuración principal de la aplicación. Aquí puede\n\nEditar listas de imágenes\n\n- Guardar y restaurar listas de imágenes\n\n- Configurar widgets\n\n- Agregar y editar notificaciones de imágenes.</string>
+
+    <!-- Messages of dialogs -->
+    <string name="dialog_info_name_too_short">Ingrese un nombre con al menos un letra.</string>
+    <string name="dialog_info_name_already_existing">El nombre «%1$s» ya existe; seleccione un nombre diferente.</string>
+    <string name="dialog_info_delete_widgets">Su pantalla de inicio tiene widgets para la lista %1$s. Por favor recuerde borrarlos.</string>
+    <string name="dialog_info_backup_of_lists">Las listas %1$s fueran guardadas en la carpeta «%2$s».</string>
+    <string name="dialog_info_restore_of_lists">Las listas %1$s se han restauradas.</string>
+    <string name="dialog_info_delete_of_lists">Las listas %1$s fueron borradas.</string>
+    <string name="dialog_info_not_allowed_to_delete_all_lists">No está permitido borrar todas las listas. Asegúrese de mantener al menos una lista.</string>
+    <string name="dialog_info_backup_of_list_single">La lista %1$s fue guardada en la carpeta «%1$s».</string>
+    <string name="dialog_info_restore_of_list_single">La lista %1$s ha sido restaurada.</string>
+    <string name="dialog_info_delete_of_list_single">La lista %1$s fue borrada.</string>
+    <string name="dialog_info_no_images_in_folder">La carpeta «%1$s» no contiene imágenes.</string>
+    <string name="dialog_info_no_widget">No hay widgets: coloque primero los widgets en su pantalla de inicio.</string>
+    <string name="dialog_info_need_premium">Para usar más de tres listas de imágenes, debe comprar la versión Pro de la aplicación.</string>
+    <string name="dialog_info_invalid_regexp">Por favor ingrese una expresión regular válida.</string>
+    <string name="dialog_input_enter_list_name_new">Por favor, introduzca un nombre para la nueva lista.</string>
+    <string name="dialog_input_enter_list_name_cloned">Ingrese un nombre para la lista duplicada.</string>
+    <string name="dialog_input_enter_list_name_changed">Por favor, introduzca el nuevo nombre de la lista.</string>
+    <string name="dialog_select_list_for_display">Seleccione la lista de imágenes desde la que desea ver las imágenes.</string>
+    <string name="dialog_select_list_for_widget">Seleccione la lista de imágenes que desea asignar a este widget.</string>
+    <string name="dialog_select_list_for_notification">Seleccione la lista de imágenes que desea asignar a esta notificación.</string>
+    <string name="dialog_select_list_for_external_add">Seleccione la lista de imágenes a la que desea agregar las imágenes seleccionadas.</string>
+    <string name="dialog_select_list_for_inclusion">Seleccione la lista de imágenes que desea agregar a la lista actual.</string>
+    <string name="dialog_confirmation_delete_list">¿Realmente desea borrar la lista de imágenes «%2$s»?</string>
+    <string name="dialog_confirmation_delete_lists">¿Realmente desea borrar las %1$d listas de imágenes seleccionadas?</string>
+    <string name="dialog_confirmation_remove">¿Realmente desea eliminar %2$s de la lista «%1$s»?</string>
+    <string name="dialog_confirmation_selected_no_image_add_folder">No ha seleccionado una imagen para agregar. ¿Desea agregar toda la carpeta de imágenes a la lista?</string>
+    <string name="dialog_confirmation_add_folder_ignore_selection">Decidió agregar toda la carpeta de imágenes a la lista. Su selección de imagen no será considerada. ¿Quiere continuar?</string>
+    <string name="dialog_confirmation_add_folder">¿Desea agregar la carpeta «%1$s» a la lista de imágenes?</string>
+    <string name="dialog_confirmation_add_folder_recursively">¿Desea agregar la carpeta «%1$s» y todas sus subcarpetas a la lista de imágenes?</string>
+    <string name="dialog_confirmation_add_nested_list">¿Desea agregar la lista de imágenes «%1$s» a la lista «%2$s» como sublista?</string>
+    <string name="dialog_confirmation_overwrite_list_single">La lista «%2$s» ya existe. ¿Quiere sobrescribirlo con la copia de seguridad?</string>
+    <string name="dialog_confirmation_overwrite_list_multiple">%1$d de las listas seleccionadas ya existen. ¿Quiere sobrescribir esto con la copia de seguridad?</string>
+    <string name="dialog_confirmation_overwrite_backup_single">La copia de seguridad de «%2$s» ya existe. ¿Quiere sobrescribirlo?</string>
+    <string name="dialog_confirmation_overwrite_backup_multiple">Ya hay una copia de seguridad para %1$d de las listas seleccionadas. ¿Quiere sobrescribir esto?</string>
+    <string name="dialog_confirmation_missing_images">No se pueden cargar las siguientes imágenes de la lista «%1$s»:\n\n%2$s</string>
+    <string name="dialog_confirmation_need_read_permission">La aplicación necesita acceso almacenamiento externo para acceder a sus imágenes. Permita este acceso; de lo contrario, la aplicación no funcionará.</string>
+    <string name="dialog_confirmation_need_usage_access">Para evitar notificaciones emergentes para ciertas aplicaciones, la aplicación necesita acceso a los datos de acceso de uso. Por favor conceda este acceso en la siguiente página</string>
+
+    <!-- Partial strings used to construct other strings -->
+    <string name="partial_none">no fotos</string>
+    <string name="partial_and">%1$s y %2$s</string>
+    <string name="partial_image_single">la imagen «%1$s»</string>
+    <string name="partial_image_multiple">%1$d imágenes</string>
+    <string name="partial_nested_list_single">la lista de imágenes%1$s</string>
+    <string name="partial_nested_list_multiple">la imagen muestra%1$s</string>
+    <string name="partial_folder_single">la carpeta «%1$s»</string>
+    <string name="partial_folder_two">las carpetas «%1$s» y «%2$s»</string>
+    <string name="partial_folder_multiple">%1$d carpetas</string>
+    <string name="partial_quoted_string">«%1$s»</string>
+
+    <!-- Strings used in TimeSelectorPreference -->
+    <string-array name="timer_unit_names">
+        <item>Segundo(s)</item>
+        <item>Minuto(s)</item>
+        <item>Hora(s)</item>
+        <item>Día(s)</item>
+        <item>Semana(s)</item>
+        <item>Mes(es)</item>
+        <item>Año(s)</item>
+        <item>ilimitado</item>
+    </string-array>
+
+</resources>
