@@ -357,6 +357,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
+		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
+		mHideNavigationBar = !mChangeImageWithSingleTap;
+
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
 			mCurrentFileName = savedInstanceState.getString("currentFileName");
@@ -368,10 +372,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mNextCacheIndex = savedInstanceState.getInt("nextCacheIndex");
 			mTrackingTimestamp = savedInstanceState.getLong("trackingTimestamp");
 			mTrackingImages = savedInstanceState.getLong("trackingImages");
-			mRecreatedAfterSavingInstanceState = true;
-			mDisplayHint = false;
 			mIsGoingBackward = savedInstanceState.getBoolean("isGoingBackward");
 			mRandomFileProvider = savedInstanceState.getParcelable("randomFileProvider");
+			mHideNavigationBar = savedInstanceState.getBoolean("hideNavigationBar");
+			mRecreatedAfterSavingInstanceState = true;
+			mDisplayHint = false;
 		}
 		if (mListName == null) {
 			mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
@@ -389,8 +394,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background, R.string.pref_default_detail_background));
 		mFlipType = FlipType.fromResourceValue(
 				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, R.string.pref_default_detail_flip_behavior));
-		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
-		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
 
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
 
@@ -416,7 +419,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 					: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 
-		mHideNavigationBar = !mChangeImageWithSingleTap;
 		createGestureDetector();
 
 		final String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
@@ -728,6 +730,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 		mSavingInstanceState = false;
 		mRecreatedAfterSavingInstanceState = false;
+		setNavigationiBarFlags();
 	}
 
 	@Override
@@ -1036,6 +1039,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			outState.putLong("trackingTimestamp", mTrackingTimestamp);
 			outState.putBoolean("isGoingBackward", mIsGoingBackward);
 			outState.putParcelable("randomFileProvider", mRandomFileProvider);
+			outState.putBoolean("hideNavigationBar", mHideNavigationBar);
 		}
 	}
 
