@@ -405,10 +405,19 @@ public final class StandardImageList extends ImageList {
 						sumOfNestedWeights += mCustomWeights.get(elementWithCustomWeight);
 					}
 				}
+
+				boolean hasUnweightedElements = mImageFilesInFolders.containsKey(DUMMY_NESTED_FOLDER.getName())
+						&& mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size() > 0;
+				if (!hasUnweightedElements) {
+					for (ListElement nestedList : mNestedLists.keySet()) {
+						if (!mCustomWeights.containsKey(nestedList)) {
+							hasUnweightedElements = true;
+						}
+					}
+				}
+
 				if (sumOfNestedWeights > remainingWeight // BOOLEAN_EXPRESSION_COMPLEXITY
-						|| sumOfNestedWeights < remainingWeight && sumOfNestedWeights > 0
-						&& mImageFilesInFolders.containsKey(DUMMY_NESTED_FOLDER.getName())
-						&& mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size() == 0) {
+						|| sumOfNestedWeights < remainingWeight && sumOfNestedWeights > 0 && !hasUnweightedElements) {
 					double changeFactor = remainingWeight / sumOfNestedWeights;
 					for (ListElement otherNestedList : elementsWithCustomWeight) {
 						if (!otherNestedList.equals(element)) {
