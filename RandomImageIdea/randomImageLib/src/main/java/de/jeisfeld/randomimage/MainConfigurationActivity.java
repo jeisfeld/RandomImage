@@ -322,6 +322,15 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 
 									}, 0, R.string.dialog_info_name_too_short);
 								}
+								else if (name.startsWith("/")) {
+									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
+										@Override
+										public void onDialogFinished() {
+											createNewImageList(creationStyle);
+										}
+
+									}, 0, R.string.dialog_info_name_no_slash);
+								}
 								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
 									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
 										@Override
@@ -430,6 +439,15 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 										}
 
 									}, 0, R.string.dialog_info_name_too_short);
+								}
+								else if (name.startsWith("/")) {
+									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
+										@Override
+										public void onDialogFinished() {
+											renameImageList(currentImageList);
+										}
+
+									}, 0, R.string.dialog_info_name_no_slash);
 								}
 								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
 									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {

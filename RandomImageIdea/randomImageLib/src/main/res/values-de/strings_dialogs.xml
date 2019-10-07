@@ -64,6 +64,7 @@
 
     <!-- Messages of dialogs -->
     <string name="dialog_info_name_too_short">Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.</string>
+    <string name="dialog_info_name_no_slash">Bitte wählen Sie einen Namen, der nicht mit „/“ beginnt.</string>
     <string name="dialog_info_name_already_existing">Der Name „%1$s“ existiert bereits - bitte wählen Sie einen anderen Namen.</string>
     <string name="dialog_info_delete_widgets">Auf Ihrem Startbildschirm befinden sich Widgets für die Liste „%1$s”. Bitte denken Sie daran, diese zu entfernen.</string>
     <string name="dialog_info_backup_of_lists">Die Listen %1$s wurden gesichert im Verzeichnis „%2$s”.</string>
