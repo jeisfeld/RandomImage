@@ -31,6 +31,7 @@ import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference.DynamicListPreferenceOnClickListener;
+import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -79,6 +80,7 @@ public class SettingsFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_pref_detail_change_timeout);
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_change_with_tap);
 		bindPreferenceSummaryToValue(R.string.key_pref_detail_prevent_screen_timeout);
 
@@ -370,6 +372,9 @@ public class SettingsFragment extends PreferenceFragment {
 				int index = listPreference.findIndexOfValue(value);
 
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+			}
+			else if (preference instanceof TimeSelectorPreference) {
+				preference.setSummary(((TimeSelectorPreference) preference).getSummaryFromValue(value));
 			}
 			else if (!(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's

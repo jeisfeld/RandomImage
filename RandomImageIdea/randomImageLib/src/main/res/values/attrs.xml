@@ -3,5 +3,6 @@
     <declare-styleable name="TimeSelectorPreference">
         <attr name="indefiniteValue" format="string"/>
         <attr name="allowSeconds" format="boolean"/>
+        <attr name="allowLongDuration" format="boolean"/>
     </declare-styleable>
 </resources>

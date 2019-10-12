@@ -80,6 +80,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_timeout);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_change_with_tap);
 		bindPreferenceSummaryToValue(R.string.key_widget_detail_prevent_screen_timeout);
 		addEditListListener();
@@ -99,6 +100,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 		findPreference(getString(R.string.key_widget_detail_scale_type)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_flip_behavior)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_widget_detail_change_timeout)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_change_with_tap)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_widget_detail_prevent_screen_timeout)).setEnabled(!useDefaultSettings);
 	}
@@ -197,6 +199,12 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
 							R.string.pref_default_detail_flip_behavior));
 		}
+		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, mAppWidgetId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, mAppWidgetId,
+					PreferenceUtil.getSharedPreferenceLongString(R.string.key_pref_detail_change_timeout,
+							R.string.pref_default_notification_duration));
+		}
 		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_widget_detail_change_with_tap, mAppWidgetId)) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId,
@@ -238,6 +246,8 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_widget_detail_flip_behavior,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+		PreferenceUtil.setSharedPreferenceLongString(R.string.key_widget_detail_change_timeout,
+				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, mAppWidgetId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout,
@@ -283,6 +293,9 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 				|| preferenceKey == R.string.key_widget_detail_background
 				|| preferenceKey == R.string.key_widget_detail_flip_behavior) {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mAppWidgetId, -1));
+		}
+		else if (preferenceKey == R.string.key_widget_detail_change_timeout) {
+			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mAppWidgetId, -1));
 		}
 		else if (preferenceKey == R.string.key_widget_show_cyclically // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| preferenceKey == R.string.key_widget_view_as_list

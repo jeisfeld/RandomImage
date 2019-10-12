@@ -18,6 +18,8 @@
     <string name="pref_title_detail_scale_type">Bildskalierung</string>
     <string name="pref_title_detail_background">Hintergrundfarbe</string>
     <string name="pref_title_detail_flip_behavior">Verhalten beim Schnippen</string>
+    <string name="pref_title_detail_change_timeout">Automatische Wechselhäufigkeit</string>
+    <string name="pref_indefinite_value_detail_change_timeout">Kein Wechsel</string>
     <string name="pref_title_detail_change_with_tap">Tippen statt Schnippen</string>
     <string name="pref_title_detail_prevent_screen_timeout">Bildschirmtimeout verhindern</string>
     <string name="pref_hint_hidden_lists_pattern">[Regulären Ausdruck eingeben]</string>

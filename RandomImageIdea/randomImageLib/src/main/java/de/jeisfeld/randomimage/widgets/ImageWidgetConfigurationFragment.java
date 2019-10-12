@@ -81,6 +81,10 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, getAppWidgetId(),
 							Integer.parseInt(stringValue));
 				}
+				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_change_timeout))) {
+					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, getAppWidgetId(),
+							Long.parseLong(stringValue));
+				}
 				else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_change_with_tap))) {
 					PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, getAppWidgetId(),
 							Boolean.parseBoolean(stringValue));

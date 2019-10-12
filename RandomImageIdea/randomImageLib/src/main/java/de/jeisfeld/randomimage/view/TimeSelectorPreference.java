@@ -50,15 +50,20 @@ public class TimeSelectorPreference extends DialogPreference {
 	public TimeSelectorPreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setDialogLayoutResource(R.layout.dialog_time_selector);
-
+		// VARIABLE_DISTANCE:OFF
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimeSelectorPreference);
 		String indefiniteValue = a.getString(R.styleable.TimeSelectorPreference_indefiniteValue);
 		boolean allowSeconds = a.getBoolean(R.styleable.TimeSelectorPreference_allowSeconds, true);
+		boolean allowLongDuration = a.getBoolean(R.styleable.TimeSelectorPreference_allowLongDuration, true);
 		a.recycle();
+		// VARIABLE_DISTANCE:ON
 
 		mSpinnerEntries = SpinnerEntry.setIndefiniteValue(SpinnerEntry.getDefaultSpinnerEntries(context), indefiniteValue);
 		if (!allowSeconds) {
 			mSpinnerEntries = SpinnerEntry.hideSeconds(mSpinnerEntries);
+		}
+		if (!allowLongDuration) {
+			mSpinnerEntries = SpinnerEntry.hideLongDurations(mSpinnerEntries);
 		}
 	}
 
@@ -130,7 +135,7 @@ public class TimeSelectorPreference extends DialogPreference {
 	 * Get the summary text from the value.
 	 *
 	 * @param context the context.
-	 * @param value The value.
+	 * @param value   The value.
 	 * @return The summary text.
 	 */
 	public static String getDefaultSummaryFromValue(final Context context, final String value) {
@@ -204,6 +209,19 @@ public class TimeSelectorPreference extends DialogPreference {
 		 */
 		private static SpinnerEntry[] hideSeconds(final SpinnerEntry[] spinnerEntries) {
 			return Arrays.copyOfRange(spinnerEntries, 1, spinnerEntries.length - 1);
+		}
+
+		/**
+		 * Remove the "Days", "Weeks", "Months", "Years" entries from the spinner.
+		 *
+		 * @param spinnerEntries The list of spinner entries.
+		 * @return The cloned list without seconds.
+		 */
+		private static SpinnerEntry[] hideLongDurations(final SpinnerEntry[] spinnerEntries) {
+			SpinnerEntry[] result = new SpinnerEntry[spinnerEntries.length - 4]; // MAGIC_NUMBER
+			System.arraycopy(spinnerEntries, 0, result, 0, result.length - 1);
+			result[result.length - 1] = spinnerEntries[spinnerEntries.length - 1];
+			return result;
 		}
 
 		/**

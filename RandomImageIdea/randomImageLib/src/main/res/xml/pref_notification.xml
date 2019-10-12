@@ -19,6 +19,7 @@
             android:key="@string/key_notification_timer_duration"
             android:title="@string/pref_title_notification_timer_duration"
             rim:allowSeconds="true"
+            rim:allowLongDuration="true"
             rim:indefiniteValue="@string/pref_indefinite_value_notification_timer_duration"/>
         <ListPreference
             android:entries="@array/notification_timer_variance_names"
@@ -45,6 +46,7 @@
             android:key="@string/key_notification_duration"
             android:title="@string/pref_title_notification_duration"
             rim:allowSeconds="true"
+            rim:allowLongDuration="true"
             rim:indefiniteValue="@string/pref_indefinite_value_notification_duration"/>
         <ListPreference
             android:entries="@array/notification_timer_variance_names"
@@ -103,6 +105,12 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_detail_flip_behavior"/>
+        <de.jeisfeld.randomimage.view.TimeSelectorPreference
+            android:key="@string/key_notification_detail_change_timeout"
+            android:title="@string/pref_title_notification_detail_change_timeout"
+            rim:allowSeconds="true"
+            rim:allowLongDuration="false"
+            rim:indefiniteValue="@string/pref_indefinite_value_detail_change_timeout"/>
         <CheckBoxPreference
             android:key="@string/key_notification_detail_change_with_tap"
             android:title="@string/pref_title_notification_detail_change_with_tap"/>

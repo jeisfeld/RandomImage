@@ -24,6 +24,7 @@
     <string name="pref_title_widget_detail_scale_type">Escala de imagen</string>
     <string name="pref_title_widget_detail_background">Color de fondo</string>
     <string name="pref_title_widget_detail_flip_behavior">Comportamiento al lanzar</string>
+    <string name="pref_title_widget_detail_change_timeout">Frecuencia de cambio automático</string>
     <string name="pref_title_widget_detail_change_with_tap">Tocar en lugar de lanzar</string>
     <string name="pref_title_widget_detail_prevent_screen_timeout">Prevenir el tiempo de espera de la pantalla</string>
     <string name="pref_title_widget_timeout">Duración de uso del widget</string>

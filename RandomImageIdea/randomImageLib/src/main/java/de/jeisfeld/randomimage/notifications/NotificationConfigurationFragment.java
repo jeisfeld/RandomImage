@@ -49,7 +49,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	private OnWidgetPreferenceChangeListener mOnPreferenceChangeListener = new OnWidgetPreferenceChangeListener();
+	private OnNotificationPreferenceChangeListener mOnPreferenceChangeListener = new OnNotificationPreferenceChangeListener();
 
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
@@ -76,6 +76,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_scale_type);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_background);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_flip_behavior);
+		bindPreferenceSummaryToValue(R.string.key_notification_detail_change_timeout);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_change_with_tap);
 		bindPreferenceSummaryToValue(R.string.key_notification_detail_prevent_screen_timeout);
 		addEditListListener();
@@ -223,6 +224,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
 							R.string.pref_default_detail_flip_behavior));
 		}
+		if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, mNotificationId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, mNotificationId,
+					PreferenceUtil.getSharedPreferenceLongString(R.string.key_pref_detail_change_timeout,
+							R.string.pref_default_notification_duration));
+		}
 		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_detail_change_with_tap, mNotificationId)) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId,
@@ -330,6 +337,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_detail_flip_behavior,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+		PreferenceUtil.setSharedPreferenceLongString(R.string.key_notification_detail_change_timeout,
+				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout,
@@ -351,6 +360,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		findPreference(getString(R.string.key_notification_detail_scale_type)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_background)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_flip_behavior)).setEnabled(!useDefaultSettings);
+		findPreference(getString(R.string.key_notification_detail_change_timeout)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_change_with_tap)).setEnabled(!useDefaultSettings);
 		findPreference(getString(R.string.key_notification_detail_prevent_screen_timeout)).setEnabled(!useDefaultSettings);
 	}
@@ -396,7 +406,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			value = Integer.toString(PreferenceUtil.getIndexedSharedPreferenceInt(preferenceKey, mNotificationId, -1));
 		}
 		else if (preferenceKey == R.string.key_notification_timer_duration
-				|| preferenceKey == R.string.key_notification_duration) {
+				|| preferenceKey == R.string.key_notification_duration
+				|| preferenceKey == R.string.key_notification_detail_change_timeout) {
 			value = Long.toString(PreferenceUtil.getIndexedSharedPreferenceLong(preferenceKey, mNotificationId, -1));
 		}
 		else if (preferenceKey == R.string.key_notification_vibration // BOOLEAN_EXPRESSION_COMPLEXITY
@@ -424,7 +435,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * Get the frequency of a notification as String.
 	 *
-	 * @param context the context.
+	 * @param context        the context.
 	 * @param notificationId The notification id
 	 * @return The frequency as String.
 	 */
@@ -436,7 +447,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
-	private class OnWidgetPreferenceChangeListener implements OnPreferenceChangeListener {
+	private class OnNotificationPreferenceChangeListener implements OnPreferenceChangeListener {
 		@Override
 		public boolean onPreferenceChange(final Preference preference, final Object value) {
 			String stringValue = value.toString();
@@ -534,6 +545,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_flip_behavior))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId,
 						Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_change_timeout))) {
+				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, mNotificationId,
+						Long.parseLong(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_change_with_tap))) {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap,

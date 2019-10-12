@@ -24,6 +24,7 @@
     <string name="key_widget_detail_scale_type" translatable="false">widget_detail_scale_type</string>
     <string name="key_widget_detail_background" translatable="false">widget_detail_background</string>
     <string name="key_widget_detail_flip_behavior" translatable="false">widget_detail_flip_behavior</string>
+    <string name="key_widget_detail_change_timeout" translatable="false">widget_detail_change_timeout</string>
     <string name="key_widget_detail_change_with_tap" translatable="false">widget_detail_change_with_tap</string>
     <string name="key_widget_detail_prevent_screen_timeout" translatable="false">widget_detail_prevent_screen_timeout</string>
     <string name="key_widget_current_file_name" translatable="false">widget_current_file_name</string>
@@ -55,6 +56,7 @@
     <string name="pref_title_widget_detail_scale_type">Image scaling</string>
     <string name="pref_title_widget_detail_background">Background color</string>
     <string name="pref_title_widget_detail_flip_behavior">Action when flipping</string>
+    <string name="pref_title_widget_detail_change_timeout">Automatic change frequency</string>
     <string name="pref_title_widget_detail_change_with_tap">Use tap instead of flipping</string>
     <string name="pref_title_widget_detail_prevent_screen_timeout">Prevent screen timeout</string>
     <string name="pref_title_widget_timeout">Widget usage time</string>

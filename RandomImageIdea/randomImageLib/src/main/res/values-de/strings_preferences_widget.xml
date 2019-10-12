@@ -25,6 +25,7 @@
     <string name="pref_title_widget_detail_scale_type">Bildskalierung</string>
     <string name="pref_title_widget_detail_background">Hintergrundfarbe</string>
     <string name="pref_title_widget_detail_flip_behavior">Verhalten beim Schnippen</string>
+    <string name="pref_title_widget_detail_change_timeout">Automatische Wechselhäufigkeit</string>
     <string name="pref_title_widget_detail_change_with_tap">Tippen statt Schnippen</string>
     <string name="pref_title_widget_detail_prevent_screen_timeout">Bildschirmtimeout verhindern</string>
     <string name="pref_title_widget_timeout">Nutzungsdauer des Widgets</string>

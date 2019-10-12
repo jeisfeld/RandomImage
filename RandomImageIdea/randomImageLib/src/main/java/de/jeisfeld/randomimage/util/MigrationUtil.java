@@ -74,6 +74,9 @@ public final class MigrationUtil {
 		case 27: // MAGIC_NUMBER
 			doMigrationToVersion27();
 			break;
+		case 39: // MAGIC_NUMBER
+			doMigrationToVersion39();
+			break;
 		default:
 			break;
 		}
@@ -176,6 +179,21 @@ public final class MigrationUtil {
 					== Integer.parseInt(context.getString(R.string.pref_default_detail_flip_behavior))
 					&& !PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, appWidgetId, false);
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, isDefault || isUndefined);
+		}
+	}
+
+	/**
+	 * Do the migration steps for migration into app version 39.
+	 */
+	private static void doMigrationToVersion39() {
+		Context context = Application.getAppContext();
+		PreferenceUtil.setSharedPreferenceLongString(R.string.key_pref_detail_change_timeout, 0);
+		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, notificationId, 0);
+		}
+
+		for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
+			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, appWidgetId, 0);
 		}
 	}
 }

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
@@ -213,6 +214,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private FlipType mFlipType = FlipType.AVOID_REPETITIONS;
 
 	/**
+	 * The frequency of automatic image change.
+	 */
+	private long mChangeFrequency = 0;
+
+	/**
 	 * Flag indicating if change of image should be possible via single tap.
 	 */
 	private boolean mChangeImageWithSingleTap = false;
@@ -262,6 +268,21 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Flag indicating if a usage hint is still to be displayed.
 	 */
 	private boolean mDisplayHint = true;
+
+	/**
+	 * A Handler used for automatically changing the image by timeout.
+	 */
+	private Handler mChangeByTimeoutHandler = new Handler();
+
+	/**
+	 * The runnable used for automatically changing the image by timeout.
+	 */
+	private Runnable mChangeByTimeoutRunnable = new Runnable() {
+		@Override
+		public void run() {
+			displayRandomImage(true);
+		}
+	};
 
 	/**
 	 * Static helper method to create an intent for this activity.
@@ -394,6 +415,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background, R.string.pref_default_detail_background));
 		mFlipType = FlipType.fromResourceValue(
 				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, R.string.pref_default_detail_flip_behavior));
+		mChangeFrequency = PreferenceUtil.getSharedPreferenceLongString(R.string.key_pref_detail_change_timeout,
+				R.string.pref_default_detail_change_timeout);
 
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, false);
 
@@ -540,7 +563,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		else {
 			mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
 			setContentView(mCurrentImageView);
-			displayHint();
+			triggerAutomaticChange();
 			if (mDoPreload && mRandomFileProvider.isReady()) {
 				mRandomFileProvider.goForward();
 				mNextFileName = mRandomFileProvider.getCurrentFileName();
@@ -552,6 +575,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 
 		if (savedInstanceState == null) {
+			displayHint();
 			PreferenceUtil.incrementCounter(R.string.key_statistics_countdisplayrandom);
 
 			// Trigger data updates that should be run every now and then for sanity reasons
@@ -581,6 +605,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_background, mNotificationId, -1));
 			mFlipType = FlipType.fromResourceValue(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, mNotificationId, -1));
+			mChangeFrequency =
+					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, mNotificationId, -1);
 			mChangeImageWithSingleTap =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false);
 			mPreventScreenLock =
@@ -620,6 +646,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_background, mAppWidgetId, -1));
 			mFlipType = FlipType.fromResourceValue(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, mAppWidgetId, -1));
+			mChangeFrequency =
+					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, mAppWidgetId, -1);
 			mChangeImageWithSingleTap =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
 			mPreventScreenLock =
@@ -638,6 +666,18 @@ public class DisplayRandomImageActivity extends StartActivity {
 					R.string.key_hint_display_image, R.string.dialog_hint_display_image);
 			DialogUtil.displayFirstUseMessageIfRequired(this);
 			mDisplayHint = false;
+		}
+	}
+
+	/**
+	 * Trigger automatic image change if required.
+	 */
+	private void triggerAutomaticChange() {
+		mChangeByTimeoutHandler.removeCallbacks(mChangeByTimeoutRunnable);
+		if (mChangeFrequency > 0) {
+			mChangeByTimeoutHandler.postDelayed(
+					mChangeByTimeoutRunnable,
+					TimeUnit.SECONDS.toMillis(mChangeFrequency));
 		}
 	}
 
@@ -852,7 +892,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 							}
 						}
 						setContentView(mCurrentImageView);
-						displayHint();
+						triggerAutomaticChange();
+
 						mTrackingImages++;
 
 						if (mDoPreload) {
@@ -903,6 +944,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
 								displayLastImage();
+								triggerAutomaticChange();
 
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 							}
