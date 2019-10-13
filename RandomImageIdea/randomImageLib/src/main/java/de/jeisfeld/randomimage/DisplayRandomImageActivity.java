@@ -392,6 +392,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mIsGoingBackward = savedInstanceState.getBoolean("isGoingBackward");
 			mRandomFileProvider = savedInstanceState.getParcelable("randomFileProvider");
 			mHideNavigationBar = savedInstanceState.getBoolean("hideNavigationBar");
+			mChangeByTimeoutHandler.mActiveRuntime = savedInstanceState.getLong("changeByTimeoutHandler.activeRuntime");
 			mRecreatedAfterSavingInstanceState = true;
 			mDisplayHint = false;
 		}
@@ -1088,6 +1089,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			outState.putBoolean("isGoingBackward", mIsGoingBackward);
 			outState.putParcelable("randomFileProvider", mRandomFileProvider);
 			outState.putBoolean("hideNavigationBar", mHideNavigationBar);
+			outState.putLong("changeByTimeoutHandler.activeRuntime", mChangeByTimeoutHandler.mActiveRuntime);
 		}
 	}
 
@@ -1247,7 +1249,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * The active runtime of the timeout.
 		 */
-		private long mActiveRuntime;
+		private long mActiveRuntime = 0;
 
 
 		/**
@@ -1261,6 +1263,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		private Runnable mChangeByTimeoutRunnable = new Runnable() {
 			@Override
 			public void run() {
+				mActiveRuntime = 0;
 				displayRandomImage(true);
 			}
 		};
@@ -1270,16 +1273,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 		 */
 		private synchronized void start() {
 			if (mIsStarted) {
-				mIsStarted = false;
-				mIsPaused = false;
 				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
 			}
 			if (mChangeFrequency > 0) {
 				mIsStarted = true;
 				mIsPaused = false;
-				mCurrentTimeout = TimeUnit.SECONDS.toMillis(mChangeFrequency);
+				mCurrentTimeout = TimeUnit.SECONDS.toMillis(mChangeFrequency) - mActiveRuntime;
 				mLastResumeTime = System.currentTimeMillis();
-				mActiveRuntime = 0;
 				mHandler.postDelayed(
 						mChangeByTimeoutRunnable,
 						mCurrentTimeout);
@@ -1294,6 +1294,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
 				mIsStarted = false;
 				mIsPaused = false;
+				mActiveRuntime = 0;
 			}
 		}
 
@@ -1303,7 +1304,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		private synchronized void pause() {
 			if (mIsStarted && !mIsPaused) {
 				mIsPaused = true;
-				mActiveRuntime += mActiveRuntime + (System.currentTimeMillis() - mLastResumeTime);
+				mActiveRuntime += System.currentTimeMillis() - mLastResumeTime;
 				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
 			}
 		}
