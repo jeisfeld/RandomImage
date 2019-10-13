@@ -894,6 +894,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 							PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mCurrentFileName);
 						}
 
+						if (goToNextImage) {
+							mChangeByTimeoutHandler.stop();
+						}
 						mChangeByTimeoutHandler.start();
 
 						mTrackingImages++;
@@ -963,6 +966,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
 								displayLastImage();
+								mChangeByTimeoutHandler.stop();
 								mChangeByTimeoutHandler.start();
 
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
@@ -1284,9 +1288,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 		 * Start the timeout for automatic image change.
 		 */
 		private synchronized void start() {
-			if (mIsStarted) {
-				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
-			}
 			if (mChangeFrequency > 0) {
 				mIsStarted = true;
 				mIsPaused = false;
