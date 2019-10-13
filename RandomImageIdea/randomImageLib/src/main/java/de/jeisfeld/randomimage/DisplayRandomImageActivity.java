@@ -966,6 +966,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
 								displayLastImage();
+
+								if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+									PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name,
+											mAppWidgetId, mCurrentFileName);
+								}
+
 								mChangeByTimeoutHandler.stop();
 								mChangeByTimeoutHandler.start();
 
