@@ -114,6 +114,11 @@ public class PinchImageView extends ImageView {
 	private GestureDetector mGestureDetector = null;
 
 	/**
+	 * An additional gesture detector for up/down movements which may be applied.
+	 */
+	private UpDownListener mUpDownListener = null;
+
+	/**
 	 * The path name of the displayed image.
 	 */
 	private String mPathName = null;
@@ -477,6 +482,9 @@ public class PinchImageView extends ImageView {
 		final int action = ev.getActionMasked();
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
+			if (mUpDownListener != null) {
+				mUpDownListener.onDown();
+			}
 			mHasMoved = false;
 			mLastTouchX = ev.getX();
 			mLastTouchY = ev.getY();
@@ -504,6 +512,9 @@ public class PinchImageView extends ImageView {
 
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_CANCEL:
+			if (mUpDownListener != null) {
+				mUpDownListener.onUp();
+			}
 			if (!mHasMoved && !isProcessed) {
 				isProcessed = super.performClick();
 			}
@@ -606,6 +617,10 @@ public class PinchImageView extends ImageView {
 
 	public final void setGestureDetector(final GestureDetector gestureDetector) {
 		this.mGestureDetector = gestureDetector;
+	}
+
+	public final void setUpDownListener(final UpDownListener upDownListener) {
+		this.mUpDownListener = upDownListener;
 	}
 
 	/*
@@ -726,6 +741,22 @@ public class PinchImageView extends ImageView {
 			setRetainInstance(true);
 		}
 	}
+
+	/**
+	 * Callback for up/down gestures.
+	 */
+	public interface UpDownListener {
+		/**
+		 * Callback for tapping down.
+		 */
+		void onDown();
+
+		/**
+		 * Callback for going up again.
+		 */
+		void onUp();
+	}
+
 
 	/**
 	 * The way in which the image is initially scaled.

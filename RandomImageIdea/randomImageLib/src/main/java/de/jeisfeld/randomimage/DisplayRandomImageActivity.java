@@ -47,6 +47,7 @@ import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
+import de.jeisfeld.randomimage.view.PinchImageView.UpDownListener;
 import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
 import de.jeisfeld.randomimagelib.R;
 
@@ -127,6 +128,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * The gesture detector used by this activity.
 	 */
 	private GestureDetector mGestureDetector;
+
+	/**
+	 * A listener for up down touch events.
+	 */
+	private UpDownListener mUpDownListener;
 
 	/**
 	 * Flag indicating if the next image should be preloaded, and if the previous imageView should be retained.
@@ -272,17 +278,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * A Handler used for automatically changing the image by timeout.
 	 */
-	private Handler mChangeByTimeoutHandler = new Handler();
-
-	/**
-	 * The runnable used for automatically changing the image by timeout.
-	 */
-	private Runnable mChangeByTimeoutRunnable = new Runnable() {
-		@Override
-		public void run() {
-			displayRandomImage(true);
-		}
-	};
+	private ChangeByTimeoutHandler mChangeByTimeoutHandler = new ChangeByTimeoutHandler();
 
 	/**
 	 * Static helper method to create an intent for this activity.
@@ -443,6 +439,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 
 		createGestureDetector();
+		createUpDownListener();
 
 		final String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
@@ -563,7 +560,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		else {
 			mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
 			setContentView(mCurrentImageView);
-			triggerAutomaticChange();
+			mChangeByTimeoutHandler.start();
 			if (mDoPreload && mRandomFileProvider.isReady()) {
 				mRandomFileProvider.goForward();
 				mNextFileName = mRandomFileProvider.getCurrentFileName();
@@ -670,18 +667,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	}
 
 	/**
-	 * Trigger automatic image change if required.
-	 */
-	private void triggerAutomaticChange() {
-		mChangeByTimeoutHandler.removeCallbacks(mChangeByTimeoutRunnable);
-		if (mChangeFrequency > 0) {
-			mChangeByTimeoutHandler.postDelayed(
-					mChangeByTimeoutRunnable,
-					TimeUnit.SECONDS.toMillis(mChangeFrequency));
-		}
-	}
-
-	/**
 	 * Send the initial event to Google analytics.
 	 *
 	 * @param hasSavedInstanceState parameter indicating if there was a saved instance state.
@@ -720,6 +705,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onDestroy() {
 		super.onDestroy();
+		mChangeByTimeoutHandler.stop();
 		if (mNotificationId != null) {
 			NOTIFICATION_MAP.delete(mNotificationId);
 			if (mUserIsLeaving || !mSavingInstanceState) {
@@ -771,12 +757,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 		mSavingInstanceState = false;
 		mRecreatedAfterSavingInstanceState = false;
 		setNavigationiBarFlags();
+		mChangeByTimeoutHandler.resume();
 	}
 
 	@Override
 	protected final void onPause() {
 		super.onPause();
 		mTrackingDuration = System.currentTimeMillis() - mTrackingTimestamp;
+		mChangeByTimeoutHandler.pause();
 	}
 
 	/**
@@ -800,6 +788,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		PinchImageView imageView = new PinchImageView(this);
 		imageView.setId(cacheIndex);
 		imageView.setGestureDetector(mGestureDetector);
+		imageView.setUpDownListener(mUpDownListener);
 		imageView.setScaleType(mScaleType);
 		imageView.setImage(fileName, this, cacheIndex);
 		int backgroundColor = getBackgroundColor(fileName);
@@ -892,7 +881,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							}
 						}
 						setContentView(mCurrentImageView);
-						triggerAutomaticChange();
+						mChangeByTimeoutHandler.start();
 
 						mTrackingImages++;
 
@@ -915,6 +904,23 @@ public class DisplayRandomImageActivity extends StartActivity {
 					}
 				}, null);
 
+	}
+
+	/**
+	 * Create the gesture detector handling up/down movements.
+	 */
+	private void createUpDownListener() {
+		mUpDownListener = new UpDownListener() {
+			@Override
+			public void onDown() {
+				mChangeByTimeoutHandler.pause();
+			}
+
+			@Override
+			public void onUp() {
+				mChangeByTimeoutHandler.resume();
+			}
+		};
 	}
 
 	/**
@@ -944,7 +950,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
 							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
 								displayLastImage();
-								triggerAutomaticChange();
+								mChangeByTimeoutHandler.start();
 
 								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 							}
@@ -1217,6 +1223,113 @@ public class DisplayRandomImageActivity extends StartActivity {
 			return mFileNames;
 		}
 	}
+
+	/**
+	 * Class managing the automatic image change by timeout.
+	 */
+	private final class ChangeByTimeoutHandler {
+		/**
+		 * Flag if the timeout is started.
+		 */
+		private boolean mIsStarted = false;
+		/**
+		 * Flag if the timeout is paused.
+		 */
+		private boolean mIsPaused = false;
+		/**
+		 * The currently used timeout.
+		 */
+		private long mCurrentTimeout;
+		/**
+		 * The last resume time of the timeout.
+		 */
+		private long mLastResumeTime;
+		/**
+		 * The active runtime of the timeout.
+		 */
+		private long mActiveRuntime;
+
+
+		/**
+		 * The Handler responsible for managing the thread..
+		 */
+		private Handler mHandler = new Handler();
+
+		/**
+		 * The runnable used for automatically changing the image by timeout.
+		 */
+		private Runnable mChangeByTimeoutRunnable = new Runnable() {
+			@Override
+			public void run() {
+				displayRandomImage(true);
+			}
+		};
+
+		/**
+		 * Start the timeout for automatic image change.
+		 */
+		private synchronized void start() {
+			if (mIsStarted) {
+				mIsStarted = false;
+				mIsPaused = false;
+				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
+			}
+			if (mChangeFrequency > 0) {
+				mIsStarted = true;
+				mIsPaused = false;
+				mCurrentTimeout = TimeUnit.SECONDS.toMillis(mChangeFrequency);
+				mLastResumeTime = System.currentTimeMillis();
+				mActiveRuntime = 0;
+				mHandler.postDelayed(
+						mChangeByTimeoutRunnable,
+						mCurrentTimeout);
+			}
+		}
+
+		/**
+		 * Stop the timeout.
+		 */
+		private synchronized void stop() {
+			if (mIsStarted) {
+				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
+				mIsStarted = false;
+				mIsPaused = false;
+			}
+		}
+
+		/**
+		 * Pause the timeout.
+		 */
+		private synchronized void pause() {
+			if (mIsStarted && !mIsPaused) {
+				mIsPaused = true;
+				mActiveRuntime += mActiveRuntime + (System.currentTimeMillis() - mLastResumeTime);
+				mHandler.removeCallbacks(mChangeByTimeoutRunnable);
+			}
+		}
+
+		/**
+		 * Resume the timeout.
+		 */
+		private synchronized void resume() {
+			if (mIsPaused) {
+				mIsPaused = false;
+				mCurrentTimeout = TimeUnit.SECONDS.toMillis(mChangeFrequency) - mActiveRuntime;
+				if (mCurrentTimeout > 0) {
+					mLastResumeTime = System.currentTimeMillis();
+					mHandler.postDelayed(
+							mChangeByTimeoutRunnable,
+							mCurrentTimeout);
+				}
+				else {
+					mIsStarted = false;
+					mCurrentTimeout = 0;
+					mHandler.post(mChangeByTimeoutRunnable);
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * A class holding the direction of a fling movement.

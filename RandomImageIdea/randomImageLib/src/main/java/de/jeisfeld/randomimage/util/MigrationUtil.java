@@ -186,7 +186,6 @@ public final class MigrationUtil {
 	 * Do the migration steps for migration into app version 39.
 	 */
 	private static void doMigrationToVersion39() {
-		Context context = Application.getAppContext();
 		PreferenceUtil.setSharedPreferenceLongString(R.string.key_pref_detail_change_timeout, 0);
 		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, notificationId, 0);
