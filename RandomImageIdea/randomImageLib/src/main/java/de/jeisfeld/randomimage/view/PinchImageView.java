@@ -190,6 +190,23 @@ public class PinchImageView extends ImageView {
 	}
 
 	/**
+	 * Reset the view - may be used in order to reuse the view with a new image.
+	 */
+	public void reset() {
+		mInitialized = false;
+		mIsBitmapSet = false;
+		mHasMoved = false;
+		mWasTouched = false;
+		mScaleFactor = 1.f;
+		mActivePointerId = INVALID_POINTER_ID;
+		mActivePointerId2 = INVALID_POINTER_ID;
+		mPathName = null;
+		mImageResource = -1;
+		mBitmap = null;
+		mLastScaleFactor = 1.f;
+	}
+
+	/**
 	 * Fill with an image, making the image fit into the view. If the pathName is unchanged (restored), then it is not
 	 * refilled. The sizing (for fit) happens only once at first initialization of the view.
 	 *

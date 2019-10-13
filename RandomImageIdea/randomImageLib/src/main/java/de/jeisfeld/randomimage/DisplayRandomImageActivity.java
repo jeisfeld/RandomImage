@@ -1288,7 +1288,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		 * Start the timeout for automatic image change.
 		 */
 		private synchronized void start() {
-			if (mChangeFrequency > 0) {
+			if (!mIsStarted && mChangeFrequency > 0) {
 				mIsStarted = true;
 				mIsPaused = false;
 				mCurrentTimeout = TimeUnit.SECONDS.toMillis(mChangeFrequency) - mActiveRuntime;

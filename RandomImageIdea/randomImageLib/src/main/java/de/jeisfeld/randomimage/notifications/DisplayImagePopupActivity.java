@@ -3,14 +3,18 @@ package de.jeisfeld.randomimage.notifications;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.BaseActivity;
 import de.jeisfeld.randomimage.DisplayImageDetailsActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity.FlipType;
+import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
@@ -72,6 +76,15 @@ public class DisplayImagePopupActivity extends BaseActivity {
 	 */
 	private String mListName;
 
+	/**
+	 * The frequency of automatic image change.
+	 */
+	private Long mChangeFrequency;
+	/**
+	 * A Handler used for automatically changing the image by timeout.
+	 */
+	private ChangeByTimeoutHandler mChangeByTimeoutHandler;
+
 
 	/**
 	 * Static helper method to create an intent for this activity.
@@ -117,6 +130,13 @@ public class DisplayImagePopupActivity extends BaseActivity {
 		mImageView.setScaleType(ScaleType.HALF_SIZE);
 		mImageView.setImage(mFileName, this, 0);
 		mImageView.setGestureDetector(getGestureDetector());
+
+		mChangeFrequency =
+				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_detail_change_timeout, mNotificationId, -1);
+		if (mChangeFrequency > 0) {
+			mChangeByTimeoutHandler = new ChangeByTimeoutHandler();
+			mChangeByTimeoutHandler.start();
+		}
 	}
 
 	/**
@@ -231,6 +251,47 @@ public class DisplayImagePopupActivity extends BaseActivity {
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Popup");
 			activity.finish();
 			NOTIFICATION_MAP.remove(notificationId);
+		}
+	}
+
+
+	/**
+	 * Class managing the automatic image change by timeout.
+	 */
+	private final class ChangeByTimeoutHandler {
+		/**
+		 * The currently used timeout.
+		 */
+		private long mCurrentTimeout;
+
+		/**
+		 * The Handler responsible for managing the thread..
+		 */
+		private Handler mHandler = new Handler();
+
+		/**
+		 * The runnable used for automatically changing the image by timeout.
+		 */
+		private Runnable mChangeByTimeoutRunnable = new Runnable() {
+			@Override
+			public void run() {
+				mFileName = ImageRegistry.getImageListByName(mListName, false).getRandomFileName();
+				mImageView.reset();
+				mImageView.setImage(mFileName, DisplayImagePopupActivity.this, 0);
+				mChangeByTimeoutHandler.start();
+			}
+		};
+
+		/**
+		 * Start the timeout for automatic image change.
+		 */
+		private synchronized void start() {
+			if (mChangeFrequency > 0) {
+				mCurrentTimeout = TimeUnit.SECONDS.toMillis(mChangeFrequency);
+				mHandler.postDelayed(
+						mChangeByTimeoutRunnable,
+						mCurrentTimeout);
+			}
 		}
 	}
 
