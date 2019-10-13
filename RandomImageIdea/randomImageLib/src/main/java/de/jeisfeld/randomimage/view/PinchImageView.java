@@ -521,9 +521,12 @@ public class PinchImageView extends ImageView {
 
 		case MotionEvent.ACTION_MOVE:
 			// Prevent NullPointerException if bitmap is not yet loaded
-			if (mBitmap != null) {
+			try {
 				boolean moved = handlePointerMove(ev);
 				mHasMoved = mHasMoved || moved;
+			}
+			catch (RuntimeException e) {
+				// ignore
 			}
 			break;
 
