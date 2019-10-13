@@ -349,6 +349,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Widget");
+			if (MiniWidget.hasWidgetOfId(appWidgetId)) {
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
+			}
 			activity.finish();
 			WIDGET_MAP.delete(appWidgetId);
 		}

@@ -89,7 +89,6 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 									final FlipType flipType, final RandomFileListProvider initData) {
 		mProvider = provider;
 		mFlipType = flipType;
-		determineCacheSize();
 
 		if (initData instanceof CachedRandomFileProvider) {
 			CachedRandomFileProvider initData2 = (CachedRandomFileProvider) initData;
@@ -103,6 +102,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 			mCachedFileNames.add(firstFileName);
 			mHasFile = true;
 		}
+		determineCacheSize();
 	}
 
 	/**
@@ -143,7 +143,6 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 
 		synchronized (mCachedFileNames) {
 			switch (mFlipType) {
-
 			case AVOID_REPETITIONS:
 				if (mCurrentPosition == mCacheSize - 1) {
 					mCachedFileNames.remove(0);
@@ -158,7 +157,6 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 				break;
 			case CYCLICAL:
 				mCurrentPosition++;
-
 				if (mCurrentPosition == mCachedFileNames.size()) {
 					mCurrentPosition = 0;
 				}
@@ -191,19 +189,6 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 
 		synchronized (mCachedFileNames) {
 			switch (mFlipType) {
-			case NEW_IMAGE:
-			case ONE_BACK:
-			case MULTIPLE_BACK:
-				if (mCurrentPosition == 0) {
-					mCachedFileNames.add(0, getRandomFileName());
-					if (mCachedFileNames.size() > mCacheSize) {
-						mCachedFileNames.remove(mCacheSize);
-					}
-				}
-				else {
-					mCurrentPosition--;
-				}
-				break;
 			case AVOID_REPETITIONS:
 				if (mCurrentPosition == 0) {
 					mCachedFileNames.add(0, getRandomFileNameAvoidingRepetitions());
@@ -227,7 +212,16 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 				}
 				break;
 			default:
-				// do nothing
+				if (mCurrentPosition == 0) {
+					mCachedFileNames.add(0, getRandomFileName());
+					if (mCachedFileNames.size() > mCacheSize) {
+						mCachedFileNames.remove(mCacheSize);
+					}
+				}
+				else {
+					mCurrentPosition--;
+				}
+				break;
 			}
 
 		}
@@ -283,22 +277,23 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 			}
 			return;
 		case CYCLICAL:
-			if (mProvider.isReady()) {
-				mCacheSize = getAllImageFiles().size();
-				mCachedFileNames.addAll(getAllImageFiles());
-				Collections.shuffle(mCachedFileNames);
+			mProvider.waitUntilReady();
+			mCacheSize = getAllImageFiles().size();
 
-				if (mCachedFileNames.size() > 0) {
-					String firstFileName = mCachedFileNames.get(0);
-					mCachedFileNames.remove(firstFileName);
-					mCachedFileNames.add(0, firstFileName);
-				}
-				mHasFile = true;
-				mHasCachSizeDetermined = true;
+			String firstFileName = null;
+			if (mCachedFileNames.size() > 0) {
+				firstFileName = mCachedFileNames.get(0);
+				mCachedFileNames.remove(firstFileName);
 			}
-			else {
-				mCacheSize = 10; // MAGIC_NUMBER
+			mCachedFileNames.addAll(getAllImageFiles());
+			Collections.shuffle(mCachedFileNames);
+
+			if (firstFileName != null) {
+				mCachedFileNames.remove(firstFileName);
+				mCachedFileNames.add(0, firstFileName);
 			}
+			mHasFile = true;
+			mHasCachSizeDetermined = true;
 			return;
 		default:
 			mCacheSize = 0;
