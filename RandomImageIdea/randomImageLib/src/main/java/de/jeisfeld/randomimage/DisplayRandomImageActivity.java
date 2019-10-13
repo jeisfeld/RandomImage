@@ -48,6 +48,7 @@ import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimage.view.PinchImageView.UpDownListener;
+import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
 import de.jeisfeld.randomimagelib.R;
 
@@ -637,6 +638,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
 
+		if (MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+			mCurrentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId);
+		}
+
 		if (!PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false)) {
 			mScaleType = ScaleType.fromResourceScaleType(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
@@ -882,6 +887,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 							}
 						}
 						setContentView(mCurrentImageView);
+						if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+							PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mCurrentFileName);
+						}
+
 						mChangeByTimeoutHandler.start();
 
 						mTrackingImages++;
