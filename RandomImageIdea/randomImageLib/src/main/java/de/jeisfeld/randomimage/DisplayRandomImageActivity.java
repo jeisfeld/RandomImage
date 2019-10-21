@@ -641,10 +641,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
 
-		if (MiniWidget.hasWidgetOfId(mAppWidgetId)) {
-			mCurrentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId);
-		}
-
 		if (!PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId, false)) {
 			mScaleType = ScaleType.fromResourceScaleType(
 					PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, mAppWidgetId, -1));
@@ -658,6 +654,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, mAppWidgetId, false);
 			mPreventScreenLock =
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout, mAppWidgetId, false);
+		}
+
+		if (MiniWidget.hasWidgetOfId(mAppWidgetId) && mFlipType.allowsGoingBack()) {
+			mCurrentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId);
 		}
 
 		WidgetAlarmReceiver.setCancellationAlarm(this, mAppWidgetId);
@@ -1469,19 +1469,23 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 */
 	public enum FlipType {
 		// JAVADOC:OFF
-		NEW_IMAGE(0),
-		ONE_BACK(1),
-		MULTIPLE_BACK(2),
-		AVOID_REPETITIONS(3),
-		CYCLICAL(4),
-		NO_CHANGE(5),
-		CLOSE(6);
+		NEW_IMAGE(0, false),
+		ONE_BACK(1, true),
+		MULTIPLE_BACK(2, true),
+		AVOID_REPETITIONS(3, true),
+		CYCLICAL(4, true),
+		NO_CHANGE(5, false),
+		CLOSE(6, false);
 		// JAVADOC:ON
 
 		/**
 		 * The value by which the color is specified in the resources.
 		 */
 		private final int mResourceValue;
+		/**
+		 * Flag indicating if it is possible to go back to the last image via flipping back.
+		 */
+		private final boolean mAllowsGoingBack;
 
 		/**
 		 * A map from the resourceValue to the color.
@@ -1497,10 +1501,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * Constructor giving only the resourceValue (for random colors).
 		 *
-		 * @param resourceValue The resource value.
+		 * @param resourceValue   The resource value.
+		 * @param allowsGoingBack The indicator if it is possible to go back to the last image.
 		 */
-		FlipType(final int resourceValue) {
+		FlipType(final int resourceValue, final boolean allowsGoingBack) {
 			mResourceValue = resourceValue;
+			mAllowsGoingBack = allowsGoingBack;
 		}
 
 		/**
@@ -1521,6 +1527,15 @@ public class DisplayRandomImageActivity extends StartActivity {
 		 */
 		public int getResourceValue() {
 			return mResourceValue;
+		}
+
+		/**
+		 * Get information if it is possible to go back to the last image via flipping back.
+		 *
+		 * @return true if it is possible to go back to last image via flipping back.
+		 */
+		public boolean allowsGoingBack() {
+			return mAllowsGoingBack;
 		}
 	}
 }
