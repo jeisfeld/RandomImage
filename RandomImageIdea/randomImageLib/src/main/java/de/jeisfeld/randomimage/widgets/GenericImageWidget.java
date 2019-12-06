@@ -88,17 +88,19 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @param appWidgetManager   A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId        The appWidgetId of the widget whose size changed.
 	 * @param setBackgroundColor Flag indicating if the background color should be set as well.
+	 * @param origRemoteViews    The remoteViews passed by caller.
 	 */
 	protected final void configureButtons(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-										  final boolean setBackgroundColor) {
+										  final boolean setBackgroundColor, final RemoteViews origRemoteViews) {
 		// VARIABLE_DISTANCE:OFF
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId)); // STORE_PROPERTY
+		RemoteViews remoteViews =
+				origRemoteViews != null ? origRemoteViews : new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
 		// VARIABLE_DISTANCE:ON
 
 		// Set the onClick intent for the "next" button
 		Intent nextIntent = new Intent(context, getClass());
 		nextIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {appWidgetId});
+		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
 		nextIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.NEW_IMAGE_BY_USER);
 		PendingIntent pendingNextIntent =
 				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -629,7 +631,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 
 				@Override
 				public void onAnimationCancel(final Animator animation) {
-					onAnimationEnd(animation);
+					// do nothing
 				}
 			});
 
@@ -670,9 +672,19 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 */
 		public void interrupt() {
 			if (mAnimatorSet != null) {
-				mAnimatorSet.end();
+				mAnimatorSet.cancel();
 			}
 		}
+
+		/**
+		 * Update the RemoteViews.
+		 *
+		 * @param remoteViews The new RemoteViews
+		 */
+		public void setRemoteViews(final RemoteViews remoteViews) {
+			mRemoteViews = remoteViews;
+		}
+
 
 		/**
 		 * Interrupt an animator instance.
@@ -687,5 +699,22 @@ public abstract class GenericImageWidget extends GenericWidget {
 				}
 			}
 		}
+
+		/**
+		 * Update the remoteViews of an animator instance.
+		 *
+		 * @param appWidgetId The app widget id of the widget to be interrupted.
+		 * @param remoteViews the new RemoteViews.The app widget id of the widget to be interrupted.
+		 */
+		public static void setRemoteViews(final int appWidgetId, final RemoteViews remoteViews) {
+			synchronized (BUTTON_ANIMATORS) {
+				ButtonAnimator instance = BUTTON_ANIMATORS.get(appWidgetId);
+				if (instance != null) {
+					instance.setRemoteViews(remoteViews);
+				}
+			}
+		}
+
+
 	}
 }

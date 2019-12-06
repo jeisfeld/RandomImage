@@ -65,7 +65,7 @@ public class StackedImageWidget extends GenericImageWidget {
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
-		configureButtons(context, appWidgetManager, appWidgetId, false);
+		configureButtons(context, appWidgetManager, appWidgetId, false, remoteViews);
 
 		// trigger also onDataStackChanged, as the intent will not update the service once created.
 		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {

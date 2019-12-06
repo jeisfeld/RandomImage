@@ -54,9 +54,6 @@ public class ImageWidget extends GenericImageWidget {
 			if (isVisibleToUser) {
 				ImageRegistry.switchToImageList(listName, CreationStyle.NONE, false);
 			}
-			if (updateType == UpdateType.NEW_IMAGE_BY_USER) {
-				ButtonAnimator.interrupt(appWidgetId);
-			}
 
 			trackImageChange("Update_Widget_Image", updateType);
 
@@ -79,8 +76,8 @@ public class ImageWidget extends GenericImageWidget {
 			}
 		}
 		else {
-			setImage(context, appWidgetManager, appWidgetId, listName, currentFileName);
-			configureButtons(context, appWidgetManager, appWidgetId, true);
+			RemoteViews remoteViews = setImage(context, appWidgetManager, appWidgetId, listName, currentFileName);
+			configureButtons(context, appWidgetManager, appWidgetId, true, remoteViews);
 		}
 
 	}
@@ -119,8 +116,8 @@ public class ImageWidget extends GenericImageWidget {
 			}.start();
 		}
 		else {
-			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-			configureButtons(context, appWidgetManager, appWidgetId, true);
+			RemoteViews remoteViews = setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			configureButtons(context, appWidgetManager, appWidgetId, true, remoteViews);
 		}
 
 	}
@@ -154,8 +151,8 @@ public class ImageWidget extends GenericImageWidget {
 		else {
 			String fileName = imageList.getRandomFileName();
 
-			setImage(context, appWidgetManager, appWidgetId, listName, fileName);
-			configureButtons(context, appWidgetManager, appWidgetId, true);
+			RemoteViews remoteViews = setImage(context, appWidgetManager, appWidgetId, listName, fileName);
+			configureButtons(context, appWidgetManager, appWidgetId, true, remoteViews);
 
 			if (userTriggered) {
 				// re-trigger timer - just in case that timer is not valid any more.
@@ -172,14 +169,15 @@ public class ImageWidget extends GenericImageWidget {
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 * @param listName         The name of the image list from which the file is taken.
 	 * @param fileName         The filename of the image to be displayed.
+	 * @return the remote view of the widget.
 	 */
-	private void setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-						  final String listName, final String fileName) {
+	private RemoteViews setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
+								 final String listName, final String fileName) {
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
 		int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
 		if (width <= 0 || height <= 0) {
-			return;
+			return null;
 		}
 
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), getWidgetLayoutId(appWidgetId));
@@ -213,6 +211,10 @@ public class ImageWidget extends GenericImageWidget {
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+
+		ButtonAnimator.setRemoteViews(appWidgetId, remoteViews);
+
+		return remoteViews;
 	}
 
 	/**
