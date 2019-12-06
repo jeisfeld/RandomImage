@@ -304,10 +304,10 @@ public class TimeSelectorPreference extends DialogPreference {
 				return result;
 			}
 
-			for (int i = spinnerEntries.length - 2; i >= 0; i--) {
+			for (int i = spinnerEntries.length - 1; i >= 0; i--) {
 				long spinnerValue = spinnerEntries[i].getValue();
 
-				if (value % spinnerValue == 0) {
+				if (spinnerValue != 0 && value % spinnerValue == 0) {
 					result.mSpinnerEntry = spinnerEntries[i];
 					result.mUnitsEntry = value / spinnerValue;
 					return result;
