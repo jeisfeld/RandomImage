@@ -48,7 +48,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	/**
 	 * The request code used to get permission for show activities in foreground.
 	 */
-	public static final int REQUEST_CODE_PERMISSION = 10;
+	private static final int REQUEST_CODE_PERMISSION_FOREGROUND = 10;
 
 	/**
 	 * The names of the image lists to be displayed.
@@ -155,7 +155,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 						@Override
 						public void onDialogFinished() {
 							Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-							startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION);
+							startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION_FOREGROUND);
 						}
 					}, 0, R.string.dialog_info_permission_foreground);
 				}
@@ -709,7 +709,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		case DisplayListInfoActivity.REQUEST_CODE:
 			handleListInfoResult(resultCode, data);
 			break;
-		case REQUEST_CODE_PERMISSION:
+		case REQUEST_CODE_PERMISSION_FOREGROUND:
 			NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
 			break;
 		default:

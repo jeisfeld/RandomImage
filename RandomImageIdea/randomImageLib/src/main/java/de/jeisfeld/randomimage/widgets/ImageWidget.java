@@ -175,7 +175,6 @@ public class ImageWidget extends GenericImageWidget {
 	 */
 	private void setImage(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
 						  final String listName, final String fileName) {
-
 		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
 		int width = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH));
 		int height = (int) Math.ceil(DENSITY * options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));

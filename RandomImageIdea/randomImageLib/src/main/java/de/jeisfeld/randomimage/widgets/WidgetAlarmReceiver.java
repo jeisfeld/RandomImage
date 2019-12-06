@@ -166,6 +166,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 	private static PendingIntent createAlarmIntent(final Context context, final int appWidgetId, final boolean isCancellation) {
 		Intent intent = new Intent(context, WidgetAlarmReceiver.class);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 		if (isCancellation) {
 			intent.putExtra(STRING_IS_CANCELLATION, true);
 		}

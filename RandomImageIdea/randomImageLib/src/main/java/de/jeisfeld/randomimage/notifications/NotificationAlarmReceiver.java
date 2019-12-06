@@ -290,6 +290,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 												   final boolean isCancellation, final boolean isNew) {
 		Intent intent = new Intent(context, NotificationAlarmReceiver.class);
 		intent.putExtra(STRING_NOTIFICATION_ID, notificationId);
+		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 		if (isCancellation) {
 			intent.putExtra(STRING_IS_CANCELLATION, true);
 		}
