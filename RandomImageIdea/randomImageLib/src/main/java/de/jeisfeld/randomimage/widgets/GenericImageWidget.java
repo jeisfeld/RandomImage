@@ -19,8 +19,6 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import de.jeisfeld.randomimage.Application;
@@ -63,7 +61,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
 	 * complete the animation.
 	 */
-	private static final Map<Integer, ButtonAnimator> BUTTON_ANIMATORS = new HashMap<>();
+	private static final SparseArray<ButtonAnimator> BUTTON_ANIMATORS = new SparseArray<>();
 
 	@Override
 	public final void onDeleted(final Context context, final int[] appWidgetIds) {
@@ -103,7 +101,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {appWidgetId});
 		nextIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.NEW_IMAGE_BY_USER);
 		PendingIntent pendingNextIntent =
-				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);
 
 		// Set the onClick intent for the "settings" button
@@ -111,7 +109,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		settingsIntent.putExtra(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
 		PendingIntent pendingSettingsIntent =
-				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
 
 		// Set the onClick intent for the view on empty widget
@@ -593,7 +591,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 				return;
 			}
 			synchronized (BUTTON_ANIMATORS) {
-				if (BUTTON_ANIMATORS.containsKey(appWidgetId)) {
+				if (BUTTON_ANIMATORS.get(appWidgetId, null) != null) {
 					return;
 				}
 				BUTTON_ANIMATORS.put(appWidgetId, this);
