@@ -66,7 +66,7 @@ public final class NotificationUtil {
 	/**
 	 * Activity String for Google Analytics.
 	 */
-	private static final String IMAGE_NOTIFICATION = "Image Notification";
+	private static final String IMAGE_NOTIFICATION = "Image_Notification";
 
 	/**
 	 * The vibration pattern.

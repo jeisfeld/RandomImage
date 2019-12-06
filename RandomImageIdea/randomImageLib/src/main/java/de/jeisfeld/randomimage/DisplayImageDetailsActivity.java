@@ -174,7 +174,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 
 		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
 		if (trackingName != null) {
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Display Image Details", trackingName);
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Display_Image_Details", trackingName);
 		}
 
 		// Enable icon

@@ -32,11 +32,11 @@ public class SdMountReceiver extends BroadcastReceiver {
 		if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, false);
 			triggerAllTimers();
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device Change", "Boot completed");
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device_Change", "Boot completed");
 		}
 		if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
 			triggerAllTimers();
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device Change", "Package replaced");
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device_Change", "Package replaced");
 		}
 
 		// Update widgets after changes in SD card availability.

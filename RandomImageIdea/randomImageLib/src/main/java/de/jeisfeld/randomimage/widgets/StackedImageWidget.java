@@ -71,7 +71,7 @@ public class StackedImageWidget extends GenericImageWidget {
 		if (updateType == UpdateType.NEW_LIST || updateType == UpdateType.NEW_IMAGE_BY_USER || updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_requires_update, appWidgetId, true);
 
-			trackImageChange("Update Widget Stack", updateType);
+			trackImageChange("Update_Widget_Stack", updateType);
 		}
 		appWidgetManager.notifyAppWidgetViewDataChanged(new int[] {appWidgetId}, R.id.stackViewWidget);
 

@@ -530,11 +530,11 @@ public final class StandardImageList extends ImageList {
 
 				calculateWeights();
 
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "All images in list", null, (long) mAllImageFilesInList.size());
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Images in list", null, (long) fileNames.size());
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Folders in list", null, (long) folders.size());
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Nested lists in list", null, (long) nestedListMap.size());
-				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load image list", "all images", System.currentTimeMillis() - timestamp);
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "All_images_in_list", null, (long) mAllImageFilesInList.size());
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Images_in_list", null, (long) fileNames.size());
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Folders_in_list", null, (long) folders.size());
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Nested_lists_in_list", null, (long) nestedListMap.size());
+				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load_image_list", "all images", System.currentTimeMillis() - timestamp);
 			}
 		};
 	}

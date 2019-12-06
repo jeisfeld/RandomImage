@@ -20,7 +20,7 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget Config", "ImageWidget");
+		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget_Config", "ImageWidget");
 
 		// Do not offer cyclic change and list view in ImageWidget.
 		PreferenceGroup groupAppearance = (PreferenceGroup) findPreference(getString(R.string.key_dummy_pref_group_appearance));

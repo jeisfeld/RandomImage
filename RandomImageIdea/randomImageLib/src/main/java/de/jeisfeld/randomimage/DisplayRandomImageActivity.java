@@ -333,7 +333,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public static void finishActivityForNotification(final Context context, final int notificationId) {
 		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Notification");
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto_Close", "Display Image from Notification");
 			activity.finish();
 			NOTIFICATION_MAP.delete(notificationId);
 		}
@@ -348,7 +348,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public static void finishActivityForWidget(final Context context, final int appWidgetId) {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Display Image from Widget");
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto_Close", "Display Image from Widget");
 			if (MiniWidget.hasWidgetOfId(appWidgetId)) {
 				PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
 			}
@@ -683,7 +683,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 */
 	private void sendInitialTrackingEvent(final boolean hasSavedInstanceState, final boolean hasFolderName) {
 		if (hasSavedInstanceState) {
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Orientation Change", "Display Images");
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Orientation_Change", "Display Images");
 		}
 		else {
 			String trackingLabel;
@@ -707,7 +707,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			else {
 				trackingLabel = "Launcher";
 			}
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, "View Images", trackingLabel);
+			TrackingUtil.sendEvent(Category.EVENT_VIEW, "View_Images", trackingLabel);
 		}
 	}
 
@@ -759,7 +759,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		if (!mRecreatedAfterSavingInstanceState) {
 			if (mTrackingDuration > 0) {
 				sendStatistics();
-				TrackingUtil.sendEvent(Category.EVENT_VIEW, "View Images", "Resuming");
+				TrackingUtil.sendEvent(Category.EVENT_VIEW, "View_Images", "Resuming");
 			}
 			mTrackingTimestamp = System.currentTimeMillis();
 		}
@@ -780,8 +780,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Send the tracking statistics.
 	 */
 	private void sendStatistics() {
-		TrackingUtil.sendTiming(Category.TIME_USAGE, "View Images", null, mTrackingDuration);
-		TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Viewed Images", null, mTrackingImages);
+		TrackingUtil.sendTiming(Category.TIME_USAGE, "View_Images", null, mTrackingDuration);
+		TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Viewed_Images", null, mTrackingImages);
 		mTrackingImages = 0;
 		mTrackingDuration = 0;
 	}

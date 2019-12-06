@@ -58,7 +58,7 @@ public class ImageWidget extends GenericImageWidget {
 				ButtonAnimator.interrupt(appWidgetId);
 			}
 
-			trackImageChange("Update Widget Image", updateType);
+			trackImageChange("Update_Widget_Image", updateType);
 
 			final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 

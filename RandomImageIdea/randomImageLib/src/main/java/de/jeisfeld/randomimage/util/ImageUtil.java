@@ -531,8 +531,8 @@ public final class ImageUtil {
 				for (String path : FileUtil.getExtSdCardPaths()) {
 					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
 				}
-				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Parse Image Folders", null, System.currentTimeMillis() - timestamp);
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Image folders", null, (long) imageFolders.size());
+				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Parse_Image_Folders", null, System.currentTimeMillis() - timestamp);
+				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Image_folders", null, (long) imageFolders.size());
 
 				PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
 				PreferenceUtil.setSharedPreferenceLong(R.string.key_last_parsing_time, System.currentTimeMillis());

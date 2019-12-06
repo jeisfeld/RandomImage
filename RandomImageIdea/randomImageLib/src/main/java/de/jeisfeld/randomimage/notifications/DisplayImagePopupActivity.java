@@ -248,7 +248,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 	public static void finishActivity(final Context context, final int notificationId) {
 		DisplayImagePopupActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto-Close", "Popup");
+			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto_Close", "Popup");
 			activity.finish();
 			NOTIFICATION_MAP.remove(notificationId);
 		}

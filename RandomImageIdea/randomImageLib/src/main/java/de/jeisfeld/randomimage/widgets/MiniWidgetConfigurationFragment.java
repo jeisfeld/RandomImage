@@ -42,7 +42,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget Config", "StackedImageWidget");
+		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget_Config", "StackedImageWidget");
 
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
 

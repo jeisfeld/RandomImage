@@ -144,7 +144,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
 		if (trackingName != null) {
-			TrackingUtil.sendEvent(Category.EVENT_SETUP, "Configure List", trackingName);
+			TrackingUtil.sendEvent(Category.EVENT_SETUP, "Configure_List", trackingName);
 		}
 
 		if (savedInstanceState != null) {
