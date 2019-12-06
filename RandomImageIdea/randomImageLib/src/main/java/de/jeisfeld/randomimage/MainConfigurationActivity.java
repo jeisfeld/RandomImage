@@ -3,7 +3,11 @@ package de.jeisfeld.randomimage;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +45,10 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * The number of lists that may be created without premium status.
 	 */
 	private static final int ALLOWED_LISTS_NON_PREMIUM = 3;
+	/**
+	 * The request code used to get permission for show activities in foreground.
+	 */
+	public static final int REQUEST_CODE_PERMISSION = 10;
 
 	/**
 	 * The names of the image lists to be displayed.
@@ -142,7 +150,18 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		buttonNotifications.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
+				if (VERSION.SDK_INT >= VERSION_CODES.M && !Settings.canDrawOverlays(MainConfigurationActivity.this)) {
+					DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
+						@Override
+						public void onDialogFinished() {
+							Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+							startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION);
+						}
+					}, 0, R.string.dialog_info_permission_foreground);
+				}
+				else {
+					NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
+				}
 			}
 		});
 	}
@@ -689,6 +708,9 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		switch (requestCode) {
 		case DisplayListInfoActivity.REQUEST_CODE:
 			handleListInfoResult(resultCode, data);
+			break;
+		case REQUEST_CODE_PERMISSION:
+			NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
 			break;
 		default:
 			break;

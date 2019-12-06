@@ -78,6 +78,7 @@
     <string name="dialog_info_no_widget">Es ist kein Widget vorhanden - bitte platzieren Sie zunächst Widgets auf Ihrem Startbildschirm.</string>
     <string name="dialog_info_need_premium">Zur Nutzung von mehr als drei Bildlisten müssen Sie die Pro-Version der App erwerben.</string>
     <string name="dialog_info_invalid_regexp">Bitte geben Sie einen gültigen regulären Ausdruck ein.</string>
+    <string name="dialog_info_permission_foreground">Bitte geben Sie die Erlaubnis, Aktivitäten vom Hintergrund aus zu starten.</string>
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>
     <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>
