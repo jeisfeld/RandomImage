@@ -87,17 +87,4 @@ public class SettingsActivity extends BaseActivity {
 		}
 		return false;
 	}
-
-	/**
-	 * Helper method: Return the flag if a premium pack has been bought.
-	 *
-	 * @param boughtPremium The flag if a premium pack has been bought.
-	 */
-	protected final void returnResult(final boolean boughtPremium) {
-		Bundle resultData = new Bundle();
-		resultData.putBoolean(STRING_RESULT_BOUGHT_PREMIUM, boughtPremium);
-		Intent intent = new Intent();
-		intent.putExtras(resultData);
-		setResult(RESULT_OK, intent);
-	}
 }

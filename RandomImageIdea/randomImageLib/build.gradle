@@ -23,9 +23,9 @@ android {
 
 dependencies {
     implementation files('libs/annotations.jar')
-    implementation 'com.google.firebase:firebase-core:17.1.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    implementation 'androidx.exifinterface:exifinterface:1.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

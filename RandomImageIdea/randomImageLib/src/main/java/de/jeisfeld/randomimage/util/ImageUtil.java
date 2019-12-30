@@ -213,12 +213,12 @@ public final class ImageUtil {
 					Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
 					return getDummyBitmap();
 				}
+				if (rotation != 0) {
+					bitmap = rotateBitmap(bitmap, rotation);
+				}
 			}
 			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
 				return bitmap;
-			}
-			if (rotation != 0) {
-				bitmap = rotateBitmap(bitmap, rotation);
 			}
 
 			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore || growIfRequired) {
@@ -272,12 +272,12 @@ public final class ImageUtil {
 					Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
 					return getDummyBitmap();
 				}
+				if (rotation != 0) {
+					bitmap = rotateBitmap(bitmap, rotation);
+				}
 			}
 			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
 				return bitmap;
-			}
-			if (rotation != 0) {
-				bitmap = rotateBitmap(bitmap, rotation);
 			}
 
 			if ((long) bitmap.getWidth() * minHeight > (long) bitmap.getHeight() * minWidth) {
