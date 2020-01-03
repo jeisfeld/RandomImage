@@ -232,6 +232,14 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		if (mListName != null) {
 			configureButtonsForImageList();
 		}
+
+		Button btnConfigure = findViewById(R.id.buttonConfigure);
+		btnConfigure.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				MainConfigurationActivity.startActivity(DisplayImageDetailsActivity.this);
+			}
+		});
 	}
 
 	@Override

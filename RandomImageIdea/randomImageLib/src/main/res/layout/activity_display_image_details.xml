@@ -107,5 +107,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/buttonConfigure"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/title_activity_main_configuration"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="visible" />
+
     </LinearLayout>
 </ScrollView>
