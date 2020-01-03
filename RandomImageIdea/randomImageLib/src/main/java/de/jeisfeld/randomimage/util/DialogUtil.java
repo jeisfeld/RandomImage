@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.StartActivity;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
@@ -38,6 +37,8 @@ import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.Mess
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimagelib.R;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * Helper class to show standard dialogs.
@@ -237,8 +238,10 @@ public final class DialogUtil {
 	 * @param messageResource the confirmation message
 	 * @param args            arguments for the confirmation message
 	 */
-	public static void displayListSelectionDialog(final Activity activity,
-												  final SelectFromListDialogListener listener, final int iconId, final int titleResource,
+	public static void displayListSelectionDialog(final Activity activity, // SUPPRESS_CHECKSTYLE
+												  final SelectFromListDialogListener listener,
+												  final int iconId,
+												  final int titleResource,
 												  final ArrayList<String> listValues,
 												  final int cancelButtonResource,
 												  final int messageResource, final Object... args) {

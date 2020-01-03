@@ -18,6 +18,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -213,12 +215,15 @@ public final class ImageUtil {
 					Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
 					return getDummyBitmap();
 				}
-				if (rotation != 0) {
+				if (VERSION.SDK_INT >= VERSION_CODES.P && rotation != 0) {
 					bitmap = rotateBitmap(bitmap, rotation);
 				}
 			}
 			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
 				return bitmap;
+			}
+			if (VERSION.SDK_INT < VERSION_CODES.P && rotation != 0) {
+				bitmap = rotateBitmap(bitmap, rotation);
 			}
 
 			if (bitmap.getWidth() > maxWidth || bitmap.getHeight() > maxHeight || foundThumbInMediaStore || growIfRequired) {
