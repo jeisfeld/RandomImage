@@ -277,7 +277,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 						updateHeader();
 						getActivity().finish();
 					}
-				}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_notification);
+				}, R.string.title_dialog_select_list_name, listNames, R.string.button_cancel, R.string.dialog_select_list_for_notification);
 			}
 		}
 	}

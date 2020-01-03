@@ -543,8 +543,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 							public void onDialogNegativeClick(final DialogFragment dialog) {
 								// do nothing
 							}
-						}, R.string.title_dialog_select_list_name, listNames,
-						R.string.dialog_select_list_for_inclusion);
+				}, R.string.title_dialog_select_list_name, listNames, R.string.button_cancel, R.string.dialog_select_list_for_inclusion);
 	}
 
 	/**

@@ -55,7 +55,7 @@ public class AddSentImagesActivity extends Activity {
 									DialogUtil.displayToast(AddSentImagesActivity.this, R.string.toast_cancelled_add_images);
 									finish();
 								}
-							}, R.drawable.ic_launcher, R.string.app_name, imageListsNames,
+							}, R.drawable.ic_launcher, R.string.app_name, imageListsNames, R.string.button_cancel,
 							R.string.dialog_select_list_for_external_add);
 		}
 

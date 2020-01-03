@@ -52,6 +52,10 @@ public final class DialogUtil {
 	 */
 	private static final String PARAM_TITLE_RESOURCE = "titleResource";
 	/**
+	 * Parameter to pass the title resource to the DialogFragment.
+	 */
+	private static final String PARAM_CANCEL_BUTTON_RESOURCE = "cancelButtonResource";
+	/**
 	 * Parameter to pass the message to the DialogFragment.
 	 */
 	private static final String PARAM_MESSAGE = "message";
@@ -229,12 +233,14 @@ public final class DialogUtil {
 	 * @param iconId          The icon to be used in the dialog.
 	 * @param titleResource   the resource with the title string
 	 * @param listValues      the array of values from which to be selected.
+	 * @param cancelButtonResource the text for cancel button.
 	 * @param messageResource the confirmation message
 	 * @param args            arguments for the confirmation message
 	 */
 	public static void displayListSelectionDialog(final Activity activity,
 												  final SelectFromListDialogListener listener, final int iconId, final int titleResource,
 												  final ArrayList<String> listValues,
+												  final int cancelButtonResource,
 												  final int messageResource, final Object... args) {
 		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
@@ -243,6 +249,7 @@ public final class DialogUtil {
 		}
 		bundle.putCharSequence(PARAM_MESSAGE, message);
 		bundle.putInt(PARAM_TITLE_RESOURCE, titleResource);
+		bundle.putInt(PARAM_CANCEL_BUTTON_RESOURCE, cancelButtonResource);
 		bundle.putStringArrayList(PARAM_LIST_ITEMS, listValues);
 		SelectFromListDialogFragment fragment = new SelectFromListDialogFragment();
 		fragment.setListener(listener);
@@ -253,20 +260,22 @@ public final class DialogUtil {
 	/**
 	 * Display a confirmation message asking for cancel or ok.
 	 *
-	 * @param activity        the current activity
-	 * @param listener        The listener waiting for the response
-	 * @param titleResource   the resource with the title string
-	 * @param listValues      the array of values from which to be selected.
-	 * @param messageResource the confirmation message
-	 * @param args            arguments for the confirmation message
+	 * @param activity             the current activity
+	 * @param listener             The listener waiting for the response
+	 * @param titleResource        the resource with the title string
+	 * @param listValues           the array of values from which to be selected.
+	 * @param cancelButtonResource the text for cancel button.
+	 * @param messageResource      the confirmation message
+	 * @param args                 arguments for the confirmation message
 	 */
 	public static void displayListSelectionDialog(final Activity activity,
 												  final SelectFromListDialogListener listener,
 												  final int titleResource,
 												  final ArrayList<String> listValues,
+												  final int cancelButtonResource,
 												  final int messageResource,
 												  final Object... args) {
-		displayListSelectionDialog(activity, listener, 0, titleResource, listValues, messageResource, args);
+		displayListSelectionDialog(activity, listener, 0, titleResource, listValues, cancelButtonResource, messageResource, args);
 	}
 
 	/**
@@ -812,6 +821,7 @@ public final class DialogUtil {
 			// VARIABLE_DISTANCE:OFF
 			CharSequence message = getArguments().getCharSequence(PARAM_MESSAGE);
 			int titleResource = getArguments().getInt(PARAM_TITLE_RESOURCE);
+			int cancelButtonResource = getArguments().getInt(PARAM_CANCEL_BUTTON_RESOURCE);
 			// VARIABLE_DISTANCE:ON
 
 			ArrayList<String> itemList = getArguments().getStringArrayList(PARAM_LIST_ITEMS);
@@ -850,7 +860,7 @@ public final class DialogUtil {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(titleResource)
 					.setView(listView)
-					.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+					.setNegativeButton(cancelButtonResource, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int id) {
 							// Send the positive button event back to the host activity

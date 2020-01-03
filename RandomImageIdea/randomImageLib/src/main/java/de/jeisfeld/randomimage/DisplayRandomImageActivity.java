@@ -463,10 +463,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 						imageList = ImageRegistry.getCurrentImageListRefreshed(true);
 						mListName = ImageRegistry.getCurrentListName();
 					}
-					else if (listNames.size() == 1) {
-						mListName = listNames.get(0);
-						imageList = ImageRegistry.getCurrentImageListRefreshed(false);
-					}
 					else {
 						DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
 							@Override
@@ -480,12 +476,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 							@Override
 							public void onDialogNegativeClick(final DialogFragment dialog) {
-								mListName = ImageRegistry.getCurrentListName();
-								mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageListRefreshed(false),
-										mCurrentFileName, mFlipType, mRandomFileProvider);
-								displayImageListOnCreate(savedInstanceState, null);
+								MainConfigurationActivity.startActivity(DisplayRandomImageActivity.this);
 							}
-						}, R.string.title_dialog_select_list_name, listNames, R.string.dialog_select_list_for_display);
+								}, R.string.title_dialog_select_list_name, listNames, R.string.title_activity_main_configuration,
+								R.string.dialog_select_list_for_display);
 						return;
 					}
 				}
