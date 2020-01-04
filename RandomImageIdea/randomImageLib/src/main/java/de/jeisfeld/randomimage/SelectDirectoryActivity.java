@@ -5,6 +5,8 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -47,6 +50,10 @@ import de.jeisfeld.randomimagelib.R;
  * Add images to the list via browsing folders. Alternative use: select one image via browsing folders.
  */
 public class SelectDirectoryActivity extends BaseActivity {
+	/**
+	 * The String used for the root folder.
+	 */
+	private static final String ROOT_FOLDER_STRING = "...";
 	/**
 	 * The request code used to finish the triggering activity.
 	 */
@@ -202,7 +209,12 @@ public class SelectDirectoryActivity extends BaseActivity {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				mBackStack.push(mCurrentFolder);
-				mCurrentFolder += File.separator + mListAdapter.getItem(position);
+				if (mListAdapter.getItem(position).startsWith(File.separator) || mListAdapter.getItem(position).equals(ROOT_FOLDER_STRING)) {
+					mCurrentFolder = mListAdapter.getItem(position);
+				}
+				else {
+					mCurrentFolder += File.separator + mListAdapter.getItem(position);
+				}
 				updateDirectory();
 			}
 		});
@@ -276,6 +288,21 @@ public class SelectDirectoryActivity extends BaseActivity {
 				return dirs;
 			}
 			File dirFile = new File(dir);
+
+			if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+				// Not allowed to parse through all folders
+				if (FileUtil.isSdCardPath(dirFile)) {
+					dirs.remove("..");
+					dirs.add("...");
+				}
+				else if (ROOT_FOLDER_STRING.equals(dir)) {
+					dirs.remove("..");
+					dirs.add(FileUtil.getSdCardPath());
+					dirs.addAll(Arrays.asList(FileUtil.getExtSdCardPaths()));
+					return dirs;
+				}
+			}
+
 			if (!dirFile.exists() || !dirFile.isDirectory()) {
 				return dirs;
 			}
@@ -326,11 +353,13 @@ public class SelectDirectoryActivity extends BaseActivity {
 	 * Update the current directory.
 	 */
 	private void updateDirectory() {
-		try {
-			mCurrentFolder = new File(mCurrentFolder).getCanonicalPath();
-		}
-		catch (IOException e) {
-			// i
+		if (!ROOT_FOLDER_STRING.equals(mCurrentFolder)) {
+			try {
+				mCurrentFolder = new File(mCurrentFolder).getCanonicalPath();
+			}
+			catch (IOException e) {
+				// i
+			}
 		}
 		if (mCurrentFolder == null || "".equals(mCurrentFolder)) {
 			mCurrentFolder = File.separator;

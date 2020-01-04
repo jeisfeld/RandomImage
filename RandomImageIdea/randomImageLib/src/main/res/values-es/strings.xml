@@ -6,7 +6,7 @@
     <string name="mini_widget_name">Widget de imagen aleatoria</string>
     <string name="image_widget_name">Marco de imagen aleatoria</string>
     <string name="stacked_image_widget_name">Pila de imágenes aleatorias</string>
-    <string name="default_list_name">Mi lista de fotos</string>
+    <string name="default_list_name">Todas las imágenes</string>
     <string name="title_icon_main_configuration">Configuración Imagen Aleatoria</string>
 
     <!-- Activity titles -->

@@ -7,7 +7,7 @@
     <string name="mini_widget_name">Zufallsbild-Widget</string>
     <string name="image_widget_name">Zufallsbilderrahmen</string>
     <string name="stacked_image_widget_name">Zufallsbilderstapel</string>
-    <string name="default_list_name">Meine Bildliste</string>
+    <string name="default_list_name">Alle Bilder</string>
     <string name="title_icon_main_configuration">Zufallsbild Einrichtung</string>
 
     <!-- Activity titles -->

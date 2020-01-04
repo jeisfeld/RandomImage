@@ -302,7 +302,7 @@ public final class FileUtil {
 	 *
 	 * @return A list of external SD card paths.
 	 */
-	protected static String[] getExtSdCardPaths() {
+	public static String[] getExtSdCardPaths() {
 		if (SystemUtil.isAtLeastVersion(VERSION_CODES.KITKAT)) {
 			return getExtSdCardPathsForKitkat();
 		}
@@ -321,6 +321,34 @@ public final class FileUtil {
 
 			return paths.toArray(new String[0]);
 		}
+	}
+
+	/**
+	 * Check if the file represents the root folder of an external or internal SD card.
+	 *
+	 * @param file The file to be checked.
+	 * @return true if root folder of an SD card.
+	 */
+	@RequiresApi(Build.VERSION_CODES.KITKAT)
+	public static boolean isSdCardPath(final File file) {
+		String filePath;
+		try {
+			filePath = file.getCanonicalPath();
+		}
+		catch (IOException e) {
+			filePath = file.getAbsolutePath();
+		}
+
+		if (filePath.equals(getSdCardPath())) {
+			return true;
+		}
+
+		for (String path : getExtSdCardPaths()) {
+			if (filePath.equals(path)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -346,7 +374,7 @@ public final class FileUtil {
 	 *
 	 * @return The SD card directory.
 	 */
-	private static String getSdCardPath() {
+	public static String getSdCardPath() {
 		String sdCardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
 
 		try {

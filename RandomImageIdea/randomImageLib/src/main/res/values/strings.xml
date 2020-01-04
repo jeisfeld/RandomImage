@@ -8,7 +8,7 @@
     <string name="mini_widget_name">Random Image Widget</string>
     <string name="image_widget_name">Random Image Frame</string>
     <string name="stacked_image_widget_name">Random Image Deck</string>
-    <string name="default_list_name">My Image List</string>
+    <string name="default_list_name">All Images</string>
     <string name="title_icon_main_configuration">Random Image Setup</string>
 
     <!-- Activity titles -->
