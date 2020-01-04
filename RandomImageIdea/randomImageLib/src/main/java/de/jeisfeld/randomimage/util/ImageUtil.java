@@ -215,14 +215,14 @@ public final class ImageUtil {
 					Log.w(Application.TAG, "Cannot create bitmap from path " + path + " - return dummy bitmap");
 					return getDummyBitmap();
 				}
-				if (VERSION.SDK_INT >= VERSION_CODES.P && rotation != 0) {
+				if (VERSION.SDK_INT >= VERSION_CODES.Q && rotation != 0) {
 					bitmap = rotateBitmap(bitmap, rotation);
 				}
 			}
 			if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
 				return bitmap;
 			}
-			if (VERSION.SDK_INT < VERSION_CODES.P && rotation != 0) {
+			if (VERSION.SDK_INT < VERSION_CODES.Q && rotation != 0) {
 				bitmap = rotateBitmap(bitmap, rotation);
 			}
 
