@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,6 +23,10 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.IOException;
+
+import de.jeisfeld.randomimage.util.GifAnimationDrawable;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 
@@ -225,6 +230,8 @@ public class PinchImageView extends ImageView {
 
 	/**
 	 * Derive the bitmap drawable from the bitmap path.
+	 *
+	 * @param contentView the content view.
 	 */
 	private void setBitmapFromPath(final View contentView) {
 		if (mPathName == null) {
@@ -240,8 +247,21 @@ public class PinchImageView extends ImageView {
 			new Thread() {
 				@Override
 				public void run() {
-					mDrawable = new BitmapDrawable(getContext().getResources(),
-							rotateIfRequired(ImageUtil.getImageBitmap(mPathName, mMaxBitmapSize), contentView));
+					Bitmap bitmap = ImageUtil.getImageBitmap(mPathName, mMaxBitmapSize);
+					int rotationAngle = getRotationAngle(bitmap, contentView);
+					if (mPathName.toLowerCase().endsWith(".gif")) {
+						// special handling for animated gif
+						try {
+							mDrawable = new GifAnimationDrawable(getContext(), new File(mPathName), rotationAngle);
+						}
+						catch (IOException e) {
+							// ignore
+						}
+					}
+					if (mDrawable == null) {
+						mDrawable = new BitmapDrawable(getContext().getResources(), rotateIfRequired(bitmap, rotationAngle));
+					}
+
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
@@ -306,6 +326,9 @@ public class PinchImageView extends ImageView {
 		if (mIsBitmapSet && !mInitialized) {
 			doScalingToFit();
 		}
+		if (mDrawable instanceof AnimationDrawable) {
+			((AnimationDrawable) mDrawable).start();
+		}
 	}
 
 	/**
@@ -329,21 +352,17 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Rotate the bitmap if requested and if it fits better into the view.
 	 *
-	 * @param bitmap      the original bitmap.
-	 * @param contentView the content view holding this view.
+	 * @param bitmap        the original bitmap.
+	 * @param rotationAngle the rotation angle. May be 0, 90 or -90.
 	 * @return the rotated bitmap.
 	 */
-	private Bitmap rotateIfRequired(final Bitmap bitmap, final View contentView) {
+	public static Bitmap rotateIfRequired(final Bitmap bitmap, final int rotationAngle) {
 		Bitmap result = bitmap;
-		if (mScaleType == ScaleType.TURN_FIT
-				|| mScaleType == ScaleType.TURN_STRETCH) {
-			int rotationAngle = getRotationAngle(bitmap, contentView);
-			if (rotationAngle != 0) {
-				Matrix matrix = new Matrix();
-				matrix.setRotate(rotationAngle);
+		if (rotationAngle != 0) {
+			Matrix matrix = new Matrix();
+			matrix.setRotate(rotationAngle);
 
-				result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			}
+			result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		}
 		return result;
 	}
@@ -356,6 +375,9 @@ public class PinchImageView extends ImageView {
 	 * @return The rotation angle to optimize the image view.
 	 */
 	private int getRotationAngle(final Bitmap bitmap, final View contentView) {
+		if (mScaleType != ScaleType.TURN_FIT && mScaleType != ScaleType.TURN_STRETCH) {
+			return 0;
+		}
 		int width = getWidth() == 0 ? contentView.getWidth() : getWidth();
 		int height = getHeight() == 0 ? contentView.getHeight() : getHeight();
 		if (bitmap.getWidth() > bitmap.getHeight() && width < height) {
