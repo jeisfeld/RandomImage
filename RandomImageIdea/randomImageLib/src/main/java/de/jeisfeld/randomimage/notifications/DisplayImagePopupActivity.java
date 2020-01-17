@@ -128,7 +128,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 
 		mImageView = findViewById(R.id.imageViewMicroImage);
 		mImageView.setScaleType(ScaleType.HALF_SIZE);
-		mImageView.setImage(mFileName, this, 0);
+		mImageView.setImage(mFileName, this, 0, findViewById(android.R.id.content));
 		mImageView.setGestureDetector(getGestureDetector());
 
 		mChangeFrequency =
@@ -277,7 +277,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 			public void run() {
 				mFileName = ImageRegistry.getImageListByName(mListName, false).getRandomFileName();
 				mImageView.reset();
-				mImageView.setImage(mFileName, DisplayImagePopupActivity.this, 0);
+				mImageView.setImage(mFileName, DisplayImagePopupActivity.this, 0, findViewById(android.R.id.content));
 				mChangeByTimeoutHandler.start();
 			}
 		};

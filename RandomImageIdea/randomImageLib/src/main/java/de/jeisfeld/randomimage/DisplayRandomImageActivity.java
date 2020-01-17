@@ -793,7 +793,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		imageView.setGestureDetector(mGestureDetector);
 		imageView.setUpDownListener(mUpDownListener);
 		imageView.setScaleType(mScaleType);
-		imageView.setImage(fileName, this, cacheIndex);
+		imageView.setImage(fileName, this, cacheIndex, findViewById(android.R.id.content));
 		int backgroundColor = getBackgroundColor(fileName);
 		imageView.setBackgroundColor(backgroundColor);
 

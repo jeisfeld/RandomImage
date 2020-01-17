@@ -7,11 +7,11 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -19,6 +19,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.widget.ImageView;
 
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -129,9 +130,9 @@ public class PinchImageView extends ImageView {
 	private int mImageResource = -1;
 
 	/**
-	 * The displayed bitmap.
+	 * The displayed image.
 	 */
-	private Bitmap mBitmap = null;
+	private Drawable mDrawable = null;
 
 	/**
 	 * The maximum allowed resolution of the bitmap. The image is scaled to this size.
@@ -202,7 +203,7 @@ public class PinchImageView extends ImageView {
 		mActivePointerId2 = INVALID_POINTER_ID;
 		mPathName = null;
 		mImageResource = -1;
-		mBitmap = null;
+		mDrawable = null;
 		mLastScaleFactor = 1.f;
 	}
 
@@ -210,49 +211,56 @@ public class PinchImageView extends ImageView {
 	 * Fill with an image, making the image fit into the view. If the pathName is unchanged (restored), then it is not
 	 * refilled. The sizing (for fit) happens only once at first initialization of the view.
 	 *
-	 * @param pathName   The pathname of the image
-	 * @param activity   The triggering activity (required for bitmap caching)
-	 * @param cacheIndex A unique index of the view in the activity
+	 * @param pathName    The pathname of the image
+	 * @param activity    The triggering activity (required for bitmap caching)
+	 * @param cacheIndex  A unique index of the view in the activity
+	 * @param contentView the content view holding this view.
 	 */
-	public final void setImage(final String pathName, final Activity activity, final int cacheIndex) {
+	public final void setImage(final String pathName, final Activity activity, final int cacheIndex, final View contentView) {
 		// retrieve bitmap from cache if possible
-		final RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager(), cacheIndex);
-		if (!pathName.equals(retainFragment.getPathName())) {
-			retainFragment.setBitmap(null);
-			retainFragment.setPathName(pathName);
+		mPathName = pathName;
+
+		setBitmapFromPath(contentView);
+	}
+
+	/**
+	 * Derive the bitmap drawable from the bitmap path.
+	 */
+	private void setBitmapFromPath(final View contentView) {
+		if (mPathName == null) {
+			return;
 		}
-
-		mBitmap = retainFragment.getBitmap();
-
-		if (mBitmap == null) {
+		if (getWidth() == 0 && (contentView == null || contentView.getWidth() == 0)) {
+			return;
+		}
+		if (mDrawable == null) {
 			final Handler handler = new Handler();
 			// populate bitmaps in separate thread, so that screen keeps fluid.
 			// This also ensures that this happens only after view is visible and sized.
 			new Thread() {
 				@Override
 				public void run() {
-					mBitmap = ImageUtil.getImageBitmap(pathName, mMaxBitmapSize);
-
-					retainFragment.setBitmap(mBitmap);
-					mPathName = pathName;
+					mDrawable = new BitmapDrawable(getContext().getResources(),
+							rotateIfRequired(ImageUtil.getImageBitmap(mPathName, mMaxBitmapSize), contentView));
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							PinchImageView.super.setImageBitmap(mBitmap);
+							PinchImageView.super.setImageDrawable(mDrawable);
 							mIsBitmapSet = true;
 							doInitialScaling();
+
 						}
 					});
 				}
 			}.start();
 		}
 		else {
-			super.setImageBitmap(mBitmap);
-			mPathName = pathName;
+			super.setImageDrawable(mDrawable);
 			mIsBitmapSet = true;
 			doInitialScaling();
 		}
 	}
+
 
 	/**
 	 * Return the natural scale factor that fits the image into the view.
@@ -260,8 +268,8 @@ public class PinchImageView extends ImageView {
 	 * @return The natural scale factor fitting the image into the view.
 	 */
 	private float getNaturalScaleFactor() {
-		float heightFactor = 1f * getHeight() / mBitmap.getHeight();
-		float widthFactor = 1f * getWidth() / mBitmap.getWidth();
+		float heightFactor = 1f * getHeight() / mDrawable.getIntrinsicHeight();
+		float widthFactor = 1f * getWidth() / mDrawable.getIntrinsicWidth();
 
 		switch (mScaleType) {
 		case STRETCH:
@@ -287,7 +295,7 @@ public class PinchImageView extends ImageView {
 	 */
 	protected final float getOrientationIndependentScaleFactor() {
 		float viewSize = Math.min(getWidth(), getHeight());
-		float imageSize = Math.min(mBitmap.getWidth(), mBitmap.getHeight());
+		float imageSize = Math.min(mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
 		return 1f * viewSize / imageSize;
 	}
 
@@ -304,12 +312,11 @@ public class PinchImageView extends ImageView {
 	 * Scale the image to fit into the view.
 	 */
 	public final void doScalingToFit() {
-		if (mBitmap == null) {
+		if (mDrawable == null) {
 			return;
 		}
 		mPosX = ONE_HALF;
 		mPosY = ONE_HALF;
-		rotateIfRequired();
 		mScaleFactor = getNaturalScaleFactor();
 		if (mScaleFactor > 0) {
 			mInitialized = true;
@@ -321,30 +328,40 @@ public class PinchImageView extends ImageView {
 
 	/**
 	 * Rotate the bitmap if requested and if it fits better into the view.
+	 *
+	 * @param bitmap      the original bitmap.
+	 * @param contentView the content view holding this view.
+	 * @return the rotated bitmap.
 	 */
-	private void rotateIfRequired() {
+	private Bitmap rotateIfRequired(final Bitmap bitmap, final View contentView) {
+		Bitmap result = bitmap;
 		if (mScaleType == ScaleType.TURN_FIT
 				|| mScaleType == ScaleType.TURN_STRETCH) {
-			int rotationAngle = getRotationAngle();
+			int rotationAngle = getRotationAngle(bitmap, contentView);
 			if (rotationAngle != 0) {
 				Matrix matrix = new Matrix();
 				matrix.setRotate(rotationAngle);
-				mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
-				super.setImageBitmap(mBitmap);
+
+				result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			}
 		}
+		return result;
 	}
 
 	/**
 	 * Check if the image has the wrong aspect ratio for the view.
 	 *
+	 * @param bitmap      the bitmap to be considered.
+	 * @param contentView the content view holding this view.
 	 * @return The rotation angle to optimize the image view.
 	 */
-	private int getRotationAngle() {
-		if (mBitmap.getWidth() > mBitmap.getHeight() && getWidth() < getHeight()) {
+	private int getRotationAngle(final Bitmap bitmap, final View contentView) {
+		int width = getWidth() == 0 ? contentView.getWidth() : getWidth();
+		int height = getHeight() == 0 ? contentView.getHeight() : getHeight();
+		if (bitmap.getWidth() > bitmap.getHeight() && width < height) {
 			return 90; // MAGIC_NUMBER
 		}
-		else if (mBitmap.getWidth() < mBitmap.getHeight() && getWidth() > getHeight()) {
+		else if (bitmap.getWidth() < bitmap.getHeight() && width > height) {
 			return -90; // MAGIC_NUMBER
 		}
 		else {
@@ -361,7 +378,6 @@ public class PinchImageView extends ImageView {
 	public final void setScaleType(final ScaleType scaleType) {
 		mScaleType = scaleType;
 	}
-
 
 	/**
 	 * Animate the image out of the view.
@@ -449,9 +465,9 @@ public class PinchImageView extends ImageView {
 	 * Redo the scaling.
 	 */
 	protected final void setMatrix() {
-		if (mBitmap != null) {
+		if (mDrawable != null) {
 			Matrix matrix = new Matrix();
-			matrix.setTranslate(-mPosX * mBitmap.getWidth(), -mPosY * mBitmap.getHeight());
+			matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
 			matrix.postScale(mScaleFactor, mScaleFactor);
 			matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
 			setImageMatrix(matrix);
@@ -470,6 +486,9 @@ public class PinchImageView extends ImageView {
 	@Override
 	protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
+		if (mDrawable == null) {
+			setBitmapFromPath(null);
+		}
 		if (mIsBitmapSet) {
 			if (mInitialized) {
 				requestLayout();
@@ -599,8 +618,8 @@ public class PinchImageView extends ImageView {
 			// Only move if the ScaleGestureDetector isn't processing a gesture.
 			final float dx = x - mLastTouchX;
 			final float dy = y - mLastTouchY;
-			mPosX -= dx / mScaleFactor / mBitmap.getWidth();
-			mPosY -= dy / mScaleFactor / mBitmap.getHeight();
+			mPosX -= dx / mScaleFactor / mDrawable.getIntrinsicWidth();
+			mPosY -= dy / mScaleFactor / mDrawable.getIntrinsicHeight();
 		}
 		else {
 			// When resizing, move according to the center of the two pinch points
@@ -609,13 +628,13 @@ public class PinchImageView extends ImageView {
 			final float y0 = (ev.getY(pointerIndex2) + y) / 2;
 			final float dx = x0 - mLastTouchX0;
 			final float dy = y0 - mLastTouchY0;
-			mPosX -= dx / mScaleFactor / mBitmap.getWidth();
-			mPosY -= dy / mScaleFactor / mBitmap.getHeight();
+			mPosX -= dx / mScaleFactor / mDrawable.getIntrinsicWidth();
+			mPosY -= dy / mScaleFactor / mDrawable.getIntrinsicHeight();
 			if (mScaleFactor != mLastScaleFactor) {
 				// When resizing, then position also changes
 				final float changeFactor = mScaleFactor / mLastScaleFactor;
-				mPosX = mPosX + (x0 - getWidth() / 2.0f) * (changeFactor - 1) / mScaleFactor / mBitmap.getWidth();
-				mPosY = mPosY + (y0 - getHeight() / 2.0f) * (changeFactor - 1) / mScaleFactor / mBitmap.getHeight();
+				mPosX = mPosX + (x0 - getWidth() / 2.0f) * (changeFactor - 1) / mScaleFactor / mDrawable.getIntrinsicWidth();
+				mPosY = mPosY + (y0 - getHeight() / 2.0f) * (changeFactor - 1) / mScaleFactor / mDrawable.getIntrinsicHeight();
 				mLastScaleFactor = mScaleFactor;
 				moved = true;
 			}
@@ -702,63 +721,6 @@ public class PinchImageView extends ImageView {
 			mScaleFactor = Math.max(MIN_SCALE_FACTOR, Math.min(mScaleFactor, MAX_SCALE_FACTOR));
 			invalidate();
 			return true;
-		}
-	}
-
-	/**
-	 * Helper listFoldersFragment to retain the bitmap on configuration change.
-	 */
-	public static class RetainFragment extends Fragment {
-		/**
-		 * Tag to be used as identifier of the fragment.
-		 */
-		private static final String TAG = "RetainFragment";
-		/**
-		 * The bitmap to be stored.
-		 */
-		private Bitmap mRetainBitmap;
-
-		public final Bitmap getBitmap() {
-			return mRetainBitmap;
-		}
-
-		public final void setBitmap(final Bitmap bitmap) {
-			this.mRetainBitmap = bitmap;
-		}
-
-		/**
-		 * The pathName of this bitmap.
-		 */
-		private String mRetainPathName;
-
-		public final String getPathName() {
-			return mRetainPathName;
-		}
-
-		public final void setPathName(final String pathName) {
-			this.mRetainPathName = pathName;
-		}
-
-		/**
-		 * Get the retainFragment - search it by the index. If not found, create a new one.
-		 *
-		 * @param fm    The fragment manager handling this fragment.
-		 * @param index The index of the view (required in case of multiple PinchImageViews to be retained).
-		 * @return the retainFragment.
-		 */
-		public static RetainFragment findOrCreateRetainFragment(final FragmentManager fm, final int index) {
-			RetainFragment fragment = (RetainFragment) fm.findFragmentByTag(TAG + index);
-			if (fragment == null) {
-				fragment = new RetainFragment();
-				fm.beginTransaction().add(fragment, TAG + index).commitAllowingStateLoss();
-			}
-			return fragment;
-		}
-
-		@Override
-		public final void onCreate(final Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setRetainInstance(true);
 		}
 	}
 
