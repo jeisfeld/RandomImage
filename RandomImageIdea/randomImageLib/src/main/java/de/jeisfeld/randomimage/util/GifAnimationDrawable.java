@@ -69,11 +69,14 @@ public final class GifAnimationDrawable extends AnimationDrawable {
 
 			mGifDecoder.readContents();
 			int n = mGifDecoder.getFrameCount();
-			int t;
+
+			if (n < 2) {
+				throw new IOException("Less than two frames - no animated GIF");
+			}
+
 			for (int i = 1; i < n; i++) {
-				mTmpBitmap = mGifDecoder.getFrame(i);
-				t = mGifDecoder.getDelay(i);
-				addFrame(new BitmapDrawable(context.getResources(), PinchImageView.rotateIfRequired(mTmpBitmap, rotationAngle)), t);
+				addFrame(new BitmapDrawable(context.getResources(), PinchImageView.rotateIfRequired(mGifDecoder.getFrame(i), rotationAngle)),
+						mGifDecoder.getDelay(i));
 			}
 		}
 		finally {

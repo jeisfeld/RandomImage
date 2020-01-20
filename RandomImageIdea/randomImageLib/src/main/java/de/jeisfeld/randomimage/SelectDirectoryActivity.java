@@ -46,6 +46,8 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 /**
  * Add images to the list via browsing folders. Alternative use: select one image via browsing folders.
  */
@@ -341,7 +343,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 				if (v instanceof TextView) {
 					// Enable list item (directory) text wrapping
 					TextView tv = (TextView) v;
-					tv.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+					tv.getLayoutParams().height = WRAP_CONTENT;
 					tv.setEllipsize(null);
 				}
 				return v;
@@ -387,7 +389,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 			layoutParams.weight = 1;
 		}
 		else {
-			layoutParams.height = LayoutParams.WRAP_CONTENT;
+			layoutParams.height = WRAP_CONTENT;
 			layoutParams.weight = 0;
 		}
 		mListView.requestLayout();
