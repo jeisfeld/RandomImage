@@ -96,12 +96,20 @@ public final class ImageUtil {
 		Date retrievedDate = null;
 		try {
 			ExifInterface exif = new ExifInterface(path);
-			String dateString = exif.getAttribute(ExifInterface.TAG_DATETIME);
+			String dateString = exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);
 
 			retrievedDate = DateUtil.parse(dateString, "yyyy:MM:dd HH:mm:ss");
 		}
 		catch (Exception e) {
-			Log.w(Application.TAG, e.toString() + " - Cannot retrieve EXIF date for " + path);
+			try {
+				ExifInterface exif = new ExifInterface(path);
+				String dateString = exif.getAttribute(ExifInterface.TAG_DATETIME);
+
+				retrievedDate = DateUtil.parse(dateString, "yyyy:MM:dd HH:mm:ss");
+			}
+			catch (Exception e2) {
+				Log.w(Application.TAG, e2.toString() + " - Cannot retrieve EXIF date for " + path);
+			}
 		}
 		if (retrievedDate == null) {
 			File f = new File(path);
