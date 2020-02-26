@@ -7,11 +7,6 @@
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="genref">
-		<attributes>
-			<attribute name="ignore_optional_problems" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="con" path="org.eclipse.andmore.ANDROID_FRAMEWORK"/>
@@ -21,5 +16,6 @@
 	<classpathentry kind="lib" path="libs-local/core-1.1.0-rc03.jar"/>
 	<classpathentry kind="lib" path="libs-local/exifinterface-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs-local/play-services-measurement-api-17.1.0.jar"/>
+	<classpathentry kind="lib" path="libs-local/R.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
