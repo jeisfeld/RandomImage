@@ -100,32 +100,32 @@ public final class DialogUtil {
 	/**
 	 * Display an information message and go back to the current activity.
 	 *
-	 * @param activity        the current activity
+	 * @param activity the current activity
 	 * @param messageResource the message resource
-	 * @param args            arguments for the error message
+	 * @param args arguments for the error message
 	 */
 	public static void displayInfo(final Activity activity,
-								   final int messageResource,
-								   final Object... args) {
+			final int messageResource,
+			final Object... args) {
 		displayInfo(activity, null, 0, messageResource, args);
 	}
 
 	/**
 	 * Display an information message and go back to the current activity.
 	 *
-	 * @param activity           the current activity
-	 * @param listener           an optional listener waiting for the dialog response. If a listener is given, then the dialog will not
-	 *                           be automatically recreated on orientation change!
+	 * @param activity the current activity
+	 * @param listener an optional listener waiting for the dialog response. If a listener is given, then the dialog will not
+	 *            be automatically recreated on orientation change!
 	 * @param skipDialogResource the preference indicating if the info should be skipped. Value 0 should be used if the dialog is
-	 *                           non-skippable.
-	 * @param messageResource    the message resource
-	 * @param args               arguments for the error message
+	 *            non-skippable.
+	 * @param messageResource the message resource
+	 * @param args arguments for the error message
 	 */
 	public static void displayInfo(final Activity activity,
-								   final MessageDialogListener listener,
-								   final int skipDialogResource,
-								   final int messageResource,
-								   final Object... args) {
+			final MessageDialogListener listener,
+			final int skipDialogResource,
+			final int messageResource,
+			final Object... args) {
 		Bundle bundle = new Bundle();
 
 		if (skipDialogResource != 0) {
@@ -152,9 +152,9 @@ public final class DialogUtil {
 	/**
 	 * Display a toast.
 	 *
-	 * @param context  the current activity or context
+	 * @param context the current activity or context
 	 * @param resource the message resource
-	 * @param args     arguments for the error message
+	 * @param args arguments for the error message
 	 */
 	public static void displayToast(final Context context, final int resource, final Object... args) {
 		try {
@@ -179,16 +179,16 @@ public final class DialogUtil {
 	/**
 	 * Display a confirmation message asking for cancel or ok.
 	 *
-	 * @param activity        the current activity
-	 * @param listener        The listener waiting for the response
-	 * @param titleResource   the title of the confirmation dialog
-	 * @param buttonResource  the display on the positive button
+	 * @param activity the current activity
+	 * @param listener The listener waiting for the response
+	 * @param titleResource the title of the confirmation dialog
+	 * @param buttonResource the display on the positive button
 	 * @param messageResource the confirmation message
-	 * @param args            arguments for the confirmation message
+	 * @param args arguments for the confirmation message
 	 */
 	public static void displayConfirmationMessage(final Activity activity, final ConfirmDialogListener listener,
-												  final Integer titleResource, final int buttonResource,
-												  final int messageResource, final Object... args) {
+			final Integer titleResource, final int buttonResource,
+			final int messageResource, final Object... args) {
 		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
@@ -203,17 +203,17 @@ public final class DialogUtil {
 	/**
 	 * Display a confirmation message asking for cancel or ok.
 	 *
-	 * @param activity        the current activity
-	 * @param listener        The listener waiting for the response
-	 * @param titleResource   the resource with the title string
-	 * @param buttonResource  the display on the positive button
-	 * @param textValue       the text to be displayed in the input field
+	 * @param activity the current activity
+	 * @param listener The listener waiting for the response
+	 * @param titleResource the resource with the title string
+	 * @param buttonResource the display on the positive button
+	 * @param textValue the text to be displayed in the input field
 	 * @param messageResource the confirmation message
-	 * @param args            arguments for the confirmation message
+	 * @param args arguments for the confirmation message
 	 */
 	public static void displayInputDialog(final Activity activity,
-										  final RequestInputDialogListener listener, final int titleResource, final int buttonResource,
-										  final String textValue, final int messageResource, final Object... args) {
+			final RequestInputDialogListener listener, final int titleResource, final int buttonResource,
+			final String textValue, final int messageResource, final Object... args) {
 		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
 		bundle.putCharSequence(PARAM_MESSAGE, message);
@@ -229,22 +229,22 @@ public final class DialogUtil {
 	/**
 	 * Display a confirmation message asking for cancel or ok.
 	 *
-	 * @param activity        the current activity
-	 * @param listener        The listener waiting for the response
-	 * @param iconId          The icon to be used in the dialog.
-	 * @param titleResource   the resource with the title string
-	 * @param listValues      the array of values from which to be selected.
+	 * @param activity the current activity
+	 * @param listener The listener waiting for the response
+	 * @param iconId The icon to be used in the dialog.
+	 * @param titleResource the resource with the title string
+	 * @param listValues the array of values from which to be selected.
 	 * @param cancelButtonResource the text for cancel button.
 	 * @param messageResource the confirmation message
-	 * @param args            arguments for the confirmation message
+	 * @param args arguments for the confirmation message
 	 */
 	public static void displayListSelectionDialog(final Activity activity, // SUPPRESS_CHECKSTYLE
-												  final SelectFromListDialogListener listener,
-												  final int iconId,
-												  final int titleResource,
-												  final ArrayList<String> listValues,
-												  final int cancelButtonResource,
-												  final int messageResource, final Object... args) {
+			final SelectFromListDialogListener listener,
+			final int iconId,
+			final int titleResource,
+			final ArrayList<String> listValues,
+			final int cancelButtonResource,
+			final int messageResource, final Object... args) {
 		String message = capitalizeFirst(activity.getString(messageResource, args));
 		Bundle bundle = new Bundle();
 		if (iconId != 0) {
@@ -263,21 +263,21 @@ public final class DialogUtil {
 	/**
 	 * Display a confirmation message asking for cancel or ok.
 	 *
-	 * @param activity             the current activity
-	 * @param listener             The listener waiting for the response
-	 * @param titleResource        the resource with the title string
-	 * @param listValues           the array of values from which to be selected.
+	 * @param activity the current activity
+	 * @param listener The listener waiting for the response
+	 * @param titleResource the resource with the title string
+	 * @param listValues the array of values from which to be selected.
 	 * @param cancelButtonResource the text for cancel button.
-	 * @param messageResource      the confirmation message
-	 * @param args                 arguments for the confirmation message
+	 * @param messageResource the confirmation message
+	 * @param args arguments for the confirmation message
 	 */
 	public static void displayListSelectionDialog(final Activity activity,
-												  final SelectFromListDialogListener listener,
-												  final int titleResource,
-												  final ArrayList<String> listValues,
-												  final int cancelButtonResource,
-												  final int messageResource,
-												  final Object... args) {
+			final SelectFromListDialogListener listener,
+			final int titleResource,
+			final ArrayList<String> listValues,
+			final int cancelButtonResource,
+			final int messageResource,
+			final Object... args) {
 		displayListSelectionDialog(activity, listener, 0, titleResource, listValues, cancelButtonResource, messageResource, args);
 	}
 
@@ -285,13 +285,13 @@ public final class DialogUtil {
 	 * Create a message sub-string telling about the number and names of folders and or files.
 	 *
 	 * @param nestedImageLists The list of nested image lists.
-	 * @param folderList       The list of folders.
-	 * @param imageList        The list of files.
+	 * @param folderList The list of folders.
+	 * @param imageList The list of files.
 	 * @return The message sub-string.
 	 */
 	public static String createFileFolderMessageString(final List<String> nestedImageLists,
-													   final List<String> folderList,
-													   final List<String> imageList) {
+			final List<String> folderList,
+			final List<String> imageList) {
 		int nestedListCount = nestedImageLists == null ? 0 : nestedImageLists.size();
 		int folderCount = folderList == null ? 0 : folderList.size();
 		int imageCount = imageList == null ? 0 : imageList.size();
@@ -304,9 +304,10 @@ public final class DialogUtil {
 				? getFormattedString(R.string.partial_image_single, new File(imageList.get(0)).getName())
 				: getFormattedString(R.string.partial_image_multiple, imageCount);
 
-		String nestedListString = nestedImageLists == null ? "" : getFormattedString(
-				nestedImageLists.size() == 1 ? R.string.partial_nested_list_single : R.string.partial_nested_list_multiple,
-				createListNameString(nestedImageLists));
+		String nestedListString = nestedImageLists == null ? ""
+				: getFormattedString(
+						nestedImageLists.size() == 1 ? R.string.partial_nested_list_single : R.string.partial_nested_list_multiple,
+						createListNameString(nestedImageLists));
 
 		String folderString = null;
 		if (folderList != null && folderCount > 0) {
@@ -427,7 +428,7 @@ public final class DialogUtil {
 	 * Search for image folders if this was not done before.
 	 *
 	 * @param activity The calling activity.
-	 * @param reparse  flag indicating if the folders should be reparsed if this was already done before.
+	 * @param reparse flag indicating if the folders should be reparsed if this was already done before.
 	 * @return true if the dialog was started.
 	 */
 	public static boolean displaySearchForImageFoldersIfRequired(final Activity activity, final boolean reparse) {
@@ -445,7 +446,7 @@ public final class DialogUtil {
 	 * Get a formatted String out of a message resource and parameter strings.
 	 *
 	 * @param resourceId The message resource.
-	 * @param args       The parameter strings.
+	 * @param args The parameter strings.
 	 * @return The formatted string.
 	 */
 	private static String getFormattedString(final int resourceId, final Object... args) {
@@ -512,6 +513,11 @@ public final class DialogUtil {
 		 */
 		private MessageDialogListener mListener = null;
 
+		/**
+		 * Set the dialog listener.
+		 *
+		 * @param listener The dialog listener.
+		 */
 		public final void setListener(final MessageDialogListener listener) {
 			mListener = listener;
 		}
@@ -622,6 +628,11 @@ public final class DialogUtil {
 		 */
 		private ConfirmDialogListener mListener = null;
 
+		/**
+		 * Set the dialog listener.
+		 *
+		 * @param listener The dialog listener.
+		 */
 		public final void setListener(final ConfirmDialogListener listener) {
 			mListener = listener;
 		}
@@ -715,6 +726,11 @@ public final class DialogUtil {
 		 */
 		private RequestInputDialogListener mListener = null;
 
+		/**
+		 * Set the dialog listener.
+		 *
+		 * @param listener The dialog listener.
+		 */
 		public final void setListener(final RequestInputDialogListener listener) {
 			mListener = listener;
 		}
@@ -792,7 +808,7 @@ public final class DialogUtil {
 			 * Callback method for positive click from the confirmation dialog.
 			 *
 			 * @param dialog the confirmation dialog fragment.
-			 * @param text   the text returned from the input.
+			 * @param text the text returned from the input.
 			 */
 			void onDialogPositiveClick(DialogFragment dialog, String text);
 
@@ -814,6 +830,11 @@ public final class DialogUtil {
 		 */
 		private SelectFromListDialogListener mListener = null;
 
+		/**
+		 * Set the dialog listener.
+		 *
+		 * @param listener The dialog listener.
+		 */
 		public final void setListener(final SelectFromListDialogListener listener) {
 			mListener = listener;
 		}
@@ -904,9 +925,9 @@ public final class DialogUtil {
 			/**
 			 * Callback method for positive click from the confirmation dialog.
 			 *
-			 * @param dialog   the confirmation dialog fragment.
+			 * @param dialog the confirmation dialog fragment.
 			 * @param position the position of the array that was selected.
-			 * @param text     the text returned from the input.
+			 * @param text the text returned from the input.
 			 */
 			void onDialogPositiveClick(DialogFragment dialog, int position, String text);
 

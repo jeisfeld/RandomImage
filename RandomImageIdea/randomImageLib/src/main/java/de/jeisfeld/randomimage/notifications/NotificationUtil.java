@@ -11,9 +11,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -268,7 +270,7 @@ public final class NotificationUtil {
 			if (SystemUtil.isUsageStatsAvailable() && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
 				String lastPackageUsed = SystemUtil.getLastPackageUsed();
 				Set<String> packages = PreferenceUtil.getSharedPreferenceStringSet(R.string.key_pref_apps_without_popup_notifications);
-				if (packages != null && packages.contains(lastPackageUsed)) {
+				if (packages.contains(lastPackageUsed)) {
 					// skip notification and restart timer
 					NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 					return;
@@ -289,7 +291,14 @@ public final class NotificationUtil {
 				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 				if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
 					Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-					vibrator.vibrate(VIBRATION_PATTERN, -1);
+
+					if (VERSION.SDK_INT >= VERSION_CODES.O) {
+						vibrator.vibrate(VibrationEffect.createWaveform(VIBRATION_PATTERN, -1),
+								new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT).build());
+					}
+					else {
+						vibrator.vibrate(VIBRATION_PATTERN, -1);
+					}
 				}
 			}
 			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
@@ -610,7 +619,7 @@ public final class NotificationUtil {
 		// Cancel notifications which are not needed any more.
 		if (previousMissingMounts != null) {
 			for (String previousMissingMount : previousMissingMounts) {
-				if (!missingMountReverseMap.keySet().contains(previousMissingMount)) {
+				if (!missingMountReverseMap.containsKey(previousMissingMount)) {
 					NotificationUtil.cancelNotification(context, previousMissingMount, NotificationType.UNMOUNTED_PATH);
 				}
 			}

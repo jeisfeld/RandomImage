@@ -246,6 +246,11 @@ public class ThumbImageView extends FrameLayout {
 		mCheckBoxMarked.setChecked(marked);
 	}
 
+	/**
+	 * Get information if the view is marked.
+	 *
+	 * @return the isMarked flag.
+	 */
 	public final boolean isMarked() {
 		return mIsMarked;
 	}

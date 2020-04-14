@@ -57,10 +57,20 @@ public class ListElement {
 		return mProperties;
 	}
 
+	/**
+	 * Get the type.
+	 *
+	 * @return the type
+	 */
 	public final Type getType() {
 		return mType;
 	}
 
+	/**
+	 * Get the name.
+	 *
+	 * @return the name
+	 */
 	public final String getName() {
 		return mName;
 	}
@@ -153,7 +163,8 @@ public class ListElement {
 
 		/**
 		 * Base constructor of a type.
-		 *@param description The description.
+		 *
+		 * @param description The description.
 		 */
 		Type(final String description) {
 			this.mDescription = description;
@@ -161,7 +172,8 @@ public class ListElement {
 
 		/**
 		 * Constructor of a type, with prefix.
-		 *@param description The description.
+		 *
+		 * @param description The description.
 		 * @param prefix The prefix.
 		 */
 		Type(final String description, final String prefix) {
@@ -198,10 +210,20 @@ public class ListElement {
 			return mDescription;
 		}
 
+		/**
+		 * Get the element pattern.
+		 *
+		 * @return the element pattern.
+		 */
 		public Pattern getElementPattern() {
 			return mElementPattern;
 		}
 
+		/**
+		 * Get the property pattern.
+		 *
+		 * @return the property pattern
+		 */
 		public Pattern getPropertyPattern() {
 			return mPropertyPattern;
 		}

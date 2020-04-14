@@ -175,7 +175,7 @@ public class PinchImageView extends ImageView {
 	 * Standard constructor to be implemented for all views.
 	 *
 	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs   The attributes of the XML tag that is inflating the view.
+	 * @param attrs The attributes of the XML tag that is inflating the view.
 	 * @see android.view.View#View(Context, AttributeSet)
 	 */
 	public PinchImageView(final Context context, final AttributeSet attrs) {
@@ -185,10 +185,10 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Standard constructor to be implemented for all views.
 	 *
-	 * @param context  The Context the view is running in, through which it can access the current theme, resources, etc.
-	 * @param attrs    The attributes of the XML tag that is inflating the view.
+	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
+	 * @param attrs The attributes of the XML tag that is inflating the view.
 	 * @param defStyle An attribute in the current theme that contains a reference to a style resource that supplies default
-	 *                 values for the view. Can be 0 to not look for defaults.
+	 *            values for the view. Can be 0 to not look for defaults.
 	 * @see android.view.View#View(Context, AttributeSet, int)
 	 */
 	public PinchImageView(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -218,9 +218,9 @@ public class PinchImageView extends ImageView {
 	 * Fill with an image, making the image fit into the view. If the pathName is unchanged (restored), then it is not
 	 * refilled. The sizing (for fit) happens only once at first initialization of the view.
 	 *
-	 * @param pathName    The pathname of the image
-	 * @param activity    The triggering activity (required for bitmap caching)
-	 * @param cacheIndex  A unique index of the view in the activity
+	 * @param pathName The pathname of the image
+	 * @param activity The triggering activity (required for bitmap caching)
+	 * @param cacheIndex A unique index of the view in the activity
 	 * @param contentView the content view holding this view.
 	 */
 	public final void setImage(final String pathName, final Activity activity, final int cacheIndex, final View contentView) {
@@ -282,7 +282,6 @@ public class PinchImageView extends ImageView {
 			doInitialScaling();
 		}
 	}
-
 
 	/**
 	 * Return the natural scale factor that fits the image into the view.
@@ -354,7 +353,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Rotate the bitmap if requested and if it fits better into the view.
 	 *
-	 * @param bitmap        the original bitmap.
+	 * @param bitmap the original bitmap.
 	 * @param rotationAngle the rotation angle. May be 0, 90 or -90.
 	 * @return the rotated bitmap.
 	 */
@@ -372,7 +371,7 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Check if the image has the wrong aspect ratio for the view.
 	 *
-	 * @param bitmap      the bitmap to be considered.
+	 * @param bitmap the bitmap to be considered.
 	 * @param contentView the content view holding this view.
 	 * @return The rotation angle to optimize the image view.
 	 */
@@ -406,8 +405,8 @@ public class PinchImageView extends ImageView {
 	/**
 	 * Animate the image out of the view.
 	 *
-	 * @param velocityX      The x velocity specifying the direction of animation.
-	 * @param velocityY      The y velocity specifying the direction of animation.
+	 * @param velocityX The x velocity specifying the direction of animation.
+	 * @param velocityY The y velocity specifying the direction of animation.
 	 * @param postActivities Activities to be done after the animation is finished.
 	 */
 	public final void animateOut(final float velocityX, final float velocityY, final Runnable postActivities) {
@@ -678,10 +677,20 @@ public class PinchImageView extends ImageView {
 		return moved;
 	}
 
+	/**
+	 * Set the gesture detector.
+	 *
+	 * @param gestureDetector The gesture detector.
+	 */
 	public final void setGestureDetector(final GestureDetector gestureDetector) {
 		this.mGestureDetector = gestureDetector;
 	}
 
+	/**
+	 * Set the UpDownListener.
+	 *
+	 * @param upDownListener The UpDownListener.
+	 */
 	public final void setUpDownListener(final UpDownListener upDownListener) {
 		this.mUpDownListener = upDownListener;
 	}
@@ -724,6 +733,10 @@ public class PinchImageView extends ImageView {
 		super.onRestoreInstanceState(enhancedState);
 	}
 
+	/**
+	 * Get the background color.
+	 * @return The background color.
+	 */
 	public final int getBackgroundColor() {
 		return mBackgroundColor;
 	}
@@ -762,7 +775,6 @@ public class PinchImageView extends ImageView {
 		 */
 		void onUp();
 	}
-
 
 	/**
 	 * The way in which the image is initially scaled.
