@@ -164,14 +164,13 @@ public class Application extends android.app.Application {
 
 		int languageSetting = Integer.parseInt(languageString);
 		switch (languageSetting) {
-		case 0:
-			return DEFAULT_LOCALE;
 		case 1:
 			return Locale.ENGLISH;
 		case 2:
 			return Locale.GERMAN;
 		case 3: // MAGIC_NUMBER
 			return new Locale("es");
+		case 0:
 		default:
 			return DEFAULT_LOCALE;
 		}

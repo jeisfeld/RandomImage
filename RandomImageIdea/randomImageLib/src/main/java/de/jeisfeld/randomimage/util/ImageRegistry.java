@@ -136,8 +136,6 @@ public final class ImageRegistry {
 	private static ArrayList<String> filterNameList(final ArrayList<String> nameList, final ListFiltering listFiltering) {
 		Collections.sort(nameList, Collator.getInstance());
 		switch (listFiltering) {
-		case ALL_LISTS:
-			return nameList;
 		case HIDE_BY_REGEXP:
 			String hiddenListsPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_lists_pattern);
 			boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
@@ -149,6 +147,7 @@ public final class ImageRegistry {
 				}
 			}
 			return filteredList;
+		case ALL_LISTS:
 		default:
 			return nameList;
 		}

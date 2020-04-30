@@ -595,11 +595,7 @@ public class GifDecoder {
 					}
 					break;
 				case 0xfe:// MAGIC_NUMBER comment extension
-					skip();
-					break;
 				case 0x01:// plain text extension
-					skip();
-					break;
 				default: // uninteresting extension
 					skip();
 				}

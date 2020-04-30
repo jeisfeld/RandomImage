@@ -412,6 +412,7 @@ public final class StandardImageList extends ImageList {
 					for (ListElement nestedList : mNestedLists.keySet()) {
 						if (!mCustomWeights.containsKey(nestedList)) {
 							hasUnweightedElements = true;
+							break;
 						}
 					}
 				}

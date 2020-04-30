@@ -809,14 +809,13 @@ public class PinchImageView extends ImageView {
 		 */
 		public static ScaleType fromResourceScaleType(final int resourceScaleType) {
 			switch (resourceScaleType) {
-			case 0:
-				return FIT;
 			case 1:
 				return STRETCH;
 			case 2:
 				return TURN_FIT;
 			case 3: // MAGIC_NUMBER
 				return TURN_STRETCH;
+			case 0:
 			default:
 				return FIT;
 			}

@@ -45,7 +45,6 @@ public final class GifAnimationDrawable extends AnimationDrawable {
 	 * @param rotationAngle a rotation angle of 0, 90 or -90 degrees.
 	 * @throws IOException Exception while reading.
 	 */
-	@SuppressWarnings("resource")
 	public GifAnimationDrawable(final Context context, final File file, final int rotationAngle) throws IOException {
 		super();
 		InputStream bis = null;

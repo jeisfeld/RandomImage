@@ -1,8 +1,5 @@
 package de.jeisfeld.randomimage.widgets;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
@@ -64,7 +64,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 	/**
 	 * Factory class handling the image stack for the stacked image widget.
 	 */
-	private final class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+	private static final class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 		/**
 		 * The file names of the stacked images.
 		 */

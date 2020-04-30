@@ -145,11 +145,10 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		switch (mCurrentAction) {
-		case DISPLAY:
-			return false;
 		case ADD:
 			getMenuInflater().inflate(R.menu.add_to_list, menu);
 			return true;
+		case DISPLAY:
 		default:
 			return false;
 		}
@@ -160,10 +159,9 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		int id = item.getItemId();
 
 		switch (mCurrentAction) {
-		case DISPLAY:
-			return super.onOptionsItemSelected(item);
 		case ADD:
 			return onOptionsItemSelectedAdd(id);
+		case DISPLAY:
 		default:
 			return super.onOptionsItemSelected(item);
 		}

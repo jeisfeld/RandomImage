@@ -29,9 +29,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import de.jeisfeld.randomimage.Application;
-
 import androidx.annotation.RequiresApi;
+import de.jeisfeld.randomimage.Application;
 
 /**
  * Utility class for getting system information.
@@ -149,6 +148,7 @@ public final class SystemUtil {
 	 * @param activity The triggering activity.
 	 * @param lock if true, the orientation is locked, otherwise it's unlocked.
 	 */
+	@SuppressLint("SourceLockedOrientationActivity")
 	public static void lockOrientation(final Activity activity, final boolean lock) {
 		if (activity == null) {
 			return;

@@ -1190,7 +1190,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * A class allowing to select a random file name out of an image folder.
 	 */
-	private final class FolderRandomFileProvider implements RandomFileProvider {
+	private static final class FolderRandomFileProvider implements RandomFileProvider {
 		/**
 		 * The list of files in the folder, being the base of the provider.
 		 */

@@ -70,7 +70,7 @@
     <string name="dialog_info_restore_of_lists">Las listas %1$s se han restauradas.</string>
     <string name="dialog_info_delete_of_lists">Las listas %1$s fueron borradas.</string>
     <string name="dialog_info_not_allowed_to_delete_all_lists">No está permitido borrar todas las listas. Asegúrese de mantener al menos una lista.</string>
-    <string name="dialog_info_backup_of_list_single">La lista %1$s fue guardada en la carpeta «%1$s».</string>
+    <string name="dialog_info_backup_of_list_single">La lista %1$s fue guardada en la carpeta «%2$s».</string>
     <string name="dialog_info_restore_of_list_single">La lista %1$s ha sido restaurada.</string>
     <string name="dialog_info_delete_of_list_single">La lista %1$s fue borrada.</string>
     <string name="dialog_info_no_images_in_folder">La carpeta «%1$s» no contiene imágenes.</string>
