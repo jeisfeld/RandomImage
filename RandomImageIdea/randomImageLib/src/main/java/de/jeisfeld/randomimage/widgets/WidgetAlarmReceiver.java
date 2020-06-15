@@ -3,10 +3,8 @@ package de.jeisfeld.randomimage.widgets;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
-import de.jeisfeld.randomimage.SdMountReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.util.AlarmReceiver;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -103,12 +100,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 		}
 
 		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
-		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
-		PackageManager pm = context.getPackageManager();
-
-		pm.setComponentEnabledSetting(receiver,
-				PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-				PackageManager.DONT_KILL_APP);
+		reEnableAlarmsOnBoot(context);
 	}
 
 	/**
@@ -126,12 +118,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 			ArrayList<Integer> allWidgetIds = GenericWidget.getAllWidgetIds();
 			if ((allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId)
 					&& NotificationSettingsActivity.getNotificationIds().size() == 0) {
-				ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
-				PackageManager pm = context.getPackageManager();
-
-				pm.setComponentEnabledSetting(receiver,
-						PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-						PackageManager.DONT_KILL_APP);
+				reEnableAlarmsOnBoot(context);
 			}
 		}
 	}

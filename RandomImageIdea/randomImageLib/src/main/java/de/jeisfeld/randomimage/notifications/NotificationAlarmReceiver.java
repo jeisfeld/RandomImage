@@ -2,10 +2,8 @@ package de.jeisfeld.randomimage.notifications;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
-import de.jeisfeld.randomimage.SdMountReceiver;
 import de.jeisfeld.randomimage.util.AlarmReceiver;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
@@ -199,14 +196,9 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, alarmTimeMillis);
 		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(frequency));
 
-		// Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
-		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
-		PackageManager pm = context.getPackageManager();
-
-		pm.setComponentEnabledSetting(receiver,
-				PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-				PackageManager.DONT_KILL_APP);
+		reEnableAlarmsOnBoot(context);
 	}
+
 
 	/**
 	 * Sets an alarm that runs at the given interval in order to cancel a notification. When the alarm fires, the app broadcasts an
@@ -267,12 +259,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 			List<Integer> allNotificationIds = NotificationSettingsActivity.getNotificationIds();
 			if ((allNotificationIds.size() == 0 || allNotificationIds.size() == 1 && allNotificationIds.get(0) == notificationId)
 					&& GenericWidget.getAllWidgetIds().size() == 0) {
-				ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
-				PackageManager pm = context.getPackageManager();
-
-				pm.setComponentEnabledSetting(receiver,
-						PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-						PackageManager.DONT_KILL_APP);
+				reEnableAlarmsOnBoot(context);
 			}
 		}
 	}

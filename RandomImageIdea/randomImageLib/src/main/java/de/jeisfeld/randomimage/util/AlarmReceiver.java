@@ -4,9 +4,13 @@ import android.app.AlarmManager;
 import android.app.AlarmManager.AlarmClockInfo;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+
+import de.jeisfeld.randomimage.SdMountReceiver;
 
 /**
  * Receiver for the alarm triggering the update of the image widget.
@@ -75,6 +79,21 @@ public abstract class AlarmReceiver extends BroadcastReceiver {
 		else {
 			return AlarmType.INEXACT;
 		}
+	}
+
+	/**
+	 * Enable SdMountReceiver to automatically restart the alarm when the device is rebooted.
+	 *
+	 * @param context The context.
+	 */
+	protected static void reEnableAlarmsOnBoot(final Context context) {
+		ComponentName receiver = new ComponentName(context, SdMountReceiver.class);
+		PackageManager pm = context.getPackageManager();
+
+		pm.setComponentEnabledSetting(receiver,
+				PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+				PackageManager.DONT_KILL_APP);
+
 	}
 
 	/**
