@@ -380,7 +380,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
 		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
-		mHideNavigationBar = !mChangeImageWithSingleTap;
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -435,6 +434,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		else {
 			configureWidgetProperties();
 		}
+		mHideNavigationBar = !mChangeImageWithSingleTap;
 
 		if (mScaleType == ScaleType.TURN_FIT || mScaleType == ScaleType.TURN_STRETCH) {
 			int orientation = getResources().getConfiguration().orientation;
@@ -523,14 +523,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 			getWindow().setNavigationBarColor(backgroundColor);
 
 			mIsDark = Color.red(backgroundColor) + Color.green(backgroundColor) + Color.blue(backgroundColor) <= 384; // MAGIC_NUMBER
-			setNavigationiBarFlags();
+			setNavigationBarFlags();
 		}
 	}
 
 	/**
 	 * Set system flags for navigation bar.
 	 */
-	private void setNavigationiBarFlags() {
+	private void setNavigationBarFlags() {
 		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
 			int flag = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
 
@@ -759,7 +759,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 		mSavingInstanceState = false;
 		mRecreatedAfterSavingInstanceState = false;
-		setNavigationiBarFlags();
+		setNavigationBarFlags();
 		mChangeByTimeoutHandler.resume();
 	}
 
@@ -998,7 +998,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			public boolean onSingleTapUp(final MotionEvent e) {
 				if (!mChangeImageWithSingleTap) {
 					mHideNavigationBar = !mHideNavigationBar;
-					setNavigationiBarFlags();
+					setNavigationBarFlags();
 					return true;
 				}
 
