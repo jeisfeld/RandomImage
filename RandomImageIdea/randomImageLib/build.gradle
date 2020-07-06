@@ -23,6 +23,8 @@ android {
 
 dependencies {
     implementation files('libs/annotations.jar')
+    implementation files('libs/sdk-v1.0.0.jar')
+    implementation files('libs/spenremote-v1.0.1.jar')
     implementation 'com.google.firebase:firebase-core:17.4.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.exifinterface:exifinterface:1.2.0'

@@ -19,6 +19,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.samsung.android.sdk.penremote.ButtonEvent;
+import com.samsung.android.sdk.penremote.SpenEvent;
+import com.samsung.android.sdk.penremote.SpenEventListener;
+import com.samsung.android.sdk.penremote.SpenRemote;
+import com.samsung.android.sdk.penremote.SpenRemote.ConnectionResultCallback;
+import com.samsung.android.sdk.penremote.SpenUnit;
+import com.samsung.android.sdk.penremote.SpenUnitManager;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -275,6 +283,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Flag indicating if a usage hint is still to be displayed.
 	 */
 	private boolean mDisplayHint = true;
+	/**
+	 * The manager of S-Pen gestures.
+	 */
+	private SpenUnitManager mSpenUnitManager = null;
 
 	/**
 	 * A Handler used for automatically changing the image by timeout.
@@ -445,6 +457,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		createGestureDetector();
 		createUpDownListener();
+		createSPenListener();
 
 		final String folderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		if (folderName != null) {
@@ -465,19 +478,19 @@ public class DisplayRandomImageActivity extends StartActivity {
 					}
 					else {
 						DialogUtil.displayListSelectionDialog(this, new SelectFromListDialogListener() {
-							@Override
-							public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
-								mListName = text;
-								ImageRegistry.switchToImageList(mListName, CreationStyle.NONE, true);
-								mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false),
-										mCurrentFileName, mFlipType, mRandomFileProvider);
-								displayImageListOnCreate(savedInstanceState, null);
-							}
+									@Override
+									public void onDialogPositiveClick(final DialogFragment dialog, final int position, final String text) {
+										mListName = text;
+										ImageRegistry.switchToImageList(mListName, CreationStyle.NONE, true);
+										mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false),
+												mCurrentFileName, mFlipType, mRandomFileProvider);
+										displayImageListOnCreate(savedInstanceState, null);
+									}
 
-							@Override
-							public void onDialogNegativeClick(final DialogFragment dialog) {
-								MainConfigurationActivity.startActivity(DisplayRandomImageActivity.this);
-							}
+									@Override
+									public void onDialogNegativeClick(final DialogFragment dialog) {
+										MainConfigurationActivity.startActivity(DisplayRandomImageActivity.this);
+									}
 								}, R.string.title_dialog_select_list_name, listNames, R.string.title_activity_main_configuration,
 								R.string.dialog_select_list_for_display);
 						return;
@@ -728,6 +741,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 		if (mUserIsLeaving || !mSavingInstanceState) {
 			sendStatistics();
 		}
+		SpenRemote spenRemote = SpenRemote.getInstance();
+		if (spenRemote.isConnected()) {
+			spenRemote.disconnect(this);
+		}
+		mSpenUnitManager = null;
 	}
 
 	@Override
@@ -761,6 +779,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		mRecreatedAfterSavingInstanceState = false;
 		setNavigationBarFlags();
 		mChangeByTimeoutHandler.resume();
+		registerSPenListener();
 	}
 
 	@Override
@@ -768,6 +787,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		super.onPause();
 		mTrackingDuration = System.currentTimeMillis() - mTrackingTimestamp;
 		mChangeByTimeoutHandler.pause();
+		unregisterSPenListener();
 	}
 
 	/**
@@ -917,6 +937,52 @@ public class DisplayRandomImageActivity extends StartActivity {
 	}
 
 	/**
+	 * Display the last image.
+	 */
+	private void displayLastImage() {
+		String tempFileName = mCurrentFileName;
+		mCurrentFileName = mPreviousFileName;
+		mPreviousFileName = tempFileName;
+		if (mDoPreload) {
+			int tempCacheIndex = mCurrentCacheIndex;
+			mCurrentCacheIndex = mPreviousCacheIndex;
+			mPreviousCacheIndex = tempCacheIndex;
+		}
+		if (mDoPreload && mPreviousImageView != null) {
+			PinchImageView tempImageView = mCurrentImageView;
+			mCurrentImageView = mPreviousImageView;
+			mPreviousImageView = tempImageView;
+		}
+		else {
+			mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
+		}
+		mIsGoingBackward = !mIsGoingBackward;
+		setContentView(mCurrentImageView);
+
+		// need to move mRandomFileProvider to new position.
+		if (mIsGoingBackward) {
+			mRandomFileProvider.goBackward();
+		}
+		else {
+			mRandomFileProvider.goForward();
+		}
+
+		if (mDoPreload) {
+			if (mIsGoingBackward) {
+				mRandomFileProvider.goBackward();
+				mNextFileName = mRandomFileProvider.getCurrentFileName();
+				mRandomFileProvider.goForward();
+			}
+			else {
+				mRandomFileProvider.goForward();
+				mNextFileName = mRandomFileProvider.getCurrentFileName();
+				mRandomFileProvider.goBackward();
+			}
+			mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
+		}
+	}
+
+	/**
 	 * Create the gesture detector handling up/down movements.
 	 */
 	private void createUpDownListener() {
@@ -931,6 +997,85 @@ public class DisplayRandomImageActivity extends StartActivity {
 				mChangeByTimeoutHandler.resume();
 			}
 		};
+	}
+
+	/**
+	 * Create a listener for the Samsung S-Pen.
+	 */
+	private void createSPenListener() {
+		final SpenRemote spenRemote = SpenRemote.getInstance();
+		if (!spenRemote.isFeatureEnabled(SpenRemote.FEATURE_TYPE_BUTTON)) {
+			return;
+		}
+		if (!spenRemote.isConnected()) {
+			spenRemote.connect(this, new ConnectionResultCallback() {
+				@Override
+				public void onSuccess(final SpenUnitManager spenUnitManager) {
+					mSpenUnitManager = spenUnitManager;
+					registerSPenListener();
+				}
+
+				@Override
+				public void onFailure(final int i) {
+					// do nothing
+				}
+			});
+		}
+	}
+
+	/**
+	 * Register the listener for SPen.
+	 */
+	private void registerSPenListener() {
+		if (mSpenUnitManager != null) {
+			mSpenUnitManager.registerSpenEventListener(new SpenEventListener() {
+				/**
+				 * The max difference of two clicks considered as double click
+				 */
+				private static final long LONG_CLICK_DURATION = 500;
+				/**
+				 * The last timestamp.
+				 */
+				private long mDownTimestamp = 0;
+
+				@Override
+				public void onEvent(final SpenEvent spenEvent) {
+					if (mRandomFileProvider == null) {
+						return;
+					}
+					final ButtonEvent buttonEvent = new ButtonEvent(spenEvent);
+					switch (buttonEvent.getAction()) {
+					case ButtonEvent.ACTION_DOWN:
+						mDownTimestamp = buttonEvent.getTimeStamp();
+						break;
+					case ButtonEvent.ACTION_UP:
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (mDownTimestamp > 0 && buttonEvent.getTimeStamp() - mDownTimestamp > LONG_CLICK_DURATION) {
+									displayLastImage();
+								}
+								else {
+									displayRandomImage(true);
+								}
+							}
+						});
+						break;
+					default:
+						// do nothing
+					}
+				}
+			}, mSpenUnitManager.getUnit(SpenUnit.TYPE_BUTTON));
+		}
+	}
+
+	/**
+	 * Unregister the listener for SPen.
+	 */
+	private void unregisterSPenListener() {
+		if (mSpenUnitManager != null) {
+			mSpenUnitManager.unregisterSpenEventListener(mSpenUnitManager.getUnit(SpenUnit.TYPE_BUTTON));
+		}
 	}
 
 	/**
@@ -1033,52 +1178,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			public void onLongPress(final MotionEvent e) {
 				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName,
 						mAppWidgetId, mPreventDisplayAll, "Display random image");
-			}
-
-			/**
-			 * Display the last image.
-			 */
-			private void displayLastImage() {
-				String tempFileName = mCurrentFileName;
-				mCurrentFileName = mPreviousFileName;
-				mPreviousFileName = tempFileName;
-				if (mDoPreload) {
-					int tempCacheIndex = mCurrentCacheIndex;
-					mCurrentCacheIndex = mPreviousCacheIndex;
-					mPreviousCacheIndex = tempCacheIndex;
-				}
-				if (mDoPreload && mPreviousImageView != null) {
-					PinchImageView tempImageView = mCurrentImageView;
-					mCurrentImageView = mPreviousImageView;
-					mPreviousImageView = tempImageView;
-				}
-				else {
-					mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
-				}
-				mIsGoingBackward = !mIsGoingBackward;
-				setContentView(mCurrentImageView);
-
-				// need to move mRandomFileProvider to new position.
-				if (mIsGoingBackward) {
-					mRandomFileProvider.goBackward();
-				}
-				else {
-					mRandomFileProvider.goForward();
-				}
-
-				if (mDoPreload) {
-					if (mIsGoingBackward) {
-						mRandomFileProvider.goBackward();
-						mNextFileName = mRandomFileProvider.getCurrentFileName();
-						mRandomFileProvider.goForward();
-					}
-					else {
-						mRandomFileProvider.goForward();
-						mNextFileName = mRandomFileProvider.getCurrentFileName();
-						mRandomFileProvider.goBackward();
-					}
-					mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
-				}
 			}
 		});
 	}
