@@ -741,11 +741,14 @@ public class DisplayRandomImageActivity extends StartActivity {
 		if (mUserIsLeaving || !mSavingInstanceState) {
 			sendStatistics();
 		}
-		SpenRemote spenRemote = SpenRemote.getInstance();
-		if (spenRemote.isConnected()) {
-			spenRemote.disconnect(this);
+
+		if (SystemUtil.hasSamsungApi()) {
+			SpenRemote spenRemote = SpenRemote.getInstance();
+			if (spenRemote.isConnected()) {
+				spenRemote.disconnect(this);
+			}
+			mSpenUnitManager = null;
 		}
-		mSpenUnitManager = null;
 	}
 
 	@Override
@@ -1003,23 +1006,25 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Create a listener for the Samsung S-Pen.
 	 */
 	private void createSPenListener() {
-		final SpenRemote spenRemote = SpenRemote.getInstance();
-		if (!spenRemote.isFeatureEnabled(SpenRemote.FEATURE_TYPE_BUTTON)) {
-			return;
-		}
-		if (!spenRemote.isConnected()) {
-			spenRemote.connect(this, new ConnectionResultCallback() {
-				@Override
-				public void onSuccess(final SpenUnitManager spenUnitManager) {
-					mSpenUnitManager = spenUnitManager;
-					registerSPenListener();
-				}
+		if (SystemUtil.hasSamsungApi()) {
+			final SpenRemote spenRemote = SpenRemote.getInstance();
+			if (!spenRemote.isFeatureEnabled(SpenRemote.FEATURE_TYPE_BUTTON)) {
+				return;
+			}
+			if (!spenRemote.isConnected()) {
+				spenRemote.connect(this, new ConnectionResultCallback() {
+					@Override
+					public void onSuccess(final SpenUnitManager spenUnitManager) {
+						mSpenUnitManager = spenUnitManager;
+						registerSPenListener();
+					}
 
-				@Override
-				public void onFailure(final int i) {
-					// do nothing
-				}
-			});
+					@Override
+					public void onFailure(final int i) {
+						// do nothing
+					}
+				});
+			}
 		}
 	}
 

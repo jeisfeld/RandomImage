@@ -146,7 +146,7 @@ public final class SystemUtil {
 	 * Lock or unlock the screen orientation programmatically.
 	 *
 	 * @param activity The triggering activity.
-	 * @param lock if true, the orientation is locked, otherwise it's unlocked.
+	 * @param lock     if true, the orientation is locked, otherwise it's unlocked.
 	 */
 	@SuppressLint("SourceLockedOrientationActivity")
 	public static void lockOrientation(final Activity activity, final boolean lock) {
@@ -215,7 +215,17 @@ public final class SystemUtil {
 		}
 		Context context = Application.getAppContext();
 		AppOpsManager appOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-		int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), context.getPackageName());
+		if (appOps == null) {
+			return false;
+		}
+		int mode;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+			mode = appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), context.getPackageName());
+		}
+		else {
+			//noinspection deprecation
+			mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), context.getPackageName());
+		}
 		if (mode == AppOpsManager.MODE_DEFAULT) {
 			return context.checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED;
 		}
@@ -234,6 +244,9 @@ public final class SystemUtil {
 		Context context = Application.getAppContext();
 		@SuppressLint("InlinedApi")
 		UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+		if (usm == null) {
+			return new ArrayList<>();
+		}
 		long time = System.currentTimeMillis();
 		List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - TimeUnit.DAYS.toMillis(1), time);
 
@@ -271,6 +284,21 @@ public final class SystemUtil {
 	}
 
 	/**
+	 * Give information if the device supports Samsung API.
+	 *
+	 * @return true if Samsung API is supported.
+	 */
+	public static boolean hasSamsungApi() {
+		try {
+			Class.forName("com.samsung.android.feature.SemFloatingFeature");
+			return true;
+		}
+		catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Bean to store information about an application.
 	 */
 	public static final class ApplicationInfo {
@@ -287,7 +315,7 @@ public final class SystemUtil {
 		 * Standard constructor, passing package name and label name.
 		 *
 		 * @param packageName The package name.
-		 * @param labelName The label name.
+		 * @param labelName   The label name.
 		 */
 		private ApplicationInfo(final String packageName, final String labelName) {
 			this.mPackageName = packageName;
