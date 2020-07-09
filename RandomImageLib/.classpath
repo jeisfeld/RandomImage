@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="libs-local/exifinterface-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs-local/play-services-measurement-api-17.1.0.jar"/>
 	<classpathentry kind="lib" path="libs-local/R.jar"/>
+	<classpathentry kind="lib" path="libs-local/documentfile-1.0.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

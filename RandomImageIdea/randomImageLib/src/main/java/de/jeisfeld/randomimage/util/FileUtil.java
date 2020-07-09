@@ -25,10 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.jeisfeld.randomimage.Application;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
-import de.jeisfeld.randomimage.Application;
 
 /**
  * Utility class for helping parsing file systems.
@@ -82,7 +83,6 @@ public final class FileUtil {
 	 * @param target The target file
 	 * @return true if the copying was successful.
 	 */
-	@SuppressWarnings("null")
 	public static boolean copyFile(final File source, final File target) {
 		FileInputStream inStream = null;
 		FileOutputStream outStream = null;

@@ -153,9 +153,9 @@ public class SettingsFragment extends PreferenceFragment {
 			resetBackupPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				@Override
 				public boolean onPreferenceClick(final Preference preference) {
-					Uri uri = PreferenceUtil.getSharedPreferenceUri(R.string.key_backup_folder_uri);
-					if (uri != null) {
-						Application.getAppContext().getContentResolver().releasePersistableUriPermission(uri,
+					Uri backupUri = PreferenceUtil.getSharedPreferenceUri(R.string.key_backup_folder_uri);
+					if (backupUri != null) {
+						Application.getAppContext().getContentResolver().releasePersistableUriPermission(backupUri,
 								Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 					}
 					PreferenceUtil.removeSharedPreference(R.string.key_backup_folder_uri);
