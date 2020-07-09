@@ -86,6 +86,7 @@
     <string name="dialog_select_list_for_notification">Seleccione la lista de imágenes que desea asignar a esta notificación.</string>
     <string name="dialog_select_list_for_external_add">Seleccione la lista de imágenes a la que desea agregar las imágenes seleccionadas.</string>
     <string name="dialog_select_list_for_inclusion">Seleccione la lista de imágenes que desea agregar a la lista actual.</string>
+    <string name="dialog_select_backup_folder">Seleccione una carpeta para las copias de seguridad y otorgue acceso a ella.</string>
     <string name="dialog_confirmation_delete_list">¿Realmente desea borrar la lista de imágenes «%2$s»?</string>
     <string name="dialog_confirmation_delete_lists">¿Realmente desea borrar las %1$d listas de imágenes seleccionadas?</string>
     <string name="dialog_confirmation_remove">¿Realmente desea eliminar %2$s de la lista «%1$s»?</string>

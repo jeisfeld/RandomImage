@@ -87,6 +87,7 @@
     <string name="dialog_select_list_for_notification">Bitte wählen Sie die Bildliste, die Sie dieser Benachrichtigung zuordnen wollen.</string>
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
     <string name="dialog_select_list_for_inclusion">Bitte wählen Sie die Bildliste, die Sie zur aktuellen Liste hinzufügen wollen.</string>
+    <string name="dialog_select_backup_folder">Bitte wählen Sie ein Verzeichnis für Sicherungskopien und geben Sie Zugriff darauf.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%2$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_delete_lists">Wollen Sie die %1$d ausgewählten Bildlisten wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s” entfernen?</string>

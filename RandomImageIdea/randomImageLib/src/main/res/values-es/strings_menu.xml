@@ -30,7 +30,9 @@
 
     <!-- Entries related to buttons in the settings -->
     <string name="menu_hide_all_info">No mostrar mensajes de información</string>
-    <string name="menu_search_image_Folders">Buscar carpetas de imágenes</string>
+    <string name="menu_search_image_folders">Buscar carpetas de imágenes</string>
+    <string name="menu_reset_backup_folder">Restablecer carpeta de copia de seguridad</string>
+    <string name="menu_reset_backup_folder_unset">(No escablecido)</string>
     <string name="menu_apps_without_popup_notifications">Aplicaciones sin notificaciones emergentes</string>
     <string name="menu_show_all_info">Mostrar todos los mensajes de información</string>
     <string name="menu_title_contact_developer">Contacto con el desarrollador</string>

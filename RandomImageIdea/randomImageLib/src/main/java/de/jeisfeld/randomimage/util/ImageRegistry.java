@@ -1,5 +1,7 @@
 package de.jeisfeld.randomimage.util;
 
+import android.net.Uri;
+import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.util.Log;
 
@@ -9,8 +11,11 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageList.ImageListInfo;
 import de.jeisfeld.randomimagelib.R;
@@ -19,11 +24,6 @@ import de.jeisfeld.randomimagelib.R;
  * Utility class for storing and persisting the list of image names.
  */
 public final class ImageRegistry {
-	/**
-	 * The folder where config files are stored.
-	 */
-	private static final File CONFIG_FILE_FOLDER = Application.getAppContext().getExternalFilesDir(null);
-
 	/**
 	 * The folder where backup files are stored.
 	 */
@@ -179,9 +179,19 @@ public final class ImageRegistry {
 	 * @return The names of all available image lists in the backup.
 	 */
 	public static ArrayList<String> getBackupImageListNames(final ListFiltering listFiltering) {
-		Map<String, ImageListInfo> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
-		ArrayList<String> nameList = new ArrayList<>(backupConfigFileMap.keySet());
-		return filterNameList(nameList, listFiltering);
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+			if (getBackupDocumentFolder() == null) {
+				return new ArrayList<>();
+			}
+			Map<String, ImageListInfo> backupConfigFileMap = parseConfigFiles(getBackupDocumentFolder());
+			ArrayList<String> nameList = new ArrayList<>(backupConfigFileMap.keySet());
+			return filterNameList(nameList, listFiltering);
+		}
+		else {
+			Map<String, ImageListInfo> backupConfigFileMap = parseConfigFiles(BACKUP_FILE_FOLDER);
+			ArrayList<String> nameList = new ArrayList<>(backupConfigFileMap.keySet());
+			return filterNameList(nameList, listFiltering);
+		}
 	}
 
 	/**
@@ -252,30 +262,49 @@ public final class ImageRegistry {
 	 */
 	public static String backupImageList(final String name) {
 		File configFile = getConfigFile(name);
-
-		ImageListInfo oldImageListInfo = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
-		File oldBackupFile = oldImageListInfo == null ? null : oldImageListInfo.getConfigFile();
-
 		if (configFile == null) {
 			Log.e(Application.TAG, "Could not find config file of " + name + " for backup.");
 			return null;
 		}
 
-		if (!BACKUP_FILE_FOLDER.exists()) {
-			boolean success = BACKUP_FILE_FOLDER.mkdir();
-			if (!success) {
-				Log.e(Application.TAG, "Could not create backup dir " + BACKUP_FILE_FOLDER.getAbsolutePath());
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+			if (getBackupDocumentFolder() == null) {
 				return null;
 			}
+			DocumentFile oldBackupFile = getBackupDocumentFolder().findFile(configFile.getName());
+			if (oldBackupFile != null) {
+				FileUtil.deleteFile(oldBackupFile);
+			}
+			ImageListInfo oldImageListInfo = parseConfigFiles(getBackupDocumentFolder()).get(name);
+			oldBackupFile = oldImageListInfo == null ? null : oldImageListInfo.getConfigDocumentFile();
+			if (oldBackupFile != null) {
+				FileUtil.deleteFile(oldBackupFile);
+			}
+			DocumentFile backupFile = getBackupDocumentFolder().createFile("*", configFile.getName());
+			if (backupFile == null) {
+				return null;
+			}
+			else {
+				return FileUtil.copyFile(configFile, backupFile) ? backupFile.getName() : null;
+			}
 		}
+		else {
+			if (!BACKUP_FILE_FOLDER.exists()) {
+				boolean success = BACKUP_FILE_FOLDER.mkdir();
+				if (!success) {
+					Log.e(Application.TAG, "Could not create backup dir " + BACKUP_FILE_FOLDER.getAbsolutePath());
+					return null;
+				}
+			}
 
-		File backupFile = new File(BACKUP_FILE_FOLDER, configFile.getName());
-		if (oldBackupFile != null && !oldBackupFile.equals(backupFile)) {
-			//noinspection ResultOfMethodCallIgnored
-			oldBackupFile.delete();
+			File backupFile = new File(BACKUP_FILE_FOLDER, configFile.getName());
+			ImageListInfo oldImageListInfo = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+			File oldBackupFile = oldImageListInfo == null ? null : oldImageListInfo.getConfigFile();
+			if (oldBackupFile != null && !oldBackupFile.equals(backupFile)) {
+				FileUtil.deleteFile(oldBackupFile);
+			}
+			return FileUtil.copyFile(configFile, backupFile) ? backupFile.getAbsolutePath() : null;
 		}
-
-		return FileUtil.copyFile(configFile, backupFile) ? backupFile.getAbsolutePath() : null;
 	}
 
 	/**
@@ -285,34 +314,92 @@ public final class ImageRegistry {
 	 * @return true if successful.
 	 */
 	public static boolean restoreImageList(final String name) {
-		File oldConfigFile = getConfigFile(name);
-		ImageListInfo backupFileInfo = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
-		File backupFile = backupFileInfo == null ? null : backupFileInfo.getConfigFile();
-
-		if (backupFile == null) {
-			Log.e(Application.TAG, "Could not find backup file of " + name + " for restore.");
-			return false;
-		}
-
-		File tempBackupFile = null;
-		if (oldConfigFile != null) {
-			tempBackupFile = new File(CONFIG_FILE_FOLDER, oldConfigFile.getName() + ".bak");
-			//noinspection ResultOfMethodCallIgnored
-			oldConfigFile.renameTo(tempBackupFile);
-		}
-
-		File newConfigFile = getFileForListName(name);
-		boolean success = FileUtil.copyFile(backupFile, newConfigFile);
-		if (success) {
-			if (tempBackupFile != null) {
-				//noinspection ResultOfMethodCallIgnored
-				tempBackupFile.delete();
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+			if (getBackupDocumentFolder() == null) {
+				return false;
 			}
-			parseConfigFiles();
-			switchToImageList(name, CreationStyle.NONE, true);
+			ImageListInfo backupFileInfo = parseConfigFiles(getBackupDocumentFolder()).get(name);
+			DocumentFile backupFile = backupFileInfo == null ? null : backupFileInfo.getConfigDocumentFile();
+
+			if (backupFile == null) {
+				Log.e(Application.TAG, "Could not find backup file of " + name + " for restore.");
+				return false;
+			}
+
+			File oldConfigFile = getConfigFile(name);
+			File tempBackupFile = null;
+			if (oldConfigFile != null) {
+				tempBackupFile = new File(getConfigFileFolder(), oldConfigFile.getName() + ".bak");
+				//noinspection ResultOfMethodCallIgnored
+				oldConfigFile.renameTo(tempBackupFile);
+			}
+
+			File newConfigFile = getFileForListName(name);
+			boolean success = FileUtil.copyFile(backupFile, newConfigFile);
+			if (success) {
+				if (tempBackupFile != null) {
+					//noinspection ResultOfMethodCallIgnored
+					tempBackupFile.delete();
+				}
+				parseConfigFiles();
+				switchToImageList(name, CreationStyle.NONE, true);
+			}
+			return success;
 		}
-		return success;
+		else {
+			ImageListInfo backupFileInfo = parseConfigFiles(BACKUP_FILE_FOLDER).get(name);
+			File backupFile = backupFileInfo == null ? null : backupFileInfo.getConfigFile();
+
+			if (backupFile == null) {
+				Log.e(Application.TAG, "Could not find backup file of " + name + " for restore.");
+				return false;
+			}
+
+			File oldConfigFile = getConfigFile(name);
+			File tempBackupFile = null;
+			if (oldConfigFile != null) {
+				tempBackupFile = new File(getConfigFileFolder(), oldConfigFile.getName() + ".bak");
+				//noinspection ResultOfMethodCallIgnored
+				oldConfigFile.renameTo(tempBackupFile);
+			}
+
+			File newConfigFile = getFileForListName(name);
+			boolean success = FileUtil.copyFile(backupFile, newConfigFile);
+			if (success) {
+				if (tempBackupFile != null) {
+					//noinspection ResultOfMethodCallIgnored
+					tempBackupFile.delete();
+				}
+				parseConfigFiles();
+				switchToImageList(name, CreationStyle.NONE, true);
+			}
+			return success;
+		}
 	}
+
+	/**
+	 * Get the backup folder as DocumentFile.
+	 *
+	 * @return The backup folder as DocumentFile.
+	 */
+	@RequiresApi(api = VERSION_CODES.Q)
+	public static DocumentFile getBackupDocumentFolder() {
+		Uri treeUri = PreferenceUtil.getSharedPreferenceUri(R.string.key_backup_folder_uri);
+		if (treeUri == null) {
+			return null;
+		}
+		return DocumentFile.fromTreeUri(Application.getAppContext(), treeUri);
+	}
+
+	/**
+	 * Get the config file folder on regular storage.
+	 *
+	 * @return The config file folder.
+	 */
+	public static File getConfigFileFolder() {
+		return Application.getAppContext().getExternalFilesDir(null);
+	}
+
 
 	/**
 	 * Rename an image list.
@@ -412,8 +499,8 @@ public final class ImageRegistry {
 	 * Get the list of available config files.
 	 */
 	public static void parseConfigFiles() {
-		if (CONFIG_FILE_FOLDER != null) {
-			mImageListInfoMap = parseConfigFiles(CONFIG_FILE_FOLDER);
+		if (getConfigFileFolder() != null) {
+			mImageListInfoMap = parseConfigFiles(getConfigFileFolder());
 		}
 	}
 
@@ -438,6 +525,44 @@ public final class ImageRegistry {
 		Map<String, ImageListInfo> fileMap = new HashMap<>();
 
 		for (File configFile : configFiles) {
+			ImageListInfo imageListInfo = ImageList.getInfoFromConfigFile(configFile);
+
+			if (imageListInfo != null) {
+				String name = imageListInfo.getName();
+
+				if (name == null) {
+					Log.e(Application.TAG, "List name is null");
+				}
+				else if (fileMap.containsKey(name)) {
+					Log.e(Application.TAG, "Duplicate config list name " + name);
+				}
+				else {
+					fileMap.put(name, new ImageListInfo(name, configFile, imageListInfo.getListClass()));
+				}
+			}
+		}
+		return fileMap;
+	}
+
+	/**
+	 * Get the image lists from the config file folder.
+	 *
+	 * @param configFileFolder the config file folder.
+	 * @return The map from list names to image list files.
+	 */
+	private static Map<String, ImageListInfo> parseConfigFiles(final DocumentFile configFileFolder) {
+		DocumentFile[] allFiles = configFileFolder.listFiles();
+
+		List<DocumentFile> configFiles = new ArrayList<>();
+		for (DocumentFile file : allFiles) {
+			if (file.isFile() && file.getName() != null && file.getName().endsWith(CONFIG_FILE_SUFFIX)) {
+				configFiles.add(file);
+			}
+		}
+
+		Map<String, ImageListInfo> fileMap = new HashMap<>();
+
+		for (DocumentFile configFile : configFiles) {
 			ImageListInfo imageListInfo = ImageList.getInfoFromConfigFile(configFile);
 
 			if (imageListInfo != null) {
@@ -483,6 +608,26 @@ public final class ImageRegistry {
 	 * @return A file for this name.
 	 */
 	private static File getFileForListName(final String name) {
+		String baseName = getConfigFileBaseNameForListName(name);
+		String fileName = baseName + CONFIG_FILE_SUFFIX;
+		File resultFile = new File(getConfigFileFolder(), fileName);
+
+		int counter = 1;
+		while (resultFile.exists()) {
+			fileName = baseName + " (" + (++counter) + ")" + CONFIG_FILE_SUFFIX;
+			resultFile = new File(getConfigFileFolder(), fileName);
+		}
+
+		return resultFile;
+	}
+
+	/**
+	 * Get the config file base name for a list name.
+	 *
+	 * @param name The list name.
+	 * @return The config file name.
+	 */
+	private static String getConfigFileBaseNameForListName(final String name) {
 		String baseName =
 				CONFIG_FILE_PREFIX
 						+ name.replaceAll("[.]", ",")
@@ -493,32 +638,17 @@ public final class ImageRegistry {
 		if (baseName.length() > MAX_NAME_LENGTH) {
 			baseName = baseName.substring(0, MAX_NAME_LENGTH);
 		}
-		baseName = baseName.trim();
-
-		String fileName = baseName + CONFIG_FILE_SUFFIX;
-		File resultFile = new File(CONFIG_FILE_FOLDER, fileName);
-
-		int counter = 1;
-		while (resultFile.exists()) {
-			fileName = baseName + " (" + (++counter) + ")" + CONFIG_FILE_SUFFIX;
-			resultFile = new File(CONFIG_FILE_FOLDER, fileName);
-		}
-
-		return resultFile;
+		return baseName.trim();
 	}
 
 	/**
 	 * Get the list name out of the file name (for the case that the list name is not stored there).
 	 *
-	 * @param file the config file.
+	 * @param fileName the config file name.
 	 * @return the list name generated from the file name.
 	 */
-	protected static String getListNameFromFileName(final File file) {
-		if (file == null) {
-			return null;
-		}
-
-		String listName = file.getName();
+	protected static String getListNameFromFileName(final String fileName) {
+		String listName = fileName;
 
 		if (listName.endsWith(CONFIG_FILE_SUFFIX)) {
 			listName = listName.substring(0, listName.length() - CONFIG_FILE_SUFFIX.length());

@@ -31,7 +31,9 @@
     <!-- Entries related to buttons in the settings -->
 
     <string name="menu_hide_all_info">Do not display info messages</string>
-    <string name="menu_search_image_Folders">Search image folders</string>
+    <string name="menu_search_image_folders">Search image folders</string>
+    <string name="menu_reset_backup_folder">Reset backup folder</string>
+    <string name="menu_reset_backup_folder_unset">(Unset)</string>
     <string name="menu_apps_without_popup_notifications">Apps preventing popup notifications</string>
     <string name="menu_show_all_info">Display all info messages</string>
     <string name="menu_title_contact_developer">Contact the developer</string>

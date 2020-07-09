@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.util;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -283,6 +284,41 @@ public final class PreferenceUtil {
 			}
 			PreferenceUtil.setSharedPreferenceString(preferenceId, saveStringBuffer.toString());
 		}
+	}
+
+	/**
+	 * Retrieve an Uri shared preference.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @return the corresponding preference value.
+	 */
+	public static Uri getSharedPreferenceUri(final int preferenceId) {
+		String uriString = getSharedPreferences().getString(Application.getAppContext().getString(preferenceId), null);
+
+		if (uriString == null) {
+			return null;
+		}
+		else {
+			return Uri.parse(uriString);
+		}
+	}
+
+
+	/**
+	 * Set a shared preference for an Uri.
+	 *
+	 * @param preferenceId the id of the shared preference.
+	 * @param uri          the target value of the preference.
+	 */
+	public static void setSharedPreferenceUri(final int preferenceId, @Nullable final Uri uri) {
+		Editor editor = getSharedPreferences().edit();
+		if (uri == null) {
+			editor.putString(Application.getAppContext().getString(preferenceId), null);
+		}
+		else {
+			editor.putString(Application.getAppContext().getString(preferenceId), uri.toString());
+		}
+		editor.apply();
 	}
 
 	/**

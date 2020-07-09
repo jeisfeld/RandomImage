@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
@@ -28,11 +29,13 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
+import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
@@ -49,16 +52,35 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * The request code used to get permission for show activities in foreground.
 	 */
 	private static final int REQUEST_CODE_PERMISSION_FOREGROUND = 10;
+	/**
+	 * The requestCode with which the storage access framework is triggered for backup folder.
+	 */
+	private static final int REQUEST_CODE_STORAGE_ACCESS_BACKUP = 11;
+	/**
+	 * The requestCode with which the storage access framework is triggered for backup folder on restore.
+	 */
+	private static final int REQUEST_CODE_STORAGE_ACCESS_RESTORE = 12;
+	/**
+	 * The requestCode with which the storage access framework is triggered for backup folder on change action.
+	 */
+	private static final int REQUEST_CODE_STORAGE_ACCESS_CHANGEACTION = 13;
 
 	/**
 	 * The names of the image lists to be displayed.
 	 */
 	private ArrayList<String> mListNames;
-
 	/**
 	 * The current action within this activity.
 	 */
 	private CurrentAction mCurrentAction = CurrentAction.DISPLAY;
+	/**
+	 * The names of image lists for backup after calling SAF.
+	 */
+	private List<String> mListNamesForBackupRestoreActivity = null;
+	/**
+	 * The action to be started after calling SAF.
+	 */
+	private CurrentAction mActionForChangeActionActivity = null;
 
 	/**
 	 * Static helper method to start the activity.
@@ -280,11 +302,15 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			return true;
 		}
 		else if (menuId == R.id.action_do_backup) {
-			backupImageLists(getAdapter().getSelectedLists());
+			if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+				backupImageLists(getAdapter().getSelectedLists());
+			}
 			return true;
 		}
 		else if (menuId == R.id.action_do_restore) {
-			restoreImageLists(getAdapter().getSelectedLists());
+			if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+				restoreImageLists(getAdapter().getSelectedLists());
+			}
 			return true;
 		}
 		else if (menuId == R.id.action_do_delete) {
@@ -536,6 +562,38 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	}
 
 	/**
+	 * Backup a set of image lists, first ensuring that access is available.
+	 *
+	 * @param listNames the name of the lists.
+	 */
+	@RequiresApi(api = VERSION_CODES.Q)
+	private void backupImageListsAfterGettingAccess(final List<String> listNames) {
+		if (hasBackupDocumentFolder()) {
+			backupImageLists(listNames);
+		}
+		else {
+			mListNamesForBackupRestoreActivity = listNames;
+			triggerStorageAccessForBackupFolder(REQUEST_CODE_STORAGE_ACCESS_BACKUP);
+		}
+	}
+
+	/**
+	 * Trigger storage access for teh backup folder.
+	 *
+	 * @param requestCode The request code to be used.
+	 */
+	@RequiresApi(api = VERSION_CODES.Q)
+	private void triggerStorageAccessForBackupFolder(final int requestCode) {
+		DialogUtil.displayInfo(this, new MessageDialogListener() {
+			@Override
+			public void onDialogFinished() {
+				Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+				startActivityForResult(intent, requestCode);
+			}
+		}, 0, R.string.dialog_select_backup_folder);
+	}
+
+	/**
 	 * Make a backup of multiple lists in a background thread.
 	 *
 	 * @param listsToBeBackedUp The list names.
@@ -555,6 +613,9 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 						backedUpLists.add(listName);
 						backupFolder = new File(backupFile).getParent();
 					}
+				}
+				if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+					backupFolder = FileUtil.getFullPathFromTreeUri(PreferenceUtil.getSharedPreferenceUri(R.string.key_backup_folder_uri));
 				}
 				if (backedUpLists.size() > 0) {
 					DialogUtil.displayInfo(MainConfigurationActivity.this,
@@ -612,6 +673,22 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	}
 
 	/**
+	 * Restore a set of image lists, first ensuring that access is available.
+	 *
+	 * @param listNames the name of the lists.
+	 */
+	@RequiresApi(api = VERSION_CODES.Q)
+	private void restoreImageListsAfterGettingAccess(final List<String> listNames) {
+		if (hasBackupDocumentFolder()) {
+			restoreImageLists(listNames);
+		}
+		else {
+			mListNamesForBackupRestoreActivity = listNames;
+			triggerStorageAccessForBackupFolder(REQUEST_CODE_STORAGE_ACCESS_RESTORE);
+		}
+	}
+
+	/**
 	 * Restore multiple lists in a background thread.
 	 *
 	 * @param listsToBeRestored The list names.
@@ -654,6 +731,13 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		if (action != null && action != mCurrentAction) {
 			TextView textViewInfo = findViewById(R.id.textViewMessage);
 			LinearLayout layoutButtons = findViewById(R.id.layoutButtons);
+
+			if (VERSION.SDK_INT >= VERSION_CODES.Q && !hasBackupDocumentFolder()
+					&& (action == CurrentAction.BACKUP || action == CurrentAction.RESTORE)) {
+				mActionForChangeActionActivity = action;
+				triggerStorageAccessForBackupFolder(REQUEST_CODE_STORAGE_ACCESS_CHANGEACTION);
+				return;
+			}
 
 			switch (action) {
 			case DISPLAY:
@@ -705,16 +789,49 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 
 	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		switch (requestCode) {
-		case DisplayListInfoActivity.REQUEST_CODE:
-			handleListInfoResult(resultCode, data);
-			break;
-		case REQUEST_CODE_PERMISSION_FOREGROUND:
-			NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
-			break;
-		default:
-			break;
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case DisplayListInfoActivity.REQUEST_CODE:
+				handleListInfoResult(resultCode, data);
+				break;
+			case REQUEST_CODE_PERMISSION_FOREGROUND:
+				NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
+				break;
+			case REQUEST_CODE_STORAGE_ACCESS_BACKUP:
+			case REQUEST_CODE_STORAGE_ACCESS_RESTORE:
+			case REQUEST_CODE_STORAGE_ACCESS_CHANGEACTION:
+				Uri treeUri = data.getData();
+				if (VERSION.SDK_INT >= VERSION_CODES.Q && treeUri != null) {
+					PreferenceUtil.setSharedPreferenceUri(R.string.key_backup_folder_uri, treeUri);
+					getContentResolver().takePersistableUriPermission(treeUri,
+							Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+					if (requestCode == REQUEST_CODE_STORAGE_ACCESS_BACKUP) {
+						backupImageLists(mListNamesForBackupRestoreActivity);
+					}
+					else if (requestCode == REQUEST_CODE_STORAGE_ACCESS_RESTORE) {
+						restoreImageLists(mListNamesForBackupRestoreActivity);
+					}
+					else {
+						changeAction(mActionForChangeActionActivity);
+					}
+				}
+				mListNamesForBackupRestoreActivity = null;
+				mActionForChangeActionActivity = null;
+				break;
+			default:
+				break;
+			}
 		}
+	}
+
+	/**
+	 * Get information if there is DocumentFolder specified for backup.
+	 *
+	 * @return true if configured.
+	 */
+	@RequiresApi(api = VERSION_CODES.Q)
+	private boolean hasBackupDocumentFolder() {
+		return ImageRegistry.getBackupDocumentFolder() != null;
 	}
 
 	@Override
@@ -749,10 +866,20 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			}
 			break;
 		case BACKUP:
-			backupImageLists(Collections.singletonList(selectedListName));
+			if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+				backupImageListsAfterGettingAccess(Collections.singletonList(selectedListName));
+			}
+			else {
+				backupImageLists(Collections.singletonList(selectedListName));
+			}
 			break;
 		case RESTORE:
-			restoreImageLists(Collections.singletonList(selectedListName));
+			if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+				restoreImageListsAfterGettingAccess(Collections.singletonList(selectedListName));
+			}
+			else {
+				restoreImageLists(Collections.singletonList(selectedListName));
+			}
 			break;
 		case NONE:
 		default:

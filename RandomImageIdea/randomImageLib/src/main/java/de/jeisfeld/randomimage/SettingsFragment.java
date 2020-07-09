@@ -24,6 +24,7 @@ import java.util.regex.PatternSyntaxException;
 import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -87,6 +88,7 @@ public class SettingsFragment extends PreferenceFragment {
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);
 		addSearchImageFoldersListener();
+		addResetBackupFolderListener();
 		addHelpPageListener();
 		addDeveloperContactListener();
 		addProAppButtonListener();
@@ -135,6 +137,36 @@ public class SettingsFragment extends PreferenceFragment {
 				return true;
 			}
 		});
+	}
+
+	/**
+	 * Add the listener for the "Reset Backup Folder" button.
+	 */
+	private void addResetBackupFolderListener() {
+		final Preference resetBackupPreference = findPreference(getString(R.string.key_pref_reset_backup_folder));
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q)) {
+			Uri uri = PreferenceUtil.getSharedPreferenceUri(R.string.key_backup_folder_uri);
+			if (uri != null) {
+				resetBackupPreference.setSummary(FileUtil.getFullPathFromTreeUri(uri));
+			}
+
+			resetBackupPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(final Preference preference) {
+					Uri uri = PreferenceUtil.getSharedPreferenceUri(R.string.key_backup_folder_uri);
+					if (uri != null) {
+						Application.getAppContext().getContentResolver().releasePersistableUriPermission(uri,
+								Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+					}
+					PreferenceUtil.removeSharedPreference(R.string.key_backup_folder_uri);
+					resetBackupPreference.setSummary(getString(R.string.menu_reset_backup_folder_unset));
+					return true;
+				}
+			});
+		}
+		else {
+			((PreferenceCategory) findPreference(getString(R.string.key_pref_category_other))).removePreference(resetBackupPreference);
+		}
 	}
 
 	/**

@@ -88,6 +88,7 @@
     <string name="dialog_select_list_for_notification">Please select the image list which you want to associate to this notification.</string>
     <string name="dialog_select_list_for_external_add">Please select the image list to which you want to add the selected images.</string>
     <string name="dialog_select_list_for_inclusion">Please select the image list that you want to include in the current list.</string>
+    <string name="dialog_select_backup_folder">Please select a directory for backups and give access to it.</string>
     <string name="dialog_confirmation_delete_list">Do you really want to delete the image list “%2$s”?</string>
     <string name="dialog_confirmation_delete_lists">Do you really want to delete the %1$d selected image lists?</string>
     <string name="dialog_confirmation_remove">Do you really want to remove %2$s from the list “%1$s”?</string>

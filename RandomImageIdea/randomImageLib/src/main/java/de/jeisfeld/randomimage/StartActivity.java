@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage;
 import android.Manifest;
 import android.app.DialogFragment;
 import android.content.pm.PackageManager;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,11 +11,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
  * An activity used for starting the app.
-
  * Here, required app permissions are checked for Android 6.
  */
 public abstract class StartActivity extends BaseActivity {
@@ -31,7 +32,8 @@ public abstract class StartActivity extends BaseActivity {
 		int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 		int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-		if (readPermission != PackageManager.PERMISSION_GRANTED || writePermission != PackageManager.PERMISSION_GRANTED) {
+		if (readPermission != PackageManager.PERMISSION_GRANTED
+				|| (!SystemUtil.isAtLeastVersion(VERSION_CODES.Q) && writePermission != PackageManager.PERMISSION_GRANTED)) {
 			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog) {

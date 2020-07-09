@@ -4,10 +4,13 @@ import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +18,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
+import androidx.documentfile.provider.DocumentFile;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
@@ -61,7 +65,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Create an image list and load it from its file, if existing.
 	 *
-	 * @param configFile the configuration file of this list.
+	 * @param configFile          the configuration file of this list.
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	protected ImageList(final File configFile, final boolean toastIfFilesMissing) {
@@ -74,8 +78,8 @@ public abstract class ImageList implements RandomFileProvider {
 	 * Create a new image list.
 	 *
 	 * @param configFile the configuration file of this list.
-	 * @param listName the name of the list.
-	 * @param cloneFile If existing, then the new list will be cloned from this file.
+	 * @param listName   the name of the list.
+	 * @param cloneFile  If existing, then the new list will be cloned from this file.
 	 */
 	protected ImageList(final File configFile, final String listName, final File cloneFile) {
 		init(false); // OVERRIDABLE
@@ -265,7 +269,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Check if the list contains the other list.
 	 *
-	 * @param listName The list to be checked.
+	 * @param listName            The list to be checked.
 	 * @param includeDeepNestings flag indicating if recursive nestings should be considered.
 	 * @return true if it is contained in some way.
 	 */
@@ -290,7 +294,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Get an ImageList out of a config file.
 	 *
-	 * @param configFile the config file.
+	 * @param configFile          the config file.
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 * @return The image list.
 	 */
@@ -341,15 +345,76 @@ public abstract class ImageList implements RandomFileProvider {
 			return null;
 		}
 		if (listName == null) {
-			listName = ImageRegistry.getListNameFromFileName(configFile);
+			listName = ImageRegistry.getListNameFromFileName(configFile.getName());
 		}
-		if (listName == null) {
+		return new ImageListInfo(listName, configFile, StandardImageList.class);
+	}
+
+	/**
+	 * Retrieve the info for an ImageList from the config file.
+	 *
+	 * @param configFile the config file.
+	 * @return The name of the image list.
+	 */
+	protected static ImageListInfo getInfoFromConfigFile(final DocumentFile configFile) {
+		if (!configFile.exists() || configFile.isDirectory() || !configFile.canRead()) {
 			return null;
 		}
-		else {
-			// TODO: enhance for other classes.
-			return new ImageListInfo(listName, configFile, StandardImageList.class);
+
+		String listName = null;
+		InputStream inputStream = null;
+		BufferedReader reader = null;
+
+		try {
+			inputStream = Application.getAppContext().getContentResolver().openInputStream(configFile.getUri());
+			reader = new BufferedReader(new InputStreamReader(inputStream));
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+
+				// ignore comment lines
+				if (line.length() == 0 || line.startsWith("#")) {
+					continue;
+				}
+
+				// read properties
+				if (line.contains(PROPERTY_SEPARATOR) && !line.startsWith(File.separator)) {
+					int index = line.indexOf(PROPERTY_SEPARATOR);
+					String name = line.substring(0, index);
+					String value = line.substring(index + 1);
+
+					if (PROP_LIST_NAME.equals(name)) {
+						listName = value;
+					}
+				}
+			}
 		}
+		catch (IOException e) {
+			Log.e(Application.TAG, "Could not find configuration file", e);
+			return null;
+		}
+		finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				}
+				catch (IOException e) {
+					// ignore
+				}
+			}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				}
+				catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		if (listName == null) {
+			listName = ImageRegistry.getListNameFromFileName(configFile.getName());
+		}
+		return new ImageListInfo(listName, configFile, StandardImageList.class);
 	}
 
 	/**
@@ -391,7 +456,7 @@ public abstract class ImageList implements RandomFileProvider {
 					if (line.startsWith(File.separator)) {
 						File file = new File(line);
 						if (file.getName().equals("*")) {
-							if (file.getParentFile().isDirectory()) {
+							if (file.getParentFile() != null && file.getParentFile().isDirectory()) {
 								mElements.add(new ListElement(FOLDER, line));
 							}
 							else {
@@ -597,7 +662,7 @@ public abstract class ImageList implements RandomFileProvider {
 		String listName = mProperties.getProperty(PROP_LIST_NAME);
 
 		if (listName == null) {
-			listName = ImageRegistry.getListNameFromFileName(mConfigFile);
+			listName = mConfigFile == null ? null : ImageRegistry.getListNameFromFileName(mConfigFile.getName());
 		}
 
 		if (listName == null) {
@@ -625,7 +690,7 @@ public abstract class ImageList implements RandomFileProvider {
 	/**
 	 * Change the list name, also renaming the config file accordingly.
 	 *
-	 * @param listName The new name of the list.
+	 * @param listName      The new name of the list.
 	 * @param newConfigFile The new config file.
 	 * @return true if successful.
 	 */
@@ -724,7 +789,7 @@ public abstract class ImageList implements RandomFileProvider {
 		if (isRecursive) {
 			file = file.getParentFile();
 		}
-		if (!file.exists() || !file.isDirectory()) {
+		if (file == null || !file.exists() || !file.isDirectory()) {
 			return false;
 		}
 		ListElement element = new ListElement(FOLDER, folderName);
@@ -841,6 +906,15 @@ public abstract class ImageList implements RandomFileProvider {
 		}
 
 		/**
+		 * The image list configuration file.
+		 */
+		private DocumentFile mConfigDocumentFile;
+
+		protected DocumentFile getConfigDocumentFile() {
+			return mConfigDocumentFile;
+		}
+
+		/**
 		 * The class handling the image list.
 		 */
 		private Class<? extends ImageList> mListClass;
@@ -852,16 +926,30 @@ public abstract class ImageList implements RandomFileProvider {
 		/**
 		 * Constructor for the class.
 		 *
-		 * @param name The name of the image list.
+		 * @param name       The name of the image list.
 		 * @param configFile The image list configuration file.
-		 * @param listClass The class handling the image list.
+		 * @param listClass  The class handling the image list.
 		 */
 		protected ImageListInfo(final String name, final File configFile, final Class<? extends ImageList> listClass) {
 			this.mName = name;
 			this.mConfigFile = configFile;
 			this.mListClass = listClass;
+			this.mConfigDocumentFile = null;
 		}
 
+		/**
+		 * Constructor for the class.
+		 *
+		 * @param name       The name of the image list.
+		 * @param configFile The image list configuration file.
+		 * @param listClass  The class handling the image list.
+		 */
+		protected ImageListInfo(final String name, final DocumentFile configFile, final Class<? extends ImageList> listClass) {
+			this.mName = name;
+			this.mConfigDocumentFile = configFile;
+			this.mListClass = listClass;
+			this.mConfigFile = null;
+		}
 	}
 
 }

@@ -22,6 +22,7 @@
     <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>
     <string name="key_pref_category_other" translatable="false">pref_category_other</string>
     <string name="key_pref_search_image_folders" translatable="false">pref_search_image_folders</string>
+    <string name="key_pref_reset_backup_folder" translatable="false">pref_reset_backup_folder</string>
     <string name="key_pref_apps_without_popup_notifications" translatable="false">pref_apps_without_popup_notifications</string>
     <string name="key_pref_show_info" translatable="false">pref_show_info</string>
     <string name="key_pref_hide_info" translatable="false">pref_hide_info</string>
@@ -42,6 +43,7 @@
     <string name="key_last_thumb_creation_time" translatable="false">last_thumb_creation_time</string>
     <string name="key_folder_selection_filter" translatable="false">folder_selection_filter</string>
     <string name="key_last_app_version" translatable="false">last_app_version</string>
+    <string name="key_backup_folder_uri" translatable="false">backup_folder_uri</string>
 
     <!-- Keys for indexed shared preferences -->
 

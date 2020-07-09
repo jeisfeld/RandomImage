@@ -1,11 +1,13 @@
 package de.jeisfeld.randomimage.util;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.provider.DocumentsContract;
 import android.util.Log;
 
 import java.io.File;
@@ -14,19 +16,29 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 import de.jeisfeld.randomimage.Application;
 
 /**
  * Utility class for helping parsing file systems.
  */
 public final class FileUtil {
+	/**
+	 * The name of the primary volume (LOLLIPOP).
+	 */
+	private static final String PRIMARY_VOLUME_NAME = "primary";
+
 	/**
 	 * Potential external SD paths for pre-Kitkat devices.
 	 */
@@ -73,7 +85,7 @@ public final class FileUtil {
 	@SuppressWarnings("null")
 	public static boolean copyFile(final File source, final File target) {
 		FileInputStream inStream = null;
-		OutputStream outStream = null;
+		FileOutputStream outStream = null;
 		FileChannel inChannel = null;
 		FileChannel outChannel = null;
 		try {
@@ -81,40 +93,13 @@ public final class FileUtil {
 
 			// First try the normal way
 			if (isWritable(target)) {
-				// standard way
 				outStream = new FileOutputStream(target);
 				inChannel = inStream.getChannel();
-				outChannel = ((FileOutputStream) outStream).getChannel();
+				outChannel = outStream.getChannel();
 				inChannel.transferTo(0, inChannel.size(), outChannel);
 			}
 			else {
-				if (SystemUtil.isAndroid5()) {
-					// TODO: Enable SAF
-					return false;
-				}
-				else if (SystemUtil.isKitkat()) {
-					// Workaround for Kitkat ext SD card
-					Uri uri = MediaStoreUtil.getUriFromFile(target.getAbsolutePath());
-					if (uri == null) {
-						return false;
-					}
-					else {
-						outStream = Application.getAppContext().getContentResolver().openOutputStream(uri);
-					}
-				}
-				else {
-					return false;
-				}
-
-				if (outStream != null) {
-					// Both for SAF and for Kitkat, write to output stream.
-					byte[] buffer = new byte[4096]; // MAGIC_NUMBER
-					int bytesRead;
-					while ((bytesRead = inStream.read(buffer)) != -1) {
-						outStream.write(buffer, 0, bytesRead);
-					}
-				}
-
+				return false;
 			}
 		}
 		catch (Exception e) {
@@ -148,8 +133,103 @@ public final class FileUtil {
 				e.printStackTrace();
 			}
 			try {
-				assert outChannel != null;
-				outChannel.close();
+				if (outChannel != null) {
+					outChannel.close();
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Copy a file. The target file may even be on external SD card for Kitkat.
+	 *
+	 * @param source The source file
+	 * @param target The target file
+	 * @return true if the copying was successful.
+	 */
+	public static boolean copyFile(final File source, final DocumentFile target) {
+		FileInputStream inStream = null;
+		OutputStream outStream = null;
+		try {
+			inStream = new FileInputStream(source);
+			outStream = Application.getAppContext().getContentResolver().openOutputStream(target.getUri());
+			if (outStream != null) {
+				byte[] buffer = new byte[4096]; // MAGIC_NUMBER
+				int bytesRead;
+				while ((bytesRead = inStream.read(buffer)) != -1) {
+					outStream.write(buffer, 0, bytesRead);
+				}
+			}
+		}
+		catch (Exception e) {
+			Log.e(Application.TAG,
+					"Error when copying file from " + source.getAbsolutePath() + " to SAF file " + target.getName(), e);
+			return false;
+		}
+		finally {
+			try {
+				if (inStream != null) {
+					inStream.close();
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (outStream != null) {
+					outStream.close();
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Copy a file. The target file may even be on external SD card for Kitkat.
+	 *
+	 * @param source The source file
+	 * @param target The target file
+	 * @return true if the copying was successful.
+	 */
+	public static boolean copyFile(final DocumentFile source, final File target) {
+		InputStream inStream = null;
+		FileOutputStream outStream = null;
+		try {
+			inStream = Application.getAppContext().getContentResolver().openInputStream(source.getUri());
+			outStream = new FileOutputStream(target);
+			if (inStream != null) {
+				byte[] buffer = new byte[4096]; // MAGIC_NUMBER
+				int bytesRead;
+				while ((bytesRead = inStream.read(buffer)) != -1) {
+					outStream.write(buffer, 0, bytesRead);
+				}
+			}
+		}
+		catch (Exception e) {
+			Log.e(Application.TAG,
+					"Error when copying file from SAF file " + source.getName() + " to file " + target.getAbsolutePath(), e);
+			return false;
+		}
+		finally {
+			try {
+				if (inStream != null) {
+					inStream.close();
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (outStream != null) {
+					outStream.close();
+				}
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -165,55 +245,24 @@ public final class FileUtil {
 	 * @return True if successfully deleted.
 	 */
 	public static boolean deleteFile(final File file) {
-		// First try the normal deletion.
 		if (file.delete()) {
 			return true;
 		}
-
-		// Try with Storage Access Framework.
-		if (SystemUtil.isAndroid5()) {
-			// TODO: enable SAF
-			return false;
-		}
-
-		// Try the Kitkat workaround.
-		if (SystemUtil.isKitkat()) {
-			ContentResolver resolver = Application.getAppContext().getContentResolver();
-
-			try {
-				Uri uri = MediaStoreUtil.getUriFromFile(file.getAbsolutePath());
-				if (uri != null) {
-					resolver.delete(uri, null, null);
-				}
-				return !file.exists();
-			}
-			catch (Exception e) {
-				Log.e(Application.TAG, "Error when deleting file " + file.getAbsolutePath(), e);
-				return false;
-			}
-		}
-
 		return !file.exists();
 	}
 
 	/**
-	 * Move a file. The target file may even be on external SD card.
+	 * Delete a file. May be even on external SD card.
 	 *
-	 * @param source The source file
-	 * @param target The target file
-	 * @return true if the copying was successful.
+	 * @param file the file to be deleted.
+	 * @return True if successfully deleted.
 	 */
-	public static boolean moveFile(final File source, final File target) {
-		// First try the normal rename.
-		if (source.renameTo(target)) {
+	public static boolean deleteFile(final DocumentFile file) {
+		// First try the normal deletion.
+		if (file.delete()) {
 			return true;
 		}
-
-		boolean success = copyFile(source, target);
-		if (success) {
-			success = deleteFile(source);
-		}
-		return success;
+		return !file.exists();
 	}
 
 	/**
@@ -384,6 +433,142 @@ public final class FileUtil {
 			Log.e(Application.TAG, "Could not get SD directory", ioe);
 		}
 		return sdCardDirectory;
+	}
+
+	/**
+	 * Get the full path of a document from its tree URI.
+	 *
+	 * @param treeUri        The tree URI.
+	 * @param volumeBasePath the base path of the volume.
+	 * @return The path (without trailing file separator).
+	 */
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	@Nullable
+	private static String getFullPathFromTreeUri(@Nullable final Uri treeUri, final String volumeBasePath) {
+		if (treeUri == null) {
+			return null;
+		}
+		if (volumeBasePath == null) {
+			return File.separator;
+		}
+		String volumePath = volumeBasePath;
+		if (volumePath.endsWith(File.separator)) {
+			volumePath = volumePath.substring(0, volumePath.length() - 1);
+		}
+
+		String documentPath = FileUtil.getDocumentPathFromTreeUri(treeUri);
+		if (documentPath.endsWith(File.separator)) {
+			documentPath = documentPath.substring(0, documentPath.length() - 1);
+		}
+
+		if (documentPath.length() > 0) {
+			if (documentPath.startsWith(File.separator)) {
+				return volumePath + documentPath;
+			}
+			else {
+				return volumePath + File.separator + documentPath;
+			}
+		}
+		else {
+			return volumePath;
+		}
+	}
+
+	/**
+	 * Get the full path of a document from its tree URI.
+	 *
+	 * @param treeUri The tree URI.
+	 * @return The path (without trailing file separator).
+	 */
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	public static String getFullPathFromTreeUri(final Uri treeUri) {
+		return getFullPathFromTreeUri(treeUri, getVolumePath(FileUtil.getVolumeIdFromTreeUri(treeUri)));
+	}
+
+	/**
+	 * Get the path of a certain volume.
+	 *
+	 * @param volumeId The volume id.
+	 * @return The path.
+	 */
+	private static String getVolumePath(final String volumeId) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			return null;
+		}
+
+		try {
+			StorageManager storageManager = (StorageManager) Application.getAppContext().getSystemService(Context.STORAGE_SERVICE);
+
+			Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+
+			Method getVolumeList = storageManager.getClass().getMethod("getVolumeList");
+			Method getUuid = storageVolumeClazz.getMethod("getUuid");
+			Method getPath = storageVolumeClazz.getMethod("getPath");
+			Method isPrimary = storageVolumeClazz.getMethod("isPrimary");
+			Object result = getVolumeList.invoke(storageManager);
+
+			final int length = result == null ? 0 : Array.getLength(result);
+			for (int i = 0; i < length; i++) {
+				Object storageVolumeElement = Array.get(result, i);
+				String uuid = (String) getUuid.invoke(storageVolumeElement);
+				Boolean primary = (Boolean) isPrimary.invoke(storageVolumeElement);
+
+				// primary volume?
+				if (primary != null && primary && PRIMARY_VOLUME_NAME.equals(volumeId)) {
+					return (String) getPath.invoke(storageVolumeElement);
+				}
+
+				// other volumes?
+				if (uuid != null) {
+					if (uuid.equals(volumeId)) {
+						return (String) getPath.invoke(storageVolumeElement);
+					}
+				}
+			}
+
+			// not found.
+			return null;
+		}
+		catch (Exception ex) {
+			return null;
+		}
+	}
+
+	/**
+	 * Get the volume ID from the tree URI.
+	 *
+	 * @param treeUri The tree URI.
+	 * @return The volume ID.
+	 */
+	@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+	private static String getVolumeIdFromTreeUri(final Uri treeUri) {
+		final String docId = DocumentsContract.getTreeDocumentId(treeUri);
+		final String[] split = docId.split(":");
+
+		if (split.length > 0) {
+			return split[0];
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Get the document path (relative to volume name) for a tree URI (LOLLIPOP).
+	 *
+	 * @param treeUri The tree URI.
+	 * @return the document path.
+	 */
+	@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+	private static String getDocumentPathFromTreeUri(final Uri treeUri) {
+		final String docId = DocumentsContract.getTreeDocumentId(treeUri);
+		final String[] split = docId.split(":");
+		if ((split.length >= 2) && (split[1] != null)) {
+			return split[1];
+		}
+		else {
+			return File.separator;
+		}
 	}
 
 	/**
