@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,6 +65,16 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * The requestCode with which the storage access framework is triggered for backup folder on change action.
 	 */
 	private static final int REQUEST_CODE_STORAGE_ACCESS_CHANGEACTION = 13;
+	/**
+	 * The default backup folder URI (for backups created prior Android 10).
+	 */
+	protected static final Uri DEFAULT_BACKUP_URI =
+			Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ARandomImage/document/primary%3ARandomImage");
+	/**
+	 * The default backup folder URI (for backups created prior Android 10).
+	 */
+	protected static final Uri INTERNAL_STORAGE_URI =
+			Uri.parse("content://com.android.externalstorage.documents/tree/primary%3A/document/primary%3A");
 
 	/**
 	 * The names of the image lists to be displayed.
@@ -588,6 +599,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 			@Override
 			public void onDialogFinished() {
 				Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+				Uri defaultUri = ImageRegistry.BACKUP_FILE_FOLDER.exists() ? DEFAULT_BACKUP_URI : INTERNAL_STORAGE_URI;
+				intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, defaultUri);
 				startActivityForResult(intent, requestCode);
 			}
 		}, 0, R.string.dialog_select_backup_folder);

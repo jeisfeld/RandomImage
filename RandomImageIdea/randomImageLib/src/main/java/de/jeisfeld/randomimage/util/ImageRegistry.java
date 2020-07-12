@@ -27,7 +27,7 @@ public final class ImageRegistry {
 	/**
 	 * The folder where backup files are stored.
 	 */
-	private static final File BACKUP_FILE_FOLDER = new File(Environment.getExternalStorageDirectory(), "RandomImage");
+	public static final File BACKUP_FILE_FOLDER = new File(Environment.getExternalStorageDirectory(), "RandomImage");
 
 	/**
 	 * The suffix for config files.
