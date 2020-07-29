@@ -40,6 +40,6 @@
     <string name="menu_subject_contact_developer">Pregunta sobre la aplicación Imagen Aleatoria</string>
     <string name="menu_title_help_page">Página de ayuda</string>
     <string name="menu_detail_help_page">Abra la página de ayuda en el navegador</string>
-    <string name="menu_target_help_page">http://randomimage.jeisfeld.de/?lang=es&amp;page=overview</string>
+    <string name="menu_target_help_page">http://randomimage.jeisfeld.de/?lang=es</string>
 
 </resources>
