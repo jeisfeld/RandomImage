@@ -961,6 +961,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 		mIsGoingBackward = !mIsGoingBackward;
 		setContentView(mCurrentImageView);
+		if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mCurrentFileName);
+		}
 
 		// need to move mRandomFileProvider to new position.
 		if (mIsGoingBackward) {
