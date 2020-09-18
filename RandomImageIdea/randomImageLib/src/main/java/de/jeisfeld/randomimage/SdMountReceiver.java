@@ -9,6 +9,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
+import de.jeisfeld.randomimage.widgets.GenericImageWidget;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
 import de.jeisfeld.randomimage.widgets.StackedImageWidget;
@@ -45,6 +46,11 @@ public class SdMountReceiver extends BroadcastReceiver {
 				|| Intent.ACTION_BOOT_COMPLETED.equals(action)) {
 			ImageRegistry.getCurrentImageList(false).load(false);
 			GenericWidget.updateAllInstances();
+		}
+
+		// Update images on widgets with screen on if requested.
+		if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+			GenericImageWidget.updateInstancesOnScreenOff();
 		}
 	}
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
@@ -68,6 +69,11 @@ public class Application extends android.app.Application {
 			PreferenceUtil.setSharedPreferenceLong(R.string.key_statistics_firststarttime, System.currentTimeMillis());
 		}
 
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(Intent.ACTION_SHUTDOWN);
+		intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+		Application.mContext.registerReceiver(new SdMountReceiver(), intentFilter);
+
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
 	}
 
@@ -76,6 +82,9 @@ public class Application extends android.app.Application {
 	 */
 	private void setExceptionHandler() {
 		final UncaughtExceptionHandler defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+		if (defaultExceptionHandler == null) {
+			return;
+		}
 
 		UncaughtExceptionHandler customExceptionHandler =
 				new UncaughtExceptionHandler() {

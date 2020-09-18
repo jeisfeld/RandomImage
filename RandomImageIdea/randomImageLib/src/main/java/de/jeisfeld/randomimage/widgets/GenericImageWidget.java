@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import de.jeisfeld.randomimage.Application;
@@ -32,6 +33,11 @@ import de.jeisfeld.randomimagelib.R;
  * The extended widget, also displaying one or more changing images.
  */
 public abstract class GenericImageWidget extends GenericWidget {
+	/**
+	 * The list of all widget types.
+	 */
+	protected static final List<Class<? extends GenericImageWidget>> IMAGE_WIDGET_TYPES = new ArrayList<>();
+
 	/**
 	 * Method name to set the background color.
 	 */
@@ -62,6 +68,11 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * complete the animation.
 	 */
 	private static final SparseArray<ButtonAnimator> BUTTON_ANIMATORS = new SparseArray<>();
+
+	static {
+		IMAGE_WIDGET_TYPES.add(ImageWidget.class);
+		IMAGE_WIDGET_TYPES.add(StackedImageWidget.class);
+	}
 
 	@Override
 	public final void onDeleted(final Context context, final int[] appWidgetIds) {
@@ -235,6 +246,30 @@ public abstract class GenericImageWidget extends GenericWidget {
 		}
 	}
 
+	/**
+	 * Update instances configured for update on screen off.
+	 */
+	public static void updateInstancesOnScreenOff() {
+		for (Class<? extends GenericImageWidget> widgetClass : IMAGE_WIDGET_TYPES) {
+			int[] appWidgetIds = GenericWidget.getAllWidgetIds(widgetClass);
+			if (appWidgetIds != null) {
+				List<Integer> idListForUpdate = new ArrayList<>();
+				for (int appWidgetId : appWidgetIds) {
+					long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, 0);
+					if (interval == 0) {
+						idListForUpdate.add(appWidgetId);
+					}
+				}
+				if (idListForUpdate.size() > 0) {
+					int[] idsForUpdate = new int[idListForUpdate.size()];
+					for (int i = 0; i < idListForUpdate.size(); i++) {
+						idsForUpdate[i] = idListForUpdate.get(i);
+					}
+					updateInstances(widgetClass, UpdateType.NEW_IMAGE_AUTOMATIC, idsForUpdate);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Helper class containing constants for background colors.
@@ -714,7 +749,5 @@ public abstract class GenericImageWidget extends GenericWidget {
 				}
 			}
 		}
-
-
 	}
 }

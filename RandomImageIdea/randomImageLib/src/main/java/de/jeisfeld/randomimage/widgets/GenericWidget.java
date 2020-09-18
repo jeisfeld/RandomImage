@@ -221,8 +221,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		}
 
 		for (int appWidgetId : ids) {
-			long interval =
-					PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, 0);
+			long interval = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, 0);
 
 			if (interval > 0) {
 				WidgetAlarmReceiver.setAlarm(context, appWidgetId, interval * MILLIS_PER_SECOND);

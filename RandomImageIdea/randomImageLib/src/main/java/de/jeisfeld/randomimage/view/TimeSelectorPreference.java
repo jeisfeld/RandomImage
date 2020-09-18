@@ -208,7 +208,7 @@ public class TimeSelectorPreference extends DialogPreference {
 		 * @return The cloned list without seconds.
 		 */
 		private static SpinnerEntry[] hideSeconds(final SpinnerEntry[] spinnerEntries) {
-			return Arrays.copyOfRange(spinnerEntries, 1, spinnerEntries.length - 1);
+			return Arrays.copyOfRange(spinnerEntries, 1, spinnerEntries.length);
 		}
 
 		/**
