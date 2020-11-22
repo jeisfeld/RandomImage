@@ -41,6 +41,6 @@
     <string name="menu_subject_contact_developer">Frage zur Zufallsbild-App</string>
     <string name="menu_title_help_page">Hilfeseite</string>
     <string name="menu_detail_help_page">Öffnen der Hilfeseite im Browser</string>
-    <string name="menu_target_help_page">http://randomimage.jeisfeld.de/?lang=de</string>
+    <string name="menu_target_help_page">https://randomimage.de/?lang=de</string>
 
 </resources>
