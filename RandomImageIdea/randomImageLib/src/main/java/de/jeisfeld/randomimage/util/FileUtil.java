@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.provider.DocumentsContract;
 import android.util.Log;
 
@@ -25,11 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import de.jeisfeld.randomimage.Application;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
+import de.jeisfeld.randomimage.Application;
 
 /**
  * Utility class for helping parsing file systems.
@@ -492,36 +493,20 @@ public final class FileUtil {
 	 * @return The path.
 	 */
 	private static String getVolumePath(final String volumeId) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+		if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
 			return null;
 		}
-
-		try {
+		else if (VERSION.SDK_INT >= VERSION_CODES.R) {
 			StorageManager storageManager = (StorageManager) Application.getAppContext().getSystemService(Context.STORAGE_SERVICE);
 
-			Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
-
-			Method getVolumeList = storageManager.getClass().getMethod("getVolumeList");
-			Method getUuid = storageVolumeClazz.getMethod("getUuid");
-			Method getPath = storageVolumeClazz.getMethod("getPath");
-			Method isPrimary = storageVolumeClazz.getMethod("isPrimary");
-			Object result = getVolumeList.invoke(storageManager);
-
-			final int length = result == null ? 0 : Array.getLength(result);
-			for (int i = 0; i < length; i++) {
-				Object storageVolumeElement = Array.get(result, i);
-				String uuid = (String) getUuid.invoke(storageVolumeElement);
-				Boolean primary = (Boolean) isPrimary.invoke(storageVolumeElement);
-
-				// primary volume?
-				if (primary != null && primary && PRIMARY_VOLUME_NAME.equals(volumeId)) {
-					return (String) getPath.invoke(storageVolumeElement);
+			for (StorageVolume storageVolume : storageManager.getStorageVolumes()) {
+				File directory = storageVolume.getDirectory();
+				if (storageVolume.isPrimary() && PRIMARY_VOLUME_NAME.equals(volumeId)) {
+					return directory == null ? null : directory.getAbsolutePath();
 				}
-
-				// other volumes?
-				if (uuid != null) {
-					if (uuid.equals(volumeId)) {
-						return (String) getPath.invoke(storageVolumeElement);
+				else if (storageVolume.getUuid() != null) {
+					if (storageVolume.getUuid().equals(volumeId)) {
+						return directory == null ? null : directory.getAbsolutePath();
 					}
 				}
 			}
@@ -529,8 +514,43 @@ public final class FileUtil {
 			// not found.
 			return null;
 		}
-		catch (Exception ex) {
-			return null;
+		else {
+			try {
+				StorageManager storageManager = (StorageManager) Application.getAppContext().getSystemService(Context.STORAGE_SERVICE);
+
+				Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+
+				Method getVolumeList = storageManager.getClass().getMethod("getVolumeList");
+				Method getUuid = storageVolumeClazz.getMethod("getUuid");
+				Method getPath = storageVolumeClazz.getMethod("getPath");
+				Method isPrimary = storageVolumeClazz.getMethod("isPrimary");
+				Object result = getVolumeList.invoke(storageManager);
+
+				final int length = result == null ? 0 : Array.getLength(result);
+				for (int i = 0; i < length; i++) {
+					Object storageVolumeElement = Array.get(result, i);
+					String uuid = (String) getUuid.invoke(storageVolumeElement);
+					Boolean primary = (Boolean) isPrimary.invoke(storageVolumeElement);
+
+					// primary volume?
+					if (primary != null && primary && PRIMARY_VOLUME_NAME.equals(volumeId)) {
+						return (String) getPath.invoke(storageVolumeElement);
+					}
+
+					// other volumes?
+					if (uuid != null) {
+						if (uuid.equals(volumeId)) {
+							return (String) getPath.invoke(storageVolumeElement);
+						}
+					}
+				}
+
+				// not found.
+				return null;
+			}
+			catch (Exception ex) {
+				return null;
+			}
 		}
 	}
 
