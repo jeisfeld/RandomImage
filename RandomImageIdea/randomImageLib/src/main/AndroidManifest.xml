@@ -8,9 +8,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -33,11 +35,11 @@
             android:label="@string/app_name_short"
             android:theme="@style/AppTheme.Fullscreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -46,195 +48,209 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dialog.NoActionBar.MinWidth">
             <intent-filter>
-                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="image/*"/>
+                <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="image/*"/>
+                <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.SelectDirectoryActivity"
-            android:label="@string/title_activity_add_images">
-        </activity>
+            android:label="@string/title_activity_add_images" />
         <activity
             android:name="de.jeisfeld.randomimage.ConfigureImageListActivity"
             android:label="@string/title_activity_configure_image_list"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask" />
         <activity
             android:name="de.jeisfeld.randomimage.MainConfigurationActivity"
-            android:label="@string/title_icon_main_configuration">
-        </activity>
+            android:label="@string/title_icon_main_configuration" />
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImagesFromFolderActivity"
-            android:label="@string/title_activity_display_images_from_folder">
-        </activity>
+            android:label="@string/title_activity_display_images_from_folder" />
         <activity
             android:name="de.jeisfeld.randomimage.SelectImageFolderActivity"
-            android:label="@string/title_activity_add_images">
-        </activity>
+            android:label="@string/title_activity_add_images" />
         <activity
             android:name="de.jeisfeld.randomimage.DisplayImageDetailsActivity"
             android:label="@string/title_activity_display_image_details"
-            android:theme="@style/AppTheme.Dialog">
-        </activity>
+            android:theme="@style/AppTheme.Dialog" />
         <activity
             android:name="de.jeisfeld.randomimage.DisplayListInfoActivity"
             android:label="@string/title_activity_display_list_info"
-            android:theme="@style/AppTheme.Dialog">
-        </activity>
+            android:theme="@style/AppTheme.Dialog" />
         <activity
             android:name="de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationActivity"
             android:label="@string/title_activity_widget_settings">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationActivity"
             android:label="@string/title_activity_widget_settings">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationActivity"
             android:label="@string/title_activity_widget_settings">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.WidgetSettingsActivity"
-            android:label="@string/title_activity_widget_settings">
-        </activity>
+            android:label="@string/title_activity_widget_settings" />
         <activity
             android:name="de.jeisfeld.randomimage.notifications.NotificationSettingsActivity"
-            android:label="@string/title_activity_notification_settings">
-        </activity>
+            android:label="@string/title_activity_notification_settings" />
         <activity
             android:name="de.jeisfeld.randomimage.SettingsActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
+            android:label="@string/title_activity_settings" />
         <activity
             android:name="de.jeisfeld.randomimage.notifications.DisplayImagePopupActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.MiniWidget"
             android:label="@string/mini_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_mini"/>
+                android:resource="@xml/widget_mini" />
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.ImageWidget"
             android:label="@string/image_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_image"/>
+                android:resource="@xml/widget_image" />
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidget"
             android:label="@string/stacked_image_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_stacked_image"/>
+                android:resource="@xml/widget_stacked_image" />
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.SdMountReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
 
-                <data android:scheme="file"/>
+                <data android:scheme="file" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
 
-                <data android:scheme="file"/>
+                <data android:scheme="file" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="de.jeisfeld.randomimage.WIDGET_ALARM_RECEIVER"/>
+                <action android:name="de.jeisfeld.randomimage.WIDGET_ALARM_RECEIVER" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="de.jeisfeld.randomimage.NOTIFICATION_ALARM_RECEIVER"/>
+                <action android:name="de.jeisfeld.randomimage.NOTIFICATION_ALARM_RECEIVER" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.notifications.NotificationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="de.jeisfeld.randomimage.NOTIFICATION_BROADCAST_RECEIVER"/>
+                <action android:name="de.jeisfeld.randomimage.NOTIFICATION_BROADCAST_RECEIVER" />
             </intent-filter>
         </receiver>
 
         <service
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <uses-library
             android:name="com.sec.android.app.multiwindow"
-            android:required="false"/>
+            android:required="false" />
 
         <meta-data
             android:name="com.sec.android.support.multiwindow"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
-            android:value="632.0dip"/>
+            android:value="632.0dip" />
         <meta-data
             android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
-            android:value="598.0dip"/>
+            android:value="598.0dip" />
         <meta-data
             android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
-            android:value="632.0dip"/>
+            android:value="632.0dip" />
         <meta-data
             android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
-            android:value="598.0dip"/>
+            android:value="598.0dip" />
 
         <meta-data
             android:name="android.max_aspect"
-            android:value="2.5"/>
-
+            android:value="2.5" />
     </application>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.action.MANAGE_OVERLAY_PERMISSION" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.USAGE_ACCESS_SETTINGS" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MEDIA_SCANNER_SCAN_FILE" />
+        </intent>
+    </queries>
 </manifest>

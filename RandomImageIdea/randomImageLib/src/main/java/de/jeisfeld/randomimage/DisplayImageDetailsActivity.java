@@ -7,7 +7,9 @@ import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -259,6 +262,9 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			public void onClick(final View v) {
 				Intent intent = new Intent(Intent.ACTION_SEND);
 				Uri uri = MediaStoreUtil.getUriFromFile(mFileName);
+				if (uri == null) {
+					return;
+				}
 				intent.putExtra(Intent.EXTRA_STREAM, uri);
 				intent.setType("image/*");
 				startActivity(intent);
@@ -518,9 +524,6 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			textViewNumberOfImages.setVisibility(View.GONE);
 			layoutConfigureViewFrequency.setVisibility(View.GONE);
 		}
-
-		getGpsIntent();
-
 	}
 
 	/**
@@ -530,7 +533,21 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 */
 	private Intent getGpsIntent() {
 		try {
-			ExifInterface exifInterface = new ExifInterface(mFileName);
+			ExifInterface exifInterface;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+				Uri photoUri = MediaStoreUtil.getUriFromFile(mFileName);
+				if (photoUri == null) {
+					return null;
+				}
+				photoUri = MediaStore.setRequireOriginal(photoUri);
+				InputStream stream = getContentResolver().openInputStream(photoUri);
+				exifInterface = new ExifInterface(stream);
+				stream.close();
+			}
+			else {
+				exifInterface = new ExifInterface(mFileName);
+			}
+
 			double[] gpsCoordinates = exifInterface.getLatLong();
 
 			if (gpsCoordinates == null || gpsCoordinates.length < 2 || (gpsCoordinates[0] == 0 && gpsCoordinates[1] == 0)) {

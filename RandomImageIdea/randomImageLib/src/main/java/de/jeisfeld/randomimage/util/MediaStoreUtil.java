@@ -1,9 +1,6 @@
 package de.jeisfeld.randomimage.util;
 
-import java.io.File;
-
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,6 +9,8 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+
+import java.io.File;
 
 import de.jeisfeld.randomimage.Application;
 
@@ -37,7 +36,6 @@ public final class MediaStoreUtil {
 	 * @param contentUri Thr URI of the media store
 	 * @return the file path.
 	 */
-	@SuppressWarnings("static-access")
 	public static String getRealPathFromUri(final Uri contentUri) {
 		Cursor cursor = null;
 		try {
@@ -67,7 +65,6 @@ public final class MediaStoreUtil {
 	 * @return the image id.
 	 * @throws ImageNotFoundException thrown if the image is not found in the media store.
 	 */
-	@SuppressWarnings("static-access")
 	private static int getImageId(final String path) throws ImageNotFoundException {
 		ContentResolver resolver = Application.getAppContext().getContentResolver();
 
@@ -99,14 +96,14 @@ public final class MediaStoreUtil {
 	 * Get an Uri from an file path.
 	 *
 	 * @param path The file path.
-	 * @return The Uri.
+	 * @return The Uri. May be null.
 	 */
 	public static Uri getUriFromFile(final String path) {
 		ContentResolver resolver = Application.getAppContext().getContentResolver();
 
-		Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
-				new String[] {BaseColumns._ID}, MediaColumns.DATA + " = ?",
-				new String[] {path}, MediaColumns.DATE_ADDED + " desc");
+		Cursor filecursor = resolver.query(MediaStore.Images.Media.getContentUri("external"),
+				new String[]{BaseColumns._ID}, MediaColumns.DATA + " = ?",
+				new String[]{path}, MediaColumns.DATE_ADDED + " desc");
 		if (filecursor == null) {
 			return null;
 		}
@@ -114,72 +111,16 @@ public final class MediaStoreUtil {
 
 		if (filecursor.isAfterLast()) {
 			filecursor.close();
-			ContentValues values = new ContentValues();
-			values.put(MediaColumns.DATA, path);
-			return resolver.insert(MediaStore.Files.getContentUri("external"), values);
+			addPictureToMediaStore(path);
+			return null;
 		}
 		else {
-			int imageId = filecursor.getInt(filecursor.getColumnIndex(BaseColumns._ID));
-			Uri uri = MediaStore.Files.getContentUri("external").buildUpon().appendPath(
-					Integer.toString(imageId)).build();
+			long imageId = filecursor.getLong(filecursor.getColumnIndex(BaseColumns._ID));
+			Uri uri = MediaStore.Images.Media.getContentUri("external").buildUpon().appendPath(
+					Long.toString(imageId)).build();
 			filecursor.close();
 			return uri;
 		}
-	}
-
-	/**
-	 * Get the Album Id from an Audio file.
-	 *
-	 * @param file The audio file.
-	 * @return The Album ID.
-	 */
-	@SuppressWarnings("resource")
-	public static int getAlbumIdFromAudioFile(final File file) {
-		ContentResolver resolver = Application.getAppContext().getContentResolver();
-		Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				new String[] {MediaStore.Audio.AlbumColumns.ALBUM_ID},
-				MediaStore.MediaColumns.DATA + "=?",
-				new String[] {file.getAbsolutePath()}, null);
-		if (cursor == null || !cursor.moveToFirst()) {
-			// Entry not available - create entry.
-			if (cursor != null) {
-				cursor.close();
-			}
-			ContentValues values = new ContentValues();
-			values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
-			values.put(MediaStore.MediaColumns.TITLE, "{MediaWrite Workaround}");
-			values.put(MediaStore.MediaColumns.SIZE, file.length());
-			values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
-			values.put(MediaStore.Audio.AudioColumns.IS_MUSIC, true);
-			resolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
-		}
-		cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				new String[] {MediaStore.Audio.AlbumColumns.ALBUM_ID},
-				MediaStore.MediaColumns.DATA + "=?",
-				new String[] {file.getAbsolutePath()}, null);
-		if (cursor == null) {
-			return 0;
-		}
-		if (!cursor.moveToFirst()) {
-			cursor.close();
-			return 0;
-		}
-		int albumId = cursor.getInt(0);
-		cursor.close();
-		return albumId;
-	}
-
-	/**
-	 * Add a picture to the media store (via scanning).
-	 *
-	 * @param path the path of the image.
-	 */
-	public static void addFileToMediaStore(final String path) {
-		Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-		File file = new File(path);
-		Uri contentUri = Uri.fromFile(file);
-		mediaScanIntent.setData(contentUri);
-		Application.getAppContext().sendBroadcast(mediaScanIntent);
 	}
 
 	/**
@@ -188,7 +129,6 @@ public final class MediaStoreUtil {
 	 * @param path The path of the image
 	 * @return the thumbnail.
 	 */
-	@SuppressWarnings("deprecation")
 	public static Bitmap getThumbnailFromPath(final String path) {
 		ContentResolver resolver = Application.getAppContext().getContentResolver();
 

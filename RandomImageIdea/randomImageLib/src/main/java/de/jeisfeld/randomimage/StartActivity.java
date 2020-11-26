@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage;
 
 import android.Manifest;
+import android.Manifest.permission;
 import android.app.DialogFragment;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 
@@ -31,14 +33,22 @@ public abstract class StartActivity extends BaseActivity {
 
 		int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 		int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		int locationPermission = PackageManager.PERMISSION_GRANTED;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+			locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_MEDIA_LOCATION);
+		}
 
-		if (readPermission != PackageManager.PERMISSION_GRANTED
-				|| (!SystemUtil.isAtLeastVersion(VERSION_CODES.Q) && writePermission != PackageManager.PERMISSION_GRANTED)) {
+		if (readPermission != PackageManager.PERMISSION_GRANTED // BOOLEAN_EXPRESSION_COMPLEXITY
+				|| (!SystemUtil.isAtLeastVersion(VERSION_CODES.Q) && writePermission != PackageManager.PERMISSION_GRANTED)
+				|| (SystemUtil.isAtLeastVersion(VERSION_CODES.R) && locationPermission != PackageManager.PERMISSION_GRANTED)) {
 			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog) {
 					ActivityCompat.requestPermissions(StartActivity.this,
-							new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+									? new String[]{permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE,
+									permission.ACCESS_MEDIA_LOCATION}
+									: new String[]{permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE},
 							REQUEST_CODE_PERMISSION);
 				}
 

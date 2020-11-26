@@ -180,6 +180,8 @@ public final class ImageUtil {
 	 * @return the bitmap.
 	 */
 	public static Bitmap getImageBitmap(final String path, final int maxSize) {
+		// Ensure that image is in media store.
+		MediaStoreUtil.getUriFromFile(path);
 		return getImageBitmap(path, maxSize, maxSize, false);
 	}
 
@@ -791,6 +793,9 @@ public final class ImageUtil {
 		try {
 			Intent intent = new Intent(Intent.ACTION_VIEW);
 			Uri uri = MediaStoreUtil.getUriFromFile(fileName);
+			if (uri == null) {
+				return false;
+			}
 			intent.setData(uri);
 			context.startActivity(intent);
 			return true;
