@@ -73,6 +73,15 @@ public final class SystemUtil {
 	}
 
 	/**
+	 * Check if image folders shall be detected via SAF.
+	 *
+	 * @return True if image folders shall be detected via SAF.
+	 */
+	public static boolean findImagesViaMediaStore() {
+		return isAtLeastVersion(VERSION_CODES.R);
+	}
+
+	/**
 	 * Determine if an app is installed.
 	 *
 	 * @param appPackage the app package name.

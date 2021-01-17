@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -19,6 +20,7 @@ import java.util.Locale;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -33,6 +35,7 @@ public class Application extends android.app.Application {
 	/**
 	 * A utility field to store a context statically.
 	 */
+	@SuppressLint("StaticFieldLeak")
 	private static Context mContext;
 	/**
 	 * The default tag for logging.
@@ -41,6 +44,7 @@ public class Application extends android.app.Application {
 	/**
 	 * The default locale.
 	 */
+	@SuppressLint("ConstantLocale")
 	private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
 	@Override
@@ -73,6 +77,8 @@ public class Application extends android.app.Application {
 		intentFilter.addAction(Intent.ACTION_SHUTDOWN);
 		intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
 		Application.mContext.registerReceiver(new SdMountReceiver(), intentFilter);
+
+		ImageUtil.init();
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
 	}

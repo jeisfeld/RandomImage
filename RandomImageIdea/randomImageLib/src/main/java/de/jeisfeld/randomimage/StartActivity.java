@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -68,6 +69,7 @@ public abstract class StartActivity extends BaseActivity {
 			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
 				finish();
 			}
+			ImageUtil.init();
 			DialogUtil.displaySearchForImageFoldersIfRequired(this, false);
 		}
 	}

@@ -32,7 +32,7 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * The image files contained in folders of the list, either weighted or dummy.
 	 */
-	private volatile HashMap<String, ArrayList<String>> mImageFilesInFolders = new HashMap<>();
+	private final HashMap<String, ArrayList<String>> mImageFilesInFolders = new HashMap<>();
 
 	/**
 	 * The image files contained in the list, including nested lists.
@@ -505,9 +505,9 @@ public final class StandardImageList extends ImageList {
 						imageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
 					}
 					else {
-						double customWeight = Double.parseDouble(customWeightString);
+						assert mImageFilesInFolders != null;
 						mImageFilesInFolders.put(folder.getName(), ImageUtil.getImagesInFolder(folder.getName()));
-						mCustomWeights.put(folder, customWeight);
+						mCustomWeights.put(folder, Double.parseDouble(customWeightString));
 					}
 				}
 
@@ -526,6 +526,7 @@ public final class StandardImageList extends ImageList {
 
 				// Set it only here so that it is only visible when completed, and has always a complete state.
 				mAllImageFilesInList = new ArrayList<>(allImageFileSet);
+				assert mImageFilesInFolders != null;
 				mImageFilesInFolders.put(DUMMY_NESTED_FOLDER.getName(), new ArrayList<>(imageFileSet));
 				mNestedLists = nestedListMap;
 

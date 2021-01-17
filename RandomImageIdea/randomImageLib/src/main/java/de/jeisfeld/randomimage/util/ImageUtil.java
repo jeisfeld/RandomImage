@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage.util;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -32,10 +34,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
@@ -69,6 +76,11 @@ public final class ImageUtil {
 	private static final long REPARSING_INTERVAL = TimeUnit.DAYS.toMillis(7);
 
 	/**
+	 * The number of milliseconds after which the app again re-parses image files when retrieving images from a file.
+	 */
+	private static final long REPARSING_INTERVAL_2 = TimeUnit.MINUTES.toMillis(1);
+
+	/**
 	 * The file endings considered as image files.
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
@@ -80,11 +92,33 @@ public final class ImageUtil {
 	public static final String RECURSIVE_SUFFIX = File.separator + "*";
 
 	/**
+	 * A map from image folder paths to images. Used when images are retrieved via MediaStore instead of parsing folders.
+	 */
+	private static final Map<String, List<String>> FOLDER_IMAGE_MAP = new HashMap<>();
+	/**
+	 * A map from image parent folders to image folders. Used when images are retrieved via MediaStore instead of parsing folders.
+	 */
+	private static final Map<String, List<String>> FOLDER_RECURSIVE_MAP = new HashMap<>();
+	/**
+	 * The last time when parsing all image lists. Used when images are retrieved via MediaStore instead of parsing folders.
+	 */
+	private static long mLastParsingTimestamp = 0;
+
+
+	/**
 	 * Hide default constructor.
 	 */
 	private ImageUtil() {
 		throw new UnsupportedOperationException();
 	}
+
+	/**
+	 * Initialize.
+	 */
+	public static void init() {
+		fillImageMap(null);
+	}
+
 
 	/**
 	 * Get the date field with the EXIF date from the file If not existing, use the last modified date.
@@ -475,49 +509,210 @@ public final class ImageUtil {
 	}
 
 	/**
+	 * Refill the image map from MediaStore if required.
+	 */
+	private static void refillImageMap() {
+		if (SystemUtil.findImagesViaMediaStore()) {
+			if (mLastParsingTimestamp == 0 || FOLDER_IMAGE_MAP.keySet().size() == 0) {
+				fillImageMap(null);
+			}
+			else if (System.currentTimeMillis() >= mLastParsingTimestamp + REPARSING_INTERVAL_2) {
+				new Thread() {
+					@Override
+					public void run() {
+						fillImageMap(null);
+					}
+				}.start();
+			}
+		}
+	}
+
+
+	/**
+	 * Fill the map of images from MediaStore.
+	 *
+	 * @param listener A listener called when image folders are found.
+	 */
+	private static void fillImageMap(final OnImageFoldersFoundListener listener) {
+		if (SystemUtil.findImagesViaMediaStore()
+				&& ContextCompat.checkSelfPermission(Application.getAppContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+				== PackageManager.PERMISSION_GRANTED) {
+			synchronized (FOLDER_IMAGE_MAP) {
+				if (System.currentTimeMillis() < mLastParsingTimestamp + REPARSING_INTERVAL_2) {
+					return;
+				}
+				mLastParsingTimestamp = System.currentTimeMillis();
+			}
+			Map<String, List<String>> tempFolderImageMap = new HashMap<>();
+			Map<String, List<String>> tempFolderRecursiveMap = new HashMap<>();
+			List<String> imagePaths = MediaStoreUtil.getAllImagePaths();
+			List<String> sdPaths = FileUtil.getExtSdCardPaths();
+			sdPaths.add(FileUtil.SD_CARD_PATH);
+
+			Handler tempHandler = null;
+			if (listener != null) {
+				try {
+					tempHandler = new Handler();
+				}
+				catch (Exception e) {
+					// ignore
+				}
+			}
+			final Handler handler = tempHandler;
+
+			for (String path : imagePaths) {
+				File file = new File(path);
+				String folder = file.getParent();
+				if (folder == null) {
+					folder = "";
+				}
+				if (folder.endsWith(File.separator)) {
+					folder = folder.substring(0, folder.length() - 1);
+				}
+
+				if (tempFolderImageMap.containsKey(folder)) {
+					Objects.requireNonNull(tempFolderImageMap.get(folder)).add(path);
+				}
+				else {
+					List<String> filesInFolder = new ArrayList<>();
+					filesInFolder.add(path);
+					tempFolderImageMap.put(folder, filesInFolder);
+					if (listener != null && handler != null) {
+						final String finalFolder = folder;
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								listener.handleImageFolder(finalFolder);
+							}
+						});
+					}
+					String tempFolder = folder;
+
+					while (tempFolder != null && tempFolder.length() > 0) {
+						String folderRecursive = tempFolder + RECURSIVE_SUFFIX;
+						if (tempFolderRecursiveMap.containsKey(folderRecursive)) {
+							Objects.requireNonNull(tempFolderRecursiveMap.get(folderRecursive)).add(folder);
+						}
+						else {
+							List<String> foldersBelowFolder = new ArrayList<>();
+							foldersBelowFolder.add(folder);
+							tempFolderRecursiveMap.put(folderRecursive, foldersBelowFolder);
+						}
+						if (sdPaths.contains(tempFolder)) {
+							break;
+						}
+						tempFolder = new File(tempFolder).getParent();
+					}
+				}
+			}
+			final ArrayList<String> imageFolders = new ArrayList<>();
+			synchronized (FOLDER_IMAGE_MAP) {
+				FOLDER_IMAGE_MAP.clear();
+				FOLDER_RECURSIVE_MAP.clear();
+				for (Entry<String, List<String>> entry : tempFolderImageMap.entrySet()) {
+					FOLDER_IMAGE_MAP.put(entry.getKey(), entry.getValue());
+				}
+				for (Entry<String, List<String>> entry : tempFolderRecursiveMap.entrySet()) {
+					if (entry.getValue().size() >= 2) {
+						FOLDER_RECURSIVE_MAP.put(entry.getKey(), entry.getValue());
+					}
+				}
+				imageFolders.addAll(FOLDER_IMAGE_MAP.keySet());
+				imageFolders.addAll(FOLDER_RECURSIVE_MAP.keySet());
+
+				mLastParsingTimestamp = System.currentTimeMillis();
+			}
+			imageFolders.sort(new Comparator<String>() {
+				@Override
+				public int compare(final String o1, final String o2) {
+					String s1 = o1.endsWith(RECURSIVE_SUFFIX) ? o1.substring(0, o1.length() - RECURSIVE_SUFFIX.length()) : o1 + File.separator;
+					String s2 = o2.endsWith(RECURSIVE_SUFFIX) ? o2.substring(0, o2.length() - RECURSIVE_SUFFIX.length()) : o2 + File.separator;
+					return s1.compareTo(s2);
+				}
+			});
+			PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
+			if (listener != null && handler != null) {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						listener.handleImageFolders(imageFolders);
+					}
+				});
+			}
+		}
+	}
+
+	/**
 	 * Get the list of image files in a folder.
 	 *
 	 * @param folderName The folder name.
 	 * @return The list of image files in this folder.
 	 */
 	public static ArrayList<String> getImagesInFolder(final String folderName) {
-		ArrayList<String> fileNames = new ArrayList<>();
-		if (folderName == null) {
-			return fileNames;
-		}
-
-		List<String> imageFolders = new ArrayList<>();
-		File folder = new File(folderName);
-
-		if (folderName.endsWith(ImageUtil.RECURSIVE_SUFFIX)) {
-			imageFolders.addAll(ImageUtil.getImageSubfolders(folderName));
-		}
-		else if (folder.exists() && folder.isDirectory()) {
-			imageFolders.add(folderName);
-		}
-		else {
-			return fileNames;
-		}
-
-		for (String imageFolderName : imageFolders) {
-			File imageFolder = new File(imageFolderName);
-			if (imageFolder.exists() && imageFolder.isDirectory()) {
-				File[] imageFiles = imageFolder.listFiles(new FileFilter() {
-					@Override
-					public boolean accept(final File file) {
-						return isImage(file, false);
+		if (SystemUtil.findImagesViaMediaStore()) {
+			refillImageMap();
+			ArrayList<String> result = new ArrayList<>();
+			synchronized (FOLDER_IMAGE_MAP) {
+				if (folderName.endsWith(ImageUtil.RECURSIVE_SUFFIX)) {
+					List<String> folders = FOLDER_RECURSIVE_MAP.get(folderName);
+					if (folders != null) {
+						for (String folder : folders) {
+							result.addAll(Objects.requireNonNull(FOLDER_IMAGE_MAP.get(folder)));
+						}
 					}
-				});
-				if (imageFiles != null) {
-					for (File file : imageFiles) {
-						fileNames.add(file.getAbsolutePath());
+				}
+				else {
+					String folderKey = folderName;
+					if (folderKey.endsWith(File.separator)) {
+						folderKey = folderKey.substring(0, folderKey.length() - 1);
+					}
+					List<String> files = FOLDER_IMAGE_MAP.get(folderKey);
+					if (files != null) {
+						result.addAll(files);
 					}
 				}
 			}
+			return result;
 		}
+		else {
+			ArrayList<String> fileNames = new ArrayList<>();
+			if (folderName == null) {
+				return fileNames;
+			}
 
-		Collections.sort(fileNames, Collator.getInstance());
-		return fileNames;
+			List<String> imageFolders = new ArrayList<>();
+			File folder = new File(folderName);
+
+			if (folderName.endsWith(ImageUtil.RECURSIVE_SUFFIX)) {
+				imageFolders.addAll(ImageUtil.getImageSubfolders(folderName));
+			}
+			else if (folder.exists() && folder.isDirectory()) {
+				imageFolders.add(folderName);
+			}
+			else {
+				return fileNames;
+			}
+
+			for (String imageFolderName : imageFolders) {
+				File imageFolder = new File(imageFolderName);
+				if (imageFolder.exists() && imageFolder.isDirectory()) {
+					File[] imageFiles = imageFolder.listFiles(new FileFilter() {
+						@Override
+						public boolean accept(final File file) {
+							return isImage(file, false);
+						}
+					});
+					if (imageFiles != null) {
+						for (File file : imageFiles) {
+							fileNames.add(file.getAbsolutePath());
+						}
+					}
+				}
+			}
+
+			Collections.sort(fileNames, Collator.getInstance());
+			return fileNames;
+		}
 	}
 
 	/**
@@ -536,38 +731,49 @@ public final class ImageUtil {
 	 * @param listener A listener handling the response via callback.
 	 */
 	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
-		final Handler handler = new Handler();
-		new Thread() {
-			@Override
-			public void run() {
-				long timestamp = System.currentTimeMillis();
-				final ArrayList<String> imageFolders = new ArrayList<>(getAllImageSubfolders(new File(FileUtil.SD_CARD_PATH), handler, listener));
-
-				for (String path : FileUtil.getExtSdCardPaths()) {
-					imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
+		if (SystemUtil.findImagesViaMediaStore()) {
+			new Thread() {
+				@Override
+				public void run() {
+					fillImageMap(listener);
 				}
-				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Parse_Image_Folders", null, System.currentTimeMillis() - timestamp);
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Image_folders", null, (long) imageFolders.size());
+			}.start();
+		}
+		else {
+			final Handler handler = new Handler();
+			new Thread() {
+				@Override
+				public void run() {
+					long timestamp = System.currentTimeMillis();
+					final ArrayList<String> imageFolders = new ArrayList<>(getAllImageSubfolders(new File(FileUtil.SD_CARD_PATH), handler, listener));
 
-				PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
-				PreferenceUtil.setSharedPreferenceLong(R.string.key_last_parsing_time, System.currentTimeMillis());
-				if (listener != null) {
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							listener.handleImageFolders(imageFolders);
-						}
-					});
+					for (String path : FileUtil.getExtSdCardPaths()) {
+						imageFolders.addAll(getAllImageSubfolders(new File(path), handler, listener));
+					}
+					TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Parse_Image_Folders", null, System.currentTimeMillis() - timestamp);
+					TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Image_folders", null, (long) imageFolders.size());
+
+					PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
+					PreferenceUtil.setSharedPreferenceLong(R.string.key_last_parsing_time, System.currentTimeMillis());
+					if (listener != null) {
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								listener.handleImageFolders(imageFolders);
+							}
+						});
+					}
 				}
-			}
-		}.start();
+			}.start();
+		}
 	}
 
 	/**
 	 * Redo parsing of all image folders if the last parsing was more than one week ago.
 	 */
 	public static void refreshStoredImageFoldersIfApplicable() {
-		if (System.currentTimeMillis() > PreferenceUtil.getSharedPreferenceLong(R.string.key_last_parsing_time, 0) + REPARSING_INTERVAL) {
+		if (!SystemUtil.findImagesViaMediaStore()
+				&& System.currentTimeMillis() > PreferenceUtil.getSharedPreferenceLong(R.string.key_last_parsing_time, 0) + REPARSING_INTERVAL) {
 			getAllImageFolders(null);
 		}
 	}

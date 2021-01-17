@@ -324,7 +324,7 @@ public final class FileUtil {
 	 * @return A list of external SD card paths.
 	 */
 	@RequiresApi(Build.VERSION_CODES.KITKAT)
-	private static String[] getExtSdCardPathsForKitkat() {
+	private static List<String> getExtSdCardPathsForKitkat() {
 		List<String> paths = new ArrayList<>();
 		for (File file : Application.getAppContext().getExternalFilesDirs("external")) {
 			if (file != null && !file.equals(Application.getAppContext().getExternalFilesDir("external"))) {
@@ -344,7 +344,7 @@ public final class FileUtil {
 				}
 			}
 		}
-		return paths.toArray(new String[0]);
+		return paths;
 	}
 
 	/**
@@ -352,7 +352,7 @@ public final class FileUtil {
 	 *
 	 * @return A list of external SD card paths.
 	 */
-	public static String[] getExtSdCardPaths() {
+	public static List<String> getExtSdCardPaths() {
 		if (SystemUtil.isAtLeastVersion(VERSION_CODES.KITKAT)) {
 			return getExtSdCardPathsForKitkat();
 		}
@@ -369,7 +369,7 @@ public final class FileUtil {
 				paths.remove("/mnt/extSdCard");
 			}
 
-			return paths.toArray(new String[0]);
+			return paths;
 		}
 	}
 

@@ -6,12 +6,16 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build.VERSION_CODES;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 
 /**
@@ -39,12 +43,12 @@ public final class MediaStoreUtil {
 	public static String getRealPathFromUri(final Uri contentUri) {
 		Cursor cursor = null;
 		try {
-			String[] proj = {MediaStore.Images.Media.DATA};
+			String[] proj = {MediaStore.MediaColumns.DATA};
 			cursor = Application.getAppContext().getContentResolver().query(contentUri, proj, null, null, null);
 			if (cursor == null) {
 				return null;
 			}
-			int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 			cursor.moveToFirst();
 			return cursor.getString(columnIndex);
 		}
@@ -70,15 +74,15 @@ public final class MediaStoreUtil {
 
 		try {
 			Cursor imagecursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-					new String[] {MediaStore.Images.Media._ID}, MediaStore.Images.Media.DATA + " = ?",
-					new String[] {path}, MediaStore.Images.Media.DATE_ADDED + " desc");
+					new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
+					new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
 			if (imagecursor == null) {
 				throw new ImageNotFoundException();
 			}
 			imagecursor.moveToFirst();
 
 			if (!imagecursor.isAfterLast()) {
-				int imageId = imagecursor.getInt(imagecursor.getColumnIndex(MediaStore.Images.Media._ID));
+				int imageId = imagecursor.getInt(imagecursor.getColumnIndex(BaseColumns._ID));
 				imagecursor.close();
 				return imageId;
 			}
@@ -121,6 +125,29 @@ public final class MediaStoreUtil {
 			filecursor.close();
 			return uri;
 		}
+	}
+
+	/**
+	 * Get the list of all image paths.
+	 *
+	 * @return The list of all image paths.
+	 */
+	@RequiresApi(api = VERSION_CODES.KITKAT)
+	public static List<String> getAllImagePaths() {
+		ContentResolver resolver = Application.getAppContext().getContentResolver();
+		String[] projection = {
+				MediaColumns.DATA
+		};
+		List<String> result;
+		try (Cursor cursor = resolver.query(MediaStore.Images.Media.getContentUri("external"), projection, null, null, null)) {
+			result = new ArrayList<>();
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					result.add(cursor.getString(0));
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -169,7 +196,7 @@ public final class MediaStoreUtil {
 		try {
 			int imageId = getImageId(path);
 			resolver.delete(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-					MediaStore.Images.Thumbnails.IMAGE_ID + " = ?", new String[] {"" + imageId});
+					MediaStore.Images.Thumbnails.IMAGE_ID + " = ?", new String[]{"" + imageId});
 		}
 		catch (ImageNotFoundException e) {
 			// ignore

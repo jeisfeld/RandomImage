@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -300,7 +299,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 				else if (ROOT_FOLDER_STRING.equals(dir)) {
 					dirs.remove("..");
 					dirs.add(FileUtil.getSdCardPath());
-					dirs.addAll(Arrays.asList(FileUtil.getExtSdCardPaths()));
+					dirs.addAll(FileUtil.getExtSdCardPaths());
 					return dirs;
 				}
 			}

@@ -14,6 +14,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
@@ -73,7 +74,6 @@ public class SettingsFragment extends PreferenceFragment {
 
 		bindPreferenceSummaryToValue(R.string.key_pref_language);
 		bindPreferenceSummaryToValue(R.string.key_pref_folder_selection_mechanism);
-		bindPreferenceSummaryToValue(R.string.key_pref_show_hidden_folders);
 		bindPreferenceSummaryToValue(R.string.key_pref_show_list_notification);
 		bindPreferenceSummaryToValue(R.string.key_pref_use_regex_filter);
 		bindPreferenceSummaryToValue(R.string.key_pref_hidden_folders_pattern);
@@ -87,7 +87,6 @@ public class SettingsFragment extends PreferenceFragment {
 
 		addHintButtonListener(R.string.key_pref_show_info, false);
 		addHintButtonListener(R.string.key_pref_hide_info, true);
-		addSearchImageFoldersListener();
 		addResetBackupFolderListener();
 		addHelpPageListener();
 		addDeveloperContactListener();
@@ -99,6 +98,15 @@ public class SettingsFragment extends PreferenceFragment {
 
 		if (Boolean.parseBoolean(Application.getResourceString(R.string.has_premium))) {
 			getPreferenceScreen().removePreference(findPreference(getString(R.string.key_pref_category_premium)));
+		}
+		if (SystemUtil.findImagesViaMediaStore()) {
+			PreferenceGroup groupOther = (PreferenceGroup) findPreference(getString(R.string.key_pref_category_other));
+			groupOther.removePreference(findPreference(getString(R.string.key_pref_show_hidden_folders)));
+			groupOther.removePreference(findPreference(getString(R.string.key_pref_search_image_folders)));
+		}
+		else {
+			bindPreferenceSummaryToValue(R.string.key_pref_show_hidden_folders);
+			addSearchImageFoldersListener();
 		}
 	}
 
