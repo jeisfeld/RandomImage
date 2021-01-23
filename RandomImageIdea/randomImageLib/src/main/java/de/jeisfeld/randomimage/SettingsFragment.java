@@ -27,6 +27,7 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
@@ -94,7 +95,7 @@ public class SettingsFragment extends PreferenceFragment {
 		addRestrictPopupNotificationsListener();
 		updateRegexpPreferences(getActivity());
 		updateShowHiddenFoldersPreference(getActivity());
-
+		addSearchImageFoldersListener();
 
 		if (Boolean.parseBoolean(Application.getResourceString(R.string.has_premium))) {
 			getPreferenceScreen().removePreference(findPreference(getString(R.string.key_pref_category_premium)));
@@ -102,11 +103,9 @@ public class SettingsFragment extends PreferenceFragment {
 		if (SystemUtil.findImagesViaMediaStore()) {
 			PreferenceGroup groupOther = (PreferenceGroup) findPreference(getString(R.string.key_pref_category_other));
 			groupOther.removePreference(findPreference(getString(R.string.key_pref_show_hidden_folders)));
-			groupOther.removePreference(findPreference(getString(R.string.key_pref_search_image_folders)));
 		}
 		else {
 			bindPreferenceSummaryToValue(R.string.key_pref_show_hidden_folders);
-			addSearchImageFoldersListener();
 		}
 	}
 
@@ -141,7 +140,13 @@ public class SettingsFragment extends PreferenceFragment {
 		searchPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
-				DialogUtil.displaySearchForImageFoldersIfRequired(getActivity(), true);
+				if (SystemUtil.findImagesViaMediaStore()) {
+					MediaStoreUtil.triggerMediaScan(getContext());
+					DialogUtil.displayToast(getContext(), R.string.toast_triggered_media_scan);
+				}
+				else {
+					DialogUtil.displaySearchForImageFoldersIfRequired(getActivity(), true);
+				}
 				return true;
 			}
 		});

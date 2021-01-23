@@ -1,17 +1,17 @@
 package de.jeisfeld.randomimage.util;
 
 import android.content.ContentResolver;
-import android.content.Intent;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build.VERSION_CODES;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,11 +178,18 @@ public final class MediaStoreUtil {
 	 * @param path the path of the image.
 	 */
 	public static void addPictureToMediaStore(final String path) {
-		Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-		File file = new File(path);
-		Uri contentUri = Uri.fromFile(file);
-		mediaScanIntent.setData(contentUri);
-		Application.getAppContext().sendBroadcast(mediaScanIntent);
+		MediaScannerConnection.scanFile(Application.getAppContext(), new String[]{path}, null, null);
+	}
+
+	/**
+	 * Trigger the media scanner for all files.
+	 *
+	 * @param context the context.
+	 */
+	public static void triggerMediaScan(final Context context) {
+		List<String> paths = FileUtil.getExtSdCardPaths();
+		paths.add(0, FileUtil.SD_CARD_PATH);
+		MediaScannerConnection.scanFile(context, paths.toArray(new String[0]), null, null);
 	}
 
 	/**

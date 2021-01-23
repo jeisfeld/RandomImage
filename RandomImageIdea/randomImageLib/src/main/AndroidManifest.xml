@@ -249,8 +249,5 @@
         <intent>
             <action android:name="android.settings.USAGE_ACCESS_SETTINGS" />
         </intent>
-        <intent>
-            <action android:name="android.intent.action.MEDIA_SCANNER_SCAN_FILE" />
-        </intent>
     </queries>
 </manifest>
