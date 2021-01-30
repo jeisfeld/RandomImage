@@ -19,6 +19,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -116,7 +117,7 @@ public final class ImageUtil {
 	 * Initialize.
 	 */
 	public static void init() {
-		fillImageMap(null);
+		fillImageMap(null, null, false);
 	}
 
 
@@ -514,13 +515,13 @@ public final class ImageUtil {
 	private static void refillImageMap() {
 		if (SystemUtil.findImagesViaMediaStore()) {
 			if (mLastParsingTimestamp == 0 || FOLDER_IMAGE_MAP.keySet().size() == 0) {
-				fillImageMap(null);
+				fillImageMap(null, null, false);
 			}
 			else if (System.currentTimeMillis() >= mLastParsingTimestamp + REPARSING_INTERVAL_2) {
 				new Thread() {
 					@Override
 					public void run() {
-						fillImageMap(null);
+						fillImageMap(null, null, false);
 					}
 				}.start();
 			}
@@ -532,13 +533,15 @@ public final class ImageUtil {
 	 * Fill the map of images from MediaStore.
 	 *
 	 * @param listener A listener called when image folders are found.
+	 * @param handler  A callback handler.
+	 * @param force    A flag indicating if map should be created independent of last scanning time.
 	 */
-	private static void fillImageMap(final OnImageFoldersFoundListener listener) {
+	private static void fillImageMap(final OnImageFoldersFoundListener listener, final Handler handler, final boolean force) {
 		if (SystemUtil.findImagesViaMediaStore()
 				&& ContextCompat.checkSelfPermission(Application.getAppContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
 				== PackageManager.PERMISSION_GRANTED) {
 			synchronized (FOLDER_IMAGE_MAP) {
-				if (System.currentTimeMillis() < mLastParsingTimestamp + REPARSING_INTERVAL_2) {
+				if (System.currentTimeMillis() < mLastParsingTimestamp + REPARSING_INTERVAL_2 && !force) {
 					return;
 				}
 				mLastParsingTimestamp = System.currentTimeMillis();
@@ -548,17 +551,6 @@ public final class ImageUtil {
 			List<String> imagePaths = MediaStoreUtil.getAllImagePaths();
 			List<String> sdPaths = FileUtil.getExtSdCardPaths();
 			sdPaths.add(FileUtil.SD_CARD_PATH);
-
-			Handler tempHandler = null;
-			if (listener != null) {
-				try {
-					tempHandler = new Handler();
-				}
-				catch (Exception e) {
-					// ignore
-				}
-			}
-			final Handler handler = tempHandler;
 
 			for (String path : imagePaths) {
 				File file = new File(path);
@@ -731,16 +723,33 @@ public final class ImageUtil {
 	 * @param listener A listener handling the response via callback.
 	 */
 	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
+		final Handler handler = new Handler();
 		if (SystemUtil.findImagesViaMediaStore()) {
-			new Thread() {
-				@Override
-				public void run() {
-					fillImageMap(listener);
-				}
-			}.start();
+			String preferredImageFolder = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_preferred_image_folder);
+			if (preferredImageFolder != null && new File(preferredImageFolder).exists()) {
+				OnScanCompletedListener onScanCompletedListener = new OnScanCompletedListener() {
+					@Override
+					public void onScanCompleted(final String path, final Uri uri) {
+						new Thread() {
+							@Override
+							public void run() {
+								fillImageMap(listener, handler, true);
+							}
+						}.start();
+					}
+				};
+				MediaStoreUtil.triggerMediaScan(null, onScanCompletedListener, preferredImageFolder);
+			}
+			else {
+				new Thread() {
+					@Override
+					public void run() {
+						fillImageMap(listener, handler, false);
+					}
+				}.start();
+			}
 		}
 		else {
-			final Handler handler = new Handler();
 			new Thread() {
 				@Override
 				public void run() {

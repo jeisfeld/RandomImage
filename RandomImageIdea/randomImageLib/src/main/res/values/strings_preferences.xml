@@ -22,6 +22,7 @@
     <string name="key_pref_category_premium" translatable="false">pref_category_premium</string>
     <string name="key_pref_category_other" translatable="false">pref_category_other</string>
     <string name="key_pref_search_image_folders" translatable="false">pref_search_image_folders</string>
+    <string name="key_pref_preferred_image_folder" translatable="false">pref_preferred_image_folder</string>
     <string name="key_pref_reset_backup_folder" translatable="false">pref_reset_backup_folder</string>
     <string name="key_pref_apps_without_popup_notifications" translatable="false">pref_apps_without_popup_notifications</string>
     <string name="key_pref_show_info" translatable="false">pref_show_info</string>
@@ -73,6 +74,7 @@
     <string name="pref_category_other">Other settings</string>
     <string name="pref_title_language">Language</string>
     <string name="pref_title_folder_selection_mechanism">Folder selection via &#8230;</string>
+    <string name="pref_title_preferred_image_folder">Preferred image folder</string>
     <string name="pref_title_show_hidden_folders">Show hidden folders</string>
     <string name="pref_title_show_list_notification">Notify on list change</string>
     <string name="pref_title_use_regex_filter">Use regexp filter</string>

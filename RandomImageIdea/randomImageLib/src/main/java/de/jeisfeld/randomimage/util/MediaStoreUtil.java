@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Build.VERSION_CODES;
 import android.provider.BaseColumns;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.RequiresApi;
@@ -115,7 +117,7 @@ public final class MediaStoreUtil {
 
 		if (filecursor.isAfterLast()) {
 			filecursor.close();
-			addPictureToMediaStore(path);
+			triggerMediaScan(null, null, path);
 			return null;
 		}
 		else {
@@ -173,23 +175,22 @@ public final class MediaStoreUtil {
 	}
 
 	/**
-	 * Add a picture to the media store (via scanning).
-	 *
-	 * @param path the path of the image.
-	 */
-	public static void addPictureToMediaStore(final String path) {
-		MediaScannerConnection.scanFile(Application.getAppContext(), new String[]{path}, null, null);
-	}
-
-	/**
 	 * Trigger the media scanner for all files.
 	 *
-	 * @param context the context.
+	 * @param context   the context.
+	 * @param basePaths the base paths for scanning.
+	 * @param listener  A listener called when the scan is completed.
 	 */
-	public static void triggerMediaScan(final Context context) {
-		List<String> paths = FileUtil.getExtSdCardPaths();
-		paths.add(0, FileUtil.SD_CARD_PATH);
-		MediaScannerConnection.scanFile(context, paths.toArray(new String[0]), null, null);
+	public static void triggerMediaScan(final Context context, final OnScanCompletedListener listener, final String... basePaths) {
+		List<String> paths;
+		if (basePaths == null || basePaths.length == 0) {
+			paths = FileUtil.getExtSdCardPaths();
+			paths.add(0, FileUtil.SD_CARD_PATH);
+		}
+		else {
+			paths = Arrays.asList(basePaths);
+		}
+		MediaScannerConnection.scanFile(context == null ? Application.getAppContext() : context, paths.toArray(new String[0]), null, listener);
 	}
 
 	/**

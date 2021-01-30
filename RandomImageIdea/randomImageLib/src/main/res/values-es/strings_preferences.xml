@@ -10,6 +10,7 @@
     <string name="pref_category_other">Configuraciones adicionales</string>
     <string name="pref_title_language">Idioma</string>
     <string name="pref_title_folder_selection_mechanism">Selección de carpeta a través de &#8230;</string>
+    <string name="pref_title_preferred_image_folder">Carpeta de imágenes preferida</string>
     <string name="pref_title_show_hidden_folders">Mostrar carpetas ocultas</string>
     <string name="pref_title_show_list_notification">Notificación sobre cambio de lista</string>
     <string name="pref_title_use_regex_filter">Usar filtro de expresión regular</string>

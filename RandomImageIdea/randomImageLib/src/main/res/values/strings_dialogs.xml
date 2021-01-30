@@ -81,6 +81,7 @@
     <string name="dialog_info_need_premium">You have to acquire the Pro version of the app to create more than three image lists.</string>
     <string name="dialog_info_invalid_regexp">Please enter a valid regular expression.</string>
     <string name="dialog_info_permission_foreground">Please give permission to start activities from background.</string>
+    <string name="dialog_info_preferred_image_folder">Here you may select the main folder for new photos. This may speed up finding new photos.</string>
     <string name="dialog_input_enter_list_name_new">Please enter a name for the new list.</string>
     <string name="dialog_input_enter_list_name_cloned">Please enter a name for the cloned list.</string>
     <string name="dialog_input_enter_list_name_changed">Please enter the new name of the list.</string>

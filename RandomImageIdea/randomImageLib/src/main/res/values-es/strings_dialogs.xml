@@ -79,6 +79,7 @@
     <string name="dialog_info_need_premium">Para usar más de tres listas de imágenes, debe comprar la versión Pro de la aplicación.</string>
     <string name="dialog_info_invalid_regexp">Por favor ingrese una expresión regular válida.</string>
     <string name="dialog_info_permission_foreground">Por favor, dé permiso para comenzar actividades desde el fondo.</string>
+    <string name="dialog_info_preferred_image_folder">Aquí puede seleccionar la carpeta principal para nuevas fotos. Esto puede acelerar la búsqueda de nuevas fotos.</string>
     <string name="dialog_input_enter_list_name_new">Por favor, introduzca un nombre para la nueva lista.</string>
     <string name="dialog_input_enter_list_name_cloned">Ingrese un nombre para la lista duplicada.</string>
     <string name="dialog_input_enter_list_name_changed">Por favor, introduzca el nuevo nombre de la lista.</string>
