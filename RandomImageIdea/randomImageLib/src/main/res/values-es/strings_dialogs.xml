@@ -51,7 +51,10 @@
     <string name="toast_aborted_add_images_no_list">No se pudieron agregar las imágenes porque no se encontró una lista de imágenes.</string>
     <string name="toast_widget_locked">El widget está bloqueado hasta %1$s.</string>
     <string name="toast_widget_image_updated">La imagen del widget ha sido actualizada.</string>
-    <string name="toast_triggered_media_scan">Se activó la nueva exploración de archivos multimedia. Esto puede tomar varios minutos.</string>
+    <string name="toast_triggered_media_scan">Se activó la nueva exploración de archivos multimedia. Última duración: %1$s</string>
+    <string name="message_value_unknown">desconocida</string>
+    <string name="message_value_seconds">%1$.1f segundos</string>
+    <string name="message_value_minutes">%1$.1f minutos</string>
 
     <!-- Messages of hint dialogs -->
     <string name="dialog_hint_first_use_1">1. Compile una lista de imágenes y carpetas de imágenes en su teléfono inteligente que desea mostrar.</string>

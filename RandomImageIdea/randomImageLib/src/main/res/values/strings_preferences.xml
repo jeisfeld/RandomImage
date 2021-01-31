@@ -45,6 +45,7 @@
     <string name="key_folder_selection_filter" translatable="false">folder_selection_filter</string>
     <string name="key_last_app_version" translatable="false">last_app_version</string>
     <string name="key_backup_folder_uri" translatable="false">backup_folder_uri</string>
+    <string name="key_last_media_scanning_time" translatable="false">last_media_scanning_time</string>
 
     <!-- Keys for indexed shared preferences -->
 

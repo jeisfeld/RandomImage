@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -153,8 +154,15 @@ public class SettingsFragment extends PreferenceFragment {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				if (SystemUtil.findImagesViaMediaStore()) {
-					MediaStoreUtil.triggerMediaScan(getContext(), null);
-					DialogUtil.displayToast(getContext(), R.string.toast_triggered_media_scan);
+					final long startTime = System.currentTimeMillis();
+					MediaStoreUtil.triggerMediaScan(getContext(), new OnScanCompletedListener() {
+						@Override
+						public void onScanCompleted(final String path, final Uri uri) {
+							PreferenceUtil.setSharedPreferenceLong(R.string.key_last_media_scanning_time, System.currentTimeMillis() - startTime);
+						}
+					});
+					final long lastDuration = PreferenceUtil.getSharedPreferenceLong(R.string.key_last_media_scanning_time, -1);
+					DialogUtil.displayToast(getContext(), R.string.toast_triggered_media_scan, getDurationString(lastDuration));
 				}
 				else {
 					DialogUtil.displaySearchForImageFoldersIfRequired(getActivity(), true);
@@ -162,6 +170,24 @@ public class SettingsFragment extends PreferenceFragment {
 				return true;
 			}
 		});
+	}
+
+	/**
+	 * Convert a duration in milliseconds into a message String.
+	 *
+	 * @param durationMillis The duration in millis
+	 * @return The message String
+	 */
+	private String getDurationString(final long durationMillis) {
+		if (durationMillis > 99900) { // MAGIC_NUMBER
+			return getString(R.string.message_value_minutes, durationMillis / 60000.0); // MAGIC_NUMBER
+		}
+		else if (durationMillis > 0) {
+			return getString(R.string.message_value_seconds, durationMillis / 1000.0); // MAGIC_NUMBER
+		}
+		else {
+			return getString(R.string.message_value_unknown);
+		}
 	}
 
 	/**
