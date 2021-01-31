@@ -78,7 +78,7 @@ public final class SystemUtil {
 	 * @return True if image folders shall be detected via SAF.
 	 */
 	public static boolean findImagesViaMediaStore() {
-		return isAtLeastVersion(VERSION_CODES.R);
+		return isAtLeastVersion(VERSION_CODES.Q);
 	}
 
 	/**
