@@ -1,6 +1,5 @@
 package de.jeisfeld.randomimage;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -24,11 +23,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
@@ -38,6 +35,8 @@ import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference.DynamicListPreferenceOnClickListener;
+import de.jeisfeld.randomimage.view.MultiDirectoryChooserDialogFragment;
+import de.jeisfeld.randomimage.view.MultiDirectoryChooserDialogFragment.ChosenDirectoriesListener;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimagelib.R;
 
@@ -45,11 +44,6 @@ import de.jeisfeld.randomimagelib.R;
  * Fragment for displaying the settings.
  */
 public class SettingsFragment extends PreferenceFragment {
-	/**
-	 * The requestCode with which the storage access framework is triggered for preferred photo folder.
-	 */
-	private static final int REQUEST_CODE_STORAGE_ACCESS_PHOTO_FOLDER = 1;
-
 	/**
 	 * Field holding the value of the language preference, in order to detect a real change.
 	 */
@@ -109,7 +103,7 @@ public class SettingsFragment extends PreferenceFragment {
 			getPreferenceScreen().removePreference(findPreference(getString(R.string.key_pref_category_premium)));
 		}
 		if (SystemUtil.findImagesViaMediaStore()) {
-			bindPreferenceSummaryToValue(R.string.key_pref_preferred_image_folder);
+			bindPreferenceSummaryToValue(R.string.key_pref_preferred_image_folders);
 			addPreferredImageFolderListener();
 			PreferenceGroup groupOther = (PreferenceGroup) findPreference(getString(R.string.key_pref_category_other));
 			groupOther.removePreference(findPreference(getString(R.string.key_pref_show_hidden_folders)));
@@ -118,7 +112,7 @@ public class SettingsFragment extends PreferenceFragment {
 			bindPreferenceSummaryToValue(R.string.key_pref_show_hidden_folders);
 			updateShowHiddenFoldersPreference(getActivity());
 			PreferenceGroup groupOther = (PreferenceGroup) findPreference(getString(R.string.key_pref_category_other));
-			groupOther.removePreference(findPreference(getString(R.string.key_pref_preferred_image_folder)));
+			groupOther.removePreference(findPreference(getString(R.string.key_pref_preferred_image_folders)));
 		}
 	}
 
@@ -193,19 +187,39 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Add the listener for selecting the preferred image folder.
 	 */
-	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	@RequiresApi(api = VERSION_CODES.O)
 	private void addPreferredImageFolderListener() {
-		Preference preferredFolderPreference = findPreference(getString(R.string.key_pref_preferred_image_folder));
+		final Preference preferredFolderPreference = findPreference(getString(R.string.key_pref_preferred_image_folders));
 		preferredFolderPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
-				DialogUtil.displayInfo(getActivity(), new MessageDialogListener() {
-					@Override
-					public void onDialogFinished() {
-						Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-						startActivityForResult(intent, REQUEST_CODE_STORAGE_ACCESS_PHOTO_FOLDER);
-					}
-				}, 0, R.string.dialog_info_preferred_image_folder);
+				List<String> dirs = PreferenceUtil.getSharedPreferenceStringList(R.string.key_pref_preferred_image_folders);
+
+				MultiDirectoryChooserDialogFragment.displayMultiDirectoryChooserDialog(getActivity(), R.string.dialog_select_preferred_image_folders,
+						new ChosenDirectoriesListener() {
+							/**
+							 * The default serial version UID.
+							 */
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							public void onChosenDirs(final List<String> chosenDirs) {
+								if (chosenDirs == null || chosenDirs.size() == 0) {
+									PreferenceUtil.removeSharedPreference(R.string.key_pref_preferred_image_folders);
+									mOnPreferenceChangeListener.onPreferenceChange(preferredFolderPreference, "");
+								}
+								else {
+									PreferenceUtil.setSharedPreferenceStringList(R.string.key_pref_preferred_image_folders, chosenDirs);
+									mOnPreferenceChangeListener.onPreferenceChange(preferredFolderPreference, String.join("\n", chosenDirs));
+								}
+							}
+
+							@Override
+							public void onCancelled() {
+
+							}
+						}, dirs);
+
 				return true;
 			}
 		});
@@ -364,6 +378,12 @@ public class SettingsFragment extends PreferenceFragment {
 		preference.setOnPreferenceChangeListener(mOnPreferenceChangeListener);
 
 		// Trigger the listener immediately with the preference's current value.
+		if (preference.getKey().equals(getDurationString(R.string.dialog_select_preferred_image_folders))) {
+			if (VERSION.SDK_INT >= VERSION_CODES.O) {
+				List<String> values = PreferenceUtil.getSharedPreferenceStringList(R.string.dialog_select_preferred_image_folders);
+				mOnPreferenceChangeListener.setSummary(preference, String.join("\n", values));
+			}
+		}
 		if (!(preference instanceof CheckBoxPreference)) {
 			mOnPreferenceChangeListener.setSummary(preference, PreferenceManager
 					.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
@@ -398,26 +418,6 @@ public class SettingsFragment extends PreferenceFragment {
 	private void updateShowHiddenFoldersPreference(final Context context) {
 		int mechanism = PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_folder_selection_mechanism, -1);
 		findPreference(context.getString(R.string.key_pref_show_hidden_folders)).setEnabled(mechanism == 0);
-	}
-
-	@Override
-	public final void onActivityResult(final int requestCode, final int resultCode, @NonNull final Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE_STORAGE_ACCESS_PHOTO_FOLDER && SystemUtil.findImagesViaMediaStore()) {
-			String newPath = null;
-			Preference preferredFolderPreference = findPreference(getString(R.string.key_pref_preferred_image_folder));
-			if (resultCode == Activity.RESULT_OK) {
-				newPath = FileUtil.getFullPathFromTreeUri(data.getData());
-			}
-			if (newPath == null) {
-				PreferenceUtil.removeSharedPreference(R.string.key_pref_preferred_image_folder);
-				mOnPreferenceChangeListener.onPreferenceChange(preferredFolderPreference, "");
-			}
-			else {
-				PreferenceUtil.setSharedPreferenceString(R.string.key_pref_preferred_image_folder, newPath);
-				mOnPreferenceChangeListener.onPreferenceChange(preferredFolderPreference, newPath);
-			}
-		}
 	}
 
 	/**

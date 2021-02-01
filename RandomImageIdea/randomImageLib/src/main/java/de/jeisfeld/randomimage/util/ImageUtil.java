@@ -725,8 +725,8 @@ public final class ImageUtil {
 	public static void getAllImageFolders(final OnImageFoldersFoundListener listener) {
 		final Handler handler = new Handler();
 		if (SystemUtil.findImagesViaMediaStore()) {
-			String preferredImageFolder = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_preferred_image_folder);
-			if (preferredImageFolder != null && new File(preferredImageFolder).exists()) {
+			List<String> preferredImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_pref_preferred_image_folders);
+			if (preferredImageFolders != null && preferredImageFolders.size() > 0) {
 				OnScanCompletedListener onScanCompletedListener = new OnScanCompletedListener() {
 					@Override
 					public void onScanCompleted(final String path, final Uri uri) {
@@ -738,7 +738,7 @@ public final class ImageUtil {
 						}.start();
 					}
 				};
-				MediaStoreUtil.triggerMediaScan(null, onScanCompletedListener, preferredImageFolder);
+				MediaStoreUtil.triggerMediaScan(null, onScanCompletedListener, preferredImageFolders.toArray(new String[0]));
 			}
 			else {
 				new Thread() {

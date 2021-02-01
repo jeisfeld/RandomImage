@@ -51,6 +51,7 @@
     <string name="button_view_in_gallery">Mostrar en la galería</string>
     <string name="button_send_to">Enviar a&#8230;</string>
     <string name="button_show_on_map">Mostrar en el mapa</string>
+    <string name="button_select">Seleccionar</string>
 
     <!-- Info texts shown in activities. -->
     <string name="text_info_select_image_folder_for_add">Seleccione una carpeta desde el que desea agregar imágenes a la lista.</string>

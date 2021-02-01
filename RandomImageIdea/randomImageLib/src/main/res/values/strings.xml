@@ -53,6 +53,7 @@
     <string name="button_view_in_gallery">View in gallery</string>
     <string name="button_send_to">Send to&#8230;</string>
     <string name="button_show_on_map">Show on map</string>
+    <string name="button_select">Select</string>
 
     <!-- Info texts shown in activities. -->
     <string name="text_info_select_image_folder_for_add">Select the folder from which you want to add images to the image list.</string>

@@ -83,7 +83,6 @@
     <string name="dialog_info_need_premium">Zur Nutzung von mehr als drei Bildlisten müssen Sie die Pro-Version der App erwerben.</string>
     <string name="dialog_info_invalid_regexp">Bitte geben Sie einen gültigen regulären Ausdruck ein.</string>
     <string name="dialog_info_permission_foreground">Bitte geben Sie die Erlaubnis, Aktivitäten vom Hintergrund aus zu starten.</string>
-    <string name="dialog_info_preferred_image_folder">Hier können Sie den Hauptordner für neue Fotos auswählen. Dies kann das Auffinden neuer Fotos beschleunigen.</string>
     <string name="dialog_input_enter_list_name_new">Bitte geben Sie einen Namen für die neue Liste ein.</string>
     <string name="dialog_input_enter_list_name_cloned">Bitte geben Sie einen Namen für die duplizierte Liste ein.</string>
     <string name="dialog_input_enter_list_name_changed">Bitte geben Sie den neuen Namen der Liste ein.</string>
@@ -93,9 +92,12 @@
     <string name="dialog_select_list_for_external_add">Bitte wählen Sie die Bildliste, zu der Sie die ausgewählten Bilder hinzufügen wollen.</string>
     <string name="dialog_select_list_for_inclusion">Bitte wählen Sie die Bildliste, die Sie zur aktuellen Liste hinzufügen wollen.</string>
     <string name="dialog_select_backup_folder">Bitte wählen Sie ein Verzeichnis für Sicherungskopien und geben Sie Zugriff darauf.</string>
+    <string name="dialog_select_preferred_image_folder">Bitte wählen Sie einen Ordner für die Suche nach neuen Bildern.</string>
+    <string name="dialog_select_preferred_image_folders">Wählen Sie Ordner aus, in denen häufig nach Fotos gesucht werden soll.</string>
     <string name="dialog_confirmation_delete_list">Wollen Sie die Bildliste „%2$s“ wirklich löschen?</string>
     <string name="dialog_confirmation_delete_lists">Wollen Sie die %1$d ausgewählten Bildlisten wirklich löschen?</string>
     <string name="dialog_confirmation_remove">Wollen Sie wirklich %2$s aus der Liste „%1$s” entfernen?</string>
+    <string name="dialog_confirmation_remove_preferred_folder">Möchten Sie %1$s wirklich aus der Liste der häufig analysierten Bildordner entfernen?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">Sie haben kein Bild zum Hinzufügen ausgewählt. Wollen Sie das ganze Bildverzeichnis zur Liste hinzufügen?</string>
     <string name="dialog_confirmation_add_folder_ignore_selection">Sie haben sich entschieden, das ganze Bildverzeichnis zur Liste hinzuzufügen. Dabei wird Ihre Bildauswahl nicht berücksichtigt. Wollen Sie fortfahren?</string>
     <string name="dialog_confirmation_add_folder">Wollen Sie das Verzeichnis „%1$s” zur Bildliste hinzufügen?</string>

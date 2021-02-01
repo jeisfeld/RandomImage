@@ -82,7 +82,6 @@
     <string name="dialog_info_need_premium">Para usar más de tres listas de imágenes, debe comprar la versión Pro de la aplicación.</string>
     <string name="dialog_info_invalid_regexp">Por favor ingrese una expresión regular válida.</string>
     <string name="dialog_info_permission_foreground">Por favor, dé permiso para comenzar actividades desde el fondo.</string>
-    <string name="dialog_info_preferred_image_folder">Aquí puede seleccionar la carpeta principal para nuevas fotos. Esto puede acelerar la búsqueda de nuevas fotos.</string>
     <string name="dialog_input_enter_list_name_new">Por favor, introduzca un nombre para la nueva lista.</string>
     <string name="dialog_input_enter_list_name_cloned">Ingrese un nombre para la lista duplicada.</string>
     <string name="dialog_input_enter_list_name_changed">Por favor, introduzca el nuevo nombre de la lista.</string>
@@ -92,9 +91,12 @@
     <string name="dialog_select_list_for_external_add">Seleccione la lista de imágenes a la que desea agregar las imágenes seleccionadas.</string>
     <string name="dialog_select_list_for_inclusion">Seleccione la lista de imágenes que desea agregar a la lista actual.</string>
     <string name="dialog_select_backup_folder">Seleccione una carpeta para las copias de seguridad y otorgue acceso a ella.</string>
+    <string name="dialog_select_preferred_image_folder">Seleccione una carpeta para buscar nuevas imágenes.</string>
+    <string name="dialog_select_preferred_image_folders">Seleccionar carpetas donde buscar fotos con frecuencia.</string>
     <string name="dialog_confirmation_delete_list">¿Realmente desea borrar la lista de imágenes «%2$s»?</string>
     <string name="dialog_confirmation_delete_lists">¿Realmente desea borrar las %1$d listas de imágenes seleccionadas?</string>
     <string name="dialog_confirmation_remove">¿Realmente desea eliminar %2$s de la lista «%1$s»?</string>
+    <string name="dialog_confirmation_remove_preferred_folder">¿Realmente desea eliminar %1$s de la lista de carpetas de imágenes que se analizan con frecuencia?</string>
     <string name="dialog_confirmation_selected_no_image_add_folder">No ha seleccionado una imagen para agregar. ¿Desea agregar toda la carpeta de imágenes a la lista?</string>
     <string name="dialog_confirmation_add_folder_ignore_selection">Decidió agregar toda la carpeta de imágenes a la lista. Su selección de imagen no será considerada. ¿Quiere continuar?</string>
     <string name="dialog_confirmation_add_folder">¿Desea agregar la carpeta «%1$s» a la lista de imágenes?</string>
