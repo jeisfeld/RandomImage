@@ -59,10 +59,10 @@ public class Application extends android.app.Application {
 		}
 
 		// Set statistics
-		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);
-		if (initialVersion == -1) {
-			PreferenceUtil.setSharedPreferenceInt(R.string.key_statistics_initialversion, getVersion());
-		}
+//		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);
+//		if (initialVersion == -1) {
+//			PreferenceUtil.setSharedPreferenceInt(R.string.key_statistics_initialversion, getVersion());
+//		}
 
 		long firstStartTime = PreferenceUtil.getSharedPreferenceLong(R.string.key_statistics_firststarttime, -1);
 		if (firstStartTime == -1) {

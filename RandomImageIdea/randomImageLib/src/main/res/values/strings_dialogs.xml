@@ -53,6 +53,7 @@
     <string name="toast_aborted_add_images_no_list">The addition of images was aborted, as no image list was found.</string>
     <string name="toast_widget_locked">The widget is locked until %1$s.</string>
     <string name="toast_widget_image_updated">The widget image has been updated.</string>
+    <string name="toast_only_on_top_of_earlier_installation">This version of RandomImagePro is allowed to be installed only on top of earlier paid version.</string>
 
     <!-- Messages of hint dialogs -->
     <string name="dialog_hint_first_use_1">1. Assemble a list of images and image folders from your device that you want to display.</string>

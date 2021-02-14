@@ -390,6 +390,13 @@ public class DisplayRandomImageActivity extends StartActivity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		int initialVersion = PreferenceUtil.getSharedPreferenceInt(R.string.key_statistics_initialversion, -1);
+		if (initialVersion == -1 && !"de.jeisfeld.randomimage".equals(getApplicationContext().getPackageName())) {
+			DialogUtil.displayToast(getApplicationContext(), R.string.toast_only_on_top_of_earlier_installation);
+			finish();
+			return;
+		}
+
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
 		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
 
