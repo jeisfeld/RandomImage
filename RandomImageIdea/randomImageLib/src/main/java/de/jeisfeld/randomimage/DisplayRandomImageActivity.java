@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 
 import com.samsung.android.sdk.penremote.ButtonEvent;
 import com.samsung.android.sdk.penremote.SpenEvent;
@@ -603,6 +606,20 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 */
 	private void configureNotificationProperties() {
 		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
+		int notificationStyle = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1);
+
+		if (NotificationUtil.isLockScreenActivityNotificationStyle(notificationStyle)) {
+			// Show on locked screen if required
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+				setTurnScreenOn(true);
+				setShowWhenLocked(true);
+			}
+			else {
+				Window window = getWindow();
+				window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+				window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
+			}
+		}
 
 		// configurations if triggered from notification
 		NOTIFICATION_MAP.put(mNotificationId, this);
@@ -622,8 +639,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId, false);
 		}
 
-		if (!NotificationUtil.isActivityNotificationStyle(
-				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1))) {
+		if (!NotificationUtil.isActivityNotificationStyle(notificationStyle)) {
 			// Stop auto-cancellation if a normal notification has been actively clicked
 			NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 		}
@@ -856,83 +872,75 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 */
 	private void displayRandomImage(final boolean goToNextImage) {
 		mRandomFileProvider.executeWhenReady(
-				new Runnable() {
-					@Override
-					public void run() {
-						setContentView(R.layout.text_view_loading);
+				() -> setContentView(R.layout.text_view_loading),
+				() -> {
+					int tempCacheIndex = 0;
+					mPreviousFileName = mCurrentFileName;
+					if (mDoPreload) {
+						mPreviousImageView = mCurrentImageView;
+						tempCacheIndex = mPreviousCacheIndex;
+						mPreviousCacheIndex = mCurrentCacheIndex;
 					}
-				},
-				new Runnable() {
-					@Override
-					public void run() {
-						int tempCacheIndex = 0;
-						mPreviousFileName = mCurrentFileName;
-						if (mDoPreload) {
-							mPreviousImageView = mCurrentImageView;
-							tempCacheIndex = mPreviousCacheIndex;
-							mPreviousCacheIndex = mCurrentCacheIndex;
-						}
-						if (goToNextImage) {
-							// Except in very initial call, go one further
-							if (mIsGoingBackward) {
-								mRandomFileProvider.goBackward();
-							}
-							else {
-								mRandomFileProvider.goForward();
-							}
-						}
-						if (mNextImageView == null) {
-							mCurrentFileName = mRandomFileProvider.getCurrentFileName();
-							if (mDoPreload) {
-								mCurrentCacheIndex = tempCacheIndex;
-							}
-							if (mCurrentFileName == null) {
-								// Handle the case where the provider does not return any image.
-								if (mListName != null) {
-									if (DialogUtil.displaySearchForImageFoldersIfRequired(DisplayRandomImageActivity.this, false)) {
-										return;
-									}
-								}
-								finish();
-								return;
-							}
-							mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
+					if (goToNextImage) {
+						// Except in very initial call, go one further
+						if (mIsGoingBackward) {
+							mRandomFileProvider.goBackward();
 						}
 						else {
-							mCurrentFileName = mNextFileName;
-							mCurrentImageView = mNextImageView;
-							if (mDoPreload) {
-								mCurrentCacheIndex = mNextCacheIndex;
-								mNextCacheIndex = tempCacheIndex;
-							}
+							mRandomFileProvider.goForward();
 						}
-						setContentView(mCurrentImageView);
-						if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
-							PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mCurrentFileName);
-						}
-
-						if (goToNextImage) {
-							mChangeByTimeoutHandler.stop();
-						}
-						mChangeByTimeoutHandler.start();
-
-						mTrackingImages++;
-
+					}
+					if (mNextImageView == null) {
+						mCurrentFileName = mRandomFileProvider.getCurrentFileName();
 						if (mDoPreload) {
-							if (mIsGoingBackward) {
-								mRandomFileProvider.goBackward();
+							mCurrentCacheIndex = tempCacheIndex;
+						}
+						if (mCurrentFileName == null) {
+							// Handle the case where the provider does not return any image.
+							if (mListName != null) {
+								if (DialogUtil.displaySearchForImageFoldersIfRequired(DisplayRandomImageActivity.this, false)) {
+									return;
+								}
 							}
-							else {
-								mRandomFileProvider.goForward();
-							}
-							mNextFileName = mRandomFileProvider.getCurrentFileName();
-							mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
-							if (mIsGoingBackward) {
-								mRandomFileProvider.goForward();
-							}
-							else {
-								mRandomFileProvider.goBackward();
-							}
+							finish();
+							return;
+						}
+						mCurrentImageView = createImageView(mCurrentFileName, mCurrentCacheIndex);
+					}
+					else {
+						mCurrentFileName = mNextFileName;
+						mCurrentImageView = mNextImageView;
+						if (mDoPreload) {
+							mCurrentCacheIndex = mNextCacheIndex;
+							mNextCacheIndex = tempCacheIndex;
+						}
+					}
+					setContentView(mCurrentImageView);
+					if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mCurrentFileName);
+					}
+
+					if (goToNextImage) {
+						mChangeByTimeoutHandler.stop();
+					}
+					mChangeByTimeoutHandler.start();
+
+					mTrackingImages++;
+
+					if (mDoPreload) {
+						if (mIsGoingBackward) {
+							mRandomFileProvider.goBackward();
+						}
+						else {
+							mRandomFileProvider.goForward();
+						}
+						mNextFileName = mRandomFileProvider.getCurrentFileName();
+						mNextImageView = createImageView(mNextFileName, mNextCacheIndex);
+						if (mIsGoingBackward) {
+							mRandomFileProvider.goForward();
+						}
+						else {
+							mRandomFileProvider.goBackward();
 						}
 					}
 				}, null);
@@ -1057,15 +1065,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 						mDownTimestamp = buttonEvent.getTimeStamp();
 						break;
 					case ButtonEvent.ACTION_UP:
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								if (mDownTimestamp > 0 && buttonEvent.getTimeStamp() - mDownTimestamp > LONG_CLICK_DURATION) {
-									displayLastImage();
-								}
-								else {
-									displayRandomImage(true);
-								}
+						runOnUiThread(() -> {
+							if (mDownTimestamp > 0 && buttonEvent.getTimeStamp() - mDownTimestamp > LONG_CLICK_DURATION) {
+								displayLastImage();
+							}
+							else {
+								displayRandomImage(true);
 							}
 						});
 						break;
@@ -1103,38 +1108,35 @@ public class DisplayRandomImageActivity extends StartActivity {
 				}
 
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
-					Runnable runnable = new Runnable() {
-						@Override
-						public void run() {
-							if (mFlipType == FlipType.CLOSE) {
-								finish();
-								return;
-							}
-							FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
-							if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
-								displayLastImage();
-
-								if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
-									PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name,
-											mAppWidgetId, mCurrentFileName);
-								}
-
-								mChangeByTimeoutHandler.stop();
-								mChangeByTimeoutHandler.start();
-
-								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
-							}
-							else {
-								displayRandomImage(true);
-								TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
-							}
-
-							if (mPreviousImageView != null) {
-								mPreviousImageView.doScalingToFit();
-							}
-
-							mLastFlingDirection = newFlingDirection;
+					Runnable runnable = () -> {
+						if (mFlipType == FlipType.CLOSE) {
+							finish();
+							return;
 						}
+						FlingDirection newFlingDirection = new FlingDirection(velocityX, velocityY);
+						if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
+							displayLastImage();
+
+							if (mAppWidgetId != null && MiniWidget.hasWidgetOfId(mAppWidgetId)) {
+								PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name,
+										mAppWidgetId, mCurrentFileName);
+							}
+
+							mChangeByTimeoutHandler.stop();
+							mChangeByTimeoutHandler.start();
+
+							TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
+						}
+						else {
+							displayRandomImage(true);
+							TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
+						}
+
+						if (mPreviousImageView != null) {
+							mPreviousImageView.doScalingToFit();
+						}
+
+						mLastFlingDirection = newFlingDirection;
 					};
 
 					mCurrentImageView.animateOut(velocityX, velocityY, runnable);
@@ -1383,12 +1385,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * The runnable used for automatically changing the image by timeout.
 		 */
-		private Runnable mChangeByTimeoutRunnable = new Runnable() {
-			@Override
-			public void run() {
-				mActiveRuntime = 0;
-				displayRandomImage(true);
-			}
+		private Runnable mChangeByTimeoutRunnable = () -> {
+			mActiveRuntime = 0;
+			displayRandomImage(true);
 		};
 
 		/**

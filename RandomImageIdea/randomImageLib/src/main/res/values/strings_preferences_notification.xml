@@ -128,12 +128,14 @@
         <item>Special</item>
         <item>Popup</item>
         <item>Full Screen</item>
+        <item>Full Screen (incl. locked)</item>
     </string-array>
     <string-array name="notification_style_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
     <string-array name="notification_led_color_names">
         <item>Off</item>

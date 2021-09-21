@@ -134,6 +134,10 @@ public final class NotificationUtil {
 	 * The notification style that triggers DisplayRandomImageActivity instead of a notification.
 	 */
 	private static final int NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY = 3;
+	/**
+	 * The notification style that triggers DisplayRandomImageActivity instead of a notification, even on lock screen.
+	 */
+	private static final int NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED = 4;
 
 	static {
 		restoreMountingIssues();
@@ -226,25 +230,17 @@ public final class NotificationUtil {
 			return;
 		}
 		imageList.executeWhenReady(null,
-				new Runnable() {
-					@Override
-					public void run() {
-						try {
-							doDisplayRandomImageNotification(context, notificationId, listName, imageList);
-						}
-						catch (Exception e) {
-							// In case of error, trigger new alarm.
-							Log.e(Application.TAG, "Failed to publish notification for list " + listName, e);
-							NotificationAlarmReceiver.setAlarm(context, notificationId, false);
-						}
+				() -> {
+					try {
+						doDisplayRandomImageNotification(context, notificationId, listName, imageList);
 					}
-				},
-				new Runnable() {
-					@Override
-					public void run() {
+					catch (Exception e) {
+						// In case of error, trigger new alarm.
+						Log.e(Application.TAG, "Failed to publish notification for list " + listName, e);
 						NotificationAlarmReceiver.setAlarm(context, notificationId, false);
 					}
-				});
+				},
+				() -> NotificationAlarmReceiver.setAlarm(context, notificationId, false));
 	}
 
 	/**
@@ -278,7 +274,8 @@ public final class NotificationUtil {
 			}
 
 			// open activity instead of notification
-			if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
+			if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED
+					|| notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
 				context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
 						notificationId));
 				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Fullscreen");
@@ -289,7 +286,8 @@ public final class NotificationUtil {
 			}
 			if (isVibrate) {
 				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-				if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+				if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED
+						|| am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
 					Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
 					if (VERSION.SDK_INT >= VERSION_CODES.O) {
@@ -409,7 +407,18 @@ public final class NotificationUtil {
 	 */
 	public static boolean isActivityNotificationStyle(final int notificationStyle) {
 		return notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
+				|| notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED
 				|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY;
+	}
+
+	/**
+	 * Get information if a notificationStyle value leads to activity on top of lock screen.
+	 *
+	 * @param notificationStyle The notificationStyle value.
+	 * @return True if this style leads to an activity on top of lock screen.
+	 */
+	public static boolean isLockScreenActivityNotificationStyle(final int notificationStyle) {
+		return notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED;
 	}
 
 	/**
@@ -655,7 +664,7 @@ public final class NotificationUtil {
 					listName = null;
 				}
 				if (listName != null) {
-					mMountingIssues.put(listName, new HashSet<String>());
+					mMountingIssues.put(listName, new HashSet<>());
 				}
 			}
 			else if (entry.startsWith(PATH_PREFIX)) {

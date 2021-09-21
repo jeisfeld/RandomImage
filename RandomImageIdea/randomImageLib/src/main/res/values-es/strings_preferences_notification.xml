@@ -64,6 +64,7 @@
         <item>especial</item>
         <item>música pop</item>
         <item>pantalla completa</item>
+        <item>pantalla completa (incluida bloqueada)</item>
     </string-array>
     <string-array name="notification_led_color_names">
         <item>de</item>
