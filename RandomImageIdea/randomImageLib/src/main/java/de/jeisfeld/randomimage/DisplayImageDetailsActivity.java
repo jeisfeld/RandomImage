@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.exifinterface.media.ExifInterface;
+import de.jeisfeld.randomimage.notifications.NotificationConfigurationActivity;
+import de.jeisfeld.randomimage.notifications.NotificationConfigurationFragment;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -40,8 +42,12 @@ import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
+import de.jeisfeld.randomimage.widgets.GenericWidgetConfigurationActivity;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
+import de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationActivity;
 import de.jeisfeld.randomimage.widgets.MiniWidget;
+import de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationActivity;
+import de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationActivity;
 import de.jeisfeld.randomimagelib.R;
 
 import static de.jeisfeld.randomimage.util.ListElement.Type.FILE;
@@ -64,7 +70,11 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
 	/**
-	 * The resource key for the name of the image list to be displayed.
+	 * The resource key for the widget from which the activity was started.
+	 */
+	private static final String STRING_EXTRA_NOTIFICATION_ID = "de.jeisfeld.randomimage.NOTIFICATION_ID";
+	/**
+	 * The resource key for the widget from which the activity was started.
 	 */
 	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
 	/**
@@ -111,9 +121,14 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	private String mListName;
 
 	/**
-	 * The name of the widget from which the image was displayed.
+	 * The id of the widget from which the image was displayed.
 	 */
 	private int mAppWidgetId;
+
+	/**
+	 * The id of the notification from which the image was displayed.
+	 */
+	private int mNotificationId;
 
 	/**
 	 * flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
@@ -126,12 +141,13 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 * @param activity          The activity starting this activity.
 	 * @param fileName          The name of the file whose details should be displayed.
 	 * @param listName          The name of the list from which this file is taken.
+	 * @param notificationId    The notification from which the image was displayed.
 	 * @param appWidgetId       The widget from which the image was displayed.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
 	 * @param trackingName      A String indicating the starter of the activity.
 	 */
-	public static void startActivity(final Activity activity, final String fileName, final String listName, final Integer appWidgetId,
-									 final boolean preventDisplayAll, final String trackingName) {
+	public static void startActivity(final Activity activity, final String fileName, final String listName, final Integer notificationId,
+									 final Integer appWidgetId, final boolean preventDisplayAll, final String trackingName) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		if (listName != null) {
@@ -139,6 +155,9 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 		if (trackingName != null) {
 			intent.putExtra(STRING_EXTRA_TRACKING, trackingName);
+		}
+		if (notificationId != null) {
+			intent.putExtra(STRING_EXTRA_NOTIFICATION_ID, notificationId);
 		}
 		if (appWidgetId != null) {
 			intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
@@ -158,6 +177,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		mFileName = mFileNameInList;
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, -1);
+		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
 		File file = new File(mFileName);
@@ -219,12 +239,9 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		if (galleryFileName != null) {
 			Button btnViewInGallery = findViewById(R.id.buttonViewInGallery);
 			btnViewInGallery.setVisibility(View.VISIBLE);
-			btnViewInGallery.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, galleryFileName);
-					returnResult(false, false);
-				}
+			btnViewInGallery.setOnClickListener(v -> {
+				ImageUtil.showFileInGallery(DisplayImageDetailsActivity.this, galleryFileName);
+				returnResult(false, false);
 			});
 		}
 
@@ -237,12 +254,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 		Button btnConfigure = findViewById(R.id.buttonConfigure);
-		btnConfigure.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				MainConfigurationActivity.startActivity(DisplayImageDetailsActivity.this);
-			}
-		});
+		btnConfigure.setOnClickListener(v -> MainConfigurationActivity.startActivity(DisplayImageDetailsActivity.this));
 	}
 
 	@Override
@@ -257,61 +269,74 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	private void configureButtonsForImage() {
 		Button btnSendTo = findViewById(R.id.buttonSendTo);
 		btnSendTo.setVisibility(View.VISIBLE);
-		btnSendTo.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				Uri uri = MediaStoreUtil.getUriFromFile(mFileName);
-				if (uri == null) {
-					return;
-				}
-				intent.putExtra(Intent.EXTRA_STREAM, uri);
-				intent.setType("image/*");
-				startActivity(intent);
-				returnResult(false, false);
+		btnSendTo.setOnClickListener(v -> {
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			Uri uri = MediaStoreUtil.getUriFromFile(mFileName);
+			if (uri == null) {
+				return;
 			}
+			intent.putExtra(Intent.EXTRA_STREAM, uri);
+			intent.setType("image/*");
+			startActivity(intent);
+			returnResult(false, false);
 		});
 
 		Button btnDisplayMap = findViewById(R.id.buttonShowOnMap);
 		final Intent gpsIntent = getGpsIntent();
 		if (gpsIntent != null) {
 			btnDisplayMap.setVisibility(View.VISIBLE);
-			btnDisplayMap.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					startActivity(gpsIntent);
-					returnResult(false, false);
-				}
+			btnDisplayMap.setOnClickListener(v -> {
+				startActivity(gpsIntent);
+				returnResult(false, false);
 			});
 		}
 
 
 		if (mAppWidgetId >= 0) {
 			Button btnUseInWidget = findViewById(R.id.buttonUseInWidget);
+			Button btnConfigureWidget = findViewById(R.id.buttonConfigureWidget);
+			btnConfigureWidget.setVisibility(View.VISIBLE);
+			final Intent settingsIntent;
 			if (MiniWidget.hasWidgetOfId(mAppWidgetId)) {
 				btnUseInWidget.setVisibility(View.VISIBLE);
-				btnUseInWidget.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
-						MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
-						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
-						returnResult(false, false);
-					}
+				btnUseInWidget.setOnClickListener(v -> {
+					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
+					MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+					DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+					returnResult(false, false);
 				});
+				settingsIntent = new Intent(this, MiniWidgetConfigurationActivity.class);
 			}
 			else if (ImageWidget.hasWidgetOfId(mAppWidgetId)) {
 				btnUseInWidget.setVisibility(View.VISIBLE);
-				btnUseInWidget.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mFileName);
-						ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
-						DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
-						returnResult(false, false);
-					}
+				btnUseInWidget.setOnClickListener(v -> {
+					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId, mFileName);
+					ImageWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+					DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+					returnResult(false, false);
+				});
+				settingsIntent = new Intent(this, ImageWidgetConfigurationActivity.class);
+			}
+			else {
+				settingsIntent = new Intent(this, StackedImageWidgetConfigurationActivity.class);
+			}
+			if (settingsIntent != null) {
+				btnConfigureWidget.setOnClickListener(v -> {
+					settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+					settingsIntent.putExtra(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
+					startActivity(settingsIntent);
 				});
 			}
+		}
+
+		if (mNotificationId >= 0) {
+			Button btnConfigureNotification = findViewById(R.id.buttonConfigureNotification);
+			btnConfigureNotification.setVisibility(View.VISIBLE);
+			btnConfigureNotification.setOnClickListener(v -> {
+				Intent settingsIntent = new Intent(this, NotificationConfigurationActivity.class);
+				settingsIntent.putExtra(NotificationConfigurationFragment.STRING_NOTIFICATION_ID, mNotificationId);
+				startActivity(settingsIntent);
+			});
 		}
 	}
 
@@ -323,60 +348,54 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		if (imageList != null && imageList.contains(mFileNameInList)) {
 			Button btnRemoveFromList = findViewById(R.id.buttonRemoveFromList);
 			btnRemoveFromList.setVisibility(View.VISIBLE);
-			btnRemoveFromList.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					final String filesString;
-					if (mFileType == FileType.IMAGE_FILE) {
-						filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
-					}
-					else {
-						filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
-					}
-
-					DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
-							new ConfirmDialogListener() {
-								@Override
-								public void onDialogPositiveClick(final DialogFragment dialog) {
-									if (mFileType == FileType.FOLDER_SIMPLE) {
-										imageList.remove(FOLDER, mFileNameInList);
-										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
-												null, Collections.singletonList(mFileName), null);
-									}
-									else if (mFileType == FileType.FOLDER_RECURSIVE) {
-										imageList.remove(FOLDER, mFileNameInList);
-										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
-												null, Collections.singletonList(mFileName), null);
-									}
-									else {
-										imageList.remove(FILE, mFileNameInList);
-										NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
-												null, null, Collections.singletonList(mFileName));
-									}
-									imageList.update(true);
-									DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_removed_single, filesString);
-									returnResult(mPreventDisplayAll, true);
-								}
-
-								@Override
-								public void onDialogNegativeClick(final DialogFragment dialog) {
-									returnResult(false, false);
-								}
-							}, null, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
-							filesString);
+			btnRemoveFromList.setOnClickListener(v -> {
+				final String filesString;
+				if (mFileType == FileType.IMAGE_FILE) {
+					filesString = DialogUtil.createFileFolderMessageString(null, null, Collections.singletonList(mFileName));
 				}
+				else {
+					filesString = DialogUtil.createFileFolderMessageString(null, Collections.singletonList(mFileName), null);
+				}
+
+				DialogUtil.displayConfirmationMessage(DisplayImageDetailsActivity.this,
+						new ConfirmDialogListener() {
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog) {
+								if (mFileType == FileType.FOLDER_SIMPLE) {
+									imageList.remove(FOLDER, mFileNameInList);
+									NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+											null, Collections.singletonList(mFileName), null);
+								}
+								else if (mFileType == FileType.FOLDER_RECURSIVE) {
+									imageList.remove(FOLDER, mFileNameInList);
+									NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+											null, Collections.singletonList(mFileName), null);
+								}
+								else {
+									imageList.remove(FILE, mFileNameInList);
+									NotificationUtil.notifyUpdatedList(DisplayImageDetailsActivity.this, mListName, true,
+											null, null, Collections.singletonList(mFileName));
+								}
+								imageList.update(true);
+								DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_removed_single, filesString);
+								returnResult(mPreventDisplayAll, true);
+							}
+
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								returnResult(false, false);
+							}
+						}, null, R.string.button_remove, R.string.dialog_confirmation_remove, mListName,
+						filesString);
 			});
 		}
 
 		if (mListName != null && !mPreventDisplayAll) {
 			Button btnEditList = findViewById(R.id.buttonEditList);
 			btnEditList.setVisibility(View.VISIBLE);
-			btnEditList.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName, "from Image Details");
-					returnResult(false, false);
-				}
+			btnEditList.setOnClickListener(v -> {
+				ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName, "from Image Details");
+				returnResult(false, false);
 			});
 		}
 	}
@@ -465,39 +484,33 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 						final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
 						final double percentage = imageList.getPercentage(FOLDER, mFileNameInList);
 						final double probability = imageList.getProbability(FOLDER, mFileNameInList);
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								textViewNumberOfImages
-										.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images_and_proportion,
-												imageCount, FormattingUtil.getPercentageString(percentage))));
-								Double customNestedListWeight = null;
-								if (imageList instanceof StandardImageList) {
-									customNestedListWeight = ((StandardImageList) imageList).getCustomNestedElementWeight(FOLDER, mFileNameInList);
-								}
-								if (customNestedListWeight == null) {
-									editTextViewFrequency.setHint(FormattingUtil.getPercentageString(probability));
-								}
-								else {
-									editTextViewFrequency.setText(FormattingUtil.getPercentageString(customNestedListWeight));
-								}
+						runOnUiThread(() -> {
+							textViewNumberOfImages
+									.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images_and_proportion,
+											imageCount, FormattingUtil.getPercentageString(percentage))));
+							Double customNestedListWeight = null;
+							if (imageList instanceof StandardImageList) {
+								customNestedListWeight = ((StandardImageList) imageList).getCustomNestedElementWeight(FOLDER, mFileNameInList);
+							}
+							if (customNestedListWeight == null) {
+								editTextViewFrequency.setHint(FormattingUtil.getPercentageString(probability));
+							}
+							else {
+								editTextViewFrequency.setText(FormattingUtil.getPercentageString(customNestedListWeight));
+							}
 
-								if (imageList instanceof StandardImageList) {
-									ImageButton buttonSave = findViewById(R.id.button_save);
-									buttonSave.setOnClickListener(new OnClickListener() {
-										@Override
-										public void onClick(final View v) {
-											try {
-												((StandardImageList) imageList).setCustomWeight(
-														FOLDER, mFileNameInList, FormattingUtil.getPercentageValue(editTextViewFrequency));
-											}
-											catch (NumberFormatException e) {
-												// do not change weight
-											}
-											finish();
-										}
-									});
-								}
+							if (imageList instanceof StandardImageList) {
+								ImageButton buttonSave = findViewById(R.id.button_save);
+								buttonSave.setOnClickListener(v -> {
+									try {
+										((StandardImageList) imageList).setCustomWeight(
+												FOLDER, mFileNameInList, FormattingUtil.getPercentageValue(editTextViewFrequency));
+									}
+									catch (NumberFormatException e) {
+										// do not change weight
+									}
+									finish();
+								});
 							}
 						});
 
@@ -510,12 +523,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 					@Override
 					public void run() {
 						final int imageCount = ImageUtil.getImagesInFolder(mFileNameInList).size();
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								textViewNumberOfImages.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images, imageCount)));
-							}
-						});
+						runOnUiThread(() -> textViewNumberOfImages.setText(DialogUtil.fromHtml(getString(R.string.info_number_of_images, imageCount))));
 					}
 				}.start();
 			}

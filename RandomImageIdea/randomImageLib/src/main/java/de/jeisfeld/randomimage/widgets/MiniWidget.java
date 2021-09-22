@@ -94,4 +94,9 @@ public class MiniWidget extends GenericWidget {
 	public static boolean hasWidgetOfId(final int appWidgetId) {
 		return hasWidgetOfId(MiniWidget.class, appWidgetId);
 	}
+
+	@Override
+	protected final Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass() {
+		return MiniWidgetConfigurationActivity.class;
+	}
 }

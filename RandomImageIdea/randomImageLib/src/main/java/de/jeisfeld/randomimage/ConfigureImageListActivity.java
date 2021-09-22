@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -201,7 +200,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		case FOLDER:
 		case FILE:
 		default:
-			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, true, "Configure image list");
+			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, null, true, "Configure image list");
 			break;
 		}
 	}
@@ -248,28 +247,25 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		boolean hasMissingImages = imageList.hasElements(MISSING_PATH);
 		missingImagesButton.setVisibility(hasMissingImages ? View.VISIBLE : View.GONE);
 		if (hasMissingImages) {
-			missingImagesButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					StringBuilder missingImagesString = new StringBuilder();
-					for (String pathName : imageList.getElementNames(MISSING_PATH)) {
-						missingImagesString.append(pathName).append("\n");
-					}
-
-					DialogUtil.displayConfirmationMessage(ConfigureImageListActivity.this, new ConfirmDialogListener() {
-								@Override
-								public void onDialogPositiveClick(final DialogFragment dialog) {
-									imageList.cleanupMissingFiles();
-									fillListOfImages();
-								}
-
-								@Override
-								public void onDialogNegativeClick(final DialogFragment dialog) {
-									// do nothing
-								}
-							}, R.string.title_dialog_missing_images, R.string.menu_remove_from_list, R.string.dialog_confirmation_missing_images,
-							mListName, missingImagesString);
+			missingImagesButton.setOnClickListener(v -> {
+				StringBuilder missingImagesString = new StringBuilder();
+				for (String pathName : imageList.getElementNames(MISSING_PATH)) {
+					missingImagesString.append(pathName).append("\n");
 				}
+
+				DialogUtil.displayConfirmationMessage(ConfigureImageListActivity.this, new ConfirmDialogListener() {
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog) {
+								imageList.cleanupMissingFiles();
+								fillListOfImages();
+							}
+
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								// do nothing
+							}
+						}, R.string.title_dialog_missing_images, R.string.menu_remove_from_list, R.string.dialog_confirmation_missing_images,
+						mListName, missingImagesString);
 			});
 		}
 	}

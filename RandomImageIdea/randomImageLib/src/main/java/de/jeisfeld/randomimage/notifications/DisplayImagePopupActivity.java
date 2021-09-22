@@ -164,12 +164,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 				}
 
 				if (Math.abs(velocityX) + Math.abs(velocityY) > FLING_SPEED) {
-					Runnable runnable = new Runnable() {
-						@Override
-						public void run() {
-							finish();
-						}
-					};
+					Runnable runnable = () -> finish();
 
 					mImageView.animateOut(velocityX, velocityY, runnable);
 
@@ -193,8 +188,8 @@ public class DisplayImagePopupActivity extends BaseActivity {
 
 			@Override
 			public void onLongPress(final MotionEvent e) {
-				DisplayImageDetailsActivity.startActivity(DisplayImagePopupActivity.this, mFileName, mListName, null, true,
-						"Display image popup");
+				DisplayImageDetailsActivity.startActivity(DisplayImagePopupActivity.this, mFileName, mListName,
+						null, null, true, "Display image popup");
 			}
 		});
 	}

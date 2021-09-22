@@ -297,6 +297,13 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	}
 
 	/**
+	 * Get the fragment class of the widget.
+	 *
+	 * @return The fragment class.
+	 */
+	protected abstract Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass(); // SUPPRESS_CHECKSTYLE
+
+	/**
 	 * Types in which the widget can be updated.
 	 */
 	public enum UpdateType {

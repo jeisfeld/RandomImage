@@ -34,7 +34,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	/**
 	 * The resource key for the notification id.
 	 */
-	protected static final String STRING_NOTIFICATION_ID = "de.eisfeldj.randomimage.NOTIFICATION_ID";
+	public static final String STRING_NOTIFICATION_ID = "de.eisfeldj.randomimage.NOTIFICATION_ID";
 
 	/**
 	 * The number of hours per day.
@@ -104,14 +104,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	private void addEditListListener() {
 		Preference editListPreference = findPreference(getString(R.string.key_pref_edit_list));
 
-		editListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			@Override
-			public boolean onPreferenceClick(final Preference preference) {
-				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId),
-						"from Notification Config");
-				return true;
-			}
+		editListPreference.setOnPreferenceClickListener(preference -> {
+			ConfigureImageListActivity.startActivity(getActivity(),
+					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId),
+					"from Notification Config");
+			return true;
 		});
 	}
 
@@ -121,14 +118,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	private void addCancelNotificationListener() {
 		Preference cancelNotificationPreference = findPreference(getString(R.string.key_dummy_cancel_notification));
 
-		cancelNotificationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			@Override
-			public boolean onPreferenceClick(final Preference preference) {
-				NotificationSettingsActivity.cancelNotification(mNotificationId);
-				updateHeader();
-				getActivity().finish();
-				return true;
-			}
+		cancelNotificationPreference.setOnPreferenceClickListener(preference -> {
+			NotificationSettingsActivity.cancelNotification(mNotificationId);
+			updateHeader();
+			getActivity().finish();
+			return true;
 		});
 
 		// allow to display next timer occurrence

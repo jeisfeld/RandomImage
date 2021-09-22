@@ -16,7 +16,6 @@ import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.ImageList;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -139,7 +138,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		// itemType is always file.
-		DisplayImageDetailsActivity.startActivity(this, name, null, null, true, "Display folder");
+		DisplayImageDetailsActivity.startActivity(this, name, null, null, null, true, "Display folder");
 	}
 
 	@Override
@@ -288,12 +287,9 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		ArrayList<String> fileNames = ImageUtil.getImagesInFolder(mFolderName);
 
 		if (fileNames.size() == 0) {
-			DialogUtil.displayInfo(this, new MessageDialogListener() {
-				@Override
-				public void onDialogFinished() {
-					// Nothing to display.
-					returnResult(false);
-				}
+			DialogUtil.displayInfo(this, () -> {
+				// Nothing to display.
+				returnResult(false);
 			}, 0, R.string.dialog_info_no_images_in_folder, mFolderName);
 			return;
 		}

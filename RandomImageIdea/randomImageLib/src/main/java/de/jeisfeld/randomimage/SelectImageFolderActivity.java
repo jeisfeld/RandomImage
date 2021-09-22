@@ -173,7 +173,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		switch (itemType) {
 		case FOLDER:
-			DisplayImageDetailsActivity.startActivity(this, name, null, null, true, "Select Image Folder");
+			DisplayImageDetailsActivity.startActivity(this, name, null, null, null, true, "Select Image Folder");
 			break;
 		default:
 			break;
@@ -254,18 +254,15 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 			}
 		}
 
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (getAdapter() != null) {
-					getAdapter().cleanupCache();
-				}
-				setAdapter(filteredImageLists, filteredImageFolders, null, true, selectedLists, selectedFolders, null);
-				changeAction(mCurrentAction);
+		runOnUiThread(() -> {
+			if (getAdapter() != null) {
+				getAdapter().cleanupCache();
+			}
+			setAdapter(filteredImageLists, filteredImageFolders, null, true, selectedLists, selectedFolders, null);
+			changeAction(mCurrentAction);
 
-				if (firstStart) {
-					parseAllImageFolders();
-				}
+			if (firstStart) {
+				parseAllImageFolders();
 			}
 		});
 	}

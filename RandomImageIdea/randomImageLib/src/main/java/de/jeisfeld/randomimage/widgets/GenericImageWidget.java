@@ -224,13 +224,6 @@ public abstract class GenericImageWidget extends GenericWidget {
 	protected abstract int getWidgetLayoutId(int appWidgetId);
 
 	/**
-	 * Get the fragment class of the widget.
-	 *
-	 * @return The fragment class.
-	 */
-	protected abstract Class<? extends GenericWidgetConfigurationActivity> getConfigurationActivityClass(); // SUPPRESS_CHECKSTYLE
-
-	/**
 	 * Report a widget image change to Google Analytics.
 	 *
 	 * @param action     The action to be reported
@@ -693,12 +686,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 */
 		public void start() {
 			if (mAnimatorSet != null) {
-				new Handler(Looper.getMainLooper()).post(new Runnable() {
-					@Override
-					public void run() {
-						mAnimatorSet.start();
-					}
-				});
+				new Handler(Looper.getMainLooper()).post(() -> mAnimatorSet.start());
 			}
 		}
 
