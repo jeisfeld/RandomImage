@@ -124,6 +124,12 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 				}
 				long oldAlarmExpirationTime = oldAlarmTime + TimeUnit.SECONDS.toMillis(duration);
 
+				if (frequency < 2 * TimeUnit.SECONDS.toMillis(ALARM_WAIT_SECONDS)) {
+					// for short alarms, just create new alarm
+					setAlarm(context, notificationId, false);
+					return;
+				}
+
 				if (duration <= 0 || oldAlarmExpirationTime > System.currentTimeMillis()) {
 					// Avoid showing the alarm immediately after startup, also in order to avoid issues while booting.
 					long newAlarmTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ALARM_WAIT_SECONDS);

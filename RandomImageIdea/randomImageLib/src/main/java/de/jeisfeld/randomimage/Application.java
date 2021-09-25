@@ -79,6 +79,7 @@ public class Application extends android.app.Application {
 		Application.mContext.registerReceiver(new SdMountReceiver(), intentFilter);
 
 		ImageUtil.init();
+		NotificationAlarmReceiver.createAllNotificationAlarms();
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
 	}
