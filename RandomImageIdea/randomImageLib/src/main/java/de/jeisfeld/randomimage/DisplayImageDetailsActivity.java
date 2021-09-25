@@ -324,7 +324,9 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 				btnConfigureWidget.setOnClickListener(v -> {
 					settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 					settingsIntent.putExtra(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
+					returnResult(true, false);
 					startActivity(settingsIntent);
+					finish();
 				});
 			}
 		}
@@ -336,6 +338,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 				Intent settingsIntent = new Intent(this, NotificationConfigurationActivity.class);
 				settingsIntent.putExtra(NotificationConfigurationFragment.STRING_NOTIFICATION_ID, mNotificationId);
 				startActivity(settingsIntent);
+				finish();
 			});
 		}
 	}

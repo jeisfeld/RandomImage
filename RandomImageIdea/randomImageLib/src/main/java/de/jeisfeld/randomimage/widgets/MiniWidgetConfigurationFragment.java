@@ -75,12 +75,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		if (preferenceLayout != null) {
 			Button btn = new Button(getActivity());
 			btn.setText(R.string.button_finish_widget_configuration);
-			btn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					getActivity().finish();
-				}
-			});
+			btn.setOnClickListener(v -> getActivity().finish());
 			preferenceLayout.addView(btn);
 		}
 
@@ -99,13 +94,10 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	private void addEditListListener() {
 		Preference editListPreference = findPreference(getString(R.string.key_pref_edit_list));
 
-		editListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			@Override
-			public boolean onPreferenceClick(final Preference preference) {
-				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId), "from Mini Widget Config");
-				return true;
-			}
+		editListPreference.setOnPreferenceClickListener(preference -> {
+			ConfigureImageListActivity.startActivity(getActivity(),
+					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId), "from Mini Widget Config");
+			return true;
 		});
 	}
 
@@ -284,6 +276,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 			if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_list_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId, stringValue);
 				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, mAppWidgetId);
 				MiniWidget.configure(mAppWidgetId, stringValue);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_display_name))) {
