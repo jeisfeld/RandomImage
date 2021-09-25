@@ -252,11 +252,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private boolean mSavingInstanceState = false;
 
 	/**
-	 * Flag helping to detect if the user puts the activity into the background.
-	 */
-	private boolean mUserIsLeaving = false;
-
-	/**
 	 * Flag indicating if the triggering widget was locked.
 	 */
 	private boolean mIsLocked = false;
@@ -740,7 +735,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		mChangeByTimeoutHandler.stop();
 		if (mNotificationId != null) {
 			NOTIFICATION_MAP.delete(mNotificationId);
-			if (mUserIsLeaving || !mSavingInstanceState) {
+			if (!mSavingInstanceState) {
 				NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
 				NotificationAlarmReceiver.setAlarm(this, mNotificationId, false);
 			}
@@ -754,7 +749,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, System.currentTimeMillis());
 			}
 		}
-		if (mUserIsLeaving || !mSavingInstanceState) {
+		if (!mSavingInstanceState) {
 			sendStatistics();
 		}
 
@@ -768,25 +763,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 	}
 
 	@Override
-	protected final void onUserLeaveHint() {
-		if (mNotificationId != null) {
-			mUserIsLeaving = true;
-		}
-	}
-
-	@Override
-	protected final void onStop() {
-		super.onStop();
-		if (mUserIsLeaving) {
-			finish();
-		}
-	}
-
-	@Override
 	protected final void onResume() {
 		super.onResume();
 		TrackingUtil.sendScreen(this);
-		mUserIsLeaving = false;
 		if (!mRecreatedAfterSavingInstanceState) {
 			if (mTrackingDuration > 0) {
 				sendStatistics();
@@ -1282,6 +1261,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		Intent intent = new Intent();
 		intent.putExtras(resultData);
 		setResult(RESULT_OK, intent);
+		mSavingInstanceState = false;
 		finish();
 	}
 

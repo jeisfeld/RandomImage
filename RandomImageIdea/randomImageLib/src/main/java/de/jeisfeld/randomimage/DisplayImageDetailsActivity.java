@@ -337,6 +337,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			btnConfigureNotification.setOnClickListener(v -> {
 				Intent settingsIntent = new Intent(this, NotificationConfigurationActivity.class);
 				settingsIntent.putExtra(NotificationConfigurationFragment.STRING_NOTIFICATION_ID, mNotificationId);
+				returnResult(true, false);
 				startActivity(settingsIntent);
 				finish();
 			});
