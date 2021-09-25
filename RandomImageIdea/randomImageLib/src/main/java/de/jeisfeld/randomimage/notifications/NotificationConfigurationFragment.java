@@ -290,7 +290,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		if (mNotificationId > maxNotificationId) {
 			PreferenceUtil.setSharedPreferenceInt(R.string.key_notification_max_id, mNotificationId);
 		}
-		NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+		initialiseNotification(mNotificationId, true);
 		updateHeader();
 		NotificationUtil.createImageNotificationChannels();
 	}
@@ -439,6 +439,21 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	}
 
 	/**
+	 * Initialise a notification after creation or change.
+	 *
+	 * @param notificationId The notificationId.
+	 * @param immediate      Flag indicating if the notification should be displayed immediately.
+	 */
+	private void initialiseNotification(final int notificationId, final boolean immediate) {
+		if (immediate) {
+			NotificationUtil.displayRandomImageNotification(getActivity(), mNotificationId);
+		}
+		else {
+			NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+		}
+	}
+
+	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
 	private class OnNotificationPreferenceChangeListener implements OnPreferenceChangeListener {
@@ -450,16 +465,17 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_list_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId, stringValue);
 				updateHeader();
+				initialiseNotification(mNotificationId, true);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_timer_duration))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, mNotificationId, Long.parseLong(stringValue));
 				updateHeader();
-				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+				initialiseNotification(mNotificationId, false);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_timer_variance))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, mNotificationId,
 						Integer.parseInt(stringValue));
-				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+				initialiseNotification(mNotificationId, false);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_daily_start_time))) {
 				int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, -1);
@@ -474,7 +490,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				}
 
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, dailyStartTime);
-				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+				initialiseNotification(mNotificationId, false);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_daily_end_time))) {
 				int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, mNotificationId, -1);
@@ -489,7 +505,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 					return false;
 				}
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, mNotificationId, dailyEndTime);
-				NotificationAlarmReceiver.setAlarm(getActivity(), mNotificationId, false);
+				initialiseNotification(mNotificationId, false);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_duration))) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_duration, mNotificationId, Long.parseLong(stringValue));
@@ -503,6 +519,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, Integer.parseInt(stringValue));
 				NotificationUtil.createImageNotificationChannels();
 				updatePropertyEnablement();
+				initialiseNotification(mNotificationId, true);
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_led_color))) {
 				NotificationUtil.deleteImageNotificationChannels();
