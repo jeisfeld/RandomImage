@@ -17,8 +17,6 @@ import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -145,7 +143,15 @@ public final class DialogUtil {
 		DisplayMessageDialogFragment fragment = new DisplayMessageDialogFragment();
 		fragment.setListener(listener);
 		fragment.setArguments(bundle);
-		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		try {
+			fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		}
+		catch (IllegalStateException e) {
+			displayToast(activity, messageResource, args);
+			if (listener != null) {
+				listener.onDialogFinished();
+			}
+		}
 	}
 
 	/**
@@ -162,12 +168,7 @@ public final class DialogUtil {
 				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 			}
 			else {
-				new Handler(Looper.getMainLooper()).post(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-					}
-				});
+				new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
 			}
 		}
 		catch (Exception e) {
@@ -196,7 +197,12 @@ public final class DialogUtil {
 		ConfirmDialogFragment fragment = new ConfirmDialogFragment();
 		fragment.setListener(listener);
 		fragment.setArguments(bundle);
-		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		try {
+			fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		}
+		catch (IllegalStateException e) {
+			// May appear if activity is not active any more - ignore.
+		}
 	}
 
 	/**
@@ -222,7 +228,12 @@ public final class DialogUtil {
 		RequestInputDialogFragment fragment = new RequestInputDialogFragment();
 		fragment.setListener(listener);
 		fragment.setArguments(bundle);
-		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		try {
+			fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		}
+		catch (IllegalStateException e) {
+			// May appear if activity is not active any more - ignore.
+		}
 	}
 
 	/**
@@ -256,7 +267,12 @@ public final class DialogUtil {
 		SelectFromListDialogFragment fragment = new SelectFromListDialogFragment();
 		fragment.setListener(listener);
 		fragment.setArguments(bundle);
-		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		try {
+			fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		}
+		catch (IllegalStateException e) {
+			// May appear if activity is not active any more - ignore.
+		}
 	}
 
 	/**
@@ -418,7 +434,12 @@ public final class DialogUtil {
 				bundle.putInt(PARAM_ICON, R.drawable.ic_launcher);
 				DisplayMessageDialogFragment fragment = new DisplayMessageDialogFragment();
 				fragment.setArguments(bundle);
-				fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+				try {
+					fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+				}
+				catch (IllegalStateException e) {
+					// May appear if activity is not active any more - ignore.
+				}
 			}
 		}
 	}
@@ -448,7 +469,12 @@ public final class DialogUtil {
 		SystemUtil.lockOrientation(activity, true);
 		SearchImageFoldersDialogFragment fragment = new SearchImageFoldersDialogFragment();
 		fragment.setCancelable(false);
-		fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		try {
+			fragment.show(activity.getFragmentManager(), fragment.getClass().toString());
+		}
+		catch (IllegalStateException e) {
+			return false;
+		}
 		return true;
 	}
 
@@ -564,36 +590,27 @@ public final class DialogUtil {
 			}
 
 			if (skipPreference == 0) {
-				builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int id) {
-						if (mListener != null) {
-							mListener.onDialogFinished();
-						}
-						dialog.dismiss();
+				builder.setPositiveButton(R.string.button_ok, (dialog, id) -> {
+					if (mListener != null) {
+						mListener.onDialogFinished();
 					}
+					dialog.dismiss();
 				});
 			}
 			else {
 				builder
-						.setPositiveButton(R.string.button_show_later, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(final DialogInterface dialog, final int id) {
-								if (mListener != null) {
-									mListener.onDialogFinished();
-								}
-								dialog.dismiss();
+						.setPositiveButton(R.string.button_show_later, (dialog, id) -> {
+							if (mListener != null) {
+								mListener.onDialogFinished();
 							}
+							dialog.dismiss();
 						})
-						.setNegativeButton(R.string.button_dont_show, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(final DialogInterface dialog, final int id) {
-								PreferenceUtil.setSharedPreferenceBoolean(skipPreference, true);
-								if (mListener != null) {
-									mListener.onDialogFinished();
-								}
-								dialog.dismiss();
+						.setNegativeButton(R.string.button_dont_show, (dialog, id) -> {
+							PreferenceUtil.setSharedPreferenceBoolean(skipPreference, true);
+							if (mListener != null) {
+								mListener.onDialogFinished();
 							}
+							dialog.dismiss();
 						});
 			}
 
@@ -668,22 +685,16 @@ public final class DialogUtil {
 			builder.setTitle(titleResource) //
 					.setIcon(R.drawable.ic_title_warning) //
 					.setMessage(message) //
-					.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int id) {
-							// Send the positive button event back to the host activity
-							if (mListener != null) {
-								mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
-							}
+					.setNegativeButton(R.string.button_cancel, (dialog, id) -> {
+						// Send the positive button event back to the host activity
+						if (mListener != null) {
+							mListener.onDialogNegativeClick(ConfirmDialogFragment.this);
 						}
 					}) //
-					.setPositiveButton(confirmButtonResource, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int id) {
-							// Send the negative button event back to the host activity
-							if (mListener != null) {
-								mListener.onDialogPositiveClick(ConfirmDialogFragment.this);
-							}
+					.setPositiveButton(confirmButtonResource, (dialog, id) -> {
+						// Send the negative button event back to the host activity
+						if (mListener != null) {
+							mListener.onDialogPositiveClick(ConfirmDialogFragment.this);
 						}
 					});
 			return builder.create();
@@ -771,22 +782,16 @@ public final class DialogUtil {
 			builder.setTitle(titleResource) //
 					.setMessage(message) //
 					.setView(input) //
-					.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int id) {
-							// Send the positive button event back to the host activity
-							if (mListener != null) {
-								mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
-							}
+					.setNegativeButton(R.string.button_cancel, (dialog, id) -> {
+						// Send the positive button event back to the host activity
+						if (mListener != null) {
+							mListener.onDialogNegativeClick(RequestInputDialogFragment.this);
 						}
 					}) //
-					.setPositiveButton(confirmButtonResource, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int id) {
-							// Send the negative button event back to the host activity
-							if (mListener != null) {
-								mListener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
-							}
+					.setPositiveButton(confirmButtonResource, (dialog, id) -> {
+						// Send the negative button event back to the host activity
+						if (mListener != null) {
+							mListener.onDialogPositiveClick(RequestInputDialogFragment.this, input.getText().toString());
 						}
 					});
 			return builder.create();
@@ -871,13 +876,10 @@ public final class DialogUtil {
 
 			ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>(getActivity(), R.layout.adapter_list_names, items);
 			listView.setAdapter(listViewAdapter);
-			listView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-					int listPosition = (int) id;
-					mListener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
-					dismiss();
-				}
+			listView.setOnItemClickListener((parent, view, position, id) -> {
+				int listPosition = (int) id;
+				mListener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
+				dismiss();
 			});
 
 			// Listeners cannot retain functionality when automatically recreated.
@@ -894,13 +896,10 @@ public final class DialogUtil {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(titleResource)
 					.setView(listView)
-					.setNegativeButton(cancelButtonResource, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int id) {
-							// Send the positive button event back to the host activity
-							if (mListener != null) {
-								mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
-							}
+					.setNegativeButton(cancelButtonResource, (dialog, id) -> {
+						// Send the positive button event back to the host activity
+						if (mListener != null) {
+							mListener.onDialogNegativeClick(SelectFromListDialogFragment.this);
 						}
 					});
 
