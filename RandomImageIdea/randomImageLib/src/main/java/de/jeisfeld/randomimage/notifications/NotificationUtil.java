@@ -284,6 +284,9 @@ public final class NotificationUtil {
 				context.startActivity(DisplayImagePopupActivity.createIntent(context, listName, fileName, notificationId));
 				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Popup");
 			}
+
+			sendNotificationBroadcast(context, listName, fileName, notificationStyle, isVibrate);
+
 			if (isVibrate) {
 				AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 				if (notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED
@@ -300,7 +303,6 @@ public final class NotificationUtil {
 				}
 			}
 			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
-
 			return;
 		}
 
@@ -396,7 +398,28 @@ public final class NotificationUtil {
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
 
+		sendNotificationBroadcast(context, listName, fileName, notificationStyle, isVibrate);
+
 		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+	}
+
+	/**
+	 * Send broadcast informing about the notification.
+	 *
+	 * @param context           The context
+	 * @param listName          The list name
+	 * @param fileName          The file name
+	 * @param notificationStyle The notification style
+	 * @param isVibrate         The vibration flag
+	 */
+	private static void sendNotificationBroadcast(final Context context, final String listName, final String fileName,
+												  final int notificationStyle, final boolean isVibrate) {
+		Intent intent = new Intent("de.jeisfeld.randomimage.DISPLAY_NOTIFICATION");
+		intent.putExtra("de.jeisfeld.randomimage.listName", listName);
+		intent.putExtra("de.jeisfeld.randomimage.fileName", fileName);
+		intent.putExtra("de.jeisfeld.randomimage.notificationStyle", notificationStyle);
+		intent.putExtra("de.jeisfeld.randomimage.isVibrate", isVibrate);
+		context.sendBroadcast(intent);
 	}
 
 	/**

@@ -264,14 +264,10 @@ public class PinchImageView extends ImageView {
 						mDrawable = new BitmapDrawable(getContext().getResources(), rotateIfRequired(bitmap, rotationAngle));
 					}
 
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							PinchImageView.super.setImageDrawable(mDrawable);
-							mIsBitmapSet = true;
-							doInitialScaling();
-
-						}
+					handler.post(() -> {
+						PinchImageView.super.setImageDrawable(mDrawable);
+						mIsBitmapSet = true;
+						doInitialScaling();
 					});
 				}
 			}.start();
@@ -317,7 +313,7 @@ public class PinchImageView extends ImageView {
 	protected final float getOrientationIndependentScaleFactor() {
 		float viewSize = Math.min(getWidth(), getHeight());
 		float imageSize = Math.min(mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
-		return 1f * viewSize / imageSize;
+		return viewSize / imageSize;
 	}
 
 	/**
@@ -735,10 +731,20 @@ public class PinchImageView extends ImageView {
 
 	/**
 	 * Get the background color.
+	 *
 	 * @return The background color.
 	 */
 	public final int getBackgroundColor() {
 		return mBackgroundColor;
+	}
+
+	/**
+	 * Get the path name.
+	 *
+	 * @return The path name.
+	 */
+	public final String getPathName() {
+		return mPathName;
 	}
 
 	@Override

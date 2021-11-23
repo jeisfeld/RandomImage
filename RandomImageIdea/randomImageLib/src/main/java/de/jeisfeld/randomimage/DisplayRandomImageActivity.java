@@ -530,13 +530,36 @@ public class DisplayRandomImageActivity extends StartActivity {
 		if (view instanceof PinchImageView && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
 			// Update navigation bar color
 			int backgroundColor = ((PinchImageView) view).getBackgroundColor();
+			String fileName = ((PinchImageView) view).getPathName();
 
 			getWindow().setNavigationBarColor(backgroundColor);
 
 			mIsDark = Color.red(backgroundColor) + Color.green(backgroundColor) + Color.blue(backgroundColor) <= 384; // MAGIC_NUMBER
 			setNavigationBarFlags();
+
+			sendNotificationBroadcast(mListName, fileName, backgroundColor, false);
 		}
 	}
+
+	/**
+	 * Send broadcast informing about the notification.
+	 *
+	 * @param listName        The list name
+	 * @param fileName        The file name
+	 * @param backgroundColor The background color
+	 * @param isStop          Flag indicating if display is stopped
+	 */
+	private void sendNotificationBroadcast(final String listName, final String fileName, final int backgroundColor, final boolean isStop) {
+		if (listName != null && (isStop || fileName != null)) {
+			Intent intent = new Intent("de.jeisfeld.randomimage.DISPLAY_RANDOM_IMAGE");
+			intent.putExtra("de.jeisfeld.randomimage.listName", listName);
+			intent.putExtra("de.jeisfeld.randomimage.fileName", fileName);
+			intent.putExtra("de.jeisfeld.randomimage.backgroundColor", backgroundColor);
+			intent.putExtra("de.jeisfeld.randomimage.isStop", isStop);
+			sendBroadcast(intent);
+		}
+	}
+
 
 	/**
 	 * Set system flags for navigation bar.
@@ -760,6 +783,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 			mSpenUnitManager = null;
 		}
+
+		sendNotificationBroadcast(mListName, null, 0, true);
 	}
 
 	@Override
