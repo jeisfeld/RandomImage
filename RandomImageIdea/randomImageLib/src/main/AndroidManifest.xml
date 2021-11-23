@@ -23,6 +23,7 @@
     <application
         android:name="de.jeisfeld.randomimage.Application"
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -32,9 +33,9 @@
         tools:ignore="UnusedAttribute">
         <activity
             android:name="de.jeisfeld.randomimage.DisplayRandomImageActivity"
+            android:exported="true"
             android:label="@string/app_name_short"
-            android:theme="@style/AppTheme.Fullscreen"
-            android:exported="true">
+            android:theme="@style/AppTheme.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,9 +47,9 @@
         <activity
             android:name="de.jeisfeld.randomimage.AddSentImagesActivity"
             android:clearTaskOnLaunch="true"
+            android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dialog.NoActionBar.MinWidth"
-            android:exported="true">
+            android:theme="@style/AppTheme.Dialog.NoActionBar.MinWidth">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 
@@ -90,24 +91,24 @@
             android:theme="@style/AppTheme.Dialog" />
         <activity
             android:name="de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationActivity"
-            android:label="@string/title_activity_widget_settings"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/title_activity_widget_settings">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationActivity"
-            android:label="@string/title_activity_widget_settings"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/title_activity_widget_settings">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationActivity"
-            android:label="@string/title_activity_widget_settings"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/title_activity_widget_settings">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -130,8 +131,8 @@
 
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.MiniWidget"
-            android:label="@string/mini_widget_name"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/mini_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -142,8 +143,8 @@
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.ImageWidget"
-            android:label="@string/image_widget_name"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/image_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -154,8 +155,8 @@
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidget"
-            android:label="@string/stacked_image_widget_name"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/stacked_image_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

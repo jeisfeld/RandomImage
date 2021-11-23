@@ -30,9 +30,10 @@ dependencies {
     implementation files('libs/annotations.jar')
     implementation files('libs/sdk-v1.0.0.jar')
     implementation files('libs/spenremote-v1.0.1.jar')
-    implementation 'com.google.firebase:firebase-core:19.0.0'
+    //noinspection GradleDependency
+    implementation 'com.google.firebase:firebase-core:19.0.2'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.3.2'
+    implementation 'androidx.exifinterface:exifinterface:1.3.3'
 }
 
 apply plugin: 'com.google.gms.google-services'
