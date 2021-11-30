@@ -305,18 +305,6 @@ public class PinchImageView extends ImageView {
 	}
 
 	/**
-	 * Return an orientation independent scale factor that fits the smaller image dimension into the smaller view
-	 * dimension.
-	 *
-	 * @return A scale factor fitting the image independent of the orientation.
-	 */
-	protected final float getOrientationIndependentScaleFactor() {
-		float viewSize = Math.min(getWidth(), getHeight());
-		float imageSize = Math.min(mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
-		return viewSize / imageSize;
-	}
-
-	/**
 	 * Scale the image to fit into the view, if not yet scaled before.
 	 */
 	public final void doInitialScaling() {
@@ -469,15 +457,6 @@ public class PinchImageView extends ImageView {
 	private void setMPosY(final float posY) {
 		mPosY = posY;
 		setMatrix();
-	}
-
-	/**
-	 * Set the maximum size in which a bitmap is held in memory.
-	 *
-	 * @param size the maximum size (pixels)
-	 */
-	public static void setMaxBitmapSize(final int size) {
-		mMaxBitmapSize = size;
 	}
 
 	/**
