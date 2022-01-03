@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.AlarmReceiver;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimagelib.R;
 
@@ -289,7 +290,8 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		}
 		int uniqueId = isCancellation ? -notificationId : notificationId;
 		return PendingIntent.getBroadcast(context, uniqueId, intent,
-				isNew ? PendingIntent.FLAG_CANCEL_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT);
+				isNew ? PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG
+						: PendingIntent.FLAG_UPDATE_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 	}
 
 	/**

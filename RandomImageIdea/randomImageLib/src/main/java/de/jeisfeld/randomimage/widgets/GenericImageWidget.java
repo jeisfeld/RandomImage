@@ -25,6 +25,7 @@ import java.util.Random;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
@@ -114,7 +115,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		nextIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
 		nextIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.NEW_IMAGE_BY_USER);
 		PendingIntent pendingNextIntent =
-				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				PendingIntent.getBroadcast(context, appWidgetId, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 		remoteViews.setOnClickPendingIntent(R.id.buttonNextImage, pendingNextIntent);
 
 		// Set the onClick intent for the "settings" button
@@ -122,7 +123,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		settingsIntent.putExtra(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
 		PendingIntent pendingSettingsIntent =
-				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				PendingIntent.getActivity(context, appWidgetId, settingsIntent, PendingIntent.FLAG_UPDATE_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 		remoteViews.setOnClickPendingIntent(R.id.buttonSettings, pendingSettingsIntent);
 
 		// Set the onClick intent for the view on empty widget
@@ -131,7 +132,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 		refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
 		refreshIntent.putExtra(EXTRA_UPDATE_TYPE, UpdateType.SCALING);
 		PendingIntent pendingRefreshIntent =
-				PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, PendingIntent.FLAG_ONE_SHOT);
+				PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, PendingIntent.FLAG_ONE_SHOT | SystemUtil.IMMUTABLE_FLAG);
 		remoteViews.setOnClickPendingIntent(R.id.textViewWidgetEmpty, pendingRefreshIntent);
 
 		ButtonStyle buttonStyle = ButtonStyle.fromWidgetId(appWidgetId);

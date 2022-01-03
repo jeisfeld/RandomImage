@@ -776,12 +776,17 @@ public class DisplayRandomImageActivity extends StartActivity {
 			sendStatistics();
 		}
 
-		if (SystemUtil.hasSamsungApi()) {
-			SpenRemote spenRemote = SpenRemote.getInstance();
-			if (spenRemote.isConnected()) {
-				spenRemote.disconnect(this);
+		try {
+			if (SystemUtil.hasSamsungApi()) {
+				SpenRemote spenRemote = SpenRemote.getInstance();
+				if (spenRemote.isConnected()) {
+					spenRemote.disconnect(this);
+				}
+				mSpenUnitManager = null;
 			}
-			mSpenUnitManager = null;
+		}
+		catch (IllegalArgumentException e) {
+			// Ignore
 		}
 
 		sendNotificationBroadcast(mListName, null, 0, true);
@@ -1294,6 +1299,15 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public final void updateAfterFirstImageListCreated() {
 		mRandomFileProvider = new CachedRandomFileProvider(ImageRegistry.getCurrentImageList(false));
 		displayRandomImage(false);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		if (VERSION.SDK_INT >= VERSION_CODES.S) {
+			// Does not properly finish in Android 12, but this is required for proper behavior.
+			finish();
+		}
 	}
 
 	/**

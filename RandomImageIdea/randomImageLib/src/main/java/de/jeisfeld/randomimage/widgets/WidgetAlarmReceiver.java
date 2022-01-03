@@ -15,6 +15,7 @@ import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.util.AlarmReceiver;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
 
@@ -158,6 +159,6 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 			intent.putExtra(STRING_IS_CANCELLATION, true);
 		}
 		int uniqueId = isCancellation ? -appWidgetId : appWidgetId;
-		return PendingIntent.getBroadcast(context, uniqueId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		return PendingIntent.getBroadcast(context, uniqueId, intent, PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 	}
 }

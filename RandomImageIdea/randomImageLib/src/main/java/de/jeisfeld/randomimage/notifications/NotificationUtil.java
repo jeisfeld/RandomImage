@@ -187,7 +187,8 @@ public final class NotificationUtil {
 			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag, "NT." + notificationType.toString());
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			int uniqueId = getUniqueId(notificationTag, notificationType);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent,
+					PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 			notificationBuilder.setContentIntent(pendingIntent);
 		}
 
@@ -344,7 +345,8 @@ public final class NotificationUtil {
 
 			// Dummy intent will enable heads-up notifications if available
 			Intent intent = DisplayImagePopupActivity.createIntent(context, null, null, null);
-			PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent fullScreenIntent = PendingIntent.getActivity(context, 0, intent,
+					PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 			notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
 
 
@@ -377,7 +379,8 @@ public final class NotificationUtil {
 		NotificationType notificationType = NotificationType.RANDOM_IMAGE;
 		Intent actionIntent = DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null, notificationId);
 		int uniqueId = getUniqueId(notificationTag, notificationType);
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent,
+				PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 		notificationBuilder.setContentIntent(pendingIntent);
 
 		notificationBuilder.setDeleteIntent(createDismissalIntent(context, notificationType, notificationTag));
@@ -460,8 +463,8 @@ public final class NotificationUtil {
 			dismissalIntent.putExtra(EXTRA_NOTIFICATION_TAG, notificationTag);
 			uniqueId += notificationTag.hashCode();
 		}
-		return PendingIntent.getBroadcast(context.getApplicationContext(), uniqueId,
-				dismissalIntent, PendingIntent.FLAG_ONE_SHOT);
+		return PendingIntent.getBroadcast(context.getApplicationContext(), uniqueId, dismissalIntent,
+				PendingIntent.FLAG_ONE_SHOT | SystemUtil.IMMUTABLE_FLAG);
 	}
 
 	/**

@@ -11,6 +11,7 @@ import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -47,7 +48,7 @@ public class MiniWidget extends GenericWidget {
 
 		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, null, false, appWidgetId, null);
 		PendingIntent pendingIntent =
-				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 
 		remoteViews.setOnClickPendingIntent(R.id.layoutWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
+import android.app.PendingIntent;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.Display;
 import android.view.WindowManager;
@@ -21,7 +23,6 @@ import java.text.CollationKey;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.Application;
 
@@ -36,6 +38,14 @@ import de.jeisfeld.randomimage.Application;
  * Utility class for getting system information.
  */
 public final class SystemUtil {
+	/**
+	 * The immutable flag to be used for pending intents.
+	 */
+	public static final int IMMUTABLE_FLAG = VERSION.SDK_INT >= VERSION_CODES.S ? PendingIntent.FLAG_IMMUTABLE : 0;
+	/**
+	 * The immutable flag to be used for pending intents.
+	 */
+	public static final int MUTABLE_FLAG = VERSION.SDK_INT >= VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0;
 
 	/**
 	 * Hide default constructor.
@@ -68,6 +78,7 @@ public final class SystemUtil {
 	 * @param version The version
 	 * @return true if Android version is at least the given version
 	 */
+	@ChecksSdkIntAtLeast(parameter = 0)
 	public static boolean isAtLeastVersion(final int version) {
 		return Build.VERSION.SDK_INT >= version;
 	}
@@ -198,15 +209,12 @@ public final class SystemUtil {
 			collationMap.put(applicationInfo, collator.getCollationKey(applicationInfo.mLabelName));
 		}
 
-		Collections.sort(result, new Comparator<ApplicationInfo>() {
-			@Override
-			public int compare(final ApplicationInfo o1, final ApplicationInfo o2) {
-				try {
-					return collationMap.get(o1).compareTo(collationMap.get(o2));
-				}
-				catch (NullPointerException e) {
-					return 0;
-				}
+		Collections.sort(result, (o1, o2) -> {
+			try {
+				return collationMap.get(o1).compareTo(collationMap.get(o2));
+			}
+			catch (NullPointerException e) {
+				return 0;
 			}
 		});
 

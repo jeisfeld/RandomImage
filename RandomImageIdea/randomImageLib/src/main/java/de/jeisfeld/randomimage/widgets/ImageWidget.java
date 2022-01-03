@@ -24,6 +24,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
 
 import static de.jeisfeld.randomimage.widgets.GenericImageWidget.BackgroundColor.FILL_FRAME;
@@ -206,8 +207,7 @@ public class ImageWidget extends GenericImageWidget {
 		}
 
 		Intent intent = DisplayRandomImageActivity.createIntent(context, listName, fileName, false, appWidgetId, null);
-		PendingIntent pendingIntent =
-				PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
