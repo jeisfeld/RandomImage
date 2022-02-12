@@ -52,7 +52,7 @@
     <string name="toast_aborted_add_images_no_list">Die Bilder konnten nicht hinzugefügt werden, da keine Bildliste gefunden wurde.</string>
     <string name="toast_widget_locked">Das Widget ist bis %1$s gesperrt.</string>
     <string name="toast_widget_image_updated">Das Widget-Bild wurde aktualisiert.</string>
-    <string name="toast_triggered_media_scan">Das erneute Scannen von Mediendateien wurde ausgelöst. Letzte Dauer: %1$s</string>
+    <string name="toast_triggered_media_scan">Scanne Mediendateien. Dauer: %1$s</string>
     <string name="message_value_unknown">unbekannt</string>
     <string name="message_value_seconds">%1$.1f Sekunden</string>
     <string name="message_value_minutes">%1$.1f Minuten</string>
