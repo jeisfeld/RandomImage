@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -30,6 +31,7 @@ import com.samsung.android.sdk.penremote.SpenRemote.ConnectionResultCallback;
 import com.samsung.android.sdk.penremote.SpenUnit;
 import com.samsung.android.sdk.penremote.SpenUnitManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -390,6 +392,24 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
 		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
+
+		// determine parameters if activity is started via ACTION_VIEW intent
+		if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+			Uri imageUri = getIntent().getData();
+			if (imageUri != null && ImageUtil.getMimeType(imageUri).startsWith("image/")) {
+				String fileName = MediaStoreUtil.getRealPathFromUri(imageUri);
+				if (fileName != null) {
+					File file = new File(fileName);
+
+					String folderName = file.getParent();
+					if (ImageUtil.isImage(file, true) && folderName != null) {
+						getIntent().putExtra(STRING_EXTRA_FILENAME, fileName);
+						getIntent().putExtra(STRING_EXTRA_FOLDERNAME, folderName);
+						getIntent().putExtra(STRING_EXTRA_ALLOW_DISPLAY_MULTIPLE, true);
+					}
+				}
+			}
+		}
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
