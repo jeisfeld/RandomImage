@@ -19,6 +19,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Locale;
 
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
+import de.jeisfeld.randomimage.notifications.NotificationExternalTriggerReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MigrationUtil;
@@ -78,6 +79,10 @@ public class Application extends android.app.Application {
 		intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
 		Application.mContext.registerReceiver(new SdMountReceiver(), intentFilter);
 
+		IntentFilter intentFilter2 = new IntentFilter();
+		intentFilter.addAction("de.jeisfeld.randomimage.DISPLAY_RANDOM_IMAGE_FROM_EXTERNAL");
+		Application.mContext.registerReceiver(new NotificationExternalTriggerReceiver(), intentFilter);
+
 		ImageUtil.init();
 		NotificationAlarmReceiver.createAllNotificationAlarms();
 
@@ -94,19 +99,16 @@ public class Application extends android.app.Application {
 		}
 
 		UncaughtExceptionHandler customExceptionHandler =
-				new UncaughtExceptionHandler() {
-					@Override
-					public void uncaughtException(final Thread thread, final Throwable ex) {
-						try {
-							NotificationAlarmReceiver.createAllNotificationAlarms();
-						}
-						catch (Exception e) {
-							Log.e(TAG, "Failed to trigger notifications in exception case ", e);
-						}
-
-						// re-throw critical exception further to the os
-						defaultExceptionHandler.uncaughtException(thread, ex);
+				(thread, ex) -> {
+					try {
+						NotificationAlarmReceiver.createAllNotificationAlarms();
 					}
+					catch (Exception e) {
+						Log.e(TAG, "Failed to trigger notifications in exception case ", e);
+					}
+
+					// re-throw critical exception further to the os
+					defaultExceptionHandler.uncaughtException(thread, ex);
 				};
 
 		Thread.setDefaultUncaughtExceptionHandler(customExceptionHandler);

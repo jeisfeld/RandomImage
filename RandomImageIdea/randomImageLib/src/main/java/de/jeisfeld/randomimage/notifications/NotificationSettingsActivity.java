@@ -37,7 +37,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * A map allowing to get the activity from its hashCode.
 	 */
-	private static SparseArray<NotificationSettingsActivity> mActivityMap = new SparseArray<>();
+	private static final SparseArray<NotificationSettingsActivity> mActivityMap = new SparseArray<>();
 
 	/**
 	 * Utility method to start the activity.
@@ -173,6 +173,26 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	}
 
 	/**
+	 * Get a notificationId from its name.
+	 *
+	 * @param name The notification name.
+	 * @return The notification id.
+	 */
+	public static Integer getNotificationIdByName(final String name) {
+		if (name == null) {
+			return null;
+		}
+		for (Integer notificationId : getNotificationIds()) {
+			String notificationName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
+			if (name.equals(notificationName)) {
+				return notificationId;
+			}
+		}
+		return null;
+	}
+
+
+	/**
 	 * Update the preference header for one entry.
 	 *
 	 * @param hashCode       The code identifying the owning activity.
@@ -203,7 +223,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	/**
 	 * Get the summary of the header entry for a notification.
 	 *
-	 * @param context the context.
+	 * @param context        the context.
 	 * @param notificationId The notification id.
 	 * @return The header summary
 	 */

@@ -51,6 +51,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.Logger;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileListProvider;
@@ -151,7 +152,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * Flag indicating if the next image should be preloaded, and if the previous imageView should be retained.
 	 */
-	private boolean mDoPreload = SystemUtil.getLargeMemoryClass() >= 256; // MAGIC_NUMBER
+	private final boolean mDoPreload = SystemUtil.getLargeMemoryClass() >= 256; // MAGIC_NUMBER
 
 	/**
 	 * Flag indicating if the list is currently parsed backward.
@@ -291,7 +292,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	/**
 	 * A Handler used for automatically changing the image by timeout.
 	 */
-	private ChangeByTimeoutHandler mChangeByTimeoutHandler = new ChangeByTimeoutHandler();
+	private final ChangeByTimeoutHandler mChangeByTimeoutHandler = new ChangeByTimeoutHandler();
 
 	/**
 	 * Static helper method to create an intent for this activity.
@@ -389,7 +390,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		Logger.log("Starting activity");
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
 		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
 
@@ -1343,12 +1344,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * The list of files in the folder, being the base of the provider.
 		 */
-		private ArrayList<String> mFileNames;
+		private final ArrayList<String> mFileNames;
 
 		/**
 		 * The file name returned if there is no image file in the folder.
 		 */
-		private String mDefaultFileName;
+		private final String mDefaultFileName;
 
 		/**
 		 * Constructor initializing with the folder name.
@@ -1420,12 +1421,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * The Handler responsible for managing the thread..
 		 */
-		private Handler mHandler = new Handler();
+		private final Handler mHandler = new Handler();
 
 		/**
 		 * The runnable used for automatically changing the image by timeout.
 		 */
-		private Runnable mChangeByTimeoutRunnable = () -> {
+		private final Runnable mChangeByTimeoutRunnable = () -> {
 			mActiveRuntime = 0;
 			displayRandomImage(true);
 		};
@@ -1498,11 +1499,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 		/**
 		 * The x velocity of the movement.
 		 */
-		private float mVelocityX;
+		private final float mVelocityX;
 		/**
 		 * The y velocity of the movement.
 		 */
-		private float mVelocityY;
+		private final float mVelocityY;
 
 		/**
 		 * Constructor.

@@ -215,6 +215,13 @@
                 <action android:name="de.jeisfeld.randomimage.NOTIFICATION_BROADCAST_RECEIVER" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="de.jeisfeld.randomimage.notifications.NotificationExternalTriggerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="de.jeisfeld.randomimage.DISPLAY_RANDOM_IMAGE_FROM_EXTERNAL" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name="de.jeisfeld.randomimage.widgets.StackedImageWidgetService"

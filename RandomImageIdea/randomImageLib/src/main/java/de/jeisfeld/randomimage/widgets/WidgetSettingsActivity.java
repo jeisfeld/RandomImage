@@ -13,7 +13,6 @@ import java.util.List;
 import de.jeisfeld.randomimage.BasePreferenceActivity;
 import de.jeisfeld.randomimage.SelectDirectoryActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.ImageSelectionPreference.ChosenImageListener;
@@ -33,7 +32,7 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 	/**
 	 * A map allowing to get the activity from its hashCode.
 	 */
-	private static SparseArray<WidgetSettingsActivity> mActivityMap = new SparseArray<>();
+	private static final SparseArray<WidgetSettingsActivity> mActivityMap = new SparseArray<>();
 
 	/**
 	 * A listener called when an image has been selected via ImageSelectionPreference.
@@ -97,12 +96,7 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 		}
 
 		if (target.size() == 0) {
-			DialogUtil.displayInfo(this, new MessageDialogListener() {
-				@Override
-				public void onDialogFinished() {
-					finish();
-				}
-			}, 0, R.string.dialog_info_no_widget);
+			DialogUtil.displayInfo(this, this::finish, 0, R.string.dialog_info_no_widget);
 		}
 	}
 
@@ -148,6 +142,25 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 		header.fragmentArguments = arguments;
 
 		return header;
+	}
+
+	/**
+	 * Get a widgetId from its name.
+	 *
+	 * @param name The widget name.
+	 * @return The widget id.
+	 */
+	public static Integer getWidgetIdByName(final String name) {
+		if (name == null) {
+			return null;
+		}
+		for (Integer appWidgetId : GenericWidget.getAllWidgetIds()) {
+			String widgetName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, appWidgetId);
+			if (name.equals(widgetName)) {
+				return appWidgetId;
+			}
+		}
+		return null;
 	}
 
 	@Override
