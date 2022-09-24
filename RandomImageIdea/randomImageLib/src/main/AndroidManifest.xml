@@ -217,6 +217,7 @@
         </receiver>
         <receiver
             android:name="de.jeisfeld.randomimage.notifications.NotificationExternalTriggerReceiver"
+            android:process=":externalTriggerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="de.jeisfeld.randomimage.DISPLAY_RANDOM_IMAGE_FROM_EXTERNAL" />

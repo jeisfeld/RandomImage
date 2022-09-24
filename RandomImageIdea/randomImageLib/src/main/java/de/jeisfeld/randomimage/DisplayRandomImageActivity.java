@@ -1074,41 +1074,46 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 */
 	private void registerSPenListener() {
 		if (mSpenUnitManager != null) {
-			mSpenUnitManager.registerSpenEventListener(new SpenEventListener() {
-				/**
-				 * The max difference of two clicks considered as double click
-				 */
-				private static final long LONG_CLICK_DURATION = 500;
-				/**
-				 * The last timestamp.
-				 */
-				private long mDownTimestamp = 0;
+			try {
+				mSpenUnitManager.registerSpenEventListener(new SpenEventListener() {
+					/**
+					 * The max difference of two clicks considered as double click
+					 */
+					private static final long LONG_CLICK_DURATION = 500;
+					/**
+					 * The last timestamp.
+					 */
+					private long mDownTimestamp = 0;
 
-				@Override
-				public void onEvent(final SpenEvent spenEvent) {
-					if (mRandomFileProvider == null) {
-						return;
+					@Override
+					public void onEvent(final SpenEvent spenEvent) {
+						if (mRandomFileProvider == null) {
+							return;
+						}
+						final ButtonEvent buttonEvent = new ButtonEvent(spenEvent);
+						switch (buttonEvent.getAction()) {
+						case ButtonEvent.ACTION_DOWN:
+							mDownTimestamp = buttonEvent.getTimeStamp();
+							break;
+						case ButtonEvent.ACTION_UP:
+							runOnUiThread(() -> {
+								if (mDownTimestamp > 0 && buttonEvent.getTimeStamp() - mDownTimestamp > LONG_CLICK_DURATION) {
+									displayLastImage();
+								}
+								else {
+									displayRandomImage(true);
+								}
+							});
+							break;
+						default:
+							// do nothing
+						}
 					}
-					final ButtonEvent buttonEvent = new ButtonEvent(spenEvent);
-					switch (buttonEvent.getAction()) {
-					case ButtonEvent.ACTION_DOWN:
-						mDownTimestamp = buttonEvent.getTimeStamp();
-						break;
-					case ButtonEvent.ACTION_UP:
-						runOnUiThread(() -> {
-							if (mDownTimestamp > 0 && buttonEvent.getTimeStamp() - mDownTimestamp > LONG_CLICK_DURATION) {
-								displayLastImage();
-							}
-							else {
-								displayRandomImage(true);
-							}
-						});
-						break;
-					default:
-						// do nothing
-					}
-				}
-			}, mSpenUnitManager.getUnit(SpenUnit.TYPE_BUTTON));
+				}, mSpenUnitManager.getUnit(SpenUnit.TYPE_BUTTON));
+			}
+			catch (SecurityException e) {
+				Log.e(Application.TAG, "Failed to register Samsung Pen", e);
+			}
 		}
 	}
 

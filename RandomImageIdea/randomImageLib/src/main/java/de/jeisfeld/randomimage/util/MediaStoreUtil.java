@@ -12,6 +12,7 @@ import android.os.Build.VERSION_CODES;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,10 +107,16 @@ public final class MediaStoreUtil {
 	 */
 	public static Uri getUriFromFile(final String path) {
 		ContentResolver resolver = Application.getAppContext().getContentResolver();
-
-		Cursor filecursor = resolver.query(MediaStore.Images.Media.getContentUri("external"),
-				new String[]{BaseColumns._ID}, MediaColumns.DATA + " = ?",
-				new String[]{path}, MediaColumns.DATE_ADDED + " desc");
+		Cursor filecursor;
+		try {
+			filecursor = resolver.query(MediaStore.Images.Media.getContentUri("external"),
+					new String[]{BaseColumns._ID}, MediaColumns.DATA + " = ?",
+					new String[]{path}, MediaColumns.DATE_ADDED + " desc");
+		}
+		catch (SecurityException e) {
+			Log.e(Application.TAG, "Failed to resolve URL", e);
+			return null;
+		}
 		if (filecursor == null) {
 			return null;
 		}

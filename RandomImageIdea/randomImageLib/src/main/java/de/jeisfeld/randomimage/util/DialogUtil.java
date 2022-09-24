@@ -878,7 +878,9 @@ public final class DialogUtil {
 			listView.setAdapter(listViewAdapter);
 			listView.setOnItemClickListener((parent, view, position, id) -> {
 				int listPosition = (int) id;
-				mListener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
+				if (mListener != null) {
+					mListener.onDialogPositiveClick(SelectFromListDialogFragment.this, listPosition, items[listPosition]);
+				}
 				dismiss();
 			});
 
