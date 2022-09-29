@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="50"
-    android:versionName="1.4.3">
+    android:versionCode="51"
+    android:versionName="1.4.4">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
@@ -218,7 +218,8 @@
         <receiver
             android:name="de.jeisfeld.randomimage.notifications.NotificationExternalTriggerReceiver"
             android:process=":externalTriggerReceiver"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="de.jeisfeld.randomimage.DISPLAY_RANDOM_IMAGE_FROM_EXTERNAL" />
             </intent-filter>
