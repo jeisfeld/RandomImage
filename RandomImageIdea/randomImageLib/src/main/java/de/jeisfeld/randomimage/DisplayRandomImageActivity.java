@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
@@ -69,7 +72,9 @@ import de.jeisfeld.randomimagelib.R;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
 import static android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+import static android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 import static android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
 /**
  * Display a random image.
@@ -554,6 +559,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			String fileName = ((PinchImageView) view).getPathName();
 
 			getWindow().setNavigationBarColor(backgroundColor);
+			getWindow().setStatusBarColor(backgroundColor);
 
 			mIsDark = Color.red(backgroundColor) + Color.green(backgroundColor) + Color.blue(backgroundColor) <= 384; // MAGIC_NUMBER
 			setNavigationBarFlags();
@@ -588,15 +594,27 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private void setNavigationBarFlags() {
 		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
 			int flag = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+			WindowInsetsControllerCompat windowInsetsController =
+					WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
 
 			if (!mIsDark && VERSION.SDK_INT >= VERSION_CODES.O) {
 				flag |= SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+				flag |= SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+			}
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				if (mHideNavigationBar) {
+					getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+				}
 			}
 
 			if (mHideNavigationBar) {
 				flag |= SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_IMMERSIVE;
+				windowInsetsController.hide(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
 			}
-
+			else {
+				windowInsetsController.show(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+			}
 			getWindow().getDecorView().setSystemUiVisibility(flag);
 		}
 	}
