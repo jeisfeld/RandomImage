@@ -12,7 +12,6 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +27,6 @@ import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
-import de.jeisfeld.randomimage.util.DialogUtil.DisplayMessageDialogFragment.MessageDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
 import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageList;
@@ -172,29 +170,18 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	private void configureButtons() {
 		Button buttonWidgets = findViewById(R.id.buttonWidgets);
-		buttonWidgets.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				WidgetSettingsActivity.startActivity(MainConfigurationActivity.this);
-			}
-		});
+		buttonWidgets.setOnClickListener(v -> WidgetSettingsActivity.startActivity(MainConfigurationActivity.this));
 
 		Button buttonNotifications = findViewById(R.id.buttonNotifications);
-		buttonNotifications.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				if (VERSION.SDK_INT >= VERSION_CODES.M && !Settings.canDrawOverlays(MainConfigurationActivity.this)) {
-					DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-						@Override
-						public void onDialogFinished() {
-							Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-							startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION_FOREGROUND);
-						}
-					}, 0, R.string.dialog_info_permission_foreground);
-				}
-				else {
-					NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
-				}
+		buttonNotifications.setOnClickListener(v -> {
+			if (VERSION.SDK_INT >= VERSION_CODES.M && !Settings.canDrawOverlays(MainConfigurationActivity.this)) {
+				DialogUtil.displayInfo(MainConfigurationActivity.this, () -> {
+					Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+					startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION_FOREGROUND);
+				}, 0, R.string.dialog_info_permission_foreground);
+			}
+			else {
+				NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
 			}
 		});
 	}
@@ -345,12 +332,8 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 				return true;
 			}
 			else {
-				DialogUtil.displayInfo(this, new MessageDialogListener() {
-					@Override
-					public void onDialogFinished() {
-						SettingsActivity.startActivity(MainConfigurationActivity.this);
-					}
-				}, 0, R.string.dialog_info_need_premium);
+				DialogUtil.displayInfo(this, () ->
+						SettingsActivity.startActivity(MainConfigurationActivity.this), 0, R.string.dialog_info_need_premium);
 				return false;
 			}
 		}
@@ -370,31 +353,17 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 								String name = text == null ? null : text.trim();
 
 								if (name == null || name.length() == 0) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-										@Override
-										public void onDialogFinished() {
-											createNewImageList(creationStyle);
-										}
-
-									}, 0, R.string.dialog_info_name_too_short);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, () ->
+											createNewImageList(creationStyle), 0, R.string.dialog_info_name_too_short);
 								}
 								else if (name.startsWith("/")) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-										@Override
-										public void onDialogFinished() {
-											createNewImageList(creationStyle);
-										}
-
-									}, 0, R.string.dialog_info_name_no_slash);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, () ->
+											createNewImageList(creationStyle), 0, R.string.dialog_info_name_no_slash);
 								}
 								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-										@Override
-										public void onDialogFinished() {
-											createNewImageList(creationStyle);
-										}
-
-									}, 0, R.string.dialog_info_name_already_existing, name);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, () ->
+													createNewImageList(creationStyle), 0,
+											R.string.dialog_info_name_already_existing, name);
 								}
 								else {
 									ImageRegistry.switchToImageList(name, creationStyle, true);
@@ -488,31 +457,16 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 									return;
 								}
 								else if (name == null || name.length() == 0) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-										@Override
-										public void onDialogFinished() {
-											renameImageList(currentImageList);
-										}
-
-									}, 0, R.string.dialog_info_name_too_short);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, () ->
+											renameImageList(currentImageList), 0, R.string.dialog_info_name_too_short);
 								}
 								else if (name.startsWith("/")) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-										@Override
-										public void onDialogFinished() {
-											renameImageList(currentImageList);
-										}
-
-									}, 0, R.string.dialog_info_name_no_slash);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, () ->
+											renameImageList(currentImageList), 0, R.string.dialog_info_name_no_slash);
 								}
 								else if (ImageRegistry.getImageListNames(ListFiltering.ALL_LISTS).contains(name)) {
-									DialogUtil.displayInfo(MainConfigurationActivity.this, new MessageDialogListener() {
-										@Override
-										public void onDialogFinished() {
-											renameImageList(currentImageList);
-										}
-
-									}, 0, R.string.dialog_info_name_already_existing, name);
+									DialogUtil.displayInfo(MainConfigurationActivity.this, () ->
+											renameImageList(currentImageList), 0, R.string.dialog_info_name_already_existing, name);
 								}
 								else {
 									ImageRegistry.renameImageList(currentImageList, name);
@@ -595,14 +549,11 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 */
 	@RequiresApi(api = VERSION_CODES.Q)
 	private void triggerStorageAccessForBackupFolder(final int requestCode) {
-		DialogUtil.displayInfo(this, new MessageDialogListener() {
-			@Override
-			public void onDialogFinished() {
-				Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-				Uri defaultUri = ImageRegistry.BACKUP_FILE_FOLDER.exists() ? DEFAULT_BACKUP_URI : INTERNAL_STORAGE_URI;
-				intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, defaultUri);
-				startActivityForResult(intent, requestCode);
-			}
+		DialogUtil.displayInfo(this, () -> {
+			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			Uri defaultUri = ImageRegistry.BACKUP_FILE_FOLDER.exists() ? DEFAULT_BACKUP_URI : INTERNAL_STORAGE_URI;
+			intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, defaultUri);
+			startActivityForResult(intent, requestCode);
 		}, 0, R.string.dialog_select_backup_folder);
 	}
 
@@ -635,12 +586,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 							backedUpLists.size() == 1 ? R.string.dialog_info_backup_of_list_single : R.string.dialog_info_backup_of_lists,
 							DialogUtil.createListNameString(backedUpLists), backupFolder);
 				}
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						changeAction(CurrentAction.DISPLAY);
-					}
-				});
+				runOnUiThread(() -> changeAction(CurrentAction.DISPLAY));
 			}
 		}.start();
 	}
@@ -725,12 +671,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 							restoredLists.size() == 1 ? R.string.dialog_info_restore_of_list_single : R.string.dialog_info_restore_of_lists,
 							DialogUtil.createListNameString(restoredLists));
 				}
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						changeAction(CurrentAction.DISPLAY);
-					}
-				});
+				runOnUiThread(() -> changeAction(CurrentAction.DISPLAY));
 			}
 		}.start();
 	}

@@ -823,7 +823,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 						spenRemote.disconnect(this);
 					}
 					catch (SecurityException e) {
-						Log.e(Application.TAG, "Failed to disconnect Samsung Pen", e);
+						Log.w(Application.TAG, "Failed to disconnect Samsung Pen");
 					}
 				}
 				mSpenUnitManager = null;
@@ -1135,7 +1135,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 				}, mSpenUnitManager.getUnit(SpenUnit.TYPE_BUTTON));
 			}
 			catch (SecurityException e) {
-				Log.e(Application.TAG, "Failed to register Samsung Pen", e);
+				Log.w(Application.TAG, "Failed to register Samsung Pen");
 			}
 		}
 	}
@@ -1149,7 +1149,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 				mSpenUnitManager.unregisterSpenEventListener(mSpenUnitManager.getUnit(SpenUnit.TYPE_BUTTON));
 			}
 			catch (SecurityException e) {
-				Log.e(Application.TAG, "Failed to unregister Samsung Pen", e);
+				Log.w(Application.TAG, "Failed to unregister Samsung Pen");
 			}
 		}
 	}

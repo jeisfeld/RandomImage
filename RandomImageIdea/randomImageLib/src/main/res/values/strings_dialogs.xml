@@ -110,6 +110,7 @@
     <string name="dialog_confirmation_overwrite_backup_multiple">For %1$d of the selected lists, there exist already backups. Do you want to overwrite them?</string>
     <string name="dialog_confirmation_missing_images">The following images of the list “%1$s” cannot be loaded.\n\n%2$s</string>
     <string name="dialog_confirmation_need_read_permission">This app needs to have permission on your external storage in order to access the images. Please provide this access - otherwise the app will not work.</string>
+    <string name="dialog_confirmation_need_image_permission">This app needs to have permission on images and notifications. Please give these - otherwise the app will not work properly.</string>
     <string name="dialog_confirmation_need_usage_access">In order to prevent popup notifications for certain apps, RandomImage needs access to Usage Access data. Please grant this access on the following page.</string>
 
     <!-- Partial strings used to construct other strings -->

@@ -11,6 +11,7 @@ import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.GenericImageWidget;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
 import de.jeisfeld.randomimage.widgets.StackedImageWidget;
 import de.jeisfeld.randomimagelib.R;
@@ -37,6 +38,7 @@ public class SdMountReceiver extends BroadcastReceiver {
 		}
 		if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
 			triggerAllTimers();
+			GenericWidget.updateAllInstances();
 			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device_Change", "Package replaced");
 		}
 
@@ -45,7 +47,7 @@ public class SdMountReceiver extends BroadcastReceiver {
 				|| Intent.ACTION_MEDIA_UNMOUNTED.equals(action)
 				|| Intent.ACTION_BOOT_COMPLETED.equals(action)) {
 			ImageRegistry.getCurrentImageList(false).load(false);
-			GenericWidget.updateAllInstances();
+			GenericWidget.updateAllInstances(UpdateType.BUTTONS_BACKGROUND);
 		}
 
 		// Update images on widgets with screen on if requested.

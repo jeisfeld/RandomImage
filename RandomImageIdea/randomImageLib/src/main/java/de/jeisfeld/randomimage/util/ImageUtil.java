@@ -1,6 +1,6 @@
 package de.jeisfeld.randomimage.util;
 
-import android.Manifest;
+import android.Manifest.permission;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +28,6 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,7 +142,7 @@ public final class ImageUtil {
 				retrievedDate = DateUtil.parse(dateString, "yyyy:MM:dd HH:mm:ss");
 			}
 			catch (Exception e2) {
-				Log.w(Application.TAG, e2.toString() + " - Cannot retrieve EXIF date for " + path);
+				Log.w(Application.TAG, e2 + " - Cannot retrieve EXIF date for " + path);
 			}
 		}
 		if (retrievedDate == null) {
@@ -538,8 +537,10 @@ public final class ImageUtil {
 	 */
 	private static void fillImageMap(final OnImageFoldersFoundListener listener, final Handler handler, final boolean force) {
 		if (SystemUtil.findImagesViaMediaStore()
-				&& ContextCompat.checkSelfPermission(Application.getAppContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-				== PackageManager.PERMISSION_GRANTED) {
+				&& ((SystemUtil.isAtLeastVersion(VERSION_CODES.TIRAMISU) && (ContextCompat.checkSelfPermission(Application.getAppContext(),
+				permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED)))
+				|| (!SystemUtil.isAtLeastVersion(VERSION_CODES.TIRAMISU) && (ContextCompat.checkSelfPermission(Application.getAppContext(),
+				permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))) {
 			synchronized (FOLDER_IMAGE_MAP) {
 				if (System.currentTimeMillis() < mLastParsingTimestamp + REPARSING_INTERVAL_2 && !force) {
 					return;
@@ -571,12 +572,7 @@ public final class ImageUtil {
 					tempFolderImageMap.put(folder, filesInFolder);
 					if (listener != null && handler != null) {
 						final String finalFolder = folder;
-						handler.post(new Runnable() {
-							@Override
-							public void run() {
-								listener.handleImageFolder(finalFolder);
-							}
-						});
+						handler.post(() -> listener.handleImageFolder(finalFolder));
 					}
 					String tempFolder = folder;
 
@@ -601,9 +597,7 @@ public final class ImageUtil {
 			synchronized (FOLDER_IMAGE_MAP) {
 				FOLDER_IMAGE_MAP.clear();
 				FOLDER_RECURSIVE_MAP.clear();
-				for (Entry<String, List<String>> entry : tempFolderImageMap.entrySet()) {
-					FOLDER_IMAGE_MAP.put(entry.getKey(), entry.getValue());
-				}
+				FOLDER_IMAGE_MAP.putAll(tempFolderImageMap);
 				for (Entry<String, List<String>> entry : tempFolderRecursiveMap.entrySet()) {
 					if (entry.getValue().size() >= 2) {
 						FOLDER_RECURSIVE_MAP.put(entry.getKey(), entry.getValue());
@@ -614,22 +608,14 @@ public final class ImageUtil {
 
 				mLastParsingTimestamp = System.currentTimeMillis();
 			}
-			imageFolders.sort(new Comparator<String>() {
-				@Override
-				public int compare(final String o1, final String o2) {
-					String s1 = o1.endsWith(RECURSIVE_SUFFIX) ? o1.substring(0, o1.length() - RECURSIVE_SUFFIX.length()) : o1 + File.separator;
-					String s2 = o2.endsWith(RECURSIVE_SUFFIX) ? o2.substring(0, o2.length() - RECURSIVE_SUFFIX.length()) : o2 + File.separator;
-					return s1.compareTo(s2);
-				}
+			imageFolders.sort((o1, o2) -> {
+				String s1 = o1.endsWith(RECURSIVE_SUFFIX) ? o1.substring(0, o1.length() - RECURSIVE_SUFFIX.length()) : o1 + File.separator;
+				String s2 = o2.endsWith(RECURSIVE_SUFFIX) ? o2.substring(0, o2.length() - RECURSIVE_SUFFIX.length()) : o2 + File.separator;
+				return s1.compareTo(s2);
 			});
 			PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
 			if (listener != null && handler != null) {
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						listener.handleImageFolders(imageFolders);
-					}
-				});
+				handler.post(() -> listener.handleImageFolders(imageFolders));
 			}
 		}
 	}
@@ -688,12 +674,7 @@ public final class ImageUtil {
 			for (String imageFolderName : imageFolders) {
 				File imageFolder = new File(imageFolderName);
 				if (imageFolder.exists() && imageFolder.isDirectory()) {
-					File[] imageFiles = imageFolder.listFiles(new FileFilter() {
-						@Override
-						public boolean accept(final File file) {
-							return isImage(file, false);
-						}
-					});
+					File[] imageFiles = imageFolder.listFiles(file -> isImage(file, false));
 					if (imageFiles != null) {
 						for (File file : imageFiles) {
 							fileNames.add(file.getAbsolutePath());
@@ -726,18 +707,13 @@ public final class ImageUtil {
 		final Handler handler = new Handler();
 		if (SystemUtil.findImagesViaMediaStore()) {
 			List<String> preferredImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_pref_preferred_image_folders);
-			if (preferredImageFolders != null && preferredImageFolders.size() > 0) {
-				OnScanCompletedListener onScanCompletedListener = new OnScanCompletedListener() {
+			if (preferredImageFolders.size() > 0) {
+				OnScanCompletedListener onScanCompletedListener = (path, uri) -> new Thread() {
 					@Override
-					public void onScanCompleted(final String path, final Uri uri) {
-						new Thread() {
-							@Override
-							public void run() {
-								fillImageMap(listener, handler, true);
-							}
-						}.start();
+					public void run() {
+						fillImageMap(listener, handler, true);
 					}
-				};
+				}.start();
 				MediaStoreUtil.triggerMediaScan(null, onScanCompletedListener, preferredImageFolders.toArray(new String[0]));
 			}
 			else {
@@ -765,12 +741,7 @@ public final class ImageUtil {
 					PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
 					PreferenceUtil.setSharedPreferenceLong(R.string.key_last_parsing_time, System.currentTimeMillis());
 					if (listener != null) {
-						handler.post(new Runnable() {
-							@Override
-							public void run() {
-								listener.handleImageFolders(imageFolders);
-							}
-						});
+						handler.post(() -> listener.handleImageFolders(imageFolders));
 					}
 				}
 			}.start();
@@ -833,21 +804,11 @@ public final class ImageUtil {
 			result.add(parentFolder.getAbsolutePath());
 			numberOfImageFolders++;
 			if (handler != null && listener != null) {
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						listener.handleImageFolder(parentFolder.getAbsolutePath());
-					}
-				});
+				handler.post(() -> listener.handleImageFolder(parentFolder.getAbsolutePath()));
 			}
 		}
 
-		File[] children = parentFolder.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(final File file) {
-				return file.isDirectory();
-			}
-		});
+		File[] children = parentFolder.listFiles(File::isDirectory);
 		if (children == null) {
 			return result;
 		}
@@ -865,12 +826,7 @@ public final class ImageUtil {
 		if (numberOfImageFolders >= 2) {
 			result.add(0, parentFolder.getAbsolutePath() + RECURSIVE_SUFFIX);
 			if (handler != null && listener != null) {
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						listener.handleImageFolder(parentFolder.getAbsolutePath() + RECURSIVE_SUFFIX);
-					}
-				});
+				handler.post(() -> listener.handleImageFolder(parentFolder.getAbsolutePath() + RECURSIVE_SUFFIX));
 			}
 		}
 

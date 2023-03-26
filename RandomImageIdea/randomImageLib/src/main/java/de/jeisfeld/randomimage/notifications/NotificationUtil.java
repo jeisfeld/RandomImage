@@ -15,6 +15,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -110,7 +111,7 @@ public final class NotificationUtil {
 	/**
 	 * The information about added or deleted lists/folders/files per image list.
 	 */
-	private static Map<String, ListUpdateInfo> mListUpdateInfo = new HashMap<>();
+	private static final Map<String, ListUpdateInfo> mListUpdateInfo = new HashMap<>();
 
 	/**
 	 * The height of notification large icons.
@@ -184,7 +185,7 @@ public final class NotificationUtil {
 
 		if (notificationType == NotificationType.MISSING_FILES || notificationType == NotificationType.UPDATED_LIST
 				|| notificationType == NotificationType.ERROR_LOADING_LIST || notificationType == NotificationType.ERROR_SAVING_LIST) {
-			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag, "NT." + notificationType.toString());
+			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag, "NT." + notificationType);
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			int uniqueId = getUniqueId(notificationTag, notificationType);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent,
@@ -294,7 +295,11 @@ public final class NotificationUtil {
 						|| am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
 					Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-					if (VERSION.SDK_INT >= VERSION_CODES.O) {
+					if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+						vibrator.vibrate(VibrationEffect.createWaveform(VIBRATION_PATTERN, -1),
+								new VibrationAttributes.Builder().setUsage(VibrationAttributes.USAGE_ALARM).build());
+					}
+					else if (VERSION.SDK_INT >= VERSION_CODES.O) {
 						vibrator.vibrate(VibrationEffect.createWaveform(VIBRATION_PATTERN, -1),
 								new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT).build());
 					}
@@ -337,7 +342,9 @@ public final class NotificationUtil {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_special);
 			remoteViews.setImageViewBitmap(R.id.imageViewNotification, bitmap);
 			if (VERSION.SDK_INT >= VERSION_CODES.N) {
-				notificationBuilder.setCustomContentView(remoteViews);
+				notificationBuilder.setCustomContentView(remoteViews)
+						.setCustomBigContentView(remoteViews)
+						.setCustomHeadsUpContentView(remoteViews);
 			}
 			else {
 				notificationBuilder.setContent(remoteViews);
@@ -349,9 +356,10 @@ public final class NotificationUtil {
 					PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 			notificationBuilder.setFullScreenIntent(fullScreenIntent, false);
 
-
 			if (VERSION.SDK_INT >= VERSION_CODES.N) {
-				Notification publicNotification = new Builder(context).setCustomContentView(remoteViews).build();
+				Notification publicNotification = new Builder(context)
+						.setCustomContentView(remoteViews)
+						.build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
 			else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
@@ -855,7 +863,7 @@ public final class NotificationUtil {
 		/**
 		 * Nested lists added.
 		 */
-		private Set<String> mAddedLists = new HashSet<>();
+		private final Set<String> mAddedLists = new HashSet<>();
 
 		public Set<String> getAddedLists() {
 			return mAddedLists;
@@ -864,7 +872,7 @@ public final class NotificationUtil {
 		/**
 		 * Folders added.
 		 */
-		private Set<String> mAddedFolders = new HashSet<>();
+		private final Set<String> mAddedFolders = new HashSet<>();
 
 		public Set<String> getAddedFolders() {
 			return mAddedFolders;
@@ -873,7 +881,7 @@ public final class NotificationUtil {
 		/**
 		 * Files added.
 		 */
-		private Set<String> mAddedFiles = new HashSet<>();
+		private final Set<String> mAddedFiles = new HashSet<>();
 
 		public Set<String> getAddedFiles() {
 			return mAddedFiles;
@@ -882,7 +890,7 @@ public final class NotificationUtil {
 		/**
 		 * Nested lists removed.
 		 */
-		private Set<String> mRemovedLists = new HashSet<>();
+		private final Set<String> mRemovedLists = new HashSet<>();
 
 		public Set<String> getRemovedLists() {
 			return mRemovedLists;
@@ -891,7 +899,7 @@ public final class NotificationUtil {
 		/**
 		 * Folders removed.
 		 */
-		private Set<String> mRemovedFolders = new HashSet<>();
+		private final Set<String> mRemovedFolders = new HashSet<>();
 
 		public Set<String> getRemovedFolders() {
 			return mRemovedFolders;
@@ -900,7 +908,7 @@ public final class NotificationUtil {
 		/**
 		 * Files removed.
 		 */
-		private Set<String> mRemovedFiles = new HashSet<>();
+		private final Set<String> mRemovedFiles = new HashSet<>();
 
 		public Set<String> getRemovedFiles() {
 			return mRemovedFiles;

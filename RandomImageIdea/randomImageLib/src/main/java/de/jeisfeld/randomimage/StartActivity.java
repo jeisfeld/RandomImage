@@ -3,6 +3,7 @@ package de.jeisfeld.randomimage;
 import android.Manifest;
 import android.Manifest.permission;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
@@ -35,18 +36,28 @@ public abstract class StartActivity extends BaseActivity {
 		int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 		int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 		int locationPermission = PackageManager.PERMISSION_GRANTED;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+		int mediaPermission = PackageManager.PERMISSION_GRANTED;
+		int notificationPermission = PackageManager.PERMISSION_GRANTED;
+		if (Build.VERSION.SDK_INT >= VERSION_CODES.R) {
 			locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_MEDIA_LOCATION);
 		}
+		if (Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+			mediaPermission = ContextCompat.checkSelfPermission(this, permission.READ_MEDIA_IMAGES);
+			notificationPermission = ContextCompat.checkSelfPermission(this, permission.POST_NOTIFICATIONS);
+		}
 
-		if (readPermission != PackageManager.PERMISSION_GRANTED // BOOLEAN_EXPRESSION_COMPLEXITY
+		if ((!SystemUtil.isAtLeastVersion(VERSION_CODES.TIRAMISU) && readPermission != PackageManager.PERMISSION_GRANTED) // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| (!SystemUtil.isAtLeastVersion(VERSION_CODES.Q) && writePermission != PackageManager.PERMISSION_GRANTED)
-				|| (SystemUtil.isAtLeastVersion(VERSION_CODES.R) && locationPermission != PackageManager.PERMISSION_GRANTED)) {
+				|| (SystemUtil.isAtLeastVersion(VERSION_CODES.R) && locationPermission != PackageManager.PERMISSION_GRANTED)
+				|| (SystemUtil.isAtLeastVersion(VERSION_CODES.TIRAMISU)
+				&& (mediaPermission != PackageManager.PERMISSION_GRANTED || notificationPermission != PackageManager.PERMISSION_GRANTED))) {
 			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog) {
 					ActivityCompat.requestPermissions(StartActivity.this,
-							Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+							Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU
+									? new String[]{permission.ACCESS_MEDIA_LOCATION, permission.READ_MEDIA_IMAGES, permission.POST_NOTIFICATIONS}
+									: Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 									? new String[]{permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE,
 									permission.ACCESS_MEDIA_LOCATION}
 									: new String[]{permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE},
@@ -57,7 +68,8 @@ public abstract class StartActivity extends BaseActivity {
 				public void onDialogNegativeClick(final DialogFragment dialog) {
 					finish();
 				}
-			}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_read_permission);
+			}, R.string.title_dialog_request_permission, R.string.button_continue, SystemUtil.isAtLeastVersion(VERSION_CODES.TIRAMISU)
+					? R.string.dialog_confirmation_need_image_permission : R.string.dialog_confirmation_need_read_permission);
 		}
 	}
 
@@ -71,6 +83,11 @@ public abstract class StartActivity extends BaseActivity {
 			}
 			ImageUtil.init();
 			DialogUtil.displaySearchForImageFoldersIfRequired(this, false);
+			if (SystemUtil.findImagesViaMediaStore()) {
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
+			}
 		}
 	}
 
@@ -80,6 +97,5 @@ public abstract class StartActivity extends BaseActivity {
 	public void updateAfterFirstImageListCreated() {
 
 	}
-
 
 }

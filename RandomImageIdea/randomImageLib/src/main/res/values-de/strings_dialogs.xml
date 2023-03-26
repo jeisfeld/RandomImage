@@ -109,6 +109,7 @@
     <string name="dialog_confirmation_overwrite_backup_multiple">Für %1$d der ausgewählten Listen gibt es bereits ein Backup. Wollen Sie dieses überschreiben?</string>
     <string name="dialog_confirmation_missing_images">Folgende Bilder der Liste „%1$s” können nicht geladen werden: \n\n%2$s</string>
     <string name="dialog_confirmation_need_read_permission">Die App benötigt Zugriff auf den Speicher, um auf Ihre Bilder zugreifen zu können. Bitte erlauben Sie diesen Zugriff - andernfalls wird die App nicht funktionieren.</string>
+    <string name="dialog_confirmation_need_image_permission">Diese App muss die Berechtigung für Bilder und Benachrichtigungen haben. Bitte geben Sie diese - sonst funktioniert die App nicht richtig.</string>
     <string name="dialog_confirmation_need_usage_access">Um Popup-Benachrichtigungen für bestimmte Apps zu unterdrücken, benötigt Zufallsbild Zugriffs auf Nutzungsdaten. Bitte gewähren Sie diese im folgenden Einstellungsdialog.</string>
 
     <!-- Partial strings used to construct other strings -->
