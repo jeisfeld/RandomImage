@@ -6,11 +6,11 @@ android {
 
     defaultConfig {
         applicationId "de.jeisfeld.randomimage"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 33
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
         }
     }
 
@@ -22,8 +22,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = 1.11
+        targetCompatibility = 1.11
     }
     namespace 'de.jeisfeld.randomimage'
 }

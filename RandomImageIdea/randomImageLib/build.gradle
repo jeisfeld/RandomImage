@@ -5,11 +5,11 @@ android {
     buildToolsVersion '30.0.3'
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 33
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
         }
     }
 
@@ -21,8 +21,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = 1.11
+        targetCompatibility = 1.11
     }
     namespace 'de.jeisfeld.randomimagelib'
 }
@@ -31,9 +31,8 @@ dependencies {
     implementation files('libs/annotations.jar')
     implementation files('libs/sdk-v1.0.0.jar')
     implementation files('libs/spenremote-v1.0.1.jar')
-    //noinspection GradleDependency
-    implementation 'androidx.core:core:1.9.0'
-    implementation 'com.google.firebase:firebase-core:19.0.2'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.core:core:1.10.1'
+    implementation 'com.google.firebase:firebase-core:21.1.1'
+    implementation 'androidx.fragment:fragment:1.4.1'
     implementation 'androidx.exifinterface:exifinterface:1.3.6'
 }
