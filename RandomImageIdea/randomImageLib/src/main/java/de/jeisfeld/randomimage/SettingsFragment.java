@@ -417,7 +417,10 @@ public class SettingsFragment extends PreferenceFragment {
 	 */
 	private void updateShowHiddenFoldersPreference(final Context context) {
 		int mechanism = PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_folder_selection_mechanism, -1);
-		findPreference(context.getString(R.string.key_pref_show_hidden_folders)).setEnabled(mechanism == 0);
+		Preference preference = findPreference(context.getString(R.string.key_pref_show_hidden_folders));
+		if (preference != null) {
+			preference.setEnabled(mechanism == 0);
+		}
 	}
 
 	/**

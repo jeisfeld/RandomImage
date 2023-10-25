@@ -486,8 +486,8 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			break;
 		case 2:
 			// via Gallery
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("image/*");
+			Intent intent = new Intent(Intent.ACTION_PICK);
+			intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
 			startActivityForResult(intent, REQUEST_CODE_GALLERY);
 			break;
 		default:
@@ -585,7 +585,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		boolean needsRefresh = false;
-
 		switch (requestCode) {
 		case DisplayRandomImageActivity.REQUEST_CODE:
 			needsRefresh = DisplayRandomImageActivity.getResult(resultCode, data);
