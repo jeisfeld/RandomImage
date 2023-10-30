@@ -50,6 +50,7 @@
         <item>Brillante</item>
         <item>Color del borde de la imagen</item>
         <item>Color de imagen promedio</item>
+        <item>Negro</item>
     </string-array>
     <string-array name="detail_flip_behavior_names">
         <item>Siempre nueva imagen aleatoria</item>

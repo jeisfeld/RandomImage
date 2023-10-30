@@ -910,6 +910,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 		case AVERAGE_IMAGE_COLOR:
 			backgroundColor = ImageAnalyzer.getAverageImageColor(ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE));
 			break;
+		case BLACK:
+			backgroundColor = Color.BLACK;
+			break;
 		case DARK:
 		default:
 			backgroundColor = Color.TRANSPARENT;
@@ -1598,7 +1601,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 		DARK(0),
 		LIGHT(1),
 		COLOR_FROM_IMAGE(2),
-		AVERAGE_IMAGE_COLOR(3);
+		AVERAGE_IMAGE_COLOR(3),
+		BLACK(4);
 		// JAVADOC:ON
 
 		/**

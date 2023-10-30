@@ -50,6 +50,7 @@
         <item>Hell</item>
         <item>Farbe aus dem Bildrand</item>
         <item>Durchschnittliche Bildfarbe</item>
+        <item>Schwarz</item>
     </string-array>
     <string-array name="detail_flip_behavior_names">
         <item>Immer neues Zufallsbild</item>
