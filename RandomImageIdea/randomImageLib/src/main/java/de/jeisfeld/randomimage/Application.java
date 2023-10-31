@@ -18,6 +18,7 @@ import android.util.Log;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Locale;
 
+import androidx.core.content.ContextCompat;
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationExternalTriggerReceiver;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
@@ -77,11 +78,11 @@ public class Application extends android.app.Application {
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(Intent.ACTION_SHUTDOWN);
 		intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-		Application.mContext.registerReceiver(new SdMountReceiver(), intentFilter);
+		ContextCompat.registerReceiver(Application.mContext, new SdMountReceiver(), intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
 
 		IntentFilter intentFilter2 = new IntentFilter();
 		intentFilter.addAction("de.jeisfeld.randomimage.DISPLAY_RANDOM_IMAGE_FROM_EXTERNAL");
-		Application.mContext.registerReceiver(new NotificationExternalTriggerReceiver(), intentFilter);
+		ContextCompat.registerReceiver(Application.mContext, new NotificationExternalTriggerReceiver(), intentFilter2, ContextCompat.RECEIVER_EXPORTED);
 
 		ImageUtil.init();
 		NotificationAlarmReceiver.createAllNotificationAlarms();
