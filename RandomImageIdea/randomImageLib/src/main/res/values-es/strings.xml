@@ -39,6 +39,7 @@
     <string name="button_add_folder">Agregar carpeta</string>
     <string name="button_add_nested_list">Agregar lista</string>
     <string name="button_finish_widget_configuration">Terminar la configuración del widget</string>
+    <string name="button_run_widget">Ejecutar Widget</string>
     <string name="button_missing_images">Imágenes faltantes</string>
     <string name="button_widgets">Widgets de imágenes</string>
     <string name="button_notifications">Notificaciones de imágenes aleatorias</string>

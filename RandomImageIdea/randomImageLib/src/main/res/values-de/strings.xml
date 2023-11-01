@@ -40,6 +40,7 @@
     <string name="button_add_folder">Ordner hinzufügen</string>
     <string name="button_add_nested_list">Liste hinzufügen</string>
     <string name="button_finish_widget_configuration">Widget-Konfiguration beenden</string>
+    <string name="button_run_widget">Widget ausführen</string>
     <string name="button_missing_images">Fehlende Bilder</string>
     <string name="button_widgets">Zufallsbild-Widgets</string>
     <string name="button_notifications">Zufallsbild-Benachrichtigungen</string>

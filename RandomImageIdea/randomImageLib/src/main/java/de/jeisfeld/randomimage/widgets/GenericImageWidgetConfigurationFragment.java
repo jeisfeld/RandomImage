@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.widgets;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -10,12 +11,12 @@ import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -109,17 +110,18 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		LinearLayout preferenceLayout = (LinearLayout) super.onCreateView(inflater, container, savedInstanceState);
 
-		// Add finish button
-		if (preferenceLayout != null && !(getActivity() instanceof WidgetSettingsActivity)) {
-			Button btn = new Button(getActivity());
-			btn.setText(R.string.button_finish_widget_configuration);
-			btn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					getActivity().finish();
-				}
+		View buttonLayout = LayoutInflater.from(getActivity()).inflate(R.layout.layout_configure_widget_buttons, null);
+		if (preferenceLayout != null) {
+			preferenceLayout.addView(buttonLayout);
+
+			buttonLayout.findViewById(R.id.buttonFinishWidgetConfiguration).setOnClickListener(v -> getActivity().finish());
+
+			buttonLayout.findViewById(R.id.buttonRunWidget).setOnClickListener(v -> {
+				String currentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId);
+				Intent intent = DisplayRandomImageActivity.createIntent(getActivity(),
+						PreferenceUtil.getSharedPreferenceString(R.string.key_widget_list_name), currentFileName, false, mAppWidgetId, null);
+				getActivity().startActivity(intent);
 			});
-			preferenceLayout.addView(btn);
 		}
 
 		return preferenceLayout;
