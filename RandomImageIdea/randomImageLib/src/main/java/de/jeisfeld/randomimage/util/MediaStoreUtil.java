@@ -147,14 +147,26 @@ public final class MediaStoreUtil {
 		String[] projection = {
 				MediaColumns.DATA
 		};
-		List<String> result;
-		try (Cursor cursor = resolver.query(MediaStore.Images.Media.getContentUri("external"), projection, null, null, null)) {
+		List<String> result = null;
+		try (Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)) {
 			result = new ArrayList<>();
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					result.add(cursor.getString(0));
 				}
 			}
+		}
+		catch (IllegalArgumentException e) {
+			if (SystemUtil.isAtLeastVersion(VERSION_CODES.Q))
+				try (Cursor cursor = resolver.query(MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+						projection, null, null, null)) {
+					result = new ArrayList<>();
+					if (cursor != null) {
+						while (cursor.moveToNext()) {
+							result.add(cursor.getString(0));
+						}
+					}
+				}
 		}
 		return result;
 	}

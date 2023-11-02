@@ -487,57 +487,52 @@ public final class StandardImageList extends ImageList {
 	 * @return The runnable loading the image lists.
 	 */
 	private Runnable getAsyncRunnable(final boolean toastIfFilesMissing) {
-		return new Runnable() {
-			@Override
-			public void run() {
-				final long timestamp = System.currentTimeMillis();
-				final ArrayList<ListElement> folders = getElements(FOLDER);
-				final ArrayList<String> fileNames = getElementNames(FILE);
-				final ArrayList<ListElement> nestedLists = getElements(NESTED_LIST);
-				final Map<ListElement, ImageList> nestedListMap = new HashMap<>();
+		return () -> {
+			final long timestamp = System.currentTimeMillis();
+			final ArrayList<ListElement> folders = getElements(FOLDER);
+			final ArrayList<String> fileNames = getElementNames(FILE);
+			final ArrayList<ListElement> nestedLists = getElements(NESTED_LIST);
+			final Map<ListElement, ImageList> nestedListMap = new HashMap<>();
 
-				Set<String> imageFileSet = new HashSet<>(fileNames);
-				Set<String> allImageFileSet = new HashSet<>(fileNames);
-				for (ListElement folder : folders) {
-					allImageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
-					String customWeightString = folder.getProperties().getProperty(PARAM_WEIGHT);
-					if (customWeightString == null) {
-						imageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
-					}
-					else {
-						assert mImageFilesInFolders != null;
-						mImageFilesInFolders.put(folder.getName(), ImageUtil.getImagesInFolder(folder.getName()));
-						mCustomWeights.put(folder, Double.parseDouble(customWeightString));
-					}
+			Set<String> imageFileSet = new HashSet<>(fileNames);
+			Set<String> allImageFileSet = new HashSet<>(fileNames);
+			for (ListElement folder : folders) {
+				allImageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
+				String customWeightString = folder.getProperties().getProperty(PARAM_WEIGHT);
+				if (customWeightString == null) {
+					imageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
 				}
-
-				for (ListElement nestedList : nestedLists) {
-					ImageList nestedImageList = ImageRegistry.getImageListByName(nestedList.getName(), toastIfFilesMissing);
-					if (nestedImageList != null && nestedImageList.getAllImageFiles() != null) {
-						nestedListMap.put(nestedList, nestedImageList);
-						allImageFileSet.addAll(nestedImageList.getAllImageFiles());
-					}
-					String customWeightString = nestedList.getProperties().getProperty(PARAM_WEIGHT);
-					if (customWeightString != null) {
-						double customWeight = Double.parseDouble(customWeightString);
-						mCustomWeights.put(nestedList, customWeight);
-					}
+				else {
+					mImageFilesInFolders.put(folder.getName(), ImageUtil.getImagesInFolder(folder.getName()));
+					mCustomWeights.put(folder, Double.parseDouble(customWeightString));
 				}
-
-				// Set it only here so that it is only visible when completed, and has always a complete state.
-				mAllImageFilesInList = new ArrayList<>(allImageFileSet);
-				assert mImageFilesInFolders != null;
-				mImageFilesInFolders.put(DUMMY_NESTED_FOLDER.getName(), new ArrayList<>(imageFileSet));
-				mNestedLists = nestedListMap;
-
-				calculateWeights();
-
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "All_images_in_list", null, (long) mAllImageFilesInList.size());
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Images_in_list", null, (long) fileNames.size());
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Folders_in_list", null, (long) folders.size());
-				TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Nested_lists_in_list", null, (long) nestedListMap.size());
-				TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load_image_list", "all images", System.currentTimeMillis() - timestamp);
 			}
+
+			for (ListElement nestedList : nestedLists) {
+				ImageList nestedImageList = ImageRegistry.getImageListByName(nestedList.getName(), toastIfFilesMissing);
+				if (nestedImageList != null && nestedImageList.getAllImageFiles() != null) {
+					nestedListMap.put(nestedList, nestedImageList);
+					allImageFileSet.addAll(nestedImageList.getAllImageFiles());
+				}
+				String customWeightString = nestedList.getProperties().getProperty(PARAM_WEIGHT);
+				if (customWeightString != null) {
+					double customWeight = Double.parseDouble(customWeightString);
+					mCustomWeights.put(nestedList, customWeight);
+				}
+			}
+
+			// Set it only here so that it is only visible when completed, and has always a complete state.
+			mAllImageFilesInList = new ArrayList<>(allImageFileSet);
+			mImageFilesInFolders.put(DUMMY_NESTED_FOLDER.getName(), new ArrayList<>(imageFileSet));
+			mNestedLists = nestedListMap;
+
+			calculateWeights();
+
+			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "All_images_in_list", null, (long) mAllImageFilesInList.size());
+			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Images_in_list", null, (long) fileNames.size());
+			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Folders_in_list", null, (long) folders.size());
+			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Nested_lists_in_list", null, (long) nestedListMap.size());
+			TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load_image_list", "all images", System.currentTimeMillis() - timestamp);
 		};
 	}
 }

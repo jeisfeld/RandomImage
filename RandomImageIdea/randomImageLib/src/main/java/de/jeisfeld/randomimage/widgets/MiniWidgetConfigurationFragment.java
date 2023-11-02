@@ -81,7 +81,7 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 
 			buttonLayout.findViewById(R.id.buttonRunWidget).setOnClickListener(v -> {
 				Intent intent = DisplayRandomImageActivity.createIntent(getActivity(),
-						PreferenceUtil.getSharedPreferenceString(R.string.key_widget_list_name), null, false, mAppWidgetId, null);
+						PreferenceUtil.getSharedPreferenceString(R.string.key_widget_list_name), null, true, mAppWidgetId, null);
 				getActivity().startActivity(intent);
 			});
 		}

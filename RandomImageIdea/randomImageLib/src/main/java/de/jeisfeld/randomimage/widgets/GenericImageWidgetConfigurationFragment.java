@@ -119,7 +119,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			buttonLayout.findViewById(R.id.buttonRunWidget).setOnClickListener(v -> {
 				String currentFileName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_current_file_name, mAppWidgetId);
 				Intent intent = DisplayRandomImageActivity.createIntent(getActivity(),
-						PreferenceUtil.getSharedPreferenceString(R.string.key_widget_list_name), currentFileName, false, mAppWidgetId, null);
+						PreferenceUtil.getSharedPreferenceString(R.string.key_widget_list_name), currentFileName, true, mAppWidgetId, null);
 				getActivity().startActivity(intent);
 			});
 		}
