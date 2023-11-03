@@ -608,11 +608,22 @@ public final class ImageUtil {
 
 				mLastParsingTimestamp = System.currentTimeMillis();
 			}
-			imageFolders.sort((o1, o2) -> {
-				String s1 = o1.endsWith(RECURSIVE_SUFFIX) ? o1.substring(0, o1.length() - RECURSIVE_SUFFIX.length()) : o1 + File.separator;
-				String s2 = o2.endsWith(RECURSIVE_SUFFIX) ? o2.substring(0, o2.length() - RECURSIVE_SUFFIX.length()) : o2 + File.separator;
-				return s1.compareTo(s2);
-			});
+
+			if (SystemUtil.isAtLeastVersion(VERSION_CODES.N)) {
+				imageFolders.sort((o1, o2) -> {
+					String s1 = o1.endsWith(RECURSIVE_SUFFIX) ? o1.substring(0, o1.length() - RECURSIVE_SUFFIX.length()) : o1 + File.separator;
+					String s2 = o2.endsWith(RECURSIVE_SUFFIX) ? o2.substring(0, o2.length() - RECURSIVE_SUFFIX.length()) : o2 + File.separator;
+					return s1.compareTo(s2);
+				});
+			}
+			else {
+				Collections.sort(imageFolders, (o1, o2) -> {
+					String s1 = o1.endsWith(RECURSIVE_SUFFIX) ? o1.substring(0, o1.length() - RECURSIVE_SUFFIX.length()) : o1 + File.separator;
+					String s2 = o2.endsWith(RECURSIVE_SUFFIX) ? o2.substring(0, o2.length() - RECURSIVE_SUFFIX.length()) : o2 + File.separator;
+					return s1.compareTo(s2);
+				});
+			}
+
 			PreferenceUtil.setSharedPreferenceStringList(R.string.key_all_image_folders, imageFolders);
 			if (listener != null && handler != null) {
 				handler.post(() -> listener.handleImageFolders(imageFolders));
