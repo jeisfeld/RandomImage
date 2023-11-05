@@ -2,7 +2,6 @@ package de.jeisfeld.randomimage.widgets;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.PendingIntent;
@@ -602,9 +601,9 @@ public abstract class GenericImageWidget extends GenericWidget {
 		private int[] mButtonIds;
 
 		/**
-		 * The AnimatorSet running the animation.
+		 * The Animator running the animation.
 		 */
-		private AnimatorSet mAnimatorSet = null;
+		private ObjectAnimator mAnimator = null;
 
 		/**
 		 * Create and animate the ButtonAnimator.
@@ -633,10 +632,9 @@ public abstract class GenericImageWidget extends GenericWidget {
 			this.mButtonIds = buttonIds;
 			mRemoteViews = remoteViews;
 
-			final ObjectAnimator fadeOut =
-					ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
-			fadeOut.setDuration(1500); // MAGIC_NUMBER
-			fadeOut.addListener(new AnimatorListener() {
+			mAnimator = ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
+			mAnimator.setDuration(1500); // MAGIC_NUMBER
+			mAnimator.addListener(new AnimatorListener() {
 				@Override
 				public void onAnimationStart(final Animator animation) {
 					for (int buttonId : buttonIds) {
@@ -664,8 +662,6 @@ public abstract class GenericImageWidget extends GenericWidget {
 				}
 			});
 
-			mAnimatorSet = new AnimatorSet();
-			mAnimatorSet.play(fadeOut);
 		}
 
 		/**
@@ -686,8 +682,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * Start the animation.
 		 */
 		public void start() {
-			if (mAnimatorSet != null) {
-				new Handler(Looper.getMainLooper()).post(() -> mAnimatorSet.start());
+			if (mAnimator != null) {
+				new Handler(Looper.getMainLooper()).post(() -> mAnimator.start());
 			}
 		}
 
@@ -695,8 +691,8 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 * Interrupt the animation.
 		 */
 		public void interrupt() {
-			if (mAnimatorSet != null) {
-				mAnimatorSet.cancel();
+			if (mAnimator != null) {
+				mAnimator.cancel();
 			}
 		}
 
