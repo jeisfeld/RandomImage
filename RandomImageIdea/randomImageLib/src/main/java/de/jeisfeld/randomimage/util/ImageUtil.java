@@ -84,7 +84,7 @@ public final class ImageUtil {
 	 * The file endings considered as image files.
 	 */
 	private static final List<String> IMAGE_SUFFIXES = Arrays.asList(
-			"JPG", "JPEG", "PNG", "BMP", "GIF");
+			"JPG", "JPEG", "PNG", "BMP", "GIF", "TIFF", "WEBP");
 
 	/**
 	 * Suffix used to indicate recursive folders.
