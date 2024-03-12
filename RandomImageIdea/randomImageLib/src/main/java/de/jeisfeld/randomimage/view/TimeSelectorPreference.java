@@ -285,7 +285,12 @@ public class TimeSelectorPreference extends DialogPreference {
 				spinner.setSelection(DEFAULT_SPINNER_ENTRIES.length - 1);
 			}
 
-			result.mSpinnerEntry = (SpinnerEntry) spinner.getSelectedItem();
+			try {
+				result.mSpinnerEntry = (SpinnerEntry) spinner.getSelectedItem();
+			}
+			catch (ArrayIndexOutOfBoundsException e) {
+				// ignore
+			}
 			return result;
 		}
 

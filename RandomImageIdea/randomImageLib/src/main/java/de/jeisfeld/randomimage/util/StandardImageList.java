@@ -139,7 +139,7 @@ public final class StandardImageList extends ImageList {
 		else {
 			// Folder or dummy
 			ArrayList<String> filesInFolder = mImageFilesInFolders.get(weightedElement.getName());
-			if (filesInFolder == null || filesInFolder.size() == 0) {
+			if (filesInFolder == null || filesInFolder.isEmpty()) {
 				Log.w(Application.TAG, "No files contained in selected folder.");
 				return getRandomFileNameFromAllFiles();
 			}
@@ -156,7 +156,7 @@ public final class StandardImageList extends ImageList {
 	 */
 	public ArrayList<String> getSetOfRandomFileNames(final int numberOfFiles, final List<String> forbiddenFiles) {
 		ArrayList<String> allFiles = getShuffledFileNames();
-		if (allFiles.size() == 0) {
+		if (allFiles.isEmpty()) {
 			return new ArrayList<>();
 		}
 		allFiles.removeAll(forbiddenFiles);
@@ -199,7 +199,7 @@ public final class StandardImageList extends ImageList {
 	 */
 	private String getRandomFileNameFromAllFiles() {
 		List<String> allImageFiles = getAllImageFiles();
-		if (allImageFiles != null && allImageFiles.size() > 0) {
+		if (allImageFiles != null && !allImageFiles.isEmpty()) {
 			return allImageFiles.get(mRandom.nextInt(allImageFiles.size()));
 		}
 		else {
@@ -407,7 +407,7 @@ public final class StandardImageList extends ImageList {
 				}
 
 				boolean hasUnweightedElements = mImageFilesInFolders.containsKey(DUMMY_NESTED_FOLDER.getName())
-						&& mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).size() > 0;
+						&& !mImageFilesInFolders.get(DUMMY_NESTED_FOLDER.getName()).isEmpty();
 				if (!hasUnweightedElements) {
 					for (ListElement nestedList : mNestedLists.keySet()) {
 						if (!mCustomWeights.containsKey(nestedList)) {
@@ -504,7 +504,9 @@ public final class StandardImageList extends ImageList {
 				}
 				else {
 					mImageFilesInFolders.put(folder.getName(), ImageUtil.getImagesInFolder(folder.getName()));
-					mCustomWeights.put(folder, Double.parseDouble(customWeightString));
+					if (mCustomWeights != null) {
+						mCustomWeights.put(folder, Double.parseDouble(customWeightString));
+					}
 				}
 			}
 

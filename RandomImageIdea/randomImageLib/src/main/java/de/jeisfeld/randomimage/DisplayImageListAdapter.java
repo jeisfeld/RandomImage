@@ -5,8 +5,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
@@ -23,7 +21,6 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.view.ThumbImageView;
 import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName;
-import de.jeisfeld.randomimage.view.ThumbImageView.LoadableFileName.FileNameProvider;
 import de.jeisfeld.randomimage.view.ThumbImageView.MarkingType;
 import de.jeisfeld.randomimage.view.ThumbImageView.ThumbStyle;
 import de.jeisfeld.randomimagelib.R;
@@ -70,17 +67,17 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * The set of list names selected for deletion.
 	 */
-	private Set<String> mSelectedListNames = new HashSet<>();
+	private final Set<String> mSelectedListNames = new HashSet<>();
 
 	/**
 	 * The set of folder names selected for deletion.
 	 */
-	private Set<String> mSelectedFolderNames = new HashSet<>();
+	private final Set<String> mSelectedFolderNames = new HashSet<>();
 
 	/**
 	 * The set of filenames selected for deletion.
 	 */
-	private Set<String> mSelectedFileNames = new HashSet<>();
+	private final Set<String> mSelectedFileNames = new HashSet<>();
 
 	/**
 	 * Flag indicating how selection is handled.
@@ -154,15 +151,15 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Constructor for the adapter.
 	 *
-	 * @param activity The activity using the adapter.
-	 * @param listNames The names of lists to be displayed.
+	 * @param activity    The activity using the adapter.
+	 * @param listNames   The names of lists to be displayed.
 	 * @param folderNames The names of folders to be displayed.
-	 * @param fileNames The names of files to be displayed.
+	 * @param fileNames   The names of files to be displayed.
 	 * @param fixedThumbs Flag indicating if fixed thumbnail images should be used (for performance reasons)
 	 */
 	public DisplayImageListAdapter(final DisplayImageListActivity activity,
-			final List<String> listNames, final List<String> folderNames,
-			final List<String> fileNames, final boolean fixedThumbs) {
+								   final List<String> listNames, final List<String> folderNames,
+								   final List<String> fileNames, final boolean fixedThumbs) {
 		this.mActivity = activity;
 		this.mFixedThumbs = fixedThumbs;
 
@@ -206,7 +203,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 * @param folderName The folder added.
 	 */
 	public final void addFolder(final String folderName) {
-		if (mFileNames.size() > 0) {
+		if (!mFileNames.isEmpty()) {
 			// only allowed if there are no files in the list
 			throw new UnsupportedOperationException("DisplayImageListAdapter: added folderName after having fileNames");
 		}
@@ -232,7 +229,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 */
 	private void addFoldersNotYetAdded() {
 		synchronized (mFoldersNotYetAdded) {
-			if (mFoldersNotYetAdded.size() > 0) {
+			if (!mFoldersNotYetAdded.isEmpty()) {
 				mFolderNames.addAll(mFoldersNotYetAdded);
 				mViewCache.incrementMaxPosition(mFoldersNotYetAdded.size());
 				mFoldersNotYetAdded.clear();
@@ -287,8 +284,8 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Create a new ThumbImageView for the file on a certain position.
 	 *
-	 * @param position The position.
-	 * @param parent The parent view.
+	 * @param position   The position.
+	 * @param parent     The parent view.
 	 * @param sameThread if true, then image load will be done on the same thread. Otherwise a separate thread will be spawned.
 	 * @return The ThumbImageView.
 	 */
@@ -320,18 +317,15 @@ public class DisplayImageListAdapter extends BaseAdapter {
 						R.string.key_indexed_current_list_thumb, entryName));
 			}
 			else {
-				displayFileName = new LoadableFileName(new FileNameProvider() {
-					@Override
-					public String getFileName() {
-						ImageList imageList = ImageRegistry.getImageListByName(entryName, true);
-						if (imageList == null) {
-							return null;
-						}
-						imageList.waitUntilReady();
-						String fileName = imageList.getRandomFileName();
-						PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_indexed_current_list_thumb, entryName, fileName);
-						return fileName;
+				displayFileName = new LoadableFileName(() -> {
+					ImageList imageList = ImageRegistry.getImageListByName(entryName, true);
+					if (imageList == null) {
+						return null;
 					}
+					imageList.waitUntilReady();
+					String fileName = imageList.getRandomFileName();
+					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_indexed_current_list_thumb, entryName, fileName);
+					return fileName;
 				});
 			}
 
@@ -342,21 +336,18 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		case FOLDER:
 			entryName = mFolderNames.get(position - mListNames.size());
 
-			displayFileName = new LoadableFileName(new FileNameProvider() {
-				@Override
-				public String getFileName() {
-					ArrayList<String> imageFiles = new ArrayList<>(ImageUtil.getImagesInFolder(entryName));
-					if (imageFiles.size() > 0) {
-						if (mFixedThumbs) {
-							return imageFiles.get(0);
-						}
-						else {
-							return imageFiles.get(new Random().nextInt(imageFiles.size()));
-						}
+			displayFileName = new LoadableFileName(() -> {
+				ArrayList<String> imageFiles = new ArrayList<>(ImageUtil.getImagesInFolder(entryName));
+				if (!imageFiles.isEmpty()) {
+					if (mFixedThumbs) {
+						return imageFiles.get(0);
 					}
 					else {
-						return null;
+						return imageFiles.get(new Random().nextInt(imageFiles.size()));
 					}
+				}
+				else {
+					return null;
 				}
 			});
 
@@ -390,36 +381,30 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			break;
 		}
 
-		thumbImageView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				ThumbImageView view = (ThumbImageView) v;
-				switch (mSelectionMode) {
-				case ONE:
-					mActivity.onItemClick(itemType, entryName);
-					break;
-				case MULTIPLE:
-					if (view.isMarked()) {
-						view.setMarked(false);
-						selectionList.remove(entryName);
-					}
-					else {
-						view.setMarked(true);
-						selectionList.add(entryName);
-					}
-					break;
-				default:
-					break;
+		thumbImageView.setOnClickListener(v -> {
+			ThumbImageView view = (ThumbImageView) v;
+			switch (mSelectionMode) {
+			case ONE:
+				mActivity.onItemClick(itemType, entryName);
+				break;
+			case MULTIPLE:
+				if (view.isMarked()) {
+					view.setMarked(false);
+					selectionList.remove(entryName);
 				}
+				else {
+					view.setMarked(true);
+					selectionList.add(entryName);
+				}
+				break;
+			default:
+				break;
 			}
 		});
 
-		thumbImageView.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(final View v) {
-				mActivity.onItemLongClick(itemType, entryName);
-				return true;
-			}
+		thumbImageView.setOnLongClickListener(v -> {
+			mActivity.onItemLongClick(itemType, entryName);
+			return true;
 		});
 
 		// Setting of thumb may be in separate thread. Therefore, do this last.
@@ -634,7 +619,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		 * Preload a range of views and clean the cache.
 		 *
 		 * @param position The position from where to do the preload
-		 * @param atEnd Flag indicating if we are at the end of the view or of the start.
+		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void doPreload(final int position, final boolean atEnd) {
 			synchronized (mCache) {
@@ -697,7 +682,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		 * Trigger a preload thread, ensuring that only one such thread is running at a time.
 		 *
 		 * @param position The position from where to do the preload
-		 * @param atEnd Flag indicating if we are at the end of the view or of the start.
+		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
 		 */
 		private void triggerPreload(final int position, final boolean atEnd) {
 			if (position == 0 || mIsInterrupted) {
@@ -751,7 +736,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		 * Get a view from the cache.
 		 *
 		 * @param position The position of the view.
-		 * @param parent the parentView view.
+		 * @param parent   the parentView view.
 		 * @return The view from cache, if existing. Otherwise a new view.
 		 */
 		private ThumbImageView get(final int position, final ViewGroup parent) {
@@ -760,7 +745,9 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			}
 			else if (mParentView != parent) {
 				mParentView = parent;
-				mCache.clear();
+				synchronized (mCache) {
+					mCache.clear();
+				}
 			}
 
 			ThumbImageView thumbImageView;
@@ -769,7 +756,9 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			}
 			else {
 				thumbImageView = createThumbImageView(position, mParentView, false);
-				mCache.put(position, thumbImageView);
+				synchronized (mCache) {
+					mCache.put(position, thumbImageView);
+				}
 			}
 			triggerPreload(position, position > mCurrentCenter);
 

@@ -131,6 +131,9 @@ public abstract class DisplayImageListActivity extends StartActivity {
 	 * @param selectionMode The markability status.
 	 */
 	protected final void setSelectionMode(final SelectionMode selectionMode) {
+		if (getAdapter() == null) {
+			return;
+		}
 		getAdapter().setSelectionMode(selectionMode);
 		MarkingType markingType = DisplayImageListAdapter.getMarkingTypeFromSelectionMode(selectionMode);
 
