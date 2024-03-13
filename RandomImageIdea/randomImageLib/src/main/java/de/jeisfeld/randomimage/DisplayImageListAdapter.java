@@ -1,7 +1,6 @@
 package de.jeisfeld.randomimage;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	/**
 	 * Number of views to be preloaded.
 	 */
-	private static final int PRELOAD_SIZE;
+	private static final int CACHE_SIZE;
 
 	/**
 	 * The cache where views of the displays are stored for smoother scrolling.
@@ -102,14 +101,20 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		// Set cache size in dependence of device memory.
 		int memoryClass = SystemUtil.getLargeMemoryClass();
 
-		if (memoryClass >= 512) { // MAGIC_NUMBER
-			PRELOAD_SIZE = 50; // MAGIC_NUMBER
+		if (memoryClass >= 2048) { // MAGIC_NUMBER
+			CACHE_SIZE = 400; // MAGIC_NUMBER
+		}
+		else if (memoryClass >= 1024) { // MAGIC_NUMBER
+			CACHE_SIZE = 200; // MAGIC_NUMBER
+		}
+		else if (memoryClass >= 512) { // MAGIC_NUMBER
+			CACHE_SIZE = 100; // MAGIC_NUMBER
 		}
 		else if (memoryClass >= 256) { // MAGIC_NUMBER
-			PRELOAD_SIZE = 20; // MAGIC_NUMBER
+			CACHE_SIZE = 40; // MAGIC_NUMBER
 		}
 		else {
-			PRELOAD_SIZE = 5; // MAGIC_NUMBER
+			CACHE_SIZE = 10; // MAGIC_NUMBER
 		}
 	}
 
@@ -183,9 +188,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		}
 		notifyDataSetChanged();
 
-		int totalSize = this.mFileNames.size() + this.mFolderNames.size() + this.mListNames.size();
-
-		this.mViewCache = new ViewCache(totalSize - 1, PRELOAD_SIZE);
+		this.mViewCache = new ViewCache(CACHE_SIZE);
 	}
 
 	/**
@@ -211,9 +214,8 @@ public class DisplayImageListAdapter extends BaseAdapter {
 			return;
 		}
 
-		if (mFolderNames.size() < mMaxReachedPosition + PRELOAD_SIZE) {
+		if (mFolderNames.size() < mMaxReachedPosition + CACHE_SIZE) {
 			mFolderNames.add(folderName);
-			mViewCache.incrementMaxPosition(1);
 			notifyDataSetChanged();
 		}
 		else {
@@ -231,7 +233,6 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		synchronized (mFoldersNotYetAdded) {
 			if (!mFoldersNotYetAdded.isEmpty()) {
 				mFolderNames.addAll(mFoldersNotYetAdded);
-				mViewCache.incrementMaxPosition(mFoldersNotYetAdded.size());
 				mFoldersNotYetAdded.clear();
 				notifyDataSetChanged();
 			}
@@ -521,7 +522,7 @@ public class DisplayImageListAdapter extends BaseAdapter {
 	 * Cleanup the adapter cache and stop further preloading.
 	 */
 	public final void cleanupCache() {
-		mViewCache.interrupt();
+		mViewCache.clear();
 	}
 
 	/**
@@ -548,188 +549,24 @@ public class DisplayImageListAdapter extends BaseAdapter {
 		private final SparseArray<ThumbImageView> mCache;
 
 		/**
-		 * The preload size.
-		 */
-		private int mPreloadSize;
-
-		/**
-		 * The planned size of the cache.
-		 */
-		private int mPlannedSize;
-
-		/**
-		 * The current number of views on the grid.
-		 */
-		private int mCurrentViewSize = 1;
-
-		/**
-		 * The maximum position.
-		 */
-		private int mMaxPosition;
-
-		/**
-		 * Center position of the cache.
-		 */
-		private volatile int mCurrentCenter;
-
-		/**
-		 * Flag indicating if a preload thread is running.
-		 */
-		private boolean mIsPreloadRunning = false;
-
-		/**
 		 * The parentView view holding the cached views.
 		 */
 		private ViewGroup mParentView = null;
 
 		/**
-		 * Waiting preload thread. Always contains one element - this is done so that the array can be used as
-		 * synchronization object.
-		 */
-		private final Thread[] mWaitingThreads = new Thread[1];
-
-		/**
-		 * Flag indicating if the preload thread is interrupted and the thread is in the process of deletion.
-		 */
-		private boolean mIsInterrupted = false;
-
-		/**
 		 * Constructor of the cache.
 		 *
-		 * @param maxPosition The maximum position that can be stored.
-		 * @param preloadSize The number of views to be preloaded.
+		 * @param cacheSize The number of views in the cache.
 		 */
-		private ViewCache(final int maxPosition, final int preloadSize) {
-			this.mPreloadSize = preloadSize;
-			this.mMaxPosition = maxPosition;
-			mPlannedSize = 2 * preloadSize;
-			mCache = new SparseArray<>(mPlannedSize);
+		private ViewCache(final int cacheSize) {
+			mCache = new SparseArray<>(cacheSize);
 		}
 
 		/**
-		 * Increment the max position.
-		 *
-		 * @param increment The number to be incremented.
+		 * Clean the cache.
 		 */
-		private void incrementMaxPosition(final int increment) {
-			mMaxPosition += increment;
-		}
-
-		/**
-		 * Preload a range of views and clean the cache.
-		 *
-		 * @param position The position from where to do the preload
-		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
-		 */
-		private void doPreload(final int position, final boolean atEnd) {
-			synchronized (mCache) {
-				mIsPreloadRunning = true;
-				int startPosition;
-				int endPosition;
-
-				adjustPlannedSize();
-
-				// Skipping 0, because this is frequently loaded.
-				if (atEnd) {
-					startPosition = Math.max(1, Math.min(position + mPreloadSize, mMaxPosition) - mPlannedSize + 1);
-				}
-				else {
-					startPosition = Math.max(1, position - mPreloadSize);
-				}
-				endPosition = Math.min(startPosition + mPlannedSize - 1, mMaxPosition);
-
-				mCurrentCenter = atEnd ? position - mCurrentViewSize / 2 : position + mCurrentViewSize / 2;
-
-				// clean up, ignoring the first index which carries position 0.
-				int index = 1;
-				while (index < mCache.size()) {
-					if (mCache.keyAt(index) < startPosition || mCache.keyAt(index) > endPosition) {
-						mCache.removeAt(index);
-					}
-					else {
-						index++;
-					}
-				}
-
-				// preload.
-				for (int i = startPosition; i <= endPosition; i++) {
-					if (mCache.indexOfKey(i) < 0) {
-						ThumbImageView view = createThumbImageView(i, mParentView, true);
-						mCache.put(i, view);
-
-						// Prevent wrong marking status in race conditions.
-						view.setMarkable(mMarkingType);
-
-						if (mIsInterrupted || mWaitingThreads[0] != null) {
-							mIsPreloadRunning = false;
-							break;
-						}
-					}
-				}
-
-				synchronized (mWaitingThreads) {
-					if (mWaitingThreads[0] != null) {
-						mWaitingThreads[0].start();
-						mWaitingThreads[0] = null;
-					}
-				}
-
-				mIsPreloadRunning = false;
-			}
-		}
-
-		/**
-		 * Trigger a preload thread, ensuring that only one such thread is running at a time.
-		 *
-		 * @param position The position from where to do the preload
-		 * @param atEnd    Flag indicating if we are at the end of the view or of the start.
-		 */
-		private void triggerPreload(final int position, final boolean atEnd) {
-			if (position == 0 || mIsInterrupted) {
-				return;
-			}
-
-			Thread preloadThread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						doPreload(position, atEnd);
-					}
-					catch (Exception e) {
-						Log.e(Application.TAG, "Exception while preloading.", e);
-					}
-				}
-			};
-
-			synchronized (mWaitingThreads) {
-				if (mIsPreloadRunning) {
-					mWaitingThreads[0] = preloadThread;
-				}
-				else {
-					mWaitingThreads[0] = null;
-					preloadThread.start();
-				}
-			}
-		}
-
-		/**
-		 * Interrupt the preloading thread and clean the cache.
-		 */
-		private void interrupt() {
-			mIsInterrupted = true;
-			mWaitingThreads[0] = null;
+		private void clear() {
 			mCache.clear();
-		}
-
-		/**
-		 * Adjust the planned size according to the size of the view.
-		 */
-		private void adjustPlannedSize() {
-			mCurrentViewSize = mParentView.getChildCount();
-			int wishSize = Math.max(mCurrentViewSize * 2, mCurrentViewSize + 2 * mPreloadSize);
-			if (mPlannedSize < wishSize) {
-				mPlannedSize = wishSize;
-			}
 		}
 
 		/**
@@ -760,7 +597,6 @@ public class DisplayImageListAdapter extends BaseAdapter {
 					mCache.put(position, thumbImageView);
 				}
 			}
-			triggerPreload(position, position > mCurrentCenter);
 
 			return thumbImageView;
 		}
