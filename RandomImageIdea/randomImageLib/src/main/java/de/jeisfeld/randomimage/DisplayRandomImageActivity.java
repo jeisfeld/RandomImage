@@ -54,7 +54,6 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.CreationStyle;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
-import de.jeisfeld.randomimage.util.Logger;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileListProvider;
@@ -395,7 +394,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Logger.log("Starting activity");
 		mChangeImageWithSingleTap = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap);
 		mPreventScreenLock = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout);
 
@@ -495,7 +493,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			if (mListName == null) {
 				if (mCurrentFileName == null) {
 					ArrayList<String> listNames = ImageRegistry.getImageListNames(ListFiltering.HIDE_BY_REGEXP);
-					if (listNames.size() == 0) {
+					if (listNames.isEmpty()) {
 						// On first startup need to create default list.
 						imageList = ImageRegistry.getCurrentImageListRefreshed(true);
 						mListName = ImageRegistry.getCurrentListName();
@@ -1400,7 +1398,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		@Override
 		public String getRandomFileName() {
-			if (mFileNames.size() > 0) {
+			if (!mFileNames.isEmpty()) {
 				return mFileNames.get(new Random().nextInt(mFileNames.size()));
 			}
 			else {
