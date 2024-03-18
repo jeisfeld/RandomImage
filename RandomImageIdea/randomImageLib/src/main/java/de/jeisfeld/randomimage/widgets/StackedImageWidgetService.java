@@ -73,12 +73,12 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		/**
 		 * The application context.
 		 */
-		private Context mContext;
+		private final Context mContext;
 
 		/**
 		 * The app widget id.
 		 */
-		private int mAppWidgetId;
+		private final int mAppWidgetId;
 
 		/**
 		 * The width to which the images are scaled.
@@ -256,7 +256,7 @@ public class StackedImageWidgetService extends RemoteViewsService {
 				}
 			}
 
-			GenericImageWidget.configureBackground(mContext, remoteViews, AppWidgetManager.getInstance(mContext), mAppWidgetId);
+			GenericImageWidget.configureBackground(remoteViews, mAppWidgetId);
 
 			// Next, we set a fill-intent which will be used to fill-in the pending intent template
 			// which is set on the collection view in StackedImageWidget.
@@ -339,9 +339,9 @@ public class StackedImageWidgetService extends RemoteViewsService {
 		 * Re-create the previously created image list.
 		 */
 		private void recreateImageList() {
-			if (mFileNames.size() == 0) {
+			if (mFileNames.isEmpty()) {
 				mFileNames = PreferenceUtil.getIndexedSharedPreferenceStringList(R.string.key_widget_current_list_of_file_names, mAppWidgetId);
-				if (mFileNames.size() == 0) {
+				if (mFileNames.isEmpty()) {
 					createImageList();
 				}
 			}

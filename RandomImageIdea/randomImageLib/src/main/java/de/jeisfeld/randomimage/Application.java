@@ -25,6 +25,8 @@ import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MigrationUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
+import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimagelib.R;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -86,6 +88,7 @@ public class Application extends android.app.Application {
 
 		ImageUtil.init();
 		NotificationAlarmReceiver.createAllNotificationAlarms();
+		MiniWidget.updateAllInstances(UpdateType.BUTTONS_BACKGROUND);
 
 		PreferenceUtil.incrementCounter(R.string.key_statistics_countstarts);
 	}
@@ -153,30 +156,13 @@ public class Application extends android.app.Application {
 	}
 
 	/**
-	 * Retrieve the version String of the app.
-	 *
-	 * @return the app version String.
-	 */
-	public static String getVersionString() {
-		PackageInfo pInfo;
-		try {
-			pInfo = getAppContext().getPackageManager().getPackageInfo(getAppContext().getPackageName(), 0);
-			return pInfo.versionName;
-		}
-		catch (NameNotFoundException e) {
-			Log.e(TAG, "Did not find application version", e);
-			return null;
-		}
-	}
-
-	/**
 	 * Get the configured application locale.
 	 *
 	 * @return The configured application locale.
 	 */
 	private static Locale getApplicationLocale() {
 		String languageString = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_language);
-		if (languageString == null || languageString.length() == 0) {
+		if (languageString == null || languageString.isEmpty()) {
 			languageString = "0";
 			PreferenceUtil.setSharedPreferenceString(R.string.key_pref_language, "0");
 		}
@@ -205,7 +191,7 @@ public class Application extends android.app.Application {
 		Resources res = context.getResources();
 		Configuration configuration = res.getConfiguration();
 		Locale newLocale = getApplicationLocale();
-		Context newContext = context;
+		Context newContext;
 
 		if (VERSION.SDK_INT >= VERSION_CODES.N) {
 			configuration.setLocale(newLocale);
@@ -217,14 +203,9 @@ public class Application extends android.app.Application {
 			newContext = context.createConfigurationContext(configuration);
 
 		}
-		else if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+		else {
 			configuration.setLocale(newLocale);
 			newContext = context.createConfigurationContext(configuration);
-
-		}
-		else {
-			configuration.locale = newLocale;
-			res.updateConfiguration(configuration, res.getDisplayMetrics());
 		}
 		return new ContextWrapper(newContext);
 	}

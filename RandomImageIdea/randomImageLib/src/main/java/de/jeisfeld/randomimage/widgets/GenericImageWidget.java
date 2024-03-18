@@ -1,9 +1,5 @@
 package de.jeisfeld.randomimage.widgets;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -62,6 +58,11 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * Maximum difference of the color hue - value 0.5 just ensures that color boundaries do not overlap.
 	 */
 	private static final double MAX_HUE_DIFFERENCE = 0.3;
+
+	/**
+	 * The duration of the button animation in milliseconds.
+	 */
+	private static final long ANIMATION_DURATION = 1200;
 
 	/**
 	 * A temporary storage for ButtonAnimators in order to ensure that they are not garbage collected before they
@@ -151,14 +152,13 @@ public abstract class GenericImageWidget extends GenericWidget {
 		remoteViews.setBitmap(R.id.buttonNextImage, SET_IMAGE_BITMAP, buttonBitmaps[1]);
 
 		if (setBackgroundColor) {
-			configureBackground(context, remoteViews, appWidgetManager, appWidgetId);
+			configureBackground(remoteViews, appWidgetId);
 		}
 
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
 		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
-			new ButtonAnimator(context, appWidgetManager, appWidgetId, remoteViews, getWidgetLayoutId(appWidgetId),
-					R.id.buttonNextImage, R.id.buttonSettings).start();
+			new ButtonAnimator(appWidgetManager, appWidgetId, remoteViews, R.id.buttonNextImage, R.id.buttonSettings).start();
 		}
 	}
 
@@ -188,13 +188,10 @@ public abstract class GenericImageWidget extends GenericWidget {
 	/**
 	 * Configure the background of the widget.
 	 *
-	 * @param context          The {@link Context Context} in which this method is called.
 	 * @param remoteViews      The remoteViews via which the update should be made
-	 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 	 * @param appWidgetId      The appWidgetId of the widget whose size changed.
 	 */
-	protected static void configureBackground(final Context context, final RemoteViews remoteViews, final AppWidgetManager appWidgetManager,
-											  final int appWidgetId) {
+	protected static void configureBackground(final RemoteViews remoteViews, final int appWidgetId) {
 		BackgroundColor backgroundColor = BackgroundColor.fromWidgetId(appWidgetId);
 
 		switch (backgroundColor) {
@@ -253,7 +250,7 @@ public abstract class GenericImageWidget extends GenericWidget {
 						idListForUpdate.add(appWidgetId);
 					}
 				}
-				if (idListForUpdate.size() > 0) {
+				if (!idListForUpdate.isEmpty()) {
 					int[] idsForUpdate = new int[idListForUpdate.size()];
 					for (int i = 0; i < idListForUpdate.size(); i++) {
 						idsForUpdate[i] = idListForUpdate.get(i);
@@ -601,22 +598,20 @@ public abstract class GenericImageWidget extends GenericWidget {
 		private int[] mButtonIds;
 
 		/**
-		 * The Animator running the animation.
+		 * The thread running the animation.
 		 */
-		private ObjectAnimator mAnimator = null;
+		private Thread mAnimatorThread = null;
 
 		/**
 		 * Create and animate the ButtonAnimator.
 		 *
-		 * @param context          The {@link Context Context} in which this receiver is running.
 		 * @param appWidgetManager A {@link AppWidgetManager} object you can call {@link AppWidgetManager#updateAppWidget} on.
 		 * @param remoteViews      The remote view for the widget
 		 * @param appWidgetId      The appWidgetId of the widget whose buttons should be animated.
-		 * @param widgetResource   The resourceId of the widget layout.
 		 * @param buttonIds        The buttonIds to be animated.
 		 */
-		protected ButtonAnimator(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId,
-								 final RemoteViews remoteViews, final int widgetResource, final int... buttonIds) {
+		protected ButtonAnimator(final AppWidgetManager appWidgetManager, final int appWidgetId, final RemoteViews remoteViews,
+								 final int... buttonIds) {
 			if (remoteViews == null) {
 				return;
 			}
@@ -632,36 +627,32 @@ public abstract class GenericImageWidget extends GenericWidget {
 			this.mButtonIds = buttonIds;
 			mRemoteViews = remoteViews;
 
-			mAnimator = ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofInt("alpha", 255, 0));
-			mAnimator.setDuration(1500); // MAGIC_NUMBER
-			mAnimator.addListener(new AnimatorListener() {
-				@Override
-				public void onAnimationStart(final Animator animation) {
-					for (int buttonId : buttonIds) {
-						mRemoteViews.setViewVisibility(buttonId, View.VISIBLE);
+			mAnimatorThread = new Thread(() -> {
+				for (int buttonId : buttonIds) {
+					mRemoteViews.setViewVisibility(buttonId, View.VISIBLE);
+				}
+				setAlpha(255);
+				long currentTime = System.currentTimeMillis();
+				long endTime = currentTime + ANIMATION_DURATION;
+				while (currentTime < endTime) {
+					try {
+						Thread.sleep(25); // MAGIC_NUMBER
 					}
-					setAlpha(255); // MAGIC_NUMBER
-				}
-
-				@Override
-				public void onAnimationRepeat(final Animator animation) {
-					// do nothing
-				}
-
-				@Override
-				public void onAnimationEnd(final Animator animation) {
-					setAlpha(0);
-					synchronized (BUTTON_ANIMATORS) {
-						BUTTON_ANIMATORS.remove(appWidgetId);
+					catch (InterruptedException e) {
+						// ignore
 					}
-				}
+					currentTime = System.currentTimeMillis();
 
-				@Override
-				public void onAnimationCancel(final Animator animation) {
-					// do nothing
+					setAlpha((int) (Math.max(endTime - currentTime, 0) * 255 / ANIMATION_DURATION));
+
+				}
+				for (int buttonId : buttonIds) {
+					mRemoteViews.setViewVisibility(buttonId, View.GONE);
+				}
+				synchronized (BUTTON_ANIMATORS) {
+					BUTTON_ANIMATORS.remove(appWidgetId);
 				}
 			});
-
 		}
 
 		/**
@@ -669,30 +660,28 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 *
 		 * @param alpha The opacity.
 		 */
-		@SuppressWarnings("unused")
 		private void setAlpha(final int alpha) {
 			for (int buttonId : mButtonIds) {
 				mRemoteViews.setInt(buttonId, "setAlpha", alpha);
 				mRemoteViews.setInt(buttonId, "setBackgroundColor", Color.argb(alpha / 4, 0, 0, 0)); // MAGIC_NUMBER
 			}
-			mAppWidgetManager.updateAppWidget(mAppWidgetId, mRemoteViews);
+			mAppWidgetManager.partiallyUpdateAppWidget(mAppWidgetId, mRemoteViews);
 		}
 
 		/**
 		 * Start the animation.
 		 */
 		public void start() {
-			if (mAnimator != null) {
-				new Handler(Looper.getMainLooper()).post(() -> mAnimator.start());
-			}
-		}
-
-		/**
-		 * Interrupt the animation.
-		 */
-		public void interrupt() {
-			if (mAnimator != null) {
-				mAnimator.cancel();
+			if (mAnimatorThread != null) {
+				if (mAnimatorThread.isAlive()) {
+					mAnimatorThread.interrupt();
+				}
+				if (Looper.myLooper() == Looper.getMainLooper()) {
+					mAnimatorThread.start();
+				}
+				else {
+					new Handler(Looper.getMainLooper()).post(() -> mAnimatorThread.start());
+				}
 			}
 		}
 
@@ -703,21 +692,6 @@ public abstract class GenericImageWidget extends GenericWidget {
 		 */
 		public void setRemoteViews(final RemoteViews remoteViews) {
 			mRemoteViews = remoteViews;
-		}
-
-
-		/**
-		 * Interrupt an animator instance.
-		 *
-		 * @param appWidgetId The app widget id of the widget to be interrupted.
-		 */
-		public static void interrupt(final int appWidgetId) {
-			synchronized (BUTTON_ANIMATORS) {
-				ButtonAnimator instance = BUTTON_ANIMATORS.get(appWidgetId);
-				if (instance != null) {
-					instance.interrupt();
-				}
-			}
 		}
 
 		/**
