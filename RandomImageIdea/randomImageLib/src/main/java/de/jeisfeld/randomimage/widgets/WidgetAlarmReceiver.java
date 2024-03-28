@@ -117,8 +117,8 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 
 		if (!isCancellationAlarm) {
 			ArrayList<Integer> allWidgetIds = GenericWidget.getAllWidgetIds();
-			if ((allWidgetIds.size() == 0 || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId)
-					&& NotificationSettingsActivity.getNotificationIds().size() == 0) {
+			if ((allWidgetIds.isEmpty() || allWidgetIds.size() == 1 && allWidgetIds.get(0) == appWidgetId)
+					&& NotificationSettingsActivity.getNotificationIds().isEmpty()) {
 				reEnableAlarmsOnBoot(context);
 			}
 		}
@@ -140,7 +140,7 @@ public class WidgetAlarmReceiver extends AlarmReceiver {
 		PendingIntent alarmIntent = createAlarmIntent(context, appWidgetId, true);
 		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(timeout);
 
-		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(timeout));
+		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(context, timeout));
 	}
 
 	/**

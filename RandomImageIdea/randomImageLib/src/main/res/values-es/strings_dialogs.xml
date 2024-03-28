@@ -109,6 +109,7 @@
     <string name="dialog_confirmation_missing_images">No se pueden cargar las siguientes imágenes de la lista «%1$s»:\n\n%2$s</string>
     <string name="dialog_confirmation_need_read_permission">La aplicación necesita acceso almacenamiento externo para acceder a sus imágenes. Permita este acceso; de lo contrario, la aplicación no funcionará.</string>
     <string name="dialog_confirmation_need_image_permission">Esta aplicación necesita tener permiso en imágenes y notificaciones. Por favor, entréguelos; de lo contrario, la aplicación no funcionará correctamente.</string>
+    <string name="dialog_confirmation_need_alarm_permission">Para la configuración de notificaciones, la aplicación necesita permiso para configurar alarmas.</string>
     <string name="dialog_confirmation_need_usage_access">Para evitar notificaciones emergentes para ciertas aplicaciones, la aplicación necesita acceso a los datos de acceso de uso. Por favor conceda este acceso en la siguiente página</string>
 
     <!-- Partial strings used to construct other strings -->

@@ -54,7 +54,7 @@ public abstract class AlarmReceiver extends BroadcastReceiver {
 			}
 		}
 		else {
-			if (alarmType != AlarmType.INEXACT && VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+			if (alarmType != AlarmType.INEXACT) {
 				alarmMgr.setExact(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
 			}
 			else {
@@ -66,10 +66,18 @@ public abstract class AlarmReceiver extends BroadcastReceiver {
 	/**
 	 * Get the alarm type indicating the exactness of the alarm.
 	 *
+	 * @param context     The context in which the alarm is set.
 	 * @param frequency The alarm frequency in seconds.
 	 * @return The alarm type.
 	 */
-	protected static AlarmType getAlarmType(final long frequency) {
+	protected static AlarmType getAlarmType(final Context context, final long frequency) {
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.UPSIDE_DOWN_CAKE)) {
+			AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+			if (alarmMgr == null || !alarmMgr.canScheduleExactAlarms()) {
+				return AlarmType.INEXACT;
+			}
+		}
+
 		if (frequency < CLOCK_THRESHOLD) {
 			return AlarmType.CLOCK;
 		}

@@ -1,9 +1,13 @@
 package de.jeisfeld.randomimage.notifications;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
@@ -11,7 +15,10 @@ import java.util.List;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.BasePreferenceActivity;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
+import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
@@ -53,6 +60,22 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityMap.put(hashCode(), this);
+
+		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		if (SystemUtil.isAtLeastVersion(VERSION_CODES.UPSIDE_DOWN_CAKE) && alarmMgr != null && !alarmMgr.canScheduleExactAlarms()) {
+			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+				@Override
+				public void onDialogPositiveClick(final DialogFragment dialog) {
+					Intent permissionIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+					startActivity(permissionIntent);
+				}
+
+				@Override
+				public void onDialogNegativeClick(final DialogFragment dialog) {
+					finish();
+				}
+			}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_alarm_permission);
+		}
 	}
 
 	@Override

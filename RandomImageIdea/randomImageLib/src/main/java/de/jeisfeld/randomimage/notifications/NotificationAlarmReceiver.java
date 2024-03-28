@@ -110,7 +110,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 
 			if (oldAlarmTime >= 0) {
 				if (oldAlarmTime > System.currentTimeMillis()) {
-					setAlarm(context, oldAlarmTime, alarmIntent, getAlarmType(frequency));
+					setAlarm(context, oldAlarmTime, alarmIntent, getAlarmType(context, frequency));
 					return;
 				}
 
@@ -137,11 +137,11 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 
 					// For alarms bigger than daily, add some random minutes.
 					if (frequency >= SECONDS_PER_DAY) {
-						newAlarmTime += random.nextDouble() * TimeUnit.MINUTES.toMillis(10); // MAGIC_NUMBER
+						newAlarmTime += (long) (random.nextDouble() * TimeUnit.MINUTES.toMillis(10)); // MAGIC_NUMBER
 					}
 
 					PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, newAlarmTime);
-					setAlarm(context, newAlarmTime, alarmIntent, getAlarmType(frequency));
+					setAlarm(context, newAlarmTime, alarmIntent, getAlarmType(context, frequency));
 					return;
 				}
 			}
@@ -201,7 +201,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		}
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_current_alarm_timestamp, notificationId, alarmTimeMillis);
-		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(frequency));
+		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(context, frequency));
 
 		reEnableAlarmsOnBoot(context);
 	}
@@ -226,7 +226,7 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true, true);
 		long alarmTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis((long) duration);
 
-		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(expectedDuration));
+		setAlarm(context, alarmTimeMillis, alarmIntent, getAlarmType(context, expectedDuration));
 	}
 
 	/**
@@ -264,8 +264,8 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 
 		if (!isCancellationAlarm) {
 			List<Integer> allNotificationIds = NotificationSettingsActivity.getNotificationIds();
-			if ((allNotificationIds.size() == 0 || allNotificationIds.size() == 1 && allNotificationIds.get(0) == notificationId)
-					&& GenericWidget.getAllWidgetIds().size() == 0) {
+			if ((allNotificationIds.isEmpty() || allNotificationIds.size() == 1 && allNotificationIds.get(0) == notificationId)
+					&& GenericWidget.getAllWidgetIds().isEmpty()) {
 				reEnableAlarmsOnBoot(context);
 			}
 		}
