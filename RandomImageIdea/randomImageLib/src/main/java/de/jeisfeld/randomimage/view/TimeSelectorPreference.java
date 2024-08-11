@@ -328,7 +328,7 @@ public class TimeSelectorPreference extends DialogPreference {
 		 * @return The value.
 		 */
 		public long getValue() {
-			return mUnitsEntry * mSpinnerEntry.getValue();
+			return mSpinnerEntry == null ? 0 : mUnitsEntry * mSpinnerEntry.getValue();
 		}
 
 		/**

@@ -210,9 +210,14 @@ public class ImageWidget extends GenericImageWidget {
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT | SystemUtil.IMMUTABLE_FLAG);
 
 		remoteViews.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntent);
-		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
-		ButtonAnimator.setRemoteViews(appWidgetId, remoteViews);
+		try {
+			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+			ButtonAnimator.setRemoteViews(appWidgetId, remoteViews);
+		}
+		catch (Exception e) {
+			// ignore remote exception etc.
+		}
 
 		return remoteViews;
 	}
