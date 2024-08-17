@@ -24,13 +24,12 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.io.File;
 import java.io.IOException;
 
 import de.jeisfeld.randomimage.Application;
-import de.jeisfeld.randomimage.util.GifAnimationDrawable;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
+import pl.droidsonroids.gif.GifDrawable;
 
 /**
  * A view for displaying an image, allowing moving and resizing with pinching.
@@ -254,7 +253,7 @@ public class PinchImageView extends ImageView {
 					if (mPathName.toLowerCase().endsWith(".gif")) {
 						// special handling for animated gif
 						try {
-							mDrawable = new GifAnimationDrawable(getContext(), new File(mPathName), rotationAngle);
+							mDrawable = new GifDrawable(mPathName);
 						}
 						catch (IOException e) {
 							Log.i(Application.TAG, "Error while reading animated GIF: " + e.getMessage());
