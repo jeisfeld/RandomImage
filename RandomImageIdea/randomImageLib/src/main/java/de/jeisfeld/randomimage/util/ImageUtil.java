@@ -63,7 +63,7 @@ public final class ImageUtil {
 	/**
 	 * The maximum resolution handled by this app.
 	 */
-	public static final int MAX_BITMAP_SIZE = 2048;
+	public static final int MAX_BITMAP_SIZE;
 
 	/**
 	 * The number of milliseconds below which parsing of image folders is considered as "quick".
@@ -119,6 +119,15 @@ public final class ImageUtil {
 		fillImageMap(null, null, false);
 	}
 
+	static {
+		int memoryClass = SystemUtil.getLargeMemoryClass();
+		if (memoryClass >= 512) { // MAGIC_NUMBER
+			MAX_BITMAP_SIZE = 4096;
+		}
+		else {
+			MAX_BITMAP_SIZE = 2048;
+		}
+	}
 
 	/**
 	 * Get the date field with the EXIF date from the file If not existing, use the last modified date.
@@ -513,7 +522,7 @@ public final class ImageUtil {
 	 */
 	private static void refillImageMap() {
 		if (SystemUtil.findImagesViaMediaStore()) {
-			if (mLastParsingTimestamp == 0 || FOLDER_IMAGE_MAP.keySet().size() == 0) {
+			if (mLastParsingTimestamp == 0 || FOLDER_IMAGE_MAP.keySet().isEmpty()) {
 				fillImageMap(null, null, false);
 			}
 			else if (System.currentTimeMillis() >= mLastParsingTimestamp + REPARSING_INTERVAL_2) {
@@ -576,7 +585,7 @@ public final class ImageUtil {
 					}
 					String tempFolder = folder;
 
-					while (tempFolder != null && tempFolder.length() > 0) {
+					while (tempFolder != null && !tempFolder.isEmpty()) {
 						String folderRecursive = tempFolder + RECURSIVE_SUFFIX;
 						if (tempFolderRecursiveMap.containsKey(folderRecursive)) {
 							Objects.requireNonNull(tempFolderRecursiveMap.get(folderRecursive)).add(folder);
@@ -706,7 +715,7 @@ public final class ImageUtil {
 	 * @return True if this is an image folder.
 	 */
 	public static boolean isImageFolder(final String folderName) {
-		return getImagesInFolder(folderName).size() > 0;
+		return !getImagesInFolder(folderName).isEmpty();
 	}
 
 	/**
@@ -718,7 +727,7 @@ public final class ImageUtil {
 		final Handler handler = new Handler();
 		if (SystemUtil.findImagesViaMediaStore()) {
 			List<String> preferredImageFolders = PreferenceUtil.getSharedPreferenceStringList(R.string.key_pref_preferred_image_folders);
-			if (preferredImageFolders.size() > 0) {
+			if (!preferredImageFolders.isEmpty()) {
 				OnScanCompletedListener onScanCompletedListener = (path, uri) -> new Thread() {
 					@Override
 					public void run() {
@@ -803,7 +812,7 @@ public final class ImageUtil {
 		// do not consider paths excluded via regexp
 		final String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
 		final boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
-				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
+				&& hiddenFoldersPattern != null && !hiddenFoldersPattern.isEmpty();
 		if (useRegexp && parentFolder.getAbsolutePath().matches(hiddenFoldersPattern)) {
 			return result;
 		}
@@ -811,7 +820,7 @@ public final class ImageUtil {
 		int numberOfImageFolders = 0;
 		List<String> imageFiles = getImagesInFolder(parentFolder.getAbsolutePath());
 
-		if (imageFiles.size() > 0) {
+		if (!imageFiles.isEmpty()) {
 			result.add(parentFolder.getAbsolutePath());
 			numberOfImageFolders++;
 			if (handler != null && listener != null) {
@@ -827,7 +836,7 @@ public final class ImageUtil {
 
 		for (File aChildren : children) {
 			List<String> imageFolders = getAllImageSubfolders(aChildren, handler, listener);
-			if (imageFolders.size() > 0) {
+			if (!imageFolders.isEmpty()) {
 				result.addAll(imageFolders);
 				numberOfImageFolders++;
 			}
@@ -865,7 +874,7 @@ public final class ImageUtil {
 		final ArrayList<String> filteredImageFolders = new ArrayList<>();
 		String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
 		boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
-				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
+				&& hiddenFoldersPattern != null && !hiddenFoldersPattern.isEmpty();
 
 		for (String path : allImageFolders) {
 			if (!useRegexp || !path.matches(hiddenFoldersPattern)) {
