@@ -551,7 +551,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	public final void setContentView(final View view) {
 		super.setContentView(view);
-		if (view instanceof PinchImageView && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+		if (view instanceof PinchImageView) {
 			// Update navigation bar color
 			int backgroundColor = ((PinchImageView) view).getBackgroundColor();
 			String fileName = ((PinchImageView) view).getPathName();
@@ -590,31 +590,29 @@ public class DisplayRandomImageActivity extends StartActivity {
 	 * Set system flags for navigation bar.
 	 */
 	private void setNavigationBarFlags() {
-		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-			int flag = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-			WindowInsetsControllerCompat windowInsetsController =
-					WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+		int flag = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+		WindowInsetsControllerCompat windowInsetsController =
+				WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
 
-			if (!mIsDark && VERSION.SDK_INT >= VERSION_CODES.O) {
-				flag |= SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-				flag |= SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-			}
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-				if (mHideNavigationBar) {
-					getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-				}
-			}
-
-			if (mHideNavigationBar) {
-				flag |= SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_IMMERSIVE;
-				windowInsetsController.hide(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-			}
-			else {
-				windowInsetsController.show(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-			}
-			getWindow().getDecorView().setSystemUiVisibility(flag);
+		if (!mIsDark && VERSION.SDK_INT >= VERSION_CODES.O) {
+			flag |= SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+			flag |= SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.P) {
+			if (mHideNavigationBar) {
+				getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+			}
+		}
+
+		if (mHideNavigationBar) {
+			flag |= SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_IMMERSIVE;
+			windowInsetsController.hide(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+		}
+		else {
+			windowInsetsController.show(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+		}
+		getWindow().getDecorView().setSystemUiVisibility(flag);
 	}
 
 	/**
@@ -650,6 +648,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 				NotificationAlarmReceiver.createNotificationAlarmsIfOutdated();
 				ImageUtil.refreshStoredImageFoldersIfApplicable();
 			}
+		}
+
+		if (mPreventScreenLock) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 
 		sendInitialTrackingEvent(savedInstanceState != null, folderName != null);
