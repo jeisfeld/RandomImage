@@ -244,6 +244,7 @@ public final class ImageUtil {
 
 		if (maxWidth <= 0 || maxHeight <= 0) {
 			bitmap = BitmapFactory.decodeFile(path);
+			bitmap = rotateBitmap(bitmap, rotation);
 		}
 		else {
 			if ((maxWidth <= MediaStoreUtil.MINI_THUMB_SIZE || maxHeight <= MediaStoreUtil.MINI_THUMB_SIZE)
@@ -1055,6 +1056,26 @@ public final class ImageUtil {
 		Drawable icon = new BitmapDrawable(resources, BitmapFactory.decodeResource(resources, resourceId));
 		icon.setAlpha(128); // MAGIC_NUMBER
 		return icon;
+	}
+
+	/**
+	 * Retrieve a part of a bitmap in full resolution.
+	 *
+	 * @param fullBitmap The bitmap from which to get the part.
+	 * @param minX       The minimum X position to retrieve.
+	 * @param maxX       The maximum X position to retrieve.
+	 * @param minY       The minimum Y position to retrieve.
+	 * @param maxY       The maximum Y position to retrieve.
+	 * @return The bitmap.
+	 */
+	public static Bitmap getPartialBitmap(final Bitmap fullBitmap, final float minX, final float maxX,
+										  final float minY,
+										  final float maxY) {
+
+		return Bitmap.createBitmap(fullBitmap, Math.round(minX * fullBitmap.getWidth()),
+				Math.round(minY * fullBitmap.getHeight()),
+				Math.round((maxX - minX) * fullBitmap.getWidth()),
+				Math.round((maxY - minY) * fullBitmap.getHeight()));
 	}
 
 	/**

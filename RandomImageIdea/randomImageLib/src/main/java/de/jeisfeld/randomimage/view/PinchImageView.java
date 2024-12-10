@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,6 +26,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
@@ -161,6 +164,36 @@ public class PinchImageView extends ImageView {
 	private int mBackgroundColor;
 
 	/**
+	 * The rotation angle.
+	 */
+	private int mRotationAngle = 0;
+
+	/**
+	 * The displayed bitmap.
+	 */
+	protected Bitmap mBitmap;
+
+	/**
+	 * The full bitmap (full resolution).
+	 */
+	private Bitmap mBitmapFull = null;
+
+	/**
+	 * The partial bitmap with full resolution.
+	 */
+	private Bitmap mPartialBitmapFullResolution;
+
+	/**
+	 * Flag indicating if currently the full resolution snapshot is displayed.
+	 */
+	private boolean mShowingFullResolution = false;
+
+	/**
+	 * Thread showing the view in full resolution. The first is the running thread. Another one may be queuing.
+	 */
+	private final List<Thread> mFullResolutionThreads = new ArrayList<>();
+
+	/**
 	 * Standard constructor to be implemented for all views.
 	 *
 	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
@@ -248,8 +281,9 @@ public class PinchImageView extends ImageView {
 			new Thread() {
 				@Override
 				public void run() {
-					Bitmap bitmap = ImageUtil.getImageBitmap(mPathName, mMaxBitmapSize);
-					int rotationAngle = getRotationAngle(bitmap, contentView);
+					mBitmap = ImageUtil.getImageBitmap(mPathName, mMaxBitmapSize);
+					mRotationAngle = getRotationAngle(mBitmap, contentView);
+					mBitmap = rotateIfRequired(mBitmap, mRotationAngle);
 					if (mPathName.toLowerCase().endsWith(".gif")) {
 						// special handling for animated gif
 						try {
@@ -260,7 +294,7 @@ public class PinchImageView extends ImageView {
 						}
 					}
 					if (mDrawable == null) {
-						mDrawable = new BitmapDrawable(getContext().getResources(), rotateIfRequired(bitmap, rotationAngle));
+						mDrawable = new BitmapDrawable(getContext().getResources(), mBitmap);
 					}
 
 					handler.post(() -> {
@@ -313,6 +347,7 @@ public class PinchImageView extends ImageView {
 		if (mDrawable instanceof AnimationDrawable) {
 			((AnimationDrawable) mDrawable).start();
 		}
+		showFullResolutionSnapshot();
 	}
 
 	/**
@@ -463,11 +498,16 @@ public class PinchImageView extends ImageView {
 	 */
 	protected final void setMatrix() {
 		if (mDrawable != null) {
-			Matrix matrix = new Matrix();
-			matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
-			matrix.postScale(mScaleFactor, mScaleFactor);
-			matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
-			setImageMatrix(matrix);
+			if (mShowingFullResolution) {
+				setImageMatrix(null);
+			}
+			else {
+				Matrix matrix = new Matrix();
+				matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
+				matrix.postScale(mScaleFactor, mScaleFactor);
+				matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
+				setImageMatrix(matrix);
+			}
 		}
 	}
 
@@ -557,6 +597,7 @@ public class PinchImageView extends ImageView {
 			mHasMoved = false;
 			mActivePointerId = INVALID_POINTER_ID;
 			mActivePointerId2 = INVALID_POINTER_ID;
+			showFullResolutionSnapshot();
 			break;
 
 		case MotionEvent.ACTION_POINTER_UP:
@@ -605,7 +646,7 @@ public class PinchImageView extends ImageView {
 		if (!mInitialized) {
 			return false;
 		}
-
+		cleanFullResolutionBitmaps();
 		boolean moved = false;
 		final int pointerIndex = ev.findPointerIndex(mActivePointerId);
 		final float x = ev.getX(pointerIndex);
@@ -648,7 +689,140 @@ public class PinchImageView extends ImageView {
 		// setMatrix invalidates if matrix is changed.
 		setMatrix();
 
+		if (ev.getAction() == MotionEvent.ACTION_UP) {
+			showFullResolutionSnapshot();
+		}
+
 		return moved;
+	}
+
+	/**
+	 * Create a bitmap containing the current view in full resolution (incl. brightness/contrast).
+	 *
+	 * @return The bitmap in full resolution.
+	 */
+	private Bitmap createFullResolutionBitmap() {
+		if (mBitmap == null) {
+			return null;
+		}
+
+		float leftX = mPosX * mBitmap.getWidth() - (float) getWidth() / 2 / mScaleFactor;
+		float rightX = mPosX * mBitmap.getWidth() + (float) getWidth() / 2 / mScaleFactor;
+		float upperY = mPosY * mBitmap.getHeight() - (float) getHeight() / 2 / mScaleFactor;
+		float lowerY = mPosY * mBitmap.getHeight() + (float) getHeight() / 2 / mScaleFactor;
+
+		// The image part which needs to be displayed
+		float minX = Math.max(0, leftX / mBitmap.getWidth());
+		float maxX = Math.min(1, rightX / mBitmap.getWidth());
+		float minY = Math.max(0, upperY / mBitmap.getHeight());
+		float maxY = Math.min(1, lowerY / mBitmap.getHeight());
+
+		if (maxX <= minX || maxY <= minY) {
+			// Image is outside of the view
+			return null;
+		}
+
+		// The distance of the displayed image from the view borders.
+		int offsetX = Math.round(-Math.min(0, leftX) * mScaleFactor);
+		int offsetY = Math.round(-Math.min(0, upperY) * mScaleFactor);
+		int offsetMaxX = Math.round(Math.max(rightX - mBitmap.getWidth(), 0) * mScaleFactor);
+		int offsetMaxY = Math.round(Math.max(lowerY - mBitmap.getHeight(), 0) * mScaleFactor);
+
+		try {
+			Bitmap bitmapFull = mBitmapFull;
+			if (bitmapFull == null) {
+				bitmapFull = ImageUtil.getImageBitmap(mPathName, 0);
+				bitmapFull = rotateIfRequired(bitmapFull, mRotationAngle);
+				mBitmapFull = bitmapFull;
+			}
+			if (bitmapFull == null) {
+				return null;
+			}
+			if (bitmapFull.getWidth() < ImageUtil.MAX_BITMAP_SIZE && bitmapFull.getHeight() < ImageUtil.MAX_BITMAP_SIZE) {
+				return null;
+			}
+
+			Bitmap partialBitmap =
+					ImageUtil.getPartialBitmap(bitmapFull, minX, maxX, minY, maxY);
+			Bitmap scaledPartialBitmap =
+					Bitmap.createScaledBitmap(partialBitmap, getWidth() - offsetMaxX - offsetX, getHeight()
+							- offsetMaxY
+							- offsetY, false);
+
+			Bitmap bitmapFullResolution = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+			Canvas canvas = new Canvas(bitmapFullResolution);
+			canvas.drawBitmap(scaledPartialBitmap, offsetX, offsetY, null);
+
+			return bitmapFullResolution;
+		}
+		catch (Exception e) {
+			// NullPointerExceptions might occur in parallel scenarios.
+			return null;
+		}
+	}
+
+	/**
+	 * Clean the cached full resolution bitmaps. In case of full cleaning, a normal resolution snapshot is displayed.
+	 */
+	private void cleanFullResolutionBitmaps() {
+		mPartialBitmapFullResolution = null;
+		if (mShowingFullResolution) {
+			setImageBitmap(mBitmap);
+			mShowingFullResolution = false;
+			setMatrix();
+		}
+	}
+
+	/**
+	 * Show the current view in full resolution.
+	 */
+	public final void showFullResolutionSnapshot() {
+		if (mPathName.toLowerCase().endsWith(".gif")) {
+			// Do not apply for GIF, due to animated GIF
+			return;
+		}
+		Thread fullResolutionThread = new Thread() {
+			@Override
+			public void run() {
+				mPartialBitmapFullResolution = createFullResolutionBitmap();
+
+				if (isInterrupted()) {
+					// Do not display the result if the thread has been interrupted.
+					post(() -> cleanFullResolutionBitmaps());
+				}
+				else {
+					// Make a straight display of this bitmap without any matrix transformation.
+					// Will be reset by regular view as soon as the screen is touched again.
+					post(() -> {
+						if (mPartialBitmapFullResolution != null) {
+							setImageBitmap(mPartialBitmapFullResolution);
+							mShowingFullResolution = true;
+							setMatrix();
+						}
+					});
+				}
+
+				// start next thread in queue
+				synchronized (mFullResolutionThreads) {
+					mFullResolutionThreads.remove(Thread.currentThread());
+					if (!mFullResolutionThreads.isEmpty()) {
+						mFullResolutionThreads.get(0).start();
+					}
+				}
+			}
+		};
+
+		synchronized (mFullResolutionThreads) {
+			if (mFullResolutionThreads.size() > 1) {
+				// at most two threads in list
+				mFullResolutionThreads.remove(1);
+			}
+			mFullResolutionThreads.add(fullResolutionThread);
+			if (mFullResolutionThreads.size() == 1) {
+				// only start if no thread is running
+				fullResolutionThread.start();
+			}
+		}
 	}
 
 	/**

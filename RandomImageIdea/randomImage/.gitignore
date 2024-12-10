@@ -1,2 +1,6 @@
 /build/
 /randomImage.iml
+/release/baselineProfiles/1/randomImage-release.dm
+/release/baselineProfiles/0/randomImage-release.dm
+/release/randomImage.apk
+/release/output-metadata.json

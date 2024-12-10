@@ -613,6 +613,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 			windowInsetsController.show(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
 		}
 		getWindow().getDecorView().setSystemUiVisibility(flag);
+		if (mCurrentImageView != null) {
+			mCurrentImageView.showFullResolutionSnapshot();
+		}
 	}
 
 	/**
