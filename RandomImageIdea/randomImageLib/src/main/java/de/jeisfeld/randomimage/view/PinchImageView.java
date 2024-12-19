@@ -194,6 +194,11 @@ public class PinchImageView extends ImageView {
 	private final List<Thread> mFullResolutionThreads = new ArrayList<>();
 
 	/**
+	 * Flag indicating if the image is animating out.
+	 */
+	private boolean mIsAnimatingOut = false;
+
+	/**
 	 * Standard constructor to be implemented for all views.
 	 *
 	 * @param context The Context the view is running in, through which it can access the current theme, resources, etc.
@@ -446,7 +451,7 @@ public class PinchImageView extends ImageView {
 		objectAnim.addListener(new AnimatorListener() {
 			@Override
 			public void onAnimationStart(final Animator animation) {
-				// do nothing
+				mIsAnimatingOut = true;
 			}
 
 			@Override
@@ -456,12 +461,13 @@ public class PinchImageView extends ImageView {
 
 			@Override
 			public void onAnimationEnd(final Animator animation) {
+				mIsAnimatingOut = false;
 				postActivities.run();
 			}
 
 			@Override
 			public void onAnimationCancel(final Animator animation) {
-				// do nothing
+				mIsAnimatingOut = false;
 			}
 		});
 
@@ -777,7 +783,7 @@ public class PinchImageView extends ImageView {
 	 * Show the current view in full resolution.
 	 */
 	public final void showFullResolutionSnapshot() {
-		if (mPathName.toLowerCase().endsWith(".gif")) {
+		if (mIsAnimatingOut || mPathName.toLowerCase().endsWith(".gif")) {
 			// Do not apply for GIF, due to animated GIF
 			return;
 		}
