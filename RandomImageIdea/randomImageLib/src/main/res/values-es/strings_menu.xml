@@ -24,8 +24,10 @@
     <string name="menu_remove_from_list">Eliminar de la lista</string>
     <string name="menu_edit_list">Editar lista de imágenes</string>
     <string name="menu_configure_widget">Configurar widget</string>
+    <string name="menu_configure_shortcut">Configurar acceso directo</string>
     <string name="menu_configure_notification">Configurar notificación</string>
     <string name="menu_display_in_widget">Mostrar imagen en widget</string>
+    <string name="menu_display_in_shortcut">Mostrar imagen en acceso directo</string>
     <string name="menu_settings">Ajustes</string>
     <string name="menu_browse_folders">Buscar en el administrador de archivos</string>
     <string name="menu_title_pro_app">Imagen Aleatoria Pro</string>

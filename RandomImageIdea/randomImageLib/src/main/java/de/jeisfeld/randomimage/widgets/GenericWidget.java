@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
+import de.jeisfeld.randomimage.DisplayListInfoActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -51,6 +52,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 		WIDGET_TYPES.add(MiniWidget.class);
 		WIDGET_TYPES.add(ImageWidget.class);
 		WIDGET_TYPES.add(StackedImageWidget.class);
+		WIDGET_TYPES.add(ShortcutDummyWidget.class);
 	}
 
 	@Override
@@ -131,7 +133,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	protected static String getListName(final int appWidgetId) {
 		String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
-		if (listName == null || listName.length() == 0) {
+		if (listName == null || listName.isEmpty()) {
 			listName = ImageRegistry.getCurrentListName();
 		}
 		return listName;
@@ -165,7 +167,7 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 */
 	protected static void updateInstances(final Class<? extends GenericWidget> widgetClass, final UpdateType updateType,
 										  final int... appWidgetId) {
-		if (widgetClass == null) {
+		if (widgetClass == null || widgetClass.equals(ShortcutDummyWidget.class)) {
 			return;
 		}
 
@@ -236,8 +238,18 @@ public abstract class GenericWidget extends AppWidgetProvider {
 	 * @return The ids of all widgets of this class.
 	 */
 	protected static int[] getAllWidgetIds(final Class<? extends GenericWidget> widgetClass) {
-		Context context = Application.getAppContext();
-		return AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, widgetClass));
+		if (widgetClass != null && widgetClass.equals(ShortcutDummyWidget.class)) {
+			List<Integer> ids = DisplayListInfoActivity.getWidgetIdsForShortcuts();
+			int[] result = new int[ids.size()];
+			for (int i = 0; i < result.length; i++) {
+				result[i] = ids.get(i);
+			}
+			return result;
+		}
+		else {
+			Context context = Application.getAppContext();
+			return AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, widgetClass));
+		}
 	}
 
 	/**
@@ -256,7 +268,6 @@ public abstract class GenericWidget extends AppWidgetProvider {
 				}
 			}
 		}
-
 		return allWidgetIds;
 	}
 

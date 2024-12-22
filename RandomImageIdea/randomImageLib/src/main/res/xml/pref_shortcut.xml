@@ -1,0 +1,76 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:rim="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="@string/pref_category_image_list">
+        <ListPreference
+            android:key="@string/key_widget_list_name"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_widget_list_name" />
+        <Preference
+            android:key="@string/key_pref_edit_list"
+            android:title="@string/menu_edit_list" />
+        <EditTextPreference
+            android:key="@string/key_widget_display_name"
+            android:title="@string/pref_title_shortcut_display_name" />
+        <de.jeisfeld.randomimage.view.ImageSelectionPreference
+            android:entries="@array/icon_image_names"
+            android:entryValues="@array/icon_image_values"
+            android:key="@string/key_widget_icon_image"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_shortcut_icon_image" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_random_image_view">
+        <CheckBoxPreference
+            android:key="@string/key_widget_detail_use_default"
+            android:title="@string/pref_title_widget_detail_use_default" />
+        <ListPreference
+            android:entries="@array/detail_scale_type_names"
+            android:entryValues="@array/detail_scale_type_values"
+            android:key="@string/key_widget_detail_scale_type"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_widget_detail_scale_type" />
+        <ListPreference
+            android:entries="@array/detail_background_names"
+            android:entryValues="@array/detail_background_values"
+            android:key="@string/key_widget_detail_background"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_widget_detail_background" />
+        <ListPreference
+            android:entries="@array/detail_flip_behavior_names"
+            android:entryValues="@array/detail_flip_behavior_values"
+            android:key="@string/key_widget_detail_flip_behavior"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_widget_detail_flip_behavior" />
+        <de.jeisfeld.randomimage.view.TimeSelectorPreference
+            android:key="@string/key_widget_detail_change_timeout"
+            android:title="@string/pref_title_widget_detail_change_timeout"
+            rim:allowSeconds="true"
+            rim:allowLongDuration="false"
+            rim:indefiniteValue="@string/pref_indefinite_value_detail_change_timeout" />
+        <CheckBoxPreference
+            android:key="@string/key_widget_detail_change_with_tap"
+            android:title="@string/pref_title_widget_detail_change_with_tap" />
+        <CheckBoxPreference
+            android:key="@string/key_widget_detail_prevent_screen_timeout"
+            android:title="@string/pref_title_widget_detail_prevent_screen_timeout" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_shortcut_timing">
+        <de.jeisfeld.randomimage.view.TimeSelectorPreference
+            android:key="@string/key_widget_timeout"
+            android:title="@string/pref_title_shortcut_timeout"
+            rim:allowSeconds="true"
+            rim:allowLongDuration="true"
+            rim:indefiniteValue="@string/pref_indefinite_value_widget_timeout" />
+        <de.jeisfeld.randomimage.view.TimeSelectorPreference
+            android:key="@string/key_widget_allowed_call_frequency"
+            android:title="@string/pref_title_shortcut_allowed_call_frequency"
+            rim:allowSeconds="true"
+            rim:allowLongDuration="true"
+            rim:indefiniteValue="@string/pref_indefinite_value_widget_allowed_call_frequency" />
+    </PreferenceCategory>
+</PreferenceScreen>

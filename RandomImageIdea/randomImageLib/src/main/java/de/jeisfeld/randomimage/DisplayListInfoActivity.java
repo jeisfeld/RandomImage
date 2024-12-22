@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -16,8 +18,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import androidx.annotation.RequiresApi;
 import de.jeisfeld.randomimage.MainConfigurationActivity.ListAction;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
@@ -25,6 +30,9 @@ import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDial
 import de.jeisfeld.randomimage.util.FormattingUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
+import de.jeisfeld.randomimage.util.ImageUtil;
+import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
 import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -202,18 +210,19 @@ public class DisplayListInfoActivity extends BaseActivity {
 			if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
 				View buttonCreateShortcut = findViewById(R.id.buttonCreateShortcut);
 				buttonCreateShortcut.setOnClickListener(v -> {
-					Intent intent = DisplayRandomImageActivity.createIntent(DisplayListInfoActivity.this, mListName,
-							null, true, null, null);
-					intent.setAction(Intent.ACTION_VIEW);
-					intent.putExtra("key", "value"); // Add any extras if needed
-
 					// Build the shortcut
-					ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(DisplayListInfoActivity.this, "unique_shortcut_id")
-							.setShortLabel(mListName)
-							.setLongLabel(mListName)
-							.setIcon(Icon.createWithResource(DisplayListInfoActivity.this, R.drawable.ic_launcher))
-							.setIntent(intent)
-							.build();
+					int shortcutId = PreferenceUtil.getSharedPreferenceInt(R.string.key_shortcut_max_id, 0) + 1;
+					PreferenceUtil.setSharedPreferenceInt(R.string.key_shortcut_max_id, shortcutId);
+					List<Integer> shortcutIds = getShortcutIds(shortcutManager);
+					shortcutIds.add(shortcutId);
+					setShortcutIds(shortcutIds);
+					setDefaultShortcutParameters(shortcutId, mListName);
+
+					Intent intent = DisplayRandomImageActivity.createIntent(DisplayListInfoActivity.this, mListName,
+							null, false, getWidgetIdFromShortcutId(shortcutId), null);
+					intent.setAction(Intent.ACTION_VIEW);
+
+					ShortcutInfo shortcutInfo = getShortcutInfo(this, shortcutId, mListName, mListName, null);
 
 					// Request the shortcut to be pinned
 					Intent pinnedShortcutCallbackIntent =
@@ -223,6 +232,7 @@ public class DisplayListInfoActivity extends BaseActivity {
 							pinnedShortcutCallbackIntent, PendingIntent.FLAG_IMMUTABLE);
 
 					shortcutManager.requestPinShortcut(shortcutInfo, successCallback.getIntentSender());
+					returnResult(null);
 				});
 				buttonCreateShortcut.setVisibility(View.VISIBLE);
 			}
@@ -283,4 +293,203 @@ public class DisplayListInfoActivity extends BaseActivity {
 		setResult(RESULT_OK, intent);
 		finish();
 	}
+
+	/**
+	 * Get the ids of existing shortcuts.
+	 *
+	 * @param shortcutManager The shortcut manager
+	 * @return The shortcut ids.
+	 */
+	@RequiresApi(api = VERSION_CODES.O)
+	public static List<Integer> getShortcutIds(final ShortcutManager shortcutManager) {
+		List<String> shortcutIdStrings = PreferenceUtil.getSharedPreferenceStringList(R.string.key_shortcut_ids);
+		List<Integer> shortcutIds = new ArrayList<>();
+		for (String idString : shortcutIdStrings) {
+			shortcutIds.add(Integer.valueOf(idString));
+		}
+
+		// cleanup outdated ids
+		if (shortcutManager != null) {
+			List<Integer> pinnedShortcutIds = new ArrayList<>();
+			boolean deletedId = false;
+			for (ShortcutInfo shortcutInfo : shortcutManager.getPinnedShortcuts()) {
+				pinnedShortcutIds.add(Integer.valueOf(shortcutInfo.getId()));
+			}
+			List<Integer> outdatedShortcutIds = new ArrayList<>();
+			for (Integer shortcutId : shortcutIds) {
+				if (!pinnedShortcutIds.contains(shortcutId)) {
+					outdatedShortcutIds.add(shortcutId);
+				}
+			}
+			for (Integer shortcutId : outdatedShortcutIds) {
+				shortcutIds.remove(shortcutId);
+				deleteShortcutParameters(shortcutId);
+				deletedId = true;
+			}
+			if (deletedId) {
+				setShortcutIds(shortcutIds);
+			}
+		}
+
+		return shortcutIds;
+	}
+
+	/**
+	 * Get the shortcutInfo for a shortcutId and a listName.
+	 *
+	 * @param context     the context
+	 * @param shortcutId  The shortcutId
+	 * @param listName    The list name
+	 * @param displayName The display name
+	 * @param widgetIcon  The widget icon
+	 * @return The shortcutInfo.
+	 */
+	@RequiresApi(api = VERSION_CODES.O)
+	private static ShortcutInfo getShortcutInfo(final Context context, final int shortcutId, final String listName, final String displayName,
+												final String widgetIcon) {
+		Intent intent = DisplayRandomImageActivity.createIntent(context, listName,
+				null, false, getWidgetIdFromShortcutId(shortcutId), null);
+		intent.setAction(Intent.ACTION_VIEW);
+
+		Icon icon = Icon.createWithResource(context, R.drawable.ic_launcher);
+		if (widgetIcon != null) {
+			Bitmap bitmap = ImageUtil.getImageBitmap(widgetIcon, MediaStoreUtil.MINI_THUMB_SIZE);
+			icon = Icon.createWithBitmap(bitmap);
+		}
+
+		return new ShortcutInfo.Builder(context, Integer.toString(shortcutId))
+				.setShortLabel(displayName)
+				.setLongLabel(displayName)
+				.setIcon(icon)
+				.setIntent(intent)
+				.build();
+	}
+
+	/**
+	 * Get the dummy widgetIds for shortcuts
+	 *
+	 * @return The dummy widgetIds for shortcuts
+	 */
+	public static List<Integer> getWidgetIdsForShortcuts() {
+		List<Integer> widgetIds = new ArrayList<>();
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			ShortcutManager shortcutManager = Application.getAppContext().getSystemService(ShortcutManager.class);
+			List<Integer> shortcutIds = getShortcutIds(shortcutManager);
+			for (int shortcutId : shortcutIds) {
+				widgetIds.add(getWidgetIdFromShortcutId(shortcutId));
+			}
+		}
+		return widgetIds;
+	}
+
+	/**
+	 * Set the ids of existing shortcuts.
+	 *
+	 * @param shortcutIds the shortcut ids.
+	 */
+	private static void setShortcutIds(final List<Integer> shortcutIds) {
+		List<String> shortcutIdStrings = new ArrayList<>();
+		for (int id : shortcutIds) {
+			shortcutIdStrings.add(Integer.toString(id));
+		}
+		PreferenceUtil.setSharedPreferenceStringList(R.string.key_shortcut_ids, shortcutIdStrings);
+	}
+
+	/**
+	 * Delete stored parameters for a shortcutId.
+	 *
+	 * @param shortcutId The shortcutId.
+	 */
+	private static void deleteShortcutParameters(final int shortcutId) {
+		int appWidgetId = getWidgetIdFromShortcutId(shortcutId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timeout, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_allowed_call_frequency, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_icon_image, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_list_name, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_display_name, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_use_default, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_scale_type, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_background, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_flip_behavior, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_change_timeout, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_change_with_tap, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_detail_prevent_screen_timeout, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timer_duration, appWidgetId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_last_usage_time, appWidgetId);
+	}
+
+	/**
+	 * Set the default parameters for a shortcut.
+	 *
+	 * @param shortcutId The shortcutId.
+	 * @param listName   The list name.
+	 */
+	private void setDefaultShortcutParameters(final int shortcutId, final String listName) {
+		int appWidgetId = getWidgetIdFromShortcutId(shortcutId);
+		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, mListName);
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timer_duration, appWidgetId, 0);
+
+		PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, appWidgetId,
+				getString(R.string.pref_default_widget_icon_image));
+		PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, appWidgetId, true);
+		PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_scale_type, appWidgetId,
+				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_scale_type,
+						R.string.pref_default_detail_scale_type));
+		PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_background, appWidgetId,
+				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_background,
+						R.string.pref_default_detail_background));
+		PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, appWidgetId,
+				PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior,
+						R.string.pref_default_detail_flip_behavior));
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, appWidgetId,
+				PreferenceUtil.getSharedPreferenceLongString(R.string.key_pref_detail_change_timeout,
+						R.string.pref_default_notification_duration));
+		PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_change_with_tap, appWidgetId,
+				PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_change_with_tap));
+		PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_prevent_screen_timeout, appWidgetId,
+				PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout));
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_timeout, appWidgetId, 0);
+		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_allowed_call_frequency, appWidgetId, 0);
+	}
+
+	/**
+	 * Update a shortcut linked to a dummy appWidgetId with stored data.
+	 *
+	 * @param context     The context.
+	 * @param appWidgetId The dummy appWidgetId.
+	 */
+	public static void updateShortcut(final Context context, final int appWidgetId) {
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			int shortcutId = -(appWidgetId - 1) / 10;
+			String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId);
+			String displayName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, appWidgetId);
+			if (displayName == null || displayName.isEmpty()) {
+				displayName = listName;
+			}
+
+			String widgetIcon = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_icon_image, appWidgetId);
+			if (context.getResources().getStringArray(R.array.icon_image_values)[0].equals(widgetIcon)) {
+				widgetIcon = null;
+			}
+
+			ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+
+			if (shortcutManager != null) {
+				List<ShortcutInfo> shortcuts = new ArrayList<>();
+				shortcuts.add(getShortcutInfo(context, shortcutId, listName, displayName, widgetIcon));
+				shortcutManager.updateShortcuts(shortcuts);
+			}
+		}
+	}
+
+	/**
+	 * Get the dummy widgetId which is used to store paramters of a shortcutId.
+	 *
+	 * @param shortcutId the shortcutId.
+	 * @return the related dummy widgetId.
+	 */
+	private static int getWidgetIdFromShortcutId(int shortcutId) {
+		return -10 * shortcutId + 1;
+	}
+
 }

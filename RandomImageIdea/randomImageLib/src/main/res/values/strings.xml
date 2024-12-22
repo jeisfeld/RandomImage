@@ -41,7 +41,9 @@
     <string name="button_add_folder">Add folder</string>
     <string name="button_add_nested_list">Add nested list</string>
     <string name="button_finish_widget_configuration">Finish Widget Configuration</string>
+    <string name="button_finish_shortcut_configuration">Finish Shortcut Configuration</string>
     <string name="button_run_widget">Run Widget</string>
+    <string name="button_run_shortcut">Run Shortcut</string>
     <string name="button_missing_images">Missing images</string>
     <string name="button_widgets">Random Image Widgets</string>
     <string name="button_notifications">Random Image Notifications</string>

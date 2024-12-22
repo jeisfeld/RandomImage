@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Non-indexed keys -->
+
+    <string name="key_shortcut_ids" translatable="false">notification_ids</string>
+    <string name="key_shortcut_max_id" translatable="false">notification_max_id</string>
+
     <!-- Display names for widgets -->
 
     <string name="mini_widget_display_name">Mini Widget</string>
     <string name="image_widget_display_name">Image Frame</string>
     <string name="stacked_image_widget_display_name">Image Deck</string>
+    <string name="shortcut_display_name">Shortcut</string>
 
     <!-- Indexed keys -->
 
@@ -41,6 +47,7 @@
     <!-- Strings related to Settings -->
 
     <string name="pref_category_widget_timing">Widget Timing</string>
+    <string name="pref_category_shortcut_timing">Shortcut Timing</string>
     <string name="pref_category_widget_appearance">Widget Appearance</string>
     <string name="pref_title_widget_list_name">List Name</string>
     <string name="pref_title_widget_timer_duration">Change Frequency</string>
@@ -51,7 +58,9 @@
     <string name="pref_title_widget_button_style">Button Style</string>
     <string name="pref_title_widget_button_color">Button Color</string>
     <string name="pref_title_widget_display_name">Widget Name</string>
+    <string name="pref_title_shortcut_display_name">Shortcut Name</string>
     <string name="pref_title_widget_icon_image">Widget Icon</string>
+    <string name="pref_title_shortcut_icon_image">Shortcut Icon</string>
     <string name="pref_title_widget_detail_use_default">Use default settings</string>
     <string name="pref_title_widget_detail_scale_type">Image scaling</string>
     <string name="pref_title_widget_detail_background">Background color</string>
@@ -60,8 +69,10 @@
     <string name="pref_title_widget_detail_change_with_tap">Use tap instead of flipping</string>
     <string name="pref_title_widget_detail_prevent_screen_timeout">Prevent screen timeout</string>
     <string name="pref_title_widget_timeout">Widget usage time</string>
+    <string name="pref_title_shortcut_timeout">Shortcut usage time</string>
     <string name="pref_indefinite_value_widget_timeout">indefinite</string>
     <string name="pref_title_widget_allowed_call_frequency">Widget locking time</string>
+    <string name="pref_title_shortcut_allowed_call_frequency">Shortcut locking time</string>
     <string name="pref_indefinite_value_widget_allowed_call_frequency">no locking</string>
     <string name="pref_default_widget_timer_duration" translatable="false">3600</string>
     <string name="pref_default_widget_background_style" translatable="false">2</string>

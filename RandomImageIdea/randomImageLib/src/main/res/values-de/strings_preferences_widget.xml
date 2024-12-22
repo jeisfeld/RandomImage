@@ -6,10 +6,12 @@
     <string name="mini_widget_display_name">Mini-Widget</string>
     <string name="image_widget_display_name">Bilderrahmen</string>
     <string name="stacked_image_widget_display_name">Bilderstapel</string>
+    <string name="shortcut_display_name">Shortcut</string>
 
     <!-- Strings related to Settings -->
 
     <string name="pref_category_widget_timing">Widget-Timing</string>
+    <string name="pref_category_shortcut_timing">Shortcut-Timing</string>
     <string name="pref_category_widget_appearance">Erscheinungsbild</string>
     <string name="pref_title_widget_list_name">Listenname</string>
     <string name="pref_title_widget_timer_duration">Wechselhäufigkeit</string>
@@ -20,7 +22,9 @@
     <string name="pref_title_widget_button_style">Button-Stil</string>
     <string name="pref_title_widget_button_color">Button-Farbe</string>
     <string name="pref_title_widget_display_name">Name des Widgets</string>
+    <string name="pref_title_shortcut_display_name">Name des Shortcuts</string>
     <string name="pref_title_widget_icon_image">Icon des Widgets</string>
+    <string name="pref_title_shortcut_icon_image">Icon des Shortcuts</string>
     <string name="pref_title_widget_detail_use_default">Standardeinstellungen verwenden</string>
     <string name="pref_title_widget_detail_scale_type">Bildskalierung</string>
     <string name="pref_title_widget_detail_background">Hintergrundfarbe</string>
@@ -29,8 +33,10 @@
     <string name="pref_title_widget_detail_change_with_tap">Tippen statt Schnippen</string>
     <string name="pref_title_widget_detail_prevent_screen_timeout">Bildschirmtimeout verhindern</string>
     <string name="pref_title_widget_timeout">Nutzungsdauer des Widgets</string>
+    <string name="pref_title_shortcut_timeout">Nutzungsdauer des Shortcuts</string>
     <string name="pref_indefinite_value_widget_timeout">unbegrenzt</string>
     <string name="pref_title_widget_allowed_call_frequency">Sperrdauer des Widgets</string>
+    <string name="pref_title_shortcut_allowed_call_frequency">Sperrdauer des Shortcuts</string>
     <string name="pref_indefinite_value_widget_allowed_call_frequency">keine Sperre</string>
 
     <!-- String arrays -->

@@ -47,6 +47,7 @@ import de.jeisfeld.randomimage.widgets.ImageWidget;
 import de.jeisfeld.randomimage.widgets.ImageWidgetConfigurationActivity;
 import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationActivity;
+import de.jeisfeld.randomimage.widgets.ShortcutDummyWidget;
 import de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationActivity;
 import de.jeisfeld.randomimagelib.R;
 
@@ -176,7 +177,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		mFileNameInList = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		mFileName = mFileNameInList;
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
-		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, -1);
+		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
 		mPreventDisplayAll = getIntent().getBooleanExtra(STRING_EXTRA_PREVENT_DISPLAY_ALL, false);
 
@@ -225,7 +226,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		else if (mFileType == FileType.FOLDER_SIMPLE) {
 			setTitle(R.string.title_activity_display_folder_details);
 			ArrayList<String> files = ImageUtil.getImagesInFolder(mFileName);
-			if (files.size() > 0) {
+			if (!files.isEmpty()) {
 				galleryFileName = files.get(0);
 			}
 			else {
@@ -292,7 +293,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 
 
-		if (mAppWidgetId >= 0) {
+		if (mAppWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
 			Button btnUseInWidget = findViewById(R.id.buttonUseInWidget);
 			Button btnConfigureWidget = findViewById(R.id.buttonConfigureWidget);
 			btnConfigureWidget.setVisibility(View.VISIBLE);
@@ -303,6 +304,18 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
 					MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
 					DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_widget_image_updated);
+					returnResult(false, false);
+				});
+				settingsIntent = new Intent(this, MiniWidgetConfigurationActivity.class);
+			}
+			else if (ShortcutDummyWidget.hasWidgetOfId(mAppWidgetId)) {
+				btnConfigureWidget.setText(R.string.menu_configure_shortcut);
+				btnUseInWidget.setVisibility(View.VISIBLE);
+				btnUseInWidget.setText(R.string.menu_display_in_shortcut);
+				btnUseInWidget.setOnClickListener(v -> {
+					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, mFileName);
+					DisplayListInfoActivity.updateShortcut(this, mAppWidgetId);
+					DialogUtil.displayToast(DisplayImageDetailsActivity.this, R.string.toast_shortcut_image_updated);
 					returnResult(false, false);
 				});
 				settingsIntent = new Intent(this, MiniWidgetConfigurationActivity.class);

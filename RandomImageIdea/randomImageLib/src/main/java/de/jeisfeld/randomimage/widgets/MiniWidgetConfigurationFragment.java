@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
+import de.jeisfeld.randomimage.DisplayListInfoActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
@@ -36,6 +37,11 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 	private int mAppWidgetId;
 
 	/**
+	 * Flag indicating if this is shortcut instead of mini widget.
+	 */
+	private boolean mIsShortcut;
+
+	/**
 	 * A preference value change listener that updates the preference's summary to reflect its new value.
 	 */
 	private OnWidgetPreferenceChangeListener mOnPreferenceChangeListener = new OnWidgetPreferenceChangeListener();
@@ -46,11 +52,12 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget_Config", "StackedImageWidget");
 
 		mAppWidgetId = getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
+		mIsShortcut = !MiniWidget.hasWidgetOfId(mAppWidgetId);
 
 		setDefaultValues();
 		setNonIndexedValues();
 
-		addPreferencesFromResource(R.xml.pref_widget_mini);
+		addPreferencesFromResource(mIsShortcut ? R.xml.pref_shortcut : R.xml.pref_widget_mini);
 
 		configureListNameProperty();
 		bindPreferenceSummaryToValue(R.string.key_widget_display_name);
@@ -73,7 +80,8 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		LinearLayout preferenceLayout = (LinearLayout) super.onCreateView(inflater, container, savedInstanceState);
 
 		// Add run and cancel buttons
-		View buttonLayout = LayoutInflater.from(getActivity()).inflate(R.layout.layout_configure_widget_buttons, null);
+		View buttonLayout = LayoutInflater.from(getActivity()).inflate(
+				mIsShortcut ? R.layout.layout_configure_shortcut_buttons : R.layout.layout_configure_widget_buttons, null);
 		if (preferenceLayout != null) {
 			preferenceLayout.addView(buttonLayout);
 
@@ -284,16 +292,28 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId, stringValue);
 				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
 				PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, mAppWidgetId);
-				MiniWidget.configure(mAppWidgetId, stringValue);
+				if (!mIsShortcut) {
+					MiniWidget.configure(mAppWidgetId, stringValue);
+				}
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_display_name))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_display_name, mAppWidgetId, stringValue);
 				WidgetSettingsActivity.updateHeader(getArguments().getInt(WidgetSettingsActivity.STRING_HASH_CODE, 0), mAppWidgetId);
-				MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+				if (mIsShortcut) {
+					DisplayListInfoActivity.updateShortcut(getActivity(), mAppWidgetId);
+				}
+				else {
+					MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+				}
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_icon_image))) {
 				PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_icon_image, mAppWidgetId, stringValue);
-				MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+				if (mIsShortcut) {
+					DisplayListInfoActivity.updateShortcut(getActivity(), mAppWidgetId);
+				}
+				else {
+					MiniWidget.updateInstances(UpdateType.BUTTONS_BACKGROUND, mAppWidgetId);
+				}
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_widget_detail_use_default))) {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_widget_detail_use_default, mAppWidgetId,

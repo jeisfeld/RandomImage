@@ -95,7 +95,7 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 			}
 		}
 
-		if (target.size() == 0) {
+		if (target.isEmpty()) {
 			DialogUtil.displayInfo(this, this::finish, 0, R.string.dialog_info_no_widget);
 		}
 	}
@@ -123,9 +123,13 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 			widgetNameResourceId = R.string.stacked_image_widget_display_name;
 			fragmentString = "de.jeisfeld.randomimage.widgets.StackedImageWidgetConfigurationFragment";
 		}
+		else if (widgetClass.equals(ShortcutDummyWidget.class)) {
+			widgetNameResourceId = R.string.shortcut_display_name;
+			fragmentString = "de.jeisfeld.randomimage.widgets.MiniWidgetConfigurationFragment";
+		}
 
 		String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, appWidgetId);
-		if (title == null || title.length() == 0) {
+		if (title == null || title.isEmpty()) {
 			title = getString(widgetNameResourceId) + " " + (index + 1);
 		}
 

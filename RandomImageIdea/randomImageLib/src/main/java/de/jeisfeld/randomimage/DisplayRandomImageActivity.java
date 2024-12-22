@@ -65,6 +65,7 @@ import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimage.view.PinchImageView.UpDownListener;
 import de.jeisfeld.randomimage.widgets.MiniWidget;
+import de.jeisfeld.randomimage.widgets.ShortcutDummyWidget;
 import de.jeisfeld.randomimage.widgets.WidgetAlarmReceiver;
 import de.jeisfeld.randomimagelib.R;
 
@@ -716,7 +717,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 		if (allowedCallFrequency > 0 && currentTime < nextAllowedTime) {
 			mIsLocked = true;
-			DialogUtil.displayToast(this, R.string.toast_widget_locked, DateUtil.format(new Date(nextAllowedTime)));
+			DialogUtil.displayToast(this,
+					ShortcutDummyWidget.hasWidgetOfId(mAppWidgetId) ? R.string.toast_shortcut_locked : R.string.toast_widget_locked,
+					DateUtil.format(new Date(nextAllowedTime)));
 			finish();
 			return;
 		}

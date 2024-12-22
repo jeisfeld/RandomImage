@@ -24,8 +24,10 @@
     <string name="menu_remove_from_list">Aus der Liste entfernen</string>
     <string name="menu_edit_list">Bildliste bearbeiten</string>
     <string name="menu_configure_widget">Widget konfigurieren</string>
+    <string name="menu_configure_shortcut">Shortcut konfigurieren</string>
     <string name="menu_configure_notification">Benachrichtigung konfigurieren</string>
     <string name="menu_display_in_widget">Bild in Widget anzeigen</string>
+    <string name="menu_display_in_shortcut">Bild in Shortcut anzeigen</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_browse_folders">Im Dateimanager suchen</string>
     <string name="menu_title_pro_app">Zufallsbild Pro</string>

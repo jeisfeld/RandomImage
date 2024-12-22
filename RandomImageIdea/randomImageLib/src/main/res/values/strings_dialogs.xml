@@ -52,7 +52,9 @@
     <string name="toast_error_select_folder">Unexpected error while trying to add a folder.</string>
     <string name="toast_aborted_add_images_no_list">The addition of images was aborted, as no image list was found.</string>
     <string name="toast_widget_locked">The widget is locked until %1$s.</string>
+    <string name="toast_shortcut_locked">The shortcut is locked until %1$s.</string>
     <string name="toast_widget_image_updated">The widget image has been updated.</string>
+    <string name="toast_shortcut_image_updated">The shortcut image has been updated.</string>
     <string name="toast_triggered_media_scan">Re-scanning media files. Duration %1$s</string>
     <string name="message_value_unknown">unknown</string>
     <string name="message_value_seconds">%1$.1f seconds</string>
