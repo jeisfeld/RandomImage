@@ -72,5 +72,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/buttonCreateShortcut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:text="@string/button_create_shortcut"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone" />
+
     </LinearLayout>
 </ScrollView>

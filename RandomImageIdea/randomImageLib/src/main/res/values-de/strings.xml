@@ -49,6 +49,7 @@
     <string name="button_delete_list">Liste löschen</string>
     <string name="button_backup_list">Liste sichern</string>
     <string name="button_restore_list">Liste wiederherstellen</string>
+    <string name="button_create_shortcut">Shortcut erstellen</string>
     <string name="button_continue">Weiter</string>
     <string name="button_view_in_gallery">In Galerie anzeigen</string>
     <string name="button_send_to">Senden an&#8230;</string>

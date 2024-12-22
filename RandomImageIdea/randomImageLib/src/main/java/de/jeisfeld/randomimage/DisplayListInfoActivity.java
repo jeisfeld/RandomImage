@@ -3,10 +3,15 @@ package de.jeisfeld.randomimage;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -120,71 +125,57 @@ public class DisplayListInfoActivity extends BaseActivity {
 			return;
 		}
 
-		findViewById(R.id.buttonRemove).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				final String listString = DialogUtil.createFileFolderMessageString(Collections.singletonList(mListName), null, null);
-				DialogUtil.displayConfirmationMessage(DisplayListInfoActivity.this,
-						new ConfirmDialogListener() {
-							@Override
-							public void onDialogPositiveClick(final DialogFragment dialog) {
-								imageList.remove(NESTED_LIST, mListName);
-								NotificationUtil.notifyUpdatedList(DisplayListInfoActivity.this, parentListName, true,
-										Collections.singletonList(mListName), null, null);
-								imageList.update(true);
-								DialogUtil.displayToast(DisplayListInfoActivity.this, R.string.toast_removed_single, listString);
-								returnResult(ListAction.REFRESH);
-							}
+		findViewById(R.id.buttonRemove).setOnClickListener(v -> {
+			final String listString = DialogUtil.createFileFolderMessageString(Collections.singletonList(mListName), null, null);
+			DialogUtil.displayConfirmationMessage(DisplayListInfoActivity.this,
+					new ConfirmDialogListener() {
+						@Override
+						public void onDialogPositiveClick(final DialogFragment dialog) {
+							imageList.remove(NESTED_LIST, mListName);
+							NotificationUtil.notifyUpdatedList(DisplayListInfoActivity.this, parentListName, true,
+									Collections.singletonList(mListName), null, null);
+							imageList.update(true);
+							DialogUtil.displayToast(DisplayListInfoActivity.this, R.string.toast_removed_single, listString);
+							returnResult(ListAction.REFRESH);
+						}
 
-							@Override
-							public void onDialogNegativeClick(final DialogFragment dialog) {
-								returnResult(ListAction.NONE);
-							}
-						}, null, R.string.button_remove, R.string.dialog_confirmation_remove, parentListName, listString);
-			}
+						@Override
+						public void onDialogNegativeClick(final DialogFragment dialog) {
+							returnResult(ListAction.NONE);
+						}
+					}, null, R.string.button_remove, R.string.dialog_confirmation_remove, parentListName, listString);
 		});
 
 		imageList.executeWhenReady(
 				null,
-				new Runnable() {
-					@Override
-					public void run() {
-						((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
-								DialogUtil.fromHtml(getString(R.string.info_number_of_images_and_proportion,
-										imageList.getNestedListImageCount(mListName),
-										FormattingUtil.getPercentageString(imageList.getPercentage(NESTED_LIST, mListName)))));
+				() -> {
+					((TextView) findViewById(R.id.textViewNumberOfImages)).setText(
+							DialogUtil.fromHtml(getString(R.string.info_number_of_images_and_proportion,
+									imageList.getNestedListImageCount(mListName),
+									FormattingUtil.getPercentageString(imageList.getPercentage(NESTED_LIST, mListName)))));
 
-						final EditText editTextViewFrequency = findViewById(R.id.editTextViewFrequency);
-						Double customNestedListWeight = imageList.getCustomNestedElementWeight(NESTED_LIST, mListName);
-						if (customNestedListWeight == null) {
-							double nestedListWeight = imageList.getProbability(NESTED_LIST, mListName);
-							editTextViewFrequency.setHint(FormattingUtil.getPercentageString(nestedListWeight));
-						}
-						else {
-							editTextViewFrequency.setText(FormattingUtil.getPercentageString(customNestedListWeight));
-						}
-
-						ImageButton buttonSave = findViewById(R.id.button_save);
-						buttonSave.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(final View v) {
-								try {
-									imageList.setCustomWeight(NESTED_LIST, mListName, FormattingUtil.getPercentageValue(editTextViewFrequency));
-								}
-								catch (NumberFormatException e) {
-									// do not change weight
-								}
-								finish();
-							}
-						});
+					final EditText editTextViewFrequency = findViewById(R.id.editTextViewFrequency);
+					Double customNestedListWeight = imageList.getCustomNestedElementWeight(NESTED_LIST, mListName);
+					if (customNestedListWeight == null) {
+						double nestedListWeight = imageList.getProbability(NESTED_LIST, mListName);
+						editTextViewFrequency.setHint(FormattingUtil.getPercentageString(nestedListWeight));
 					}
-				},
-				new Runnable() {
-					@Override
-					public void run() {
+					else {
+						editTextViewFrequency.setText(FormattingUtil.getPercentageString(customNestedListWeight));
+					}
+
+					ImageButton buttonSave = findViewById(R.id.button_save);
+					buttonSave.setOnClickListener(v -> {
+						try {
+							imageList.setCustomWeight(NESTED_LIST, mListName, FormattingUtil.getPercentageValue(editTextViewFrequency));
+						}
+						catch (NumberFormatException e) {
+							// do not change weight
+						}
 						finish();
-					}
-				}
+					});
+				},
+				this::finish
 		);
 	}
 
@@ -192,56 +183,59 @@ public class DisplayListInfoActivity extends BaseActivity {
 	 * Configure the action buttons for the list.
 	 */
 	private void displayMainListInfo() {
-		findViewById(R.id.buttonDelete).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				returnResult(ListAction.DELETE);
-			}
-		});
+		findViewById(R.id.buttonDelete).setOnClickListener(v -> returnResult(ListAction.DELETE));
 
-		findViewById(R.id.buttonRename).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				returnResult(ListAction.RENAME);
-			}
-		});
+		findViewById(R.id.buttonRename).setOnClickListener(v -> returnResult(ListAction.RENAME));
 
-		findViewById(R.id.buttonClone).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				returnResult(ListAction.CLONE);
-			}
-		});
+		findViewById(R.id.buttonClone).setOnClickListener(v -> returnResult(ListAction.CLONE));
 
-		findViewById(R.id.buttonBackup).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				returnResult(ListAction.BACKUP);
-			}
-		});
+		findViewById(R.id.buttonBackup).setOnClickListener(v -> returnResult(ListAction.BACKUP));
 
 		if (ImageRegistry.getBackupImageListNames(ListFiltering.ALL_LISTS).contains(mListName)) {
 			View buttonRestore = findViewById(R.id.buttonRestore);
-			buttonRestore.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					returnResult(ListAction.RESTORE);
-				}
-			});
+			buttonRestore.setOnClickListener(v -> returnResult(ListAction.RESTORE));
 			buttonRestore.setVisibility(View.VISIBLE);
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+			if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
+				View buttonCreateShortcut = findViewById(R.id.buttonCreateShortcut);
+				buttonCreateShortcut.setOnClickListener(v -> {
+					Intent intent = DisplayRandomImageActivity.createIntent(DisplayListInfoActivity.this, mListName,
+							null, true, null, null);
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.putExtra("key", "value"); // Add any extras if needed
+
+					// Build the shortcut
+					ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(DisplayListInfoActivity.this, "unique_shortcut_id")
+							.setShortLabel(mListName)
+							.setLongLabel(mListName)
+							.setIcon(Icon.createWithResource(DisplayListInfoActivity.this, R.drawable.ic_launcher))
+							.setIntent(intent)
+							.build();
+
+					// Request the shortcut to be pinned
+					Intent pinnedShortcutCallbackIntent =
+							shortcutManager.createShortcutResultIntent(shortcutInfo);
+
+					PendingIntent successCallback = PendingIntent.getBroadcast(DisplayListInfoActivity.this, 0,
+							pinnedShortcutCallbackIntent, PendingIntent.FLAG_IMMUTABLE);
+
+					shortcutManager.requestPinShortcut(shortcutInfo, successCallback.getIntentSender());
+				});
+				buttonCreateShortcut.setVisibility(View.VISIBLE);
+			}
 		}
 
 		new Thread() {
 			@Override
 			public void run() {
 				final int numberOfImages = ImageRegistry.getImageListByName(mListName, true).getAllImageFiles().size();
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
-						textViewNumberOfImages.setText(
-								DialogUtil.fromHtml(getString(R.string.info_number_of_images, numberOfImages)));
-					}
+				runOnUiThread(() -> {
+					TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
+					textViewNumberOfImages.setText(
+							DialogUtil.fromHtml(getString(R.string.info_number_of_images, numberOfImages)));
 				});
 			}
 		}.start();
