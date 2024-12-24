@@ -10,7 +10,9 @@ import android.util.SparseArray;
 import java.util.Arrays;
 import java.util.List;
 
+import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.BasePreferenceActivity;
+import de.jeisfeld.randomimage.DisplayListInfoActivity;
 import de.jeisfeld.randomimage.SelectDirectoryActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
@@ -61,7 +63,12 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 			for (int appWidgetId : appWidgetIds) {
 				if (oldName.equals(GenericWidget.getListName(appWidgetId))) {
 					PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_widget_list_name, appWidgetId, newName);
-					GenericWidget.updateInstances(widgetClass, UpdateType.NEW_LIST, appWidgetId);
+					if (ShortcutDummyWidget.class.equals(widgetClass)) {
+						DisplayListInfoActivity.updateShortcut(Application.getAppContext(), appWidgetId);
+					}
+					else {
+						GenericWidget.updateInstances(widgetClass, UpdateType.NEW_LIST, appWidgetId);
+					}
 				}
 			}
 		}
