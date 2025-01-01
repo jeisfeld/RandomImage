@@ -3,8 +3,8 @@
 
     <!-- Non-indexed keys -->
 
-    <string name="key_shortcut_ids" translatable="false">notification_ids</string>
-    <string name="key_shortcut_max_id" translatable="false">notification_max_id</string>
+    <string name="key_shortcut_ids" translatable="false">shortcut_ids</string>
+    <string name="key_shortcut_max_id" translatable="false">shortcut_max_id</string>
 
     <!-- Display names for widgets -->
 
