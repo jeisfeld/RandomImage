@@ -16,7 +16,6 @@ import de.jeisfeld.randomimage.DisplayListInfoActivity;
 import de.jeisfeld.randomimage.SelectDirectoryActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.ImageSelectionPreference.ChosenImageListener;
 import de.jeisfeld.randomimage.view.ImageSelectionPreference.ChosenImageListenerActivity;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
@@ -89,7 +88,6 @@ public class WidgetSettingsActivity extends BasePreferenceActivity implements Ch
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
 	}
 
 	@Override

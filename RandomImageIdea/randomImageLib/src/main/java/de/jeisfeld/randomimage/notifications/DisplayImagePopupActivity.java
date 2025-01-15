@@ -16,8 +16,6 @@ import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity.FlipType;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimagelib.R;
@@ -169,7 +167,6 @@ public class DisplayImagePopupActivity extends BaseActivity {
 					mImageView.animateOut(velocityX, velocityY, runnable);
 
 					PreferenceUtil.incrementCounter(R.string.key_statistics_countfling);
-					TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Popup");
 					return true;
 				}
 				else {
@@ -189,7 +186,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 			@Override
 			public void onLongPress(final MotionEvent e) {
 				DisplayImageDetailsActivity.startActivity(DisplayImagePopupActivity.this, mFileName, mListName,
-						null, null, true, "Display image popup");
+						null, null, true);
 			}
 		});
 	}
@@ -223,7 +220,6 @@ public class DisplayImagePopupActivity extends BaseActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
 		mUserIsLeaving = false;
 		mSavingInstanceState = false;
 	}
@@ -243,7 +239,6 @@ public class DisplayImagePopupActivity extends BaseActivity {
 	public static void finishActivity(final Context context, final int notificationId) {
 		DisplayImagePopupActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto_Close", "Popup");
 			activity.finish();
 			NOTIFICATION_MAP.remove(notificationId);
 		}

@@ -21,8 +21,6 @@ import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -219,22 +217,6 @@ public abstract class GenericImageWidget extends GenericWidget {
 	 * @return The layout resource id.
 	 */
 	protected abstract int getWidgetLayoutId(int appWidgetId);
-
-	/**
-	 * Report a widget image change to Google Analytics.
-	 *
-	 * @param action     The action to be reported
-	 * @param updateType The updateType
-	 */
-	protected static void trackImageChange(final String action, final UpdateType updateType) {
-		if (updateType == UpdateType.NEW_IMAGE_AUTOMATIC) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, action, "Timer");
-		}
-		else {
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, action,
-					updateType == UpdateType.NEW_LIST ? "Updated List" : "Manual");
-		}
-	}
 
 	/**
 	 * Update instances configured for update on screen off.

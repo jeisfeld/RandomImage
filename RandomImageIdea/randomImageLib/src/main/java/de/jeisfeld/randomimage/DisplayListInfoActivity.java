@@ -34,7 +34,6 @@ import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 import static de.jeisfeld.randomimage.util.ListElement.Type.NESTED_LIST;
@@ -118,7 +117,6 @@ public class DisplayListInfoActivity extends BaseActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
 	}
 
 	/**

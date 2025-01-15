@@ -144,7 +144,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemClick(final ItemType itemType, final String name) {
 		// itemType is always list.
-		ConfigureImageListActivity.startActivity(this, name, "from Main Config");
+		ConfigureImageListActivity.startActivity(this, name);
 	}
 
 	@Override
@@ -367,7 +367,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 								}
 								else {
 									ImageRegistry.switchToImageList(name, creationStyle, true);
-									ConfigureImageListActivity.startActivity(MainConfigurationActivity.this, name, "new");
+									ConfigureImageListActivity.startActivity(MainConfigurationActivity.this, name);
 									fillListOfLists();
 								}
 							}

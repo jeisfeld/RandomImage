@@ -13,7 +13,6 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -98,7 +97,6 @@ public abstract class GenericWidgetConfigurationActivity extends StartActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
 	}
 
 	/**

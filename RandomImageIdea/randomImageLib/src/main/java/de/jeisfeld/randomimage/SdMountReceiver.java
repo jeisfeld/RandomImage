@@ -7,8 +7,6 @@ import android.content.Intent;
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.GenericImageWidget;
 import de.jeisfeld.randomimage.widgets.GenericWidget;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
@@ -34,12 +32,10 @@ public class SdMountReceiver extends BroadcastReceiver {
 		if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
 			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_device_shut_down, false);
 			triggerAllTimers();
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device_Change", "Boot completed");
 		}
 		if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
 			triggerAllTimers();
 			GenericWidget.updateAllInstances();
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Device_Change", "Package replaced");
 		}
 
 		// Update widgets after changes in SD card availability.

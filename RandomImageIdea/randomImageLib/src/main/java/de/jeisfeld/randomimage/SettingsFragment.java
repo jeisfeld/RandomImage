@@ -32,7 +32,6 @@ import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference;
 import de.jeisfeld.randomimage.view.DynamicMultiSelectListPreference.DynamicListPreferenceOnClickListener;
 import de.jeisfeld.randomimage.view.MultiDirectoryChooserDialogFragment;
@@ -119,7 +118,6 @@ public class SettingsFragment extends PreferenceFragment {
 	@Override
 	public final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(getActivity());
 	}
 
 	/**

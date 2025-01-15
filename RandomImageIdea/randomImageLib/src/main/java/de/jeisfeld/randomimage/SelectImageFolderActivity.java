@@ -173,7 +173,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		switch (itemType) {
 		case FOLDER:
-			DisplayImageDetailsActivity.startActivity(this, name, null, null, null, true, "Select Image Folder");
+			DisplayImageDetailsActivity.startActivity(this, name, null, null, null, true);
 			break;
 		default:
 			break;
@@ -190,7 +190,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				fillListOfFolders();
 				synchronized (mFillListThreads) {
 					mFillListThreads.remove(Thread.currentThread());
-					if (mFillListThreads.size() > 0) {
+					if (!mFillListThreads.isEmpty()) {
 						mFillListThreads.get(0).start();
 					}
 				}

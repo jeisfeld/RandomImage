@@ -19,7 +19,6 @@ import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -87,7 +86,6 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
 	}
 
 	@Override

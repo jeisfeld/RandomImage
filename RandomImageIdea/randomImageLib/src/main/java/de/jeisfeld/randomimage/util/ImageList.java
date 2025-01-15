@@ -24,7 +24,6 @@ import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
@@ -566,8 +565,6 @@ public abstract class ImageList implements RandomFileProvider {
 				}
 			}
 		}
-
-		TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load image list", "config file", System.currentTimeMillis() - timestamp);
 	}
 
 	/**

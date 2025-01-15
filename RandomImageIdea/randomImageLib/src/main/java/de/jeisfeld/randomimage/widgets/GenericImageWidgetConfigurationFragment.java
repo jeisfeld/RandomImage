@@ -20,7 +20,6 @@ import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericImageWidget.ButtonStyle;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
@@ -130,7 +129,6 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 	@Override
 	public final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(getActivity());
 	}
 
 	/**
@@ -143,7 +141,7 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 			@Override
 			public boolean onPreferenceClick(final Preference preference) {
 				ConfigureImageListActivity.startActivity(getActivity(),
-						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId), "from Image Widget Config");
+						PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_list_name, mAppWidgetId));
 				if (isReconfigureWidget()) {
 					getActivity().finish();
 				}

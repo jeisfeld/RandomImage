@@ -30,8 +30,6 @@ import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 import static de.jeisfeld.randomimage.util.ListElement.Type.FILE;
@@ -48,10 +46,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
-	/**
-	 * The resource key for the a tracking String.
-	 */
-	public static final String STRING_EXTRA_TRACKING = "de.jeisfeld.randomimage.TRACKING";
 
 	/**
 	 * Request code for getting images from gallery.
@@ -102,10 +96,9 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 *
 	 * @param listName     the image list which should be displayed first.
 	 * @param context      The context creating the intent.
-	 * @param trackingName A String indicating the starter of the activity.
 	 */
-	public static void startActivity(final Activity context, final String listName, final String trackingName) {
-		context.startActivity(createIntent(context, listName, trackingName));
+	public static void startActivity(final Activity context, final String listName) {
+		context.startActivity(createIntent(context, listName));
 	}
 
 	/**
@@ -113,16 +106,12 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 *
 	 * @param listName     the image list which should be displayed first.
 	 * @param context      The context creating the intent.
-	 * @param trackingName A String indicating the starter of the activity.
 	 * @return the intent.
 	 */
-	public static Intent createIntent(final Context context, final String listName, final String trackingName) {
+	public static Intent createIntent(final Context context, final String listName) {
 		Intent intent = new Intent(context, ConfigureImageListActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
-		}
-		if (trackingName != null) {
-			intent.putExtra(STRING_EXTRA_TRACKING, trackingName);
 		}
 		return intent;
 	}
@@ -140,11 +129,6 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		}
 		mTextViewListName = findViewById(R.id.textViewTitle);
 		mTextViewMessage = findViewById(R.id.textViewMessage);
-
-		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
-		if (trackingName != null) {
-			TrackingUtil.sendEvent(Category.EVENT_SETUP, "Configure_List", trackingName);
-		}
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
@@ -200,7 +184,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		case FOLDER:
 		case FILE:
 		default:
-			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, null, true, "Configure image list");
+			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, null, true);
 			break;
 		}
 	}

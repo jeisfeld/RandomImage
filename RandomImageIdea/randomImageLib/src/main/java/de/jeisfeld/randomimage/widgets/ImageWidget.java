@@ -56,8 +56,6 @@ public class ImageWidget extends GenericImageWidget {
 				ImageRegistry.switchToImageList(listName, CreationStyle.NONE, false);
 			}
 
-			trackImageChange("Update_Widget_Image", updateType);
-
 			final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 
 			if (imageList == null) {

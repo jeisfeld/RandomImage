@@ -13,7 +13,6 @@ import java.util.Random;
 import java.util.Set;
 
 import de.jeisfeld.randomimage.Application;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 
 import static de.jeisfeld.randomimage.util.ListElement.DUMMY_NESTED_FOLDER;
 import static de.jeisfeld.randomimage.util.ListElement.Type.FILE;
@@ -529,12 +528,6 @@ public final class StandardImageList extends ImageList {
 			mNestedLists = nestedListMap;
 
 			calculateWeights();
-
-			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "All_images_in_list", null, (long) mAllImageFilesInList.size());
-			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Images_in_list", null, (long) fileNames.size());
-			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Folders_in_list", null, (long) folders.size());
-			TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Nested_lists_in_list", null, (long) nestedListMap.size());
-			TrackingUtil.sendTiming(Category.TIME_BACKGROUND, "Load_image_list", "all images", System.currentTimeMillis() - timestamp);
 		};
 	}
 }

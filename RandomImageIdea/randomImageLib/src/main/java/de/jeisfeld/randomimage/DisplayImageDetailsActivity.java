@@ -39,8 +39,6 @@ import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.StandardImageList;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimage.widgets.GenericWidgetConfigurationActivity;
 import de.jeisfeld.randomimage.widgets.ImageWidget;
@@ -82,10 +80,6 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 * The resource key for the flat indicating if it should be prevented to trigger the ConfigureImageListActivity.
 	 */
 	private static final String STRING_EXTRA_PREVENT_DISPLAY_ALL = "de.jeisfeld.randomimage.PREVENT_DISPLAY_ALL";
-	/**
-	 * The resource key for the a tracking String.
-	 */
-	public static final String STRING_EXTRA_TRACKING = "de.jeisfeld.randomimage.TRACKING";
 	/**
 	 * The resource key for the flag if the parent activity should be finished.
 	 */
@@ -145,17 +139,13 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	 * @param notificationId    The notification from which the image was displayed.
 	 * @param appWidgetId       The widget from which the image was displayed.
 	 * @param preventDisplayAll flag indicating if the activity should prevent to trigger ConfigureImageListActivity.
-	 * @param trackingName      A String indicating the starter of the activity.
 	 */
 	public static void startActivity(final Activity activity, final String fileName, final String listName, final Integer notificationId,
-									 final Integer appWidgetId, final boolean preventDisplayAll, final String trackingName) {
+									 final Integer appWidgetId, final boolean preventDisplayAll) {
 		Intent intent = new Intent(activity, DisplayImageDetailsActivity.class);
 		intent.putExtra(STRING_EXTRA_FILENAME, fileName);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
-		}
-		if (trackingName != null) {
-			intent.putExtra(STRING_EXTRA_TRACKING, trackingName);
 		}
 		if (notificationId != null) {
 			intent.putExtra(STRING_EXTRA_NOTIFICATION_ID, notificationId);
@@ -194,11 +184,6 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 		}
 		else {
 			mFileType = FileType.UNKNOWN;
-		}
-
-		String trackingName = getIntent().getStringExtra(STRING_EXTRA_TRACKING);
-		if (trackingName != null) {
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Display_Image_Details", trackingName);
 		}
 
 		// Enable icon
@@ -261,7 +246,6 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
 	}
 
 	/**
@@ -411,7 +395,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			Button btnEditList = findViewById(R.id.buttonEditList);
 			btnEditList.setVisibility(View.VISIBLE);
 			btnEditList.setOnClickListener(v -> {
-				ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName, "from Image Details");
+				ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
 				returnResult(false, false);
 			});
 		}

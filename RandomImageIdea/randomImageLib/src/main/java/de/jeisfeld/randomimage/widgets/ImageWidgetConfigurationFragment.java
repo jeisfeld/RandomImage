@@ -7,8 +7,6 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.GenericWidget.UpdateType;
 import de.jeisfeld.randomimagelib.R;
@@ -20,7 +18,6 @@ public class ImageWidgetConfigurationFragment extends GenericImageWidgetConfigur
 	@Override
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		TrackingUtil.sendEvent(Category.EVENT_SETUP, "Widget_Config", "ImageWidget");
 
 		// Do not offer cyclic change and list view in ImageWidget.
 		PreferenceGroup groupAppearance = (PreferenceGroup) findPreference(getString(R.string.key_dummy_pref_group_appearance));

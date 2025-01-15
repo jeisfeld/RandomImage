@@ -43,8 +43,6 @@ import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimagelib.R;
 
 /**
@@ -185,7 +183,7 @@ public final class NotificationUtil {
 
 		if (notificationType == NotificationType.MISSING_FILES || notificationType == NotificationType.UPDATED_LIST
 				|| notificationType == NotificationType.ERROR_LOADING_LIST || notificationType == NotificationType.ERROR_SAVING_LIST) {
-			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag, "NT." + notificationType);
+			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag);
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			int uniqueId = getUniqueId(notificationTag, notificationType);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent,
@@ -280,11 +278,9 @@ public final class NotificationUtil {
 					|| notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY) {
 				context.startActivity(DisplayRandomImageActivity.createIntent(context, listName, fileName, true, null,
 						notificationId));
-				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Fullscreen");
 			}
 			else {
 				context.startActivity(DisplayImagePopupActivity.createIntent(context, listName, fileName, notificationId));
-				TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Popup");
 			}
 
 			sendNotificationBroadcast(context, listName, fileName, notificationStyle, isVibrate);
@@ -366,7 +362,6 @@ public final class NotificationUtil {
 				Notification publicNotification = new Builder(context).setContent(remoteViews).build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Special");
 		}
 		else {
 			Bitmap iconBitmap = ImageUtil.getBitmapOfExactSize(fileName,
@@ -380,7 +375,6 @@ public final class NotificationUtil {
 						.setShowWhen(false).setContentTitle(title).build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, IMAGE_NOTIFICATION, "Standard");
 		}
 
 		String notificationTag = Integer.toString(notificationId);

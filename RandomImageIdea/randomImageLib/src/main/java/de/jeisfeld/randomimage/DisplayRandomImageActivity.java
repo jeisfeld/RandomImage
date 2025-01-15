@@ -59,8 +59,6 @@ import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.RandomFileListProvider;
 import de.jeisfeld.randomimage.util.RandomFileProvider;
 import de.jeisfeld.randomimage.util.SystemUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil.Category;
 import de.jeisfeld.randomimage.view.PinchImageView;
 import de.jeisfeld.randomimage.view.PinchImageView.ScaleType;
 import de.jeisfeld.randomimage.view.PinchImageView.UpDownListener;
@@ -270,18 +268,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private RandomFileListProvider mRandomFileProvider = null;
 
 	/**
-	 * Duration of usage of the screen.
-	 */
-	private long mTrackingDuration = 0;
-	/**
-	 * Timestamp for measuring the tracking duration.
-	 */
-	private long mTrackingTimestamp = 0;
-	/**
-	 * Number of images viewed.
-	 */
-	private long mTrackingImages = 0;
-	/**
 	 * Indicator if the activity was recreated after saving instance state.
 	 */
 	private boolean mRecreatedAfterSavingInstanceState = false;
@@ -351,7 +337,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public static void finishActivityForNotification(final Context context, final int notificationId) {
 		DisplayRandomImageActivity activity = NOTIFICATION_MAP.get(notificationId);
 		if (activity != null) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto_Close", "Display Image from Notification");
 			activity.finish();
 			NOTIFICATION_MAP.delete(notificationId);
 		}
@@ -366,7 +351,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public static void finishActivityForWidget(final Context context, final int appWidgetId) {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
-			TrackingUtil.sendEvent(Category.EVENT_BACKGROUND, "Auto_Close", "Display Image from Widget");
 			if (MiniWidget.hasWidgetOfId(appWidgetId)) {
 				PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
 			}
@@ -425,8 +409,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mPreviousCacheIndex = savedInstanceState.getInt("previousCacheIndex");
 			mCurrentCacheIndex = savedInstanceState.getInt("currentCacheIndex");
 			mNextCacheIndex = savedInstanceState.getInt("nextCacheIndex");
-			mTrackingTimestamp = savedInstanceState.getLong("trackingTimestamp");
-			mTrackingImages = savedInstanceState.getLong("trackingImages");
 			mIsGoingBackward = savedInstanceState.getBoolean("isGoingBackward");
 			mRandomFileProvider = savedInstanceState.getParcelable("randomFileProvider");
 			mHideNavigationBar = savedInstanceState.getBoolean("hideNavigationBar");
@@ -439,9 +421,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 		if (mCurrentFileName == null) {
 			mCurrentFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
-			if (mCurrentFileName != null) {
-				mTrackingImages++;
-			}
 		}
 
 		mScaleType = ScaleType.fromResourceScaleType(
@@ -657,8 +636,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 		if (mPreventScreenLock) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-
-		sendInitialTrackingEvent(savedInstanceState != null, folderName != null);
 	}
 
 
@@ -761,42 +738,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 		}
 	}
 
-	/**
-	 * Send the initial event to Google analytics.
-	 *
-	 * @param hasSavedInstanceState parameter indicating if there was a saved instance state.
-	 * @param hasFolderName         parameter indicating if there was a folder name.
-	 */
-	private void sendInitialTrackingEvent(final boolean hasSavedInstanceState, final boolean hasFolderName) {
-		if (hasSavedInstanceState) {
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, "Orientation_Change", "Display Images");
-		}
-		else {
-			String trackingLabel;
-			if (mNotificationId != null) {
-				trackingLabel = "Notification";
-			}
-			else if (mAppWidgetId != null) {
-				if (getIntent().getStringExtra(STRING_EXTRA_FILENAME) != null) {
-					trackingLabel = "Image Widget";
-				}
-				else {
-					trackingLabel = "Mini Widget";
-				}
-			}
-			else if (hasFolderName) {
-				trackingLabel = "Folder";
-			}
-			else if (getIntent().getStringExtra(STRING_EXTRA_FILENAME) != null) {
-				trackingLabel = "List Configuration";
-			}
-			else {
-				trackingLabel = "Launcher";
-			}
-			TrackingUtil.sendEvent(Category.EVENT_VIEW, "View_Images", trackingLabel);
-		}
-	}
-
 	@Override
 	protected final void onDestroy() {
 		super.onDestroy();
@@ -816,9 +757,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			if (!mIsLocked) {
 				PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, System.currentTimeMillis());
 			}
-		}
-		if (!mSavingInstanceState) {
-			sendStatistics();
 		}
 
 		try {
@@ -845,14 +783,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(this);
-		if (!mRecreatedAfterSavingInstanceState) {
-			if (mTrackingDuration > 0) {
-				sendStatistics();
-				TrackingUtil.sendEvent(Category.EVENT_VIEW, "View_Images", "Resuming");
-			}
-			mTrackingTimestamp = System.currentTimeMillis();
-		}
 		mSavingInstanceState = false;
 		mRecreatedAfterSavingInstanceState = false;
 		setNavigationBarFlags();
@@ -863,19 +793,8 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	protected final void onPause() {
 		super.onPause();
-		mTrackingDuration = System.currentTimeMillis() - mTrackingTimestamp;
 		mChangeByTimeoutHandler.pause();
 		unregisterSPenListener();
-	}
-
-	/**
-	 * Send the tracking statistics.
-	 */
-	private void sendStatistics() {
-		TrackingUtil.sendTiming(Category.TIME_USAGE, "View_Images", null, mTrackingDuration);
-		TrackingUtil.sendEvent(Category.COUNTER_IMAGES, "Viewed_Images", null, mTrackingImages);
-		mTrackingImages = 0;
-		mTrackingDuration = 0;
 	}
 
 	/**
@@ -986,8 +905,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 						mChangeByTimeoutHandler.stop();
 					}
 					mChangeByTimeoutHandler.start();
-
-					mTrackingImages++;
 
 					if (mDoPreload) {
 						if (mIsGoingBackward) {
@@ -1197,11 +1114,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 							mChangeByTimeoutHandler.stop();
 							mChangeByTimeoutHandler.start();
 
-							TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 						}
 						else {
 							displayRandomImage(true);
-							TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
 						}
 
 						if (mPreviousImageView != null) {
@@ -1240,11 +1155,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 
 				if (newFlingDirection.isOpposite(mLastFlingDirection) && mPreviousFileName != null && mFlipType != FlipType.NEW_IMAGE) {
 					displayLastImage();
-					TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "Back");
 				}
 				else {
 					displayRandomImage(true);
-					TrackingUtil.sendEvent(Category.EVENT_VIEW, "Fling", "New");
 				}
 
 				if (mPreviousImageView != null) {
@@ -1259,7 +1172,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			@Override
 			public void onLongPress(final MotionEvent e) {
 				DisplayImageDetailsActivity.startActivity(DisplayRandomImageActivity.this, mCurrentFileName, mListName,
-						mNotificationId, mAppWidgetId, mPreventDisplayAll, "Display random image");
+						mNotificationId, mAppWidgetId, mPreventDisplayAll);
 			}
 		});
 	}
@@ -1281,8 +1194,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			outState.putInt("previousCacheIndex", mPreviousCacheIndex);
 			outState.putInt("currentCacheIndex", mCurrentCacheIndex);
 			outState.putInt("nextCacheIndex", mNextCacheIndex);
-			outState.putLong("trackingImages", mTrackingImages);
-			outState.putLong("trackingTimestamp", mTrackingTimestamp);
 			outState.putBoolean("isGoingBackward", mIsGoingBackward);
 			outState.putParcelable("randomFileProvider", mRandomFileProvider);
 			outState.putBoolean("hideNavigationBar", mHideNavigationBar);
@@ -1293,7 +1204,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	@Override
 	public final boolean onPrepareOptionsMenu(final Menu menu) {
 		DisplayImageDetailsActivity.startActivity(this, mCurrentFileName, mListName,
-				mNotificationId, mAppWidgetId, mPreventDisplayAll, "Display Random Image 2");
+				mNotificationId, mAppWidgetId, mPreventDisplayAll);
 		return true;
 	}
 

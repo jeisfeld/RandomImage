@@ -22,7 +22,6 @@ import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.Sele
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
-import de.jeisfeld.randomimage.util.TrackingUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
@@ -95,7 +94,6 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	@Override
 	public final void onResume() {
 		super.onResume();
-		TrackingUtil.sendScreen(getActivity());
 	}
 
 	/**
@@ -106,8 +104,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 
 		editListPreference.setOnPreferenceClickListener(preference -> {
 			ConfigureImageListActivity.startActivity(getActivity(),
-					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId),
-					"from Notification Config");
+					PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, mNotificationId));
 			return true;
 		});
 	}
@@ -250,7 +247,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				ImageRegistry.getCurrentImageListRefreshed(true);
 				String listName = ImageRegistry.getCurrentListName();
 
-				ConfigureImageListActivity.startActivity(getActivity(), listName, "empty/Notification");
+				ConfigureImageListActivity.startActivity(getActivity(), listName);
 				getActivity().finish();
 			}
 			else if (listNames.size() == 1) {
