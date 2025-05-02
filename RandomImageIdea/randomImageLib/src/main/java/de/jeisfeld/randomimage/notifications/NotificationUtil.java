@@ -263,7 +263,7 @@ public final class NotificationUtil {
 		boolean isVibrate = PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_vibration,
 				notificationId, false);
 		if (isActivityNotificationStyle(notificationStyle)) {
-			if (SystemUtil.isUsageStatsAvailable() && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			if (SystemUtil.isUsageStatsAvailable()) {
 				String lastPackageUsed = SystemUtil.getLastPackageUsed();
 				Set<String> packages = PreferenceUtil.getSharedPreferenceStringSet(R.string.key_pref_apps_without_popup_notifications);
 				if (packages.contains(lastPackageUsed)) {
@@ -320,17 +320,13 @@ public final class NotificationUtil {
 		notificationBuilder.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
 				.setAutoCancel(true);
 
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-			notificationBuilder.setShowWhen(false);
-		}
+		notificationBuilder.setShowWhen(false);
 
-		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-			notificationBuilder.setCategory(Notification.CATEGORY_ALARM);
-		}
+		notificationBuilder.setCategory(Notification.CATEGORY_ALARM);
 
 		Bitmap bitmap = ImageUtil.getImageBitmap(fileName, MediaStoreUtil.MINI_THUMB_SIZE);
 		String title = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, notificationId);
-		if (title == null || title.length() == 0) {
+		if (title == null || title.isEmpty()) {
 			title = listName;
 		}
 
@@ -358,7 +354,7 @@ public final class NotificationUtil {
 						.build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
-			else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			else {
 				Notification publicNotification = new Builder(context).setContent(remoteViews).build();
 				notificationBuilder.setPublicVersion(publicNotification);
 			}
@@ -369,12 +365,10 @@ public final class NotificationUtil {
 
 			notificationBuilder.setContentTitle(title).setLargeIcon(iconBitmap).setStyle(new BigPictureStyle().bigPicture(bitmap));
 
-			if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-				Notification publicNotification = new Builder(context)
-						.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
-						.setShowWhen(false).setContentTitle(title).build();
-				notificationBuilder.setPublicVersion(publicNotification);
-			}
+			Notification publicNotification = new Builder(context)
+					.setSmallIcon(coloredIcon ? R.drawable.ic_launcher : R.drawable.ic_notification_white)
+					.setShowWhen(false).setContentTitle(title).build();
+			notificationBuilder.setPublicVersion(publicNotification);
 		}
 
 		String notificationTag = Integer.toString(notificationId);
@@ -587,7 +581,7 @@ public final class NotificationUtil {
 
 		Set<String> oldMissingMounts = mMountingIssues.get(listName);
 
-		if (notFoundFiles.size() > 0) {
+		if (!notFoundFiles.isEmpty()) {
 			int notFoundFilesCount = 0;
 			Set<String> missingMounts = new HashSet<>();
 			for (String file : notFoundFiles) {
@@ -608,7 +602,7 @@ public final class NotificationUtil {
 						notFoundFilesCount == 1 ? R.string.toast_failed_to_load_files_single : R.string.toast_failed_to_load_files,
 						listName, notFoundFilesCount);
 			}
-			if (missingMounts.size() > 0) {
+			if (!missingMounts.isEmpty()) {
 				mMountingIssues.put(listName, missingMounts);
 			}
 		}
@@ -918,7 +912,7 @@ public final class NotificationUtil {
 		 */
 		private static void updateSets(final Set<String> addedItems, final Set<String> removedItems, final List<String> updatedItems,
 									   final boolean isRemove) {
-			if (updatedItems == null || updatedItems.size() == 0) {
+			if (updatedItems == null || updatedItems.isEmpty()) {
 				return;
 			}
 			Set<String> updatedItemsClone = new HashSet<>(updatedItems);
