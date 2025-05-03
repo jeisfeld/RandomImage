@@ -1,16 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textViewMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/info_message_margin"
         android:layout_marginTop="@dimen/info_message_margin"
+        android:layout_marginBottom="@dimen/info_message_margin"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/layoutButtons"
@@ -25,8 +26,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/button_widgets"
-            android:textAppearance="?android:attr/textAppearanceButton"
-            />
+            android:textAppearance="?android:attr/textAppearanceButton" />
 
         <Button
             android:id="@+id/buttonNotifications"
@@ -35,8 +35,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/button_notifications"
-            android:textAppearance="?android:attr/textAppearanceButton"
-            />
+            android:textAppearance="?android:attr/textAppearanceButton" />
     </LinearLayout>
 
     <TextView
@@ -44,10 +43,9 @@
         style="@style/TextStyleGridHeading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/info_message_margin"
         android:layout_marginTop="@dimen/info_message_margin"
-        android:text="@string/text_info_image_lists"
-        />
+        android:layout_marginBottom="@dimen/info_message_margin"
+        android:text="@string/text_info_image_lists" />
 
     <GridView
         android:id="@+id/gridViewDisplayImages"
@@ -58,6 +56,6 @@
         android:horizontalSpacing="0dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="0dp"/>
+        android:verticalSpacing="0dp" />
 
 </LinearLayout>

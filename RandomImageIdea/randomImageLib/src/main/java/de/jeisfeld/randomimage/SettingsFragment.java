@@ -18,6 +18,9 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -113,6 +116,24 @@ public class SettingsFragment extends PreferenceFragment {
 			PreferenceGroup groupOther = (PreferenceGroup) findPreference(getString(R.string.key_pref_category_other));
 			groupOther.removePreference(findPreference(getString(R.string.key_pref_preferred_image_folders)));
 		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View root = super.onCreateView(inflater, container, savedInstanceState);
+
+		if (root != null) {
+			root.setOnApplyWindowInsetsListener((v, insets) -> {
+				v.setPadding(insets.getSystemWindowInsetLeft(),
+						insets.getSystemWindowInsetTop(),
+						insets.getSystemWindowInsetRight(),
+						insets.getSystemWindowInsetBottom());
+				return insets.consumeSystemWindowInsets();
+			});
+			root.setFitsSystemWindows(true);
+		}
+
+		return root;
 	}
 
 	@Override

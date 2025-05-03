@@ -23,6 +23,8 @@ public class NotificationConfigurationActivity extends StartActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().getDecorView().setFitsSystemWindows(true);
+
 		setResult(RESULT_CANCELED);
 
 		// Retrieve the notification id.

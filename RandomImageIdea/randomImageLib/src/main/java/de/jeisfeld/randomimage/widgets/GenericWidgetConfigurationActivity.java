@@ -36,6 +36,7 @@ public abstract class GenericWidgetConfigurationActivity extends StartActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().getDecorView().setFitsSystemWindows(true);
 
 		// Set the result to CANCELED. This will cause the widget host to cancel
 		// out of the widget placement if they press the back button.

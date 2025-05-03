@@ -39,6 +39,7 @@ public class SettingsActivity extends BaseActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().getDecorView().setFitsSystemWindows(true);
 
 		// Display the SettingsFragment as the main content.
 

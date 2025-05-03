@@ -58,6 +58,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		mActivityMap.put(hashCode(), this);
 
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

@@ -111,6 +111,15 @@ public abstract class GenericImageWidgetConfigurationFragment extends Preference
 
 		View buttonLayout = LayoutInflater.from(getActivity()).inflate(R.layout.layout_configure_widget_buttons, null);
 		if (preferenceLayout != null) {
+			preferenceLayout.setOnApplyWindowInsetsListener((v, insets) -> {
+				v.setPadding(insets.getSystemWindowInsetLeft(),
+						insets.getSystemWindowInsetTop(),
+						insets.getSystemWindowInsetRight(),
+						insets.getSystemWindowInsetBottom());
+				return insets.consumeSystemWindowInsets();
+			});
+			preferenceLayout.setFitsSystemWindows(true);
+
 			preferenceLayout.addView(buttonLayout);
 
 			buttonLayout.findViewById(R.id.buttonFinishWidgetConfiguration).setOnClickListener(v -> getActivity().finish());

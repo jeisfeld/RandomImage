@@ -7,6 +7,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 
@@ -23,6 +24,16 @@ public abstract class BasePreferenceActivity extends PreferenceActivity {
 	@Override
 	protected void onCreate(@Nullable final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		View root = getWindow().getDecorView().findViewById(android.R.id.content);
+		root.setOnApplyWindowInsetsListener((v, insets) -> {
+			v.setPadding(insets.getSystemWindowInsetLeft(),
+					insets.getSystemWindowInsetTop(),
+					insets.getSystemWindowInsetRight(),
+					insets.getSystemWindowInsetBottom());
+			return insets.consumeSystemWindowInsets();
+		});
+		root.setFitsSystemWindows(true);
 
 		// Update title
 		try {

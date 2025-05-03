@@ -10,6 +10,9 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,6 +92,24 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			((PreferenceGroup) findPreference(getString(R.string.key_dummy_pref_group_appearance)))
 					.removePreference(findPreference(getString(R.string.key_notification_vibration)));
 		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View root = super.onCreateView(inflater, container, savedInstanceState);
+
+		if (root != null) {
+			root.setOnApplyWindowInsetsListener((v, insets) -> {
+				v.setPadding(insets.getSystemWindowInsetLeft(),
+						insets.getSystemWindowInsetTop(),
+						insets.getSystemWindowInsetRight(),
+						insets.getSystemWindowInsetBottom());
+				return insets.consumeSystemWindowInsets();
+			});
+			root.setFitsSystemWindows(true);
+		}
+
+		return root;
 	}
 
 	@Override
