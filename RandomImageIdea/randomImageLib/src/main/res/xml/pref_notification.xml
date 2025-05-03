@@ -28,20 +28,14 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_timer_variance"/>
-        <ListPreference
-            android:entries="@array/notification_daily_start_time_names"
-            android:entryValues="@array/notification_daily_start_time_values"
+        <de.jeisfeld.randomimage.view.TimePreference
             android:key="@string/key_notification_daily_start_time"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_notification_daily_start_time"/>
-        <ListPreference
-            android:entries="@array/notification_daily_end_time_names"
-            android:entryValues="@array/notification_daily_end_time_values"
+            android:title="@string/pref_title_notification_daily_start_time"
+            android:defaultValue="00:00" />
+        <de.jeisfeld.randomimage.view.TimePreference
             android:key="@string/key_notification_daily_end_time"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_notification_daily_end_time"/>
+            android:title="@string/pref_title_notification_daily_end_time"
+            android:defaultValue="00:00" />
         <de.jeisfeld.randomimage.view.TimeSelectorPreference
             android:key="@string/key_notification_duration"
             android:title="@string/pref_title_notification_duration"

@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage.util;
 
 import android.content.Context;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import de.jeisfeld.randomimage.Application;
@@ -77,6 +78,9 @@ public final class MigrationUtil {
 		case 39: // MAGIC_NUMBER
 			doMigrationToVersion39();
 			break;
+		case 67: // MAGIC_NUMBER
+			doMigrationToVersion67();
+			break;
 		default:
 			break;
 		}
@@ -112,7 +116,7 @@ public final class MigrationUtil {
 	private static void doMigrationToVersion20() {
 		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
 			int duration = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration, notificationId, 0);
-			long newDuration = duration * 60; // MAGIC_NUMBER
+			long newDuration = duration * 60L; // MAGIC_NUMBER
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_notification_duration, notificationId, newDuration);
 
 			int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_timer_variance, notificationId, 0);
@@ -193,6 +197,25 @@ public final class MigrationUtil {
 
 		for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
 			PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_detail_change_timeout, appWidgetId, 0);
+		}
+	}
+
+	/**
+	 * Do the migration steps for migration into app version 67.
+	 */
+	private static void doMigrationToVersion67() {
+		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+			int oldStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, notificationId, 0);
+			int oldEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, notificationId, 0);
+			if (oldEndTime >= 24) {
+				oldEndTime -= 24;
+			}
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_start_time, notificationId);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_daily_end_time, notificationId);
+			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_daily_start_time, notificationId,
+					String.format(Locale.getDefault(), "%02d:%02d", oldStartTime, 0));
+			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_daily_end_time, notificationId,
+					String.format(Locale.getDefault(), "%02d:%02d", oldEndTime, 0));
 		}
 	}
 }

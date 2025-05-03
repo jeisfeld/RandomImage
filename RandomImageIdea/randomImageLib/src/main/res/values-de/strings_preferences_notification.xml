@@ -41,24 +41,6 @@
         <item>geringe Variation</item>
         <item>große Variation</item>
     </string-array>
-    <string-array name="notification_daily_start_time_names">
-        <item>0:00</item>
-        <item>5:00</item>
-        <item>6:00</item>
-        <item>7:00</item>
-        <item>8:00</item>
-        <item>9:00</item>
-        <item>10:00</item>
-    </string-array>
-    <string-array name="notification_daily_end_time_names">
-        <item>20:00</item>
-        <item>21:00</item>
-        <item>22:00</item>
-        <item>23:00</item>
-        <item>0:00</item>
-        <item>1:00</item>
-        <item>2:00</item>
-    </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>
         <item>Spezial</item>

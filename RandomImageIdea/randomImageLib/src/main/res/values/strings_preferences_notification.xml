@@ -47,9 +47,9 @@
     <string name="pref_title_notification_timer_variance">Notification variability</string>
     <string name="pref_default_notification_timer_variance" translatable="false">1</string>
     <string name="pref_title_notification_daily_start_time">Start hour for notifications</string>
-    <string name="pref_default_notification_daily_start_time" translatable="false">0</string>
+    <string name="pref_default_notification_daily_start_time" translatable="false">00:00</string>
     <string name="pref_title_notification_daily_end_time">End hour for notifications</string>
-    <string name="pref_default_notification_daily_end_time" translatable="false">24</string>
+    <string name="pref_default_notification_daily_end_time" translatable="false">00:00</string>
     <string name="pref_title_notification_duration">Duration</string>
     <string name="pref_indefinite_value_notification_duration">unlimited</string>
     <string name="pref_default_notification_duration" translatable="false">0</string>
@@ -86,42 +86,6 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </string-array>
-    <string-array name="notification_daily_start_time_names">
-        <item>12 am</item>
-        <item>5 am</item>
-        <item>6 am</item>
-        <item>7 am</item>
-        <item>8 am</item>
-        <item>9 am</item>
-        <item>10 am</item>
-    </string-array>
-    <string-array name="notification_daily_start_time_values" translatable="false">
-        <item>0</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-    </string-array>
-    <string-array name="notification_daily_end_time_names">
-        <item>8 pm</item>
-        <item>9 pm</item>
-        <item>10 pm</item>
-        <item>11 pm</item>
-        <item>12 am</item>
-        <item>1 am</item>
-        <item>2 am</item>
-    </string-array>
-    <string-array name="notification_daily_end_time_values" translatable="false">
-        <item>20</item>
-        <item>21</item>
-        <item>22</item>
-        <item>23</item>
-        <item>24</item>
-        <item>25</item>
-        <item>26</item>
     </string-array>
     <string-array name="notification_style_names">
         <item>Standard</item>

@@ -80,6 +80,15 @@ public class MiniWidgetConfigurationFragment extends PreferenceFragment {
 		View buttonLayout = LayoutInflater.from(getActivity()).inflate(
 				mIsShortcut ? R.layout.layout_configure_shortcut_buttons : R.layout.layout_configure_widget_buttons, null);
 		if (preferenceLayout != null) {
+			preferenceLayout.setOnApplyWindowInsetsListener((v, insets) -> {
+				v.setPadding(insets.getSystemWindowInsetLeft(),
+						insets.getSystemWindowInsetTop(),
+						insets.getSystemWindowInsetRight(),
+						insets.getSystemWindowInsetBottom());
+				return insets.consumeSystemWindowInsets();
+			});
+			preferenceLayout.setFitsSystemWindows(true);
+
 			preferenceLayout.addView(buttonLayout);
 
 			buttonLayout.findViewById(R.id.buttonFinishWidgetConfiguration).setOnClickListener(v -> getActivity().finish());

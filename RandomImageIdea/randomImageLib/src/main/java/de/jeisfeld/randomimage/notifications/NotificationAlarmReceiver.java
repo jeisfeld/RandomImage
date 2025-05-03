@@ -30,17 +30,13 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 */
 	private static final int ALARM_WAIT_SECONDS = 60;
 	/**
-	 * The number of hours per day.
-	 */
-	private static final int HOURS_PER_DAY = (int) TimeUnit.DAYS.toHours(1);
-	/**
 	 * The number of seconds per day.
 	 */
 	private static final int SECONDS_PER_DAY = (int) TimeUnit.DAYS.toSeconds(1);
 	/**
 	 * The threshold above which "number of days" are counted rather than "number of seconds".
 	 */
-	private static final int DAY_THRESHOLD = (int) TimeUnit.HOURS.toSeconds(6);
+	private static final int DAY_THRESHOLD = (int) TimeUnit.HOURS.toSeconds(12);
 	/**
 	 * Time (in milliseconds) after which timers are considered as outdated.
 	 */
@@ -93,14 +89,16 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 			return;
 		}
 
-		int dailyStartTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_start_time, notificationId, -1);
-		int dailyEndTime = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_daily_end_time, notificationId, -1);
-
-		double expectedDaysUntilAlarm = (double) frequency / SECONDS_PER_DAY;
-		if (frequency < DAY_THRESHOLD) {
-			// refer to hours rather than days if we are below six hours
-			expectedDaysUntilAlarm *= ((double) HOURS_PER_DAY) / (dailyEndTime - dailyStartTime);
+		String dailyStartTimeString = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_daily_start_time, notificationId);
+		int dailyStartTime = timeStringToSeconds(dailyStartTimeString);
+		String dailyEndTimeString = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_daily_end_time, notificationId);
+		int dailyEndTime = timeStringToSeconds(dailyEndTimeString);
+		int dailyDuration = dailyEndTime - dailyStartTime;
+		if (dailyDuration <= 0) {
+			dailyDuration = dailyDuration + 86400;
 		}
+
+		double expectedDaysUntilAlarm = (double) frequency / (frequency < DAY_THRESHOLD ? dailyDuration : SECONDS_PER_DAY);
 
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, false, true);
 		Random random = new Random();
@@ -155,18 +153,15 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 
 		// Determine how much of "notification time" is already elapsed today.
 		Calendar currentTimeCalendar = Calendar.getInstance();
-		Calendar startOfDayCalendar = Calendar.getInstance();
-		startOfDayCalendar.setTimeInMillis(currentTimeCalendar.getTimeInMillis());
-		startOfDayCalendar.set(Calendar.HOUR_OF_DAY, dailyStartTime);
-		startOfDayCalendar.set(Calendar.MINUTE, 0);
-		startOfDayCalendar.set(Calendar.SECOND, 0);
+		int secondsSinceMidnight = currentTimeCalendar.get(Calendar.HOUR_OF_DAY) * 3600 + currentTimeCalendar.get(Calendar.MINUTE) * 60 + currentTimeCalendar.get(Calendar.SECOND);
+		Calendar startOfDayCalendar = getCalendarForToday(dailyStartTimeString);
 
-		if (currentTimeCalendar.get(Calendar.HOUR_OF_DAY) + HOURS_PER_DAY < dailyEndTime) {
+		if (dailyStartTime > dailyEndTime && dailyEndTime > secondsSinceMidnight) {
 			// after midnight. Therefore, the reference day is the previous day.
 			startOfDayCalendar.add(Calendar.DATE, -1);
 		}
 
-		double usableMillisecondsPerDay = TimeUnit.HOURS.toMillis(dailyEndTime - dailyStartTime);
+		double usableMillisecondsPerDay = TimeUnit.SECONDS.toMillis(dailyDuration);
 		// quota of the available time used today
 		double usedTimeToday = ((double) currentTimeCalendar.getTimeInMillis() - startOfDayCalendar.getTimeInMillis()) / usableMillisecondsPerDay;
 
@@ -206,6 +201,50 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 		reEnableAlarmsOnBoot(context);
 	}
 
+	/**
+	 * Convert time String into number of seconds of the day.
+	 *
+	 * @param time The time String in format hh:mm
+	 * @return The number of seconds of the day.
+	 */
+	private static int timeStringToSeconds(String time) {
+		if (time == null) {
+			return 0;
+		}
+		try {
+			String[] parts = time.split(":");
+			int hour = Integer.parseInt(parts[0]);
+			int minute = Integer.parseInt(parts[1]);
+			return hour * 3600 + minute * 60;
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
+
+	/**
+	 * Get a calendar that represents a given time on current date
+	 *
+	 * @param time The time String in format hh:mm
+	 * @return The calendar.
+	 */
+	private static Calendar getCalendarForToday(String time) {
+		Calendar calendar = Calendar.getInstance();
+		try {
+			String[] parts = time.split(":");
+			int hour = Integer.parseInt(parts[0]);
+			int minute = Integer.parseInt(parts[1]);
+
+			calendar.set(Calendar.HOUR_OF_DAY, hour);
+			calendar.set(Calendar.MINUTE, minute);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+		}
+		catch (Exception e) {
+			// ignore
+		}
+		return calendar;
+	}
 
 	/**
 	 * Sets an alarm that runs at the given interval in order to cancel a notification. When the alarm fires, the app broadcasts an
