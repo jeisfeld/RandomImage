@@ -17,6 +17,7 @@
     <string name="key_notification_duration" translatable="false">notification_duration</string>
     <string name="key_notification_duration_2" translatable="false">notification_duration_2</string>
     <string name="key_notification_duration_variance" translatable="false">notification_duration_variance</string>
+    <string name="key_notification_duration_variance_2" translatable="false">notification_duration_variance_2</string>
     <string name="key_notification_style" translatable="false">notification_style</string>
     <string name="key_notification_led_color" translatable="false">notification_led_color</string>
     <string name="key_notification_vibration" translatable="false">notification_vibration</string>
@@ -59,6 +60,8 @@
     <string name="pref_default_notification_duration_2" translatable="false">0</string>
     <string name="pref_title_notification_duration_variance">Duration variability</string>
     <string name="pref_default_notification_duration_variance" translatable="false">0</string>
+    <string name="pref_title_notification_duration_variance_2">Duration variability after opening</string>
+    <string name="pref_default_notification_duration_variance_2" translatable="false">0</string>
     <string name="pref_title_notification_style">Notification style</string>
     <string name="pref_default_notification_style" translatable="false">0</string>
     <string name="pref_title_notification_led_color">LED color</string>

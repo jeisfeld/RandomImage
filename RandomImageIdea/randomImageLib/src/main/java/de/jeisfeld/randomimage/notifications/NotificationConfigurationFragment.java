@@ -65,6 +65,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		bindPreferenceSummaryToValue(R.string.key_notification_duration);
 		bindPreferenceSummaryToValue(R.string.key_notification_duration_2);
 		bindPreferenceSummaryToValue(R.string.key_notification_duration_variance);
+		bindPreferenceSummaryToValue(R.string.key_notification_duration_variance_2);
 		bindPreferenceSummaryToValue(R.string.key_notification_style);
 		bindPreferenceSummaryToValue(R.string.key_notification_led_color);
 		bindPreferenceSummaryToValue(R.string.key_notification_colored_icon);
@@ -204,6 +205,12 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_duration_variance,
 							R.string.pref_default_notification_duration_variance));
 		}
+		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance_2, mNotificationId, -1) == -1) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_duration_variance_2, mNotificationId,
+					PreferenceUtil.getSharedPreferenceIntString(R.string.key_notification_duration_variance_2,
+							R.string.pref_default_notification_duration_variance_2));
+		}
 		if (PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1) == -1) {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId,
@@ -333,6 +340,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_duration_2, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_duration_variance,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, mNotificationId, -1));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_duration_variance_2,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance_2, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_style,
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_style, mNotificationId, -1));
 		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_led_color,
@@ -370,6 +379,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		coloredIconPreference.setEnabled(!NotificationUtil.isActivityNotificationStyle(notificationStyle));
 		Preference notificationDuration2Preference = findPreference(getString(R.string.key_notification_duration_2));
 		notificationDuration2Preference.setEnabled(!NotificationUtil.isAlreadyOpenedNotificationStyle(notificationStyle));
+		Preference notificationDurationVariance2Preference = findPreference(getString(R.string.key_notification_duration_variance_2));
+		notificationDurationVariance2Preference.setEnabled(!NotificationUtil.isAlreadyOpenedNotificationStyle(notificationStyle));
 
 		boolean useDefaultSettings =
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_use_default, mNotificationId, false);
@@ -412,6 +423,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		String value;
 		if (preferenceKey == R.string.key_notification_timer_variance // BOOLEAN_EXPRESSION_COMPLEXITY
 				|| preferenceKey == R.string.key_notification_duration_variance
+				|| preferenceKey == R.string.key_notification_duration_variance_2
 				|| preferenceKey == R.string.key_notification_style
 				|| preferenceKey == R.string.key_notification_led_color
 				|| preferenceKey == R.string.key_notification_detail_scale_type
@@ -514,6 +526,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_duration_variance))) {
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, mNotificationId,
+						Integer.parseInt(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_duration_variance_2))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_duration_variance_2, mNotificationId,
 						Integer.parseInt(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_style))) {

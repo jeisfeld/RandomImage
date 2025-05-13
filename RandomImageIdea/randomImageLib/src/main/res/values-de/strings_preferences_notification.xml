@@ -18,6 +18,7 @@
     <string name="pref_indefinite_value_notification_duration">unbegrenzt</string>
     <string name="pref_indefinite_value_notification_duration_2">keine</string>
     <string name="pref_title_notification_duration_variance">Variabilität der Anzeigedauer</string>
+    <string name="pref_title_notification_duration_variance_2">Variabilität der Anzeigedauer nach öffnen</string>
     <string name="pref_title_notification_style">Benachrichtigungs-Stil</string>
     <string name="pref_title_notification_led_color">LED-Farbe</string>
     <string name="pref_title_notification_vibration">Vibration</string>

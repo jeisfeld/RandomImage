@@ -261,7 +261,8 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 			return;
 		}
 
-		int timerVariance = onOpening ? 0 :
+		int timerVariance = onOpening ?
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance_2, notificationId, -1) :
 				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, notificationId, -1);
 		double duration = getRandomizedDuration(expectedDuration, timerVariance);
 
