@@ -252,14 +252,17 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 *
 	 * @param context        The context in which the alarm is set.
 	 * @param notificationId the notification id.
+	 * @param onOpening    Flag indicating if this happens while notification is opened.
 	 */
-	public static void setCancellationAlarm(final Context context, final int notificationId) {
-		long expectedDuration = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_duration, notificationId, 0);
+	public static void setCancellationAlarm(final Context context, final int notificationId, final boolean onOpening) {
+		long expectedDuration = PreferenceUtil.getIndexedSharedPreferenceLong(
+				onOpening ? R.string.key_notification_duration_2 : R.string.key_notification_duration, notificationId, 0);
 		if (expectedDuration == 0) {
 			return;
 		}
 
-		int timerVariance = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, notificationId, -1);
+		int timerVariance = onOpening ? 0 :
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_duration_variance, notificationId, -1);
 		double duration = getRandomizedDuration(expectedDuration, timerVariance);
 
 		PendingIntent alarmIntent = createAlarmIntent(context, notificationId, true, true);

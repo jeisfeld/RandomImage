@@ -49,6 +49,12 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_notification_duration_variance"/>
+        <de.jeisfeld.randomimage.view.TimeSelectorPreference
+            android:key="@string/key_notification_duration_2"
+            android:title="@string/pref_title_notification_duration_2"
+            rim:allowSeconds="true"
+            rim:allowLongDuration="true"
+            rim:indefiniteValue="@string/pref_indefinite_value_notification_duration_2" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/key_dummy_pref_group_appearance"

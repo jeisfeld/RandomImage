@@ -677,9 +677,11 @@ public class DisplayRandomImageActivity extends StartActivity {
 					PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId, false);
 		}
 
-		if (!NotificationUtil.isActivityNotificationStyle(notificationStyle)) {
+		if (!NotificationUtil.isAlreadyOpenedNotificationStyle(notificationStyle)) {
 			// Stop auto-cancellation if a normal notification has been actively clicked
 			NotificationAlarmReceiver.cancelAlarm(this, mNotificationId, true);
+			// Start auto-cancellation for this scenario if configured
+			NotificationAlarmReceiver.setCancellationAlarm(this, mNotificationId, true);
 		}
 	}
 

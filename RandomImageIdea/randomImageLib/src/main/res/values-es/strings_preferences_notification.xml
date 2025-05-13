@@ -14,7 +14,9 @@
     <string name="pref_title_notification_daily_start_time">Hora de inicio para notificaciones</string>
     <string name="pref_title_notification_daily_end_time">Hora de finalización para notificaciones</string>
     <string name="pref_title_notification_duration">Duración</string>
+    <string name="pref_title_notification_duration_2">Duración después apertura</string>
     <string name="pref_indefinite_value_notification_duration">ilimitado</string>
+    <string name="pref_indefinite_value_notification_duration_2">ninguna</string>
     <string name="pref_title_notification_duration_variance">Variabilidad de la duración</string>
     <string name="pref_title_notification_style">Estilo de notificación</string>
     <string name="pref_title_notification_led_color">Color del LED</string>

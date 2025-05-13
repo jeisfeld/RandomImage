@@ -304,7 +304,7 @@ public final class NotificationUtil {
 					}
 				}
 			}
-			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+			NotificationAlarmReceiver.setCancellationAlarm(context, notificationId, false);
 			return;
 		}
 
@@ -399,7 +399,7 @@ public final class NotificationUtil {
 
 		sendNotificationBroadcast(context, listName, fileName, notificationStyle, isVibrate);
 
-		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId);
+		NotificationAlarmReceiver.setCancellationAlarm(context, notificationId, false);
 	}
 
 	/**
@@ -431,6 +431,17 @@ public final class NotificationUtil {
 		return notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
 				|| notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED
 				|| notificationStyle == NOTIFICATION_STYLE_START_MICRO_IMAGE_ACTIVITY;
+	}
+
+	/**
+	 * Get information if a notificationStyle value leads to the start of an activity rather than to a notification.
+	 *
+	 * @param notificationStyle The notificationStyle value.
+	 * @return True if this style leads to an activity.
+	 */
+	public static boolean isAlreadyOpenedNotificationStyle(final int notificationStyle) {
+		return notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY
+				|| notificationStyle == NOTIFICATION_STYLE_START_RANDOM_IMAGE_ACTIVITY_INCL_LOCKED;
 	}
 
 	/**
