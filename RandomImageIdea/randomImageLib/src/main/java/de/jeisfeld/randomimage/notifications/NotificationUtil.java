@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -183,7 +184,7 @@ public final class NotificationUtil {
 
 		if (notificationType == NotificationType.MISSING_FILES || notificationType == NotificationType.UPDATED_LIST
 				|| notificationType == NotificationType.ERROR_LOADING_LIST || notificationType == NotificationType.ERROR_SAVING_LIST) {
-			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag);
+			Intent actionIntent = ConfigureImageListActivity.createIntent(context, notificationTag, AppWidgetManager.INVALID_APPWIDGET_ID);
 			actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			int uniqueId = getUniqueId(notificationTag, notificationType);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, actionIntent,

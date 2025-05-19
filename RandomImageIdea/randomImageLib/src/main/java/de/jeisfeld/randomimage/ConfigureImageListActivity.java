@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -46,6 +47,10 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	/**
+	 * The resource key for the widget from which the activity was started.
+	 */
+	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
 
 	/**
 	 * Request code for getting images from gallery.
@@ -71,6 +76,10 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * The name of the image list to be displayed.
 	 */
 	private String mListName;
+	/**
+	 * The id of the widget from which the activity was opened.
+	 */
+	private int mAppWidgetId;
 
 	protected final String getListName() {
 		return mListName;
@@ -96,9 +105,20 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 *
 	 * @param listName     the image list which should be displayed first.
 	 * @param context      The context creating the intent.
+	 * @param appWidgetId  The widget ID from which the activity is started (if available)
+	 */
+	public static void startActivity(final Activity context, final String listName, final int appWidgetId) {
+		context.startActivity(createIntent(context, listName, appWidgetId));
+	}
+
+	/**
+	 * Static helper method to start the activity.
+	 *
+	 * @param listName the image list which should be displayed first.
+	 * @param context  The context creating the intent.
 	 */
 	public static void startActivity(final Activity context, final String listName) {
-		context.startActivity(createIntent(context, listName));
+		startActivity(context, listName, AppWidgetManager.INVALID_APPWIDGET_ID);
 	}
 
 	/**
@@ -106,13 +126,15 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 *
 	 * @param listName     the image list which should be displayed first.
 	 * @param context      The context creating the intent.
+	 * @param appWidgetId  The widget ID from which the activity is started (if available)
 	 * @return the intent.
 	 */
-	public static Intent createIntent(final Context context, final String listName) {
+	public static Intent createIntent(final Context context, final String listName, final int appWidgetId) {
 		Intent intent = new Intent(context, ConfigureImageListActivity.class);
 		if (listName != null) {
 			intent.putExtra(STRING_EXTRA_LISTNAME, listName);
 		}
+		intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
 		return intent;
 	}
 
@@ -132,9 +154,11 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 		if (savedInstanceState != null) {
 			mListName = savedInstanceState.getString("listName");
+			mAppWidgetId = savedInstanceState.getInt("appWidgetId");
 		}
 		else {
 			mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
+			mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 
 		if (mListName == null) {
@@ -165,7 +189,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			switchToImageList(name, CreationStyle.NONE);
 			break;
 		case FOLDER:
-			DisplayImagesFromFolderActivity.startActivity(this, name, mListName, false);
+			DisplayImagesFromFolderActivity.startActivity(this, name, mListName, false, mAppWidgetId);
 			break;
 		case FILE:
 		default:
@@ -184,7 +208,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		case FOLDER:
 		case FILE:
 		default:
-			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, null, true);
+			DisplayImageDetailsActivity.startActivity(this, name, mListName, null, mAppWidgetId, true);
 			break;
 		}
 	}
@@ -310,7 +334,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 	 * @return true if null or empty.
 	 */
 	private static boolean isEmpty(final ArrayList<String> list) {
-		return list == null || list.size() == 0;
+		return list == null || list.isEmpty();
 	}
 
 	@Override
@@ -375,7 +399,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 			String imageFolderString =
 					DialogUtil.createFileFolderMessageString(nestedListsToBeRemoved, foldersToBeRemoved,
 							imagesToBeRemoved);
-			if (nestedListsToBeRemoved.size() > 0 || imagesToBeRemoved.size() > 0 || foldersToBeRemoved.size() > 0) {
+			if (!nestedListsToBeRemoved.isEmpty() || !imagesToBeRemoved.isEmpty() || !foldersToBeRemoved.isEmpty()) {
 
 				DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
 							@Override
@@ -559,6 +583,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable("currentAction", mCurrentAction);
 		outState.putSerializable("listName", mListName);
+		outState.putSerializable("appWidgetId", mAppWidgetId);
 	}
 
 	@Override
@@ -613,7 +638,7 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 
 				String folderName = new File(fileName).getParent();
 				if (folderName != null) {
-					DisplayImagesFromFolderActivity.startActivity(this, folderName, mListName, true);
+					DisplayImagesFromFolderActivity.startActivity(this, folderName, mListName, true, AppWidgetManager.INVALID_APPWIDGET_ID);
 				}
 			}
 			break;

@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -161,7 +162,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				addRecursiveFolder(name);
 			}
 			else {
-				DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true);
+				DisplayImagesFromFolderActivity.startActivity(this, name, mListName, true, AppWidgetManager.INVALID_APPWIDGET_ID);
 			}
 			break;
 		default:
@@ -331,7 +332,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 	private void parseAllImageFolders() {
 		final String hiddenFoldersPattern = PreferenceUtil.getSharedPreferenceString(R.string.key_pref_hidden_folders_pattern);
 		final boolean useRegexp = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_use_regex_filter)
-				&& hiddenFoldersPattern != null && hiddenFoldersPattern.length() > 0;
+				&& hiddenFoldersPattern != null && !hiddenFoldersPattern.isEmpty();
 
 		ImageUtil.getAllImageFolders(new OnImageFoldersFoundListener() {
 
@@ -345,7 +346,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 						public void run() {
 							for (String imageFolder : imageFolders) {
 								List<String> images = ImageUtil.getImagesInFolder(imageFolder);
-								if (images != null && images.size() > 0) {
+								if (!images.isEmpty()) {
 									MediaStoreUtil.getThumbnailFromPath(images.get(0));
 								}
 							}
@@ -387,7 +388,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				// Exclude if already contained
 				&& !(imageList.getListName().equals(mListName) && imageList.contains(path))
 				// Include if there is no filter
-				&& (filterString == null || filterString.length() == 0
+				&& (filterString == null || filterString.isEmpty()
 				// Include if matches filter
 				|| path.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
 				// Include if selected
@@ -407,7 +408,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 				// Exclude if already contained
 				&& !(imageList.getListName().equals(mListName) && imageList.containsNestedList(listName, false))
 				// Include if there is no filter
-				&& (filterString == null || filterString.length() == 0
+				&& (filterString == null || filterString.isEmpty()
 				// Include if matches filter
 				|| listName.toLowerCase(Locale.getDefault()).contains(filterString.toLowerCase(Locale.getDefault()))
 				// Include if selected
@@ -514,7 +515,7 @@ public class SelectImageFolderActivity extends DisplayImageListActivity {
 		if (menuId == R.id.action_add_folders) {
 			final List<String> nestedListsToBeAdded = getAdapter().getSelectedLists();
 			final List<String> foldersToBeAdded = getAdapter().getSelectedFolders();
-			if (foldersToBeAdded.size() > 0 || nestedListsToBeAdded.size() > 0) {
+			if (!foldersToBeAdded.isEmpty() || !nestedListsToBeAdded.isEmpty()) {
 				ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 
 				List<String> addedFolders = new ArrayList<>();

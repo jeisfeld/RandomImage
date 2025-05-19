@@ -2,6 +2,7 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,6 +30,10 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * The resource key for the name of the image list to be displayed.
 	 */
 	private static final String STRING_EXTRA_LISTNAME = "de.jeisfeld.randomimage.LISTNAME";
+	/**
+	 * The resource key for the widget from which the activity was started.
+	 */
+	private static final String STRING_EXTRA_APP_WIDGET_ID = "de.jeisfeld.randomimage.APP_WIDGET_ID";
 	/**
 	 * The request code used to finish the triggering activity.
 	 */
@@ -67,6 +72,10 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * The name of the image list to which files should be added.
 	 */
 	private String mListName;
+	/**
+	 * The id of the widget for which the activity was opened.
+	 */
+	private int mAppWidgetId;
 
 	/**
 	 * Static helper method to start the activity to display the contents of a folder.
@@ -77,7 +86,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	 * @param forAddition Flag indicating if the activity is opened in order to add images to the current list.
 	 */
 	public static void startActivity(final Activity activity, final String folderName,
-										   final String listName, final boolean forAddition) {
+									 final String listName, final boolean forAddition, final int appWidgetId) {
 		Intent intent = new Intent(activity, DisplayImagesFromFolderActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		if (folderName != null) {
@@ -89,6 +98,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		if (forAddition) {
 			intent.putExtra(STRING_EXTRA_FORADDITION, true);
 		}
+		intent.putExtra(STRING_EXTRA_APP_WIDGET_ID, appWidgetId);
 		activity.startActivityForResult(intent, REQUEST_CODE);
 	}
 
@@ -105,6 +115,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		mFolderName = getIntent().getStringExtra(STRING_EXTRA_FOLDERNAME);
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
 		boolean forAddition = getIntent().getBooleanExtra(STRING_EXTRA_FORADDITION, false);
+		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		if (forAddition) {
 			setTitle(R.string.title_activity_add_images);
 		}
@@ -138,7 +149,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	@Override
 	public final void onItemLongClick(final ItemType itemType, final String name) {
 		// itemType is always file.
-		DisplayImageDetailsActivity.startActivity(this, name, null, null, null, true);
+		DisplayImageDetailsActivity.startActivity(this, name, null, null, mAppWidgetId, true);
 	}
 
 	@Override
@@ -176,7 +187,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 		if (menuId == R.id.action_add_images) {
 			final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 			final ArrayList<String> imagesToBeAdded = getAdapter().getSelectedFiles();
-			if (imagesToBeAdded.size() > 0) {
+			if (!imagesToBeAdded.isEmpty()) {
 
 				ArrayList<String> addedImages = new ArrayList<>();
 				for (String fileName : imagesToBeAdded) {
@@ -286,7 +297,7 @@ public class DisplayImagesFromFolderActivity extends DisplayImageListActivity {
 	private void fillListOfImagesFromFolder() {
 		ArrayList<String> fileNames = ImageUtil.getImagesInFolder(mFolderName);
 
-		if (fileNames.size() == 0) {
+		if (fileNames.isEmpty()) {
 			DialogUtil.displayInfo(this, () -> {
 				// Nothing to display.
 				returnResult(false);

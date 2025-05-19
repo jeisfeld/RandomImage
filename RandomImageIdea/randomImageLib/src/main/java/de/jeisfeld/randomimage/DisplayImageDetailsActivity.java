@@ -317,15 +317,13 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			else {
 				settingsIntent = new Intent(this, StackedImageWidgetConfigurationActivity.class);
 			}
-			if (settingsIntent != null) {
-				btnConfigureWidget.setOnClickListener(v -> {
-					settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-					settingsIntent.putExtra(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
-					returnResult(true, false);
-					startActivity(settingsIntent);
-					finish();
-				});
-			}
+			btnConfigureWidget.setOnClickListener(v -> {
+				settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+				settingsIntent.putExtra(GenericWidgetConfigurationActivity.EXTRA_RECONFIGURE_WIDGET, true);
+				returnResult(true, false);
+				startActivity(settingsIntent);
+				finish();
+			});
 		}
 
 		if (mNotificationId >= 0) {
@@ -395,7 +393,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 			Button btnEditList = findViewById(R.id.buttonEditList);
 			btnEditList.setVisibility(View.VISIBLE);
 			btnEditList.setOnClickListener(v -> {
-				ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName);
+				ConfigureImageListActivity.startActivity(DisplayImageDetailsActivity.this, mListName, mAppWidgetId);
 				returnResult(false, false);
 			});
 		}
@@ -465,12 +463,7 @@ public class DisplayImageDetailsActivity extends BaseActivity {
 
 		TextView textViewImageDate = findViewById(R.id.textViewImageDate);
 		Date imageDate = ImageUtil.getExifDate(mFileName);
-		if (imageDate == null) {
-			textViewImageDate.setVisibility(View.GONE);
-		}
-		else {
-			textViewImageDate.setText(DialogUtil.fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
-		}
+		textViewImageDate.setText(DialogUtil.fromHtml(getString(R.string.info_file_date, DateUtil.format(imageDate))));
 
 		final TextView textViewNumberOfImages = findViewById(R.id.textViewNumberOfImages);
 		final View layoutConfigureViewFrequency = findViewById(R.id.layoutConfigureViewFrequency);

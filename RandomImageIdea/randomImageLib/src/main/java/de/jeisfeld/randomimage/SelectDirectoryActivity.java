@@ -2,23 +2,18 @@ package de.jeisfeld.randomimage;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -205,58 +200,51 @@ public class SelectDirectoryActivity extends BaseActivity {
 		mListView.setAdapter(mListAdapter);
 		mGridView = findViewById(R.id.gridViewImages);
 
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				mBackStack.push(mCurrentFolder);
-				if (mListAdapter.getItem(position).startsWith(File.separator) || mListAdapter.getItem(position).equals(ROOT_FOLDER_STRING)) {
-					mCurrentFolder = mListAdapter.getItem(position);
-				}
-				else {
-					mCurrentFolder += File.separator + mListAdapter.getItem(position);
-				}
-				updateDirectory();
+		mListView.setOnItemClickListener((parent, view, position, id) -> {
+			mBackStack.push(mCurrentFolder);
+			if (mListAdapter.getItem(position).startsWith(File.separator) || mListAdapter.getItem(position).equals(ROOT_FOLDER_STRING)) {
+				mCurrentFolder = mListAdapter.getItem(position);
 			}
+			else {
+				mCurrentFolder += File.separator + mListAdapter.getItem(position);
+			}
+			updateDirectory();
 		});
 
-		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position,
-										   final long id) {
-				final String selectedFolder = mCurrentFolder + File.separator + mListAdapter.getItem(position);
+		mListView.setOnItemLongClickListener((parent, view, position, id) -> {
+			final String selectedFolder = mCurrentFolder + File.separator + mListAdapter.getItem(position);
 
-				final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
+			final ImageList imageList = ImageRegistry.getImageListByName(mListName, true);
 
-				String folderShortName = ImageUtil.getImageFolderShortName(selectedFolder);
+			String folderShortName = ImageUtil.getImageFolderShortName(selectedFolder);
 
-				if (ImageUtil.isImageFolder(selectedFolder) && !imageList.contains(selectedFolder)) {
-					DialogUtil.displayConfirmationMessage(SelectDirectoryActivity.this,
-							new ConfirmDialogListener() {
-								@Override
-								public void onDialogPositiveClick(final DialogFragment dialog) {
-									boolean success = imageList.addFolder(selectedFolder);
+			if (ImageUtil.isImageFolder(selectedFolder) && !imageList.contains(selectedFolder)) {
+				DialogUtil.displayConfirmationMessage(SelectDirectoryActivity.this,
+						new ConfirmDialogListener() {
+							@Override
+							public void onDialogPositiveClick(final DialogFragment dialog) {
+								boolean success = imageList.addFolder(selectedFolder);
 
-									if (success) {
-										String addedFoldersString =
-												DialogUtil.createFileFolderMessageString(null, Collections.singletonList(selectedFolder), null);
-										DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
-										NotificationUtil.notifyUpdatedList(SelectDirectoryActivity.this, mListName, false, null,
-												Collections.singletonList(selectedFolder), null);
-										imageList.update(true);
-										mUpdatedList = true;
-									}
+								if (success) {
+									String addedFoldersString =
+											DialogUtil.createFileFolderMessageString(null, Collections.singletonList(selectedFolder), null);
+									DialogUtil.displayToast(SelectDirectoryActivity.this, R.string.toast_added_single, addedFoldersString);
+									NotificationUtil.notifyUpdatedList(SelectDirectoryActivity.this, mListName, false, null,
+											Collections.singletonList(selectedFolder), null);
+									imageList.update(true);
+									mUpdatedList = true;
 								}
+							}
 
-								@Override
-								public void onDialogNegativeClick(final DialogFragment dialog) {
-									// do nothing
-								}
-							}, null, R.string.button_add_folder, R.string.dialog_confirmation_add_folder,
-							folderShortName);
+							@Override
+							public void onDialogNegativeClick(final DialogFragment dialog) {
+								// do nothing
+							}
+						}, null, R.string.button_add_folder, R.string.dialog_confirmation_add_folder,
+						folderShortName);
 
-				}
-				return true;
 			}
+			return true;
 		});
 
 		updateListLayout();
@@ -288,18 +276,16 @@ public class SelectDirectoryActivity extends BaseActivity {
 			}
 			File dirFile = new File(dir);
 
-			if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
-				// Not allowed to parse through all folders
-				if (FileUtil.isSdCardPath(dirFile)) {
-					dirs.remove("..");
-					dirs.add("...");
-				}
-				else if (ROOT_FOLDER_STRING.equals(dir)) {
-					dirs.remove("..");
-					dirs.add(FileUtil.getSdCardPath());
-					dirs.addAll(FileUtil.getExtSdCardPaths());
-					return dirs;
-				}
+			// Not allowed to parse through all folders
+			if (FileUtil.isSdCardPath(dirFile)) {
+				dirs.remove("..");
+				dirs.add("...");
+			}
+			else if (ROOT_FOLDER_STRING.equals(dir)) {
+				dirs.remove("..");
+				dirs.add(FileUtil.getSdCardPath());
+				dirs.addAll(FileUtil.getExtSdCardPaths());
+				return dirs;
 			}
 
 			if (!dirFile.exists() || !dirFile.isDirectory()) {
@@ -332,7 +318,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 	 * @return The list adapter.
 	 */
 	private ArrayAdapter<String> createListAdapter(final List<String> items) {
-		return new ArrayAdapter<String>(this, R.layout.adapter_directory_names, R.id.text, items) {
+		return new ArrayAdapter<>(this, R.layout.adapter_directory_names, R.id.text, items) {
 			@Override
 			public View getView(final int position, final View convertView, final ViewGroup parent) {
 				View v = super.getView(position, convertView, parent);
@@ -360,7 +346,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 				// i
 			}
 		}
-		if (mCurrentFolder == null || "".equals(mCurrentFolder)) {
+		if (mCurrentFolder == null || mCurrentFolder.isEmpty()) {
 			mCurrentFolder = File.separator;
 		}
 
@@ -399,11 +385,11 @@ public class SelectDirectoryActivity extends BaseActivity {
 	private void fillGridView() {
 		ArrayList<String> imageFiles = ImageUtil.getImagesInFolder(mCurrentFolder);
 
-		mIsImageFolder = imageFiles.size() > 0;
+		mIsImageFolder = !imageFiles.isEmpty();
 		invalidateOptionsMenu();
 
 		mGridView.setAdapter(new DisplayImagesAdapter(imageFiles));
-		mGridView.setVisibility(imageFiles.size() > 0 ? View.VISIBLE : View.GONE);
+		mGridView.setVisibility(!imageFiles.isEmpty() ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
@@ -411,7 +397,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
 			// Back button pressed - go to the last directory if
 			// existing - otherwise cancel the dialog.
-			if (mBackStack.size() == 0) {
+			if (mBackStack.isEmpty()) {
 				super.onKeyDown(keyCode, event);
 			}
 			else {
@@ -495,7 +481,8 @@ public class SelectDirectoryActivity extends BaseActivity {
 		}
 		else if (menuId == R.id.action_select_folder) {
 			PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-			DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, mListName, true);
+			DisplayImagesFromFolderActivity.startActivity(SelectDirectoryActivity.this, mCurrentFolder, mListName, true,
+					AppWidgetManager.INVALID_APPWIDGET_ID);
 			return true;
 		}
 		else {
@@ -624,13 +611,10 @@ public class SelectDirectoryActivity extends BaseActivity {
 			imageView.setLayoutParams(new LayoutParams(GRIDVIEW_THUMB_SIZE, GRIDVIEW_THUMB_SIZE));
 
 			if (mSelectImage) {
-				imageView.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
-						returnResult(mFileNames.get(position));
-						finish();
-					}
+				imageView.setOnClickListener(v -> {
+					PreferenceUtil.setSharedPreferenceString(R.string.key_directory_chooser_last_folder, mCurrentFolder);
+					returnResult(mFileNames.get(position));
+					finish();
 				});
 			}
 
@@ -640,12 +624,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 					final Bitmap bitmap = ImageUtil.getImageBitmap(mFileNames.get(position), MediaStoreUtil.MINI_THUMB_SIZE);
 
 					try {
-						SelectDirectoryActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								imageView.setImageBitmap(bitmap);
-							}
-						});
+						SelectDirectoryActivity.this.runOnUiThread(() -> imageView.setImageBitmap(bitmap));
 					}
 					catch (Exception e) {
 						// prevent NullPointerException
