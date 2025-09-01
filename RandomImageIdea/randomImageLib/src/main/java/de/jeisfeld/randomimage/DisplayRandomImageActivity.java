@@ -1571,8 +1571,9 @@ public class DisplayRandomImageActivity extends StartActivity {
 		MULTIPLE_BACK(2, true),
 		AVOID_REPETITIONS(3, true),
 		CYCLICAL(4, true),
-		NO_CHANGE(5, false),
-		CLOSE(6, false);
+		CYCLICAL_SORTED(5, true),
+		NO_CHANGE(6, false),
+		CLOSE(7, false);
 		// JAVADOC:ON
 
 		/**

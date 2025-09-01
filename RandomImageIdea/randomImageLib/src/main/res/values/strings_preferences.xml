@@ -153,6 +153,7 @@
         <item>Allow to go back multiple images</item>
         <item>Allow to go back, avoid repetitions</item>
         <item>Display all images cyclically</item>
+        <item>Display images cyclically (sorted)</item>
         <item>No change</item>
         <item>Close screen</item>
     </string-array>
@@ -164,5 +165,6 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+        <item>7</item>
     </string-array>
 </resources>

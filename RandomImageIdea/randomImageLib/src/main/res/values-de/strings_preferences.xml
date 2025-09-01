@@ -58,6 +58,7 @@
         <item>Mehrere Bilder rückwärts möglich</item>
         <item>Rückwärts möglich, Wiederholungen vermeiden</item>
         <item>Alle Bilder zyklisch zeigen</item>
+        <item>Alle Bilder zyklisch zeigen (sortiert)</item>
         <item>Keine Änderung</item>
         <item>Ansicht schließen</item>
     </string-array>

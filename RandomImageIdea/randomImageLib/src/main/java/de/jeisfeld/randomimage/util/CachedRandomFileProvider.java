@@ -156,6 +156,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 				}
 				break;
 			case CYCLICAL:
+			case CYCLICAL_SORTED:
 				mCurrentPosition++;
 				if (mCurrentPosition == mCachedFileNames.size()) {
 					mCurrentPosition = 0;
@@ -201,6 +202,7 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 				}
 				break;
 			case CYCLICAL:
+			case CYCLICAL_SORTED:
 				if (mCurrentPosition == 0) {
 					mCurrentPosition = mCachedFileNames.size() - 1;
 					if (mCurrentPosition < 0) {
@@ -277,20 +279,30 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 			}
 			return;
 		case CYCLICAL:
+		case CYCLICAL_SORTED:
 			mProvider.waitUntilReady();
 			mCacheSize = getAllImageFiles().size();
 
 			String firstFileName = null;
-			if (mCachedFileNames.size() > 0) {
+			if (!mCachedFileNames.isEmpty()) {
 				firstFileName = mCachedFileNames.get(0);
 				mCachedFileNames.remove(firstFileName);
 			}
 			mCachedFileNames.addAll(getAllImageFiles());
-			Collections.shuffle(mCachedFileNames);
+			if (mFlipType == FlipType.CYCLICAL) {
+				Collections.shuffle(mCachedFileNames);
+			}
+			else {
+				Collections.sort(mCachedFileNames);
+			}
 
 			if (firstFileName != null) {
-				mCachedFileNames.remove(firstFileName);
-				mCachedFileNames.add(0, firstFileName);
+				if (mCachedFileNames.contains(firstFileName)) {
+					mCurrentPosition = mCachedFileNames.indexOf(firstFileName);
+				}
+				else {
+					mCachedFileNames.add(0, firstFileName);
+				}
 			}
 			mHasFile = true;
 			mHasCachSizeDetermined = true;

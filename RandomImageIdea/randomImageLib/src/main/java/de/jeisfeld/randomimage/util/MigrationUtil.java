@@ -81,6 +81,9 @@ public final class MigrationUtil {
 		case 67: // MAGIC_NUMBER
 			doMigrationToVersion67();
 			break;
+		case 68: // MAGIC_NUMBER
+			doMigrationToVersion68();
+			break;
 		default:
 			break;
 		}
@@ -216,6 +219,30 @@ public final class MigrationUtil {
 					String.format(Locale.getDefault(), "%02d:%02d", oldStartTime, 0));
 			PreferenceUtil.setIndexedSharedPreferenceString(R.string.key_notification_daily_end_time, notificationId,
 					String.format(Locale.getDefault(), "%02d:%02d", oldEndTime, 0));
+		}
+	}
+
+	/**
+	 * Do the migration steps for migration into app version 68.
+	 */
+	private static void doMigrationToVersion68() {
+		int flipType;
+		flipType = PreferenceUtil.getSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, R.string.pref_default_detail_flip_behavior);
+		if (flipType == 5 || flipType == 6) {
+			PreferenceUtil.setSharedPreferenceIntString(R.string.key_pref_detail_flip_behavior, flipType + 1);
+		}
+		for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+			flipType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, notificationId, -1);
+			if (flipType == 5 || flipType == 6) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_detail_flip_behavior, notificationId, flipType + 1);
+			}
+		}
+
+		for (int appWidgetId : GenericWidget.getAllWidgetIds()) {
+			flipType = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, appWidgetId, -1);
+			if (flipType == 5 || flipType == 6) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_widget_detail_flip_behavior, appWidgetId, flipType + 1);
+			}
 		}
 	}
 }

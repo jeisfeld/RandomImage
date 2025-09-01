@@ -58,6 +58,7 @@
         <item>Permitir retroceder varias imágenes</item>
         <item>Permitir retroceder, evitar repeticiones</item>
         <item>Mostrar todas las imágenes cíclicamente</item>
+        <item>Mostrar todas las imágenes cíclicamente (ordenadas)</item>
         <item>Sin cambios</item>
         <item>Cerrar pantalla</item>
     </string-array>
