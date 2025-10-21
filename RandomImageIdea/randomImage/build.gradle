@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 35
+    compileSdk 36
     buildToolsVersion = '35.0.0'
 
     defaultConfig {
         applicationId "de.jeisfeld.randomimage"
         minSdk 21
-        targetSdk 35
+        targetSdk 36
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_11
             targetCompatibility JavaVersion.VERSION_11

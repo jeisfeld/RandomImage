@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 34
+    compileSdk 36
     buildToolsVersion = '35.0.0'
 
     defaultConfig {
         minSdk 21
-        targetSdk 34
+        targetSdk 36
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_11
             targetCompatibility JavaVersion.VERSION_11
@@ -32,7 +32,7 @@ dependencies {
     implementation files('libs/annotations.jar')
     implementation files('libs/sdk-v1.0.0.jar')
     implementation files('libs/spenremote-v1.0.1.jar')
-    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.core:core:1.17.0'
     implementation('androidx.documentfile:documentfile:1.1.0')
     implementation 'androidx.fragment:fragment:1.8.9'
     implementation 'androidx.exifinterface:exifinterface:1.4.1'
