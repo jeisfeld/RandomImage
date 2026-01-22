@@ -82,6 +82,11 @@ public class NotificationAlarmReceiver extends AlarmReceiver {
 	 * @param useLastAlarmTime flag indicating if the last existing alarm time should be re-used.
 	 */
 	public static void setAlarm(final Context context, final int notificationId, final boolean useLastAlarmTime) {
+		if (!NotificationUtil.isMiniWidgetLinkedNotificationActive(notificationId)) {
+			cancelAlarm(context, notificationId, false);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
+			return;
+		}
 		long frequency = PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_notification_timer_duration, notificationId, 0);
 		if (frequency == 0) {
 			cancelAlarm(context, notificationId, false);

@@ -24,6 +24,7 @@
     <string name="key_notification_colored_icon" translatable="false">notification_colored_icon</string>
     <string name="key_notification_display_name" translatable="false">notification_display_name</string>
     <string name="key_notification_mini_widget" translatable="false">notification_mini_widget</string>
+    <string name="key_notification_widget_active" translatable="false">notification_widget_active</string>
     <string name="key_notification_detail_use_default" translatable="false">notification_detail_use_default</string>
     <string name="key_notification_detail_scale_type" translatable="false">notification_detail_scale_type</string>
     <string name="key_notification_detail_background" translatable="false">notification_detail_background</string>

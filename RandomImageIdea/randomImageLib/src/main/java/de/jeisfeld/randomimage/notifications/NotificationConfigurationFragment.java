@@ -268,6 +268,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			isUpdated = true;
 			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, 0);
 		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_widget_active, mNotificationId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, mNotificationId, false);
+		}
 
 		return isUpdated;
 	}
@@ -540,6 +544,11 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	 * @param immediate      Flag indicating if the notification should be displayed immediately.
 	 */
 	private void initialiseNotification(final int notificationId, final boolean immediate) {
+		if (!NotificationUtil.isMiniWidgetLinkedNotificationActive(notificationId)) {
+			NotificationAlarmReceiver.cancelAlarm(getActivity(), notificationId, false);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
+			return;
+		}
 		if (immediate) {
 			NotificationUtil.displayRandomImageNotification(getActivity(), notificationId);
 		}
@@ -650,7 +659,18 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 						mNotificationId, Boolean.parseBoolean(stringValue));
 			}
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_mini_widget))) {
-				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, Integer.parseInt(stringValue));
+				int widgetId = Integer.parseInt(stringValue);
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, widgetId);
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, mNotificationId, false);
+				if (widgetId != 0) {
+					NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId, false);
+					NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId, true);
+					PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, mNotificationId);
+					NotificationUtil.cancelRandomImageNotification(getActivity(), mNotificationId);
+				}
+				else {
+					initialiseNotification(mNotificationId, false);
+				}
 			}
 
 			return true;
