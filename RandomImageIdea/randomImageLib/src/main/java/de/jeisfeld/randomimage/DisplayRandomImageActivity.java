@@ -437,15 +437,15 @@ public class DisplayRandomImageActivity extends StartActivity {
 		mAppWidgetId = getIntent().getIntExtra(STRING_EXTRA_APP_WIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			mAppWidgetId = null;
-			mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
-			if (mNotificationId == -1) {
-				mNotificationId = null;
-			}
-			else {
-				configureNotificationProperties();
-			}
+		}
+		mNotificationId = getIntent().getIntExtra(STRING_EXTRA_NOTIFICATION_ID, -1);
+		if (mNotificationId == -1) {
+			mNotificationId = null;
 		}
 		else {
+			configureNotificationProperties();
+		}
+		if (mAppWidgetId != null) {
 			configureWidgetProperties();
 		}
 		mHideNavigationBar = !mChangeImageWithSingleTap;
