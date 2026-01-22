@@ -31,7 +31,9 @@
     <string name="pref_title_notification_detail_change_timeout">Frecuencia de cambio automático</string>
     <string name="pref_title_notification_detail_change_with_tap">Tocar en lugar de lanzar</string>
     <string name="pref_title_notification_detail_prevent_screen_timeout">Prevenir el tiempo de espera de la pantalla</string>
+    <string name="pref_title_notification_mini_widget">Enlazar con mini widget</string>
     <string name="pref_title_cancel_notification">Borrar notificación</string>
+    <string name="pref_value_none">Ninguno</string>
     <string name="notification_channel_system">Notificaciones del sistema</string>
     <string name="notification_channel_image">Notificaciones de imagen</string>
     <string name="notification_channel_with_vibration">con vibración</string>

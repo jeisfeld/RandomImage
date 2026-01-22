@@ -9,6 +9,7 @@ import android.widget.RemoteViews;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
+import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
@@ -83,6 +84,12 @@ public class MiniWidget extends GenericWidget {
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_timeout, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_allowed_call_frequency, appWidgetId);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_icon_image, appWidgetId);
+			for (int notificationId : NotificationSettingsActivity.getNotificationIds()) {
+				int linkedWidgetId = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, notificationId, 0);
+				if (linkedWidgetId == appWidgetId) {
+					PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, notificationId, 0);
+				}
+			}
 		}
 	}
 

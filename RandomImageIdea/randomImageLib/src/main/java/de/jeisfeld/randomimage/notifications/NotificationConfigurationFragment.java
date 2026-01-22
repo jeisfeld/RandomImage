@@ -1,6 +1,8 @@
 package de.jeisfeld.randomimage.notifications;
 
 import android.app.DialogFragment;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
@@ -25,6 +28,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
+import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
 
@@ -58,6 +62,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		handleNotificationCreation();
 
 		configureListNameProperty();
+		configureMiniWidgetProperty();
 		bindPreferenceSummaryToValue(R.string.key_notification_timer_duration);
 		bindPreferenceSummaryToValue(R.string.key_notification_timer_variance);
 		bindPreferenceSummaryToValue(R.string.key_notification_daily_start_time);
@@ -259,6 +264,10 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId,
 					PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_detail_prevent_screen_timeout));
 		}
+		if (!PreferenceUtil.hasIndexedSharedPreference(R.string.key_notification_mini_widget, mNotificationId)) {
+			isUpdated = true;
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, 0);
+		}
 
 		return isUpdated;
 	}
@@ -366,6 +375,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_change_with_tap, mNotificationId, false));
 		PreferenceUtil.setSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout,
 				PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout, mNotificationId, false));
+		PreferenceUtil.setSharedPreferenceIntString(R.string.key_notification_mini_widget,
+				PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, 0));
 	}
 
 	/**
@@ -408,6 +419,56 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 	}
 
 	/**
+	 * Configure the property for the linked mini widget.
+	 */
+	private void configureMiniWidgetProperty() {
+		ListPreference preference = (ListPreference) findPreference(getString(R.string.key_notification_mini_widget));
+
+		int[] widgetIds = AppWidgetManager.getInstance(getActivity())
+				.getAppWidgetIds(new ComponentName(getActivity(), MiniWidget.class));
+		if (widgetIds != null) {
+			Arrays.sort(widgetIds);
+		}
+		else {
+			widgetIds = new int[0];
+		}
+
+		ArrayList<String> entries = new ArrayList<>();
+		ArrayList<String> entryValues = new ArrayList<>();
+		entries.add(getString(R.string.pref_value_none));
+		entryValues.add("0");
+
+		for (int i = 0; i < widgetIds.length; i++) {
+			int widgetId = widgetIds[i];
+			String widgetName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_widget_display_name, widgetId);
+			if (widgetName == null || widgetName.isEmpty()) {
+				widgetName = getString(R.string.mini_widget_display_name) + " " + (i + 1);
+			}
+			entries.add(widgetName);
+			entryValues.add(Integer.toString(widgetId));
+		}
+
+		preference.setEntries(entries.toArray(new String[0]));
+		preference.setEntryValues(entryValues.toArray(new String[0]));
+
+		int storedWidgetId = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, 0);
+		boolean hasWidget = storedWidgetId == 0;
+		for (int widgetId : widgetIds) {
+			if (widgetId == storedWidgetId) {
+				hasWidget = true;
+				break;
+			}
+		}
+		if (!hasWidget) {
+			PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, 0);
+			storedWidgetId = 0;
+		}
+		preference.setValue(Integer.toString(storedWidgetId));
+
+		bindPreferenceSummaryToValue(R.string.key_notification_mini_widget);
+	}
+
+	/**
 	 * Binds a preference's summary to its value. More specifically, when the preference's value is changed, its summary
 	 * (line of text below the preference title) is updated to reflect the value. The summary is also immediately
 	 * updated upon calling this method. The exact display format is dependent on the type of preference.
@@ -426,6 +487,7 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 				|| preferenceKey == R.string.key_notification_duration_variance_2
 				|| preferenceKey == R.string.key_notification_style
 				|| preferenceKey == R.string.key_notification_led_color
+				|| preferenceKey == R.string.key_notification_mini_widget
 				|| preferenceKey == R.string.key_notification_detail_scale_type
 				|| preferenceKey == R.string.key_notification_detail_background
 				|| preferenceKey == R.string.key_notification_detail_flip_behavior) {
@@ -586,6 +648,9 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_detail_prevent_screen_timeout))) {
 				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_detail_prevent_screen_timeout,
 						mNotificationId, Boolean.parseBoolean(stringValue));
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_mini_widget))) {
+				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, Integer.parseInt(stringValue));
 			}
 
 			return true;
