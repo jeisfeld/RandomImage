@@ -124,6 +124,24 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	}
 
 	/**
+	 * Get the ids of notifications linked to a specific Mini Widget.
+	 *
+	 * @param appWidgetId The widget id.
+	 * @return The notification ids linked to this widget.
+	 */
+	public static List<Integer> getNotificationIdsByMiniWidgetId(final int appWidgetId) {
+		List<Integer> notificationIds = getNotificationIds();
+		List<Integer> linkedNotificationIds = new ArrayList<>();
+		for (int notificationId : notificationIds) {
+			int linkedWidgetId = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, notificationId, 0);
+			if (linkedWidgetId == appWidgetId) {
+				linkedNotificationIds.add(notificationId);
+			}
+		}
+		return linkedNotificationIds;
+	}
+
+	/**
 	 * Set the ids of existing notifications.
 	 *
 	 * @param notificationIds the notification ids.
@@ -312,6 +330,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_colored_icon, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_display_name, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_mini_widget, notificationId);
+		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_widget_active, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_use_default, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_scale_type, notificationId);
 		PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_detail_background, notificationId);

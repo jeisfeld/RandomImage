@@ -42,6 +42,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import de.jeisfeld.randomimage.notifications.NotificationAlarmReceiver;
+import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
 import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.notifications.NotificationUtil.NotificationType;
 import de.jeisfeld.randomimage.util.CachedRandomFileProvider;
@@ -790,6 +791,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 		setNavigationBarFlags();
 		mChangeByTimeoutHandler.resume();
 		registerSPenListener();
+		updateLinkedWidgetNotificationState(true);
 	}
 
 	@Override
@@ -797,6 +799,33 @@ public class DisplayRandomImageActivity extends StartActivity {
 		super.onPause();
 		mChangeByTimeoutHandler.pause();
 		unregisterSPenListener();
+		updateLinkedWidgetNotificationState(false);
+	}
+
+	/**
+	 * Update linked Mini Widget notification activation based on foreground state.
+	 *
+	 * @param isActive true if the activity is in the foreground.
+	 */
+	private void updateLinkedWidgetNotificationState(final boolean isActive) {
+		if (mAppWidgetId == null) {
+			return;
+		}
+		List<Integer> notificationIds = NotificationSettingsActivity.getNotificationIdsByMiniWidgetId(mAppWidgetId);
+		if (notificationIds.isEmpty()) {
+			return;
+		}
+		for (int notificationId : notificationIds) {
+			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, notificationId, isActive);
+			if (isActive) {
+				NotificationAlarmReceiver.setAlarm(this, notificationId, false);
+			}
+			else {
+				NotificationAlarmReceiver.cancelAlarm(this, notificationId, false);
+				NotificationAlarmReceiver.cancelAlarm(this, notificationId, true);
+				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
+			}
+		}
 	}
 
 	/**

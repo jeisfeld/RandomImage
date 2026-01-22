@@ -224,6 +224,11 @@ public final class NotificationUtil {
 	 * @param notificationId the id of the configured notification.
 	 */
 	public static void displayRandomImageNotification(final Context context, final int notificationId) {
+		if (!isMiniWidgetLinkedNotificationActive(notificationId)) {
+			NotificationAlarmReceiver.cancelAlarm(context, notificationId, false);
+			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
+			return;
+		}
 		final String listName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_list_name, notificationId);
 		final ImageList imageList = ImageRegistry.getImageListByName(listName, false);
 		if (imageList == null) {
@@ -242,6 +247,20 @@ public final class NotificationUtil {
 					}
 				},
 				() -> NotificationAlarmReceiver.setAlarm(context, notificationId, false));
+	}
+
+	/**
+	 * Check if a Mini Widget linked notification is active (foreground).
+	 *
+	 * @param notificationId The notification id.
+	 * @return true if the notification is enabled or not linked to a widget.
+	 */
+	public static boolean isMiniWidgetLinkedNotificationActive(final int notificationId) {
+		int linkedWidgetId = PreferenceUtil.getIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, notificationId, 0);
+		if (linkedWidgetId == 0) {
+			return true;
+		}
+		return PreferenceUtil.getIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, notificationId, false);
 	}
 
 	/**
