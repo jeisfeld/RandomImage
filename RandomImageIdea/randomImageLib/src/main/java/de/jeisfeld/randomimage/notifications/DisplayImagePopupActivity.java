@@ -2,11 +2,15 @@ package de.jeisfeld.randomimage.notifications;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import java.util.concurrent.TimeUnit;
 
@@ -113,6 +117,7 @@ public class DisplayImagePopupActivity extends BaseActivity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_image_popup);
+		hideSystemUi();
 
 		mFileName = getIntent().getStringExtra(STRING_EXTRA_FILENAME);
 		mListName = getIntent().getStringExtra(STRING_EXTRA_LISTNAME);
@@ -222,6 +227,15 @@ public class DisplayImagePopupActivity extends BaseActivity {
 		super.onResume();
 		mUserIsLeaving = false;
 		mSavingInstanceState = false;
+		hideSystemUi();
+	}
+
+	@Override
+	public void onWindowFocusChanged(final boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			hideSystemUi();
+		}
 	}
 
 	@Override
@@ -285,4 +299,21 @@ public class DisplayImagePopupActivity extends BaseActivity {
 		}
 	}
 
+	private void hideSystemUi() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+			WindowInsetsController controller = getWindow().getInsetsController();
+			if (controller != null) {
+				controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+				controller.setSystemBarsBehavior(
+						WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+			}
+		}
+		else {
+			View decorView = getWindow().getDecorView();
+			decorView.setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+							| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+							| View.SYSTEM_UI_FLAG_FULLSCREEN);
+		}
+	}
 }
