@@ -269,10 +269,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	private RandomFileListProvider mRandomFileProvider = null;
 
 	/**
-	 * Indicator if the activity was recreated after saving instance state.
-	 */
-	private boolean mRecreatedAfterSavingInstanceState = false;
-	/**
 	 * Flag indicating if a usage hint is still to be displayed.
 	 */
 	private boolean mDisplayHint = true;
@@ -352,9 +348,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	public static void finishActivityForWidget(final Context context, final int appWidgetId) {
 		DisplayRandomImageActivity activity = WIDGET_MAP.get(appWidgetId);
 		if (activity != null) {
-			if (MiniWidget.hasWidgetOfId(appWidgetId)) {
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_widget_current_file_name, appWidgetId);
-			}
 			activity.finish();
 			WIDGET_MAP.delete(appWidgetId);
 		}
@@ -414,7 +407,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 			mRandomFileProvider = savedInstanceState.getParcelable("randomFileProvider");
 			mHideNavigationBar = savedInstanceState.getBoolean("hideNavigationBar");
 			mChangeByTimeoutHandler.mActiveRuntime = savedInstanceState.getLong("changeByTimeoutHandler.activeRuntime");
-			mRecreatedAfterSavingInstanceState = true;
 			mDisplayHint = false;
 		}
 		if (mListName == null) {
@@ -787,7 +779,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 	protected final void onResume() {
 		super.onResume();
 		mSavingInstanceState = false;
-		mRecreatedAfterSavingInstanceState = false;
 		setNavigationBarFlags();
 		mChangeByTimeoutHandler.resume();
 		registerSPenListener();
