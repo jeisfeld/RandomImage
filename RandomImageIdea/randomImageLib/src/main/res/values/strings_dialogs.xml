@@ -106,6 +106,7 @@
     <string name="dialog_confirmation_add_folder">Do you want to add the folder “%1$s” to the image list?</string>
     <string name="dialog_confirmation_add_folder_recursively">Do you want to add the folder “%1$s” and all its subfolders to the image list?</string>
     <string name="dialog_confirmation_add_nested_list">Do you want to add the image list “%1$s” to the list “%2$s” as nested list?</string>
+    <string name="dialog_confirmation_remove_notification">Do you really want to remove the notification “%1$s”?</string>
     <string name="dialog_confirmation_overwrite_list_single">The list “%2$s” exists already. Do you want to overwrite it with the backup?</string>
     <string name="dialog_confirmation_overwrite_list_multiple">%1$d of the selected lists exist already. Do you want to overwrite them with the backup?</string>
     <string name="dialog_confirmation_overwrite_backup_single">The list “%2$s” has already a backup. Do you want to overwrite it?</string>

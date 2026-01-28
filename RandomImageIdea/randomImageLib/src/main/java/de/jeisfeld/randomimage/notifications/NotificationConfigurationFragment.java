@@ -23,6 +23,7 @@ import java.util.Date;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.util.DateUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.SelectFromListDialogFragment.SelectFromListDialogListener;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
@@ -138,9 +139,30 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 		Preference cancelNotificationPreference = findPreference(getString(R.string.key_dummy_cancel_notification));
 
 		cancelNotificationPreference.setOnPreferenceClickListener(preference -> {
-			NotificationSettingsActivity.cancelNotification(mNotificationId);
-			updateHeader();
-			getActivity().finish();
+			String notificationName = PreferenceUtil.getIndexedSharedPreferenceString(R.string.key_notification_display_name, mNotificationId);
+			if (notificationName == null || notificationName.isEmpty()) {
+				int index = NotificationSettingsActivity.getNotificationIds().indexOf(mNotificationId);
+				if (index >= 0) {
+					notificationName = getString(R.string.pref_heading_notifcation) + " " + (index + 1);
+				}
+				else {
+					notificationName = getString(R.string.pref_heading_notifcation);
+				}
+			}
+			String finalNotificationName = notificationName;
+			DialogUtil.displayConfirmationMessage(getActivity(), new ConfirmDialogListener() {
+				@Override
+				public void onDialogPositiveClick(final DialogFragment dialog) {
+					NotificationSettingsActivity.cancelNotification(mNotificationId);
+					updateHeader();
+					getActivity().finish();
+				}
+
+				@Override
+				public void onDialogNegativeClick(final DialogFragment dialog) {
+					// do nothing
+				}
+			}, null, R.string.button_remove, R.string.dialog_confirmation_remove_notification, finalNotificationName);
 			return true;
 		});
 
