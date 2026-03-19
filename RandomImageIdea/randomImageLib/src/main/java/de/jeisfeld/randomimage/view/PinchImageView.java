@@ -323,8 +323,8 @@ public class PinchImageView extends ImageView {
 	 * @return The natural scale factor fitting the image into the view.
 	 */
 	private float getNaturalScaleFactor() {
-		float heightFactor = 1f * getHeight() / mDrawable.getIntrinsicHeight();
-		float widthFactor = 1f * getWidth() / mDrawable.getIntrinsicWidth();
+		float heightFactor = 1f * getHeight() / getDrawableDisplayHeight();
+		float widthFactor = 1f * getWidth() / getDrawableDisplayWidth();
 
 		switch (mScaleType) {
 		case STRETCH:
@@ -414,6 +414,33 @@ public class PinchImageView extends ImageView {
 			return 0;
 		}
 
+	}
+
+	/**
+	 * Get the displayed drawable width after applying the configured rotation.
+	 *
+	 * @return the displayed drawable width.
+	 */
+	private int getDrawableDisplayWidth() {
+		return usesMatrixRotation() ? mDrawable.getIntrinsicHeight() : mDrawable.getIntrinsicWidth();
+	}
+
+	/**
+	 * Get the displayed drawable height after applying the configured rotation.
+	 *
+	 * @return the displayed drawable height.
+	 */
+	private int getDrawableDisplayHeight() {
+		return usesMatrixRotation() ? mDrawable.getIntrinsicWidth() : mDrawable.getIntrinsicHeight();
+	}
+
+	/**
+	 * Check if the drawable needs to be rotated via image matrix.
+	 *
+	 * @return {@code true} for animated GIF drawables that need matrix rotation.
+	 */
+	private boolean usesMatrixRotation() {
+		return mDrawable instanceof GifDrawable && Math.abs(mRotationAngle) == 90;
 	}
 
 	/**
@@ -509,7 +536,15 @@ public class PinchImageView extends ImageView {
 			}
 			else {
 				Matrix matrix = new Matrix();
-				matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
+				if (usesMatrixRotation() && mRotationAngle == 90) { // MAGIC_NUMBER
+					matrix.postRotate(mRotationAngle);
+					matrix.postTranslate(0, mDrawable.getIntrinsicWidth());
+				}
+				else if (usesMatrixRotation() && mRotationAngle == -90) { // MAGIC_NUMBER
+					matrix.postRotate(mRotationAngle);
+					matrix.postTranslate(mDrawable.getIntrinsicHeight(), 0);
+				}
+				matrix.postTranslate(-mPosX * getDrawableDisplayWidth(), -mPosY * getDrawableDisplayHeight());
 				matrix.postScale(mScaleFactor, mScaleFactor);
 				matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
 				setImageMatrix(matrix);
