@@ -323,8 +323,8 @@ public class PinchImageView extends ImageView {
 	 * @return The natural scale factor fitting the image into the view.
 	 */
 	private float getNaturalScaleFactor() {
-		float heightFactor = 1f * getHeight() / mDrawable.getIntrinsicHeight();
-		float widthFactor = 1f * getWidth() / mDrawable.getIntrinsicWidth();
+		float heightFactor = 1f * getHeight() / getDrawableDisplayHeight();
+		float widthFactor = 1f * getWidth() / getDrawableDisplayWidth();
 
 		switch (mScaleType) {
 		case STRETCH:
@@ -510,11 +510,78 @@ public class PinchImageView extends ImageView {
 			else {
 				Matrix matrix = new Matrix();
 				matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
+				if (usesMatrixRotation()) {
+					matrix.postRotate(mRotationAngle);
+				}
 				matrix.postScale(mScaleFactor, mScaleFactor);
 				matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
 				setImageMatrix(matrix);
 			}
 		}
+	}
+
+	/**
+	 * Get the drawable width as displayed after applying rotation.
+	 *
+	 * @return the drawable display width.
+	 */
+	private int getDrawableDisplayWidth() {
+		return isQuarterTurnRotation() ? mDrawable.getIntrinsicHeight() : mDrawable.getIntrinsicWidth();
+	}
+
+	/**
+	 * Get the drawable height as displayed after applying rotation.
+	 *
+	 * @return the drawable display height.
+	 */
+	private int getDrawableDisplayHeight() {
+		return isQuarterTurnRotation() ? mDrawable.getIntrinsicWidth() : mDrawable.getIntrinsicHeight();
+	}
+
+	/**
+	 * Check if the current rotation is a quarter turn.
+	 *
+	 * @return {@code true} if width and height are swapped by rotation.
+	 */
+	private boolean isQuarterTurnRotation() {
+		return usesMatrixRotation() && Math.abs(mRotationAngle) == 90; // MAGIC_NUMBER
+	}
+
+	/**
+	 * Check if the drawable needs matrix-based rotation handling.
+	 *
+	 * @return {@code true} if the drawable is an animated GIF rotated via matrix.
+	 */
+	private boolean usesMatrixRotation() {
+		return mDrawable instanceof GifDrawable && mRotationAngle != 0;
+	}
+
+	/**
+	 * Adjust the image position based on a movement in screen coordinates.
+	 *
+	 * @param dx the horizontal movement on screen.
+	 * @param dy the vertical movement on screen.
+	 */
+	private void adjustPosition(final float dx, final float dy) {
+		float deltaPosX;
+		float deltaPosY;
+		switch (usesMatrixRotation() ? mRotationAngle : 0) {
+		case 90: // MAGIC_NUMBER
+			deltaPosX = -dy / mScaleFactor / mDrawable.getIntrinsicWidth();
+			deltaPosY = dx / mScaleFactor / mDrawable.getIntrinsicHeight();
+			break;
+		case -90: // MAGIC_NUMBER
+			deltaPosX = dy / mScaleFactor / mDrawable.getIntrinsicWidth();
+			deltaPosY = -dx / mScaleFactor / mDrawable.getIntrinsicHeight();
+			break;
+		case 0:
+		default:
+			deltaPosX = -dx / mScaleFactor / mDrawable.getIntrinsicWidth();
+			deltaPosY = -dy / mScaleFactor / mDrawable.getIntrinsicHeight();
+			break;
+		}
+		mPosX += deltaPosX;
+		mPosY += deltaPosY;
 	}
 
 	/**
@@ -662,8 +729,7 @@ public class PinchImageView extends ImageView {
 			// Only move if the ScaleGestureDetector isn't processing a gesture.
 			final float dx = x - mLastTouchX;
 			final float dy = y - mLastTouchY;
-			mPosX -= dx / mScaleFactor / mDrawable.getIntrinsicWidth();
-			mPosY -= dy / mScaleFactor / mDrawable.getIntrinsicHeight();
+			adjustPosition(dx, dy);
 		}
 		else {
 			// When resizing, move according to the center of the two pinch points
@@ -672,13 +738,11 @@ public class PinchImageView extends ImageView {
 			final float y0 = (ev.getY(pointerIndex2) + y) / 2;
 			final float dx = x0 - mLastTouchX0;
 			final float dy = y0 - mLastTouchY0;
-			mPosX -= dx / mScaleFactor / mDrawable.getIntrinsicWidth();
-			mPosY -= dy / mScaleFactor / mDrawable.getIntrinsicHeight();
+			adjustPosition(dx, dy);
 			if (mScaleFactor != mLastScaleFactor) {
 				// When resizing, then position also changes
 				final float changeFactor = mScaleFactor / mLastScaleFactor;
-				mPosX = mPosX + (x0 - getWidth() / 2.0f) * (changeFactor - 1) / mScaleFactor / mDrawable.getIntrinsicWidth();
-				mPosY = mPosY + (y0 - getHeight() / 2.0f) * (changeFactor - 1) / mScaleFactor / mDrawable.getIntrinsicHeight();
+				adjustPosition(-(x0 - getWidth() / 2.0f) * (changeFactor - 1), -(y0 - getHeight() / 2.0f) * (changeFactor - 1));
 				mLastScaleFactor = mScaleFactor;
 				moved = true;
 			}
