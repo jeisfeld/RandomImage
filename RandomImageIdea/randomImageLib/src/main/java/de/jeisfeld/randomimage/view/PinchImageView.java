@@ -323,8 +323,8 @@ public class PinchImageView extends ImageView {
 	 * @return The natural scale factor fitting the image into the view.
 	 */
 	private float getNaturalScaleFactor() {
-		float heightFactor = 1f * getHeight() / mDrawable.getIntrinsicHeight();
-		float widthFactor = 1f * getWidth() / mDrawable.getIntrinsicWidth();
+		float heightFactor = 1f * getHeight() / getDisplayedDrawableHeight();
+		float widthFactor = 1f * getWidth() / getDisplayedDrawableWidth();
 
 		switch (mScaleType) {
 		case STRETCH:
@@ -508,13 +508,45 @@ public class PinchImageView extends ImageView {
 				setImageMatrix(null);
 			}
 			else {
+				float displayedWidth = getDisplayedDrawableWidth();
+				float displayedHeight = getDisplayedDrawableHeight();
+
 				Matrix matrix = new Matrix();
-				matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
+				matrix.postTranslate(-mDrawable.getIntrinsicWidth() / 2.0f, -mDrawable.getIntrinsicHeight() / 2.0f);
+				if (mRotationAngle != 0) {
+					matrix.postRotate(mRotationAngle);
+				}
 				matrix.postScale(mScaleFactor, mScaleFactor);
-				matrix.postTranslate(getWidth() / 2.0f, getHeight() / 2.0f);
+				matrix.postTranslate(
+						getWidth() / 2.0f + (ONE_HALF - mPosX) * displayedWidth * mScaleFactor,
+						getHeight() / 2.0f + (ONE_HALF - mPosY) * displayedHeight * mScaleFactor);
 				setImageMatrix(matrix);
 			}
 		}
+	}
+
+	/**
+	 * Get the width of the drawable after applying the configured rotation.
+	 *
+	 * @return The displayed drawable width.
+	 */
+	private int getDisplayedDrawableWidth() {
+		if (Math.abs(mRotationAngle) % 180 == 90) {
+			return mDrawable.getIntrinsicHeight();
+		}
+		return mDrawable.getIntrinsicWidth();
+	}
+
+	/**
+	 * Get the height of the drawable after applying the configured rotation.
+	 *
+	 * @return The displayed drawable height.
+	 */
+	private int getDisplayedDrawableHeight() {
+		if (Math.abs(mRotationAngle) % 180 == 90) {
+			return mDrawable.getIntrinsicWidth();
+		}
+		return mDrawable.getIntrinsicHeight();
 	}
 
 	/**
