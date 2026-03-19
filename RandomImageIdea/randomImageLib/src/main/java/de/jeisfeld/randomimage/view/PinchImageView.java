@@ -510,7 +510,7 @@ public class PinchImageView extends ImageView {
 			else {
 				Matrix matrix = new Matrix();
 				matrix.setTranslate(-mPosX * mDrawable.getIntrinsicWidth(), -mPosY * mDrawable.getIntrinsicHeight());
-				if (mRotationAngle != 0) {
+				if (usesMatrixRotation()) {
 					matrix.postRotate(mRotationAngle);
 				}
 				matrix.postScale(mScaleFactor, mScaleFactor);
@@ -544,7 +544,16 @@ public class PinchImageView extends ImageView {
 	 * @return {@code true} if width and height are swapped by rotation.
 	 */
 	private boolean isQuarterTurnRotation() {
-		return Math.abs(mRotationAngle) == 90; // MAGIC_NUMBER
+		return usesMatrixRotation() && Math.abs(mRotationAngle) == 90; // MAGIC_NUMBER
+	}
+
+	/**
+	 * Check if the drawable needs matrix-based rotation handling.
+	 *
+	 * @return {@code true} if the drawable is an animated GIF rotated via matrix.
+	 */
+	private boolean usesMatrixRotation() {
+		return mDrawable instanceof GifDrawable && mRotationAngle != 0;
 	}
 
 	/**
@@ -556,7 +565,7 @@ public class PinchImageView extends ImageView {
 	private void adjustPosition(final float dx, final float dy) {
 		float deltaPosX;
 		float deltaPosY;
-		switch (mRotationAngle) {
+		switch (usesMatrixRotation() ? mRotationAngle : 0) {
 		case 90: // MAGIC_NUMBER
 			deltaPosX = -dy / mScaleFactor / mDrawable.getIntrinsicWidth();
 			deltaPosY = dx / mScaleFactor / mDrawable.getIntrinsicHeight();
