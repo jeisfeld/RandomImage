@@ -833,11 +833,10 @@ public class DisplayRandomImageActivity extends StartActivity {
 		for (int notificationId : notificationIds) {
 			PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, notificationId, isActive);
 			if (isActive) {
-				NotificationAlarmReceiver.setAlarm(this, notificationId, false);
+				NotificationAlarmReceiver.setAlarm(this, notificationId, true);
 			}
 			else {
 				NotificationAlarmReceiver.cancelAlarm(this, notificationId, false);
-				PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);
 			}
 		}
 	}
