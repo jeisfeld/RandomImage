@@ -370,30 +370,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 		context.startActivity(intent);
 	}
 
-	/**
-	 * Check if an intent came from the launcher.
-	 *
-	 * @param intent The intent to check.
-	 * @return {@code true} if the launcher started the activity.
-	 */
-	private boolean isLauncherIntent(final Intent intent) {
-		return intent != null
-				&& Intent.ACTION_MAIN.equals(intent.getAction())
-				&& (intent.hasCategory(Intent.CATEGORY_LAUNCHER)
-				|| intent.hasCategory("android.intent.category.MULTIWINDOW_LAUNCHER"));
-	}
-
-	@Override
-	protected final void onNewIntent(final Intent intent) {
-		super.onNewIntent(intent);
-		if (isLauncherIntent(intent)) {
-			finish();
-			startActivity(createIntent(this, null, null, true, null, null));
-			return;
-		}
-		setIntent(intent);
-	}
-
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
