@@ -354,6 +354,16 @@ public class DisplayRandomImageActivity extends StartActivity {
 	}
 
 	/**
+	 * Check if there is an existing activity started from a certain widget.
+	 *
+	 * @param appWidgetId The appWidgetId that has triggered the activity.
+	 * @return true if a widget-linked DisplayRandomImageActivity currently exists.
+	 */
+	public static boolean hasStartedActivityForWidget(final int appWidgetId) {
+		return WIDGET_MAP.get(appWidgetId) != null;
+	}
+
+	/**
 	 * Static helper method to start the activity for the contents of an image folder.
 	 *
 	 * @param context    The context starting this activity.
@@ -720,6 +730,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			return;
 		}
 		WIDGET_MAP.put(mAppWidgetId, this);
+		updateLinkedWidgetNotificationState(true);
 
 		PreferenceUtil.setIndexedSharedPreferenceLong(R.string.key_widget_last_usage_time, mAppWidgetId, currentTime);
 
@@ -769,6 +780,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 			}
 		}
 		if (mAppWidgetId != null) {
+			updateLinkedWidgetNotificationState(false);
 			WIDGET_MAP.delete(mAppWidgetId);
 			if (PreferenceUtil.getIndexedSharedPreferenceLong(R.string.key_widget_timeout, mAppWidgetId, 0) > 0) {
 				WidgetAlarmReceiver.cancelAlarm(this, mAppWidgetId, true);
@@ -806,7 +818,6 @@ public class DisplayRandomImageActivity extends StartActivity {
 		setNavigationBarFlags();
 		mChangeByTimeoutHandler.resume();
 		registerSPenListener();
-		updateLinkedWidgetNotificationState(true);
 	}
 
 	@Override
@@ -814,13 +825,12 @@ public class DisplayRandomImageActivity extends StartActivity {
 		super.onPause();
 		mChangeByTimeoutHandler.pause();
 		unregisterSPenListener();
-		updateLinkedWidgetNotificationState(false);
 	}
 
 	/**
-	 * Update linked Mini Widget notification activation based on foreground state.
+	 * Update linked Mini Widget notification activation based on whether the widget activity is started.
 	 *
-	 * @param isActive true if the activity is in the foreground.
+	 * @param isActive true if the activity is started and not yet destroyed.
 	 */
 	private void updateLinkedWidgetNotificationState(final boolean isActive) {
 		if (mAppWidgetId == null) {

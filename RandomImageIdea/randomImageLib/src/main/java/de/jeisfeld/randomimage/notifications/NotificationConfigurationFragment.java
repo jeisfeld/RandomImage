@@ -29,6 +29,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.view.TimeSelectorPreference;
+import de.jeisfeld.randomimage.DisplayRandomImageActivity;
 import de.jeisfeld.randomimage.widgets.MiniWidget;
 import de.jeisfeld.randomimage.widgets.WidgetSettingsActivity;
 import de.jeisfeld.randomimagelib.R;
@@ -683,7 +684,8 @@ public class NotificationConfigurationFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_notification_mini_widget))) {
 				int widgetId = Integer.parseInt(stringValue);
 				PreferenceUtil.setIndexedSharedPreferenceInt(R.string.key_notification_mini_widget, mNotificationId, widgetId);
-				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, mNotificationId, false);
+				PreferenceUtil.setIndexedSharedPreferenceBoolean(R.string.key_notification_widget_active, mNotificationId,
+						widgetId != 0 && DisplayRandomImageActivity.hasStartedActivityForWidget(widgetId));
 				if (widgetId != 0) {
 					NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId, false);
 					NotificationAlarmReceiver.cancelAlarm(getActivity(), mNotificationId, true);
