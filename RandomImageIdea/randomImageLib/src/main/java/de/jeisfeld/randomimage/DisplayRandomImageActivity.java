@@ -387,6 +387,7 @@ public class DisplayRandomImageActivity extends StartActivity {
 	protected final void onNewIntent(final Intent intent) {
 		super.onNewIntent(intent);
 		if (isLauncherIntent(intent)) {
+			updateLinkedWidgetNotificationState(true);
 			finish();
 			startActivity(createIntent(this, null, null, true, null, null));
 			return;
