@@ -318,7 +318,7 @@ public class SelectDirectoryActivity extends BaseActivity {
 	 * @return The list adapter.
 	 */
 	private ArrayAdapter<String> createListAdapter(final List<String> items) {
-		return new ArrayAdapter<>(this, R.layout.adapter_directory_names, R.id.text, items) {
+		return new ArrayAdapter<String>(this, R.layout.adapter_directory_names, R.id.text, items) {
 			@Override
 			public View getView(final int position, final View convertView, final ViewGroup parent) {
 				View v = super.getView(position, convertView, parent);
