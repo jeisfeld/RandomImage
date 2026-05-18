@@ -32,6 +32,7 @@ import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDial
 import de.jeisfeld.randomimage.util.FileUtil;
 import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.NotificationPermissionUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimage.util.SystemUtil.ApplicationInfo;
@@ -46,6 +47,11 @@ import de.jeisfeld.randomimagelib.R;
  * Fragment for displaying the settings.
  */
 public class SettingsFragment extends PreferenceFragment {
+	/**
+	 * The request code used to query for notification permission.
+	 */
+	private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 4;
+
 	/**
 	 * Field holding the value of the language preference, in order to detect a real change.
 	 */
@@ -139,6 +145,21 @@ public class SettingsFragment extends PreferenceFragment {
 	@Override
 	public final void onResume() {
 		super.onResume();
+	}
+
+	@Override
+	public final void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
+			if (NotificationPermissionUtil.hasNotificationPermission(getActivity())) {
+				CheckBoxPreference showListNotificationPreference =
+						(CheckBoxPreference) findPreference(getString(R.string.key_pref_show_list_notification));
+				showListNotificationPreference.setChecked(true);
+				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, true);
+			}
+			else {
+				// keep the preference disabled
+			}
+		}
 	}
 
 	/**
@@ -461,6 +482,24 @@ public class SettingsFragment extends PreferenceFragment {
 						System.exit(0);
 					}
 				}
+			}
+			// enforce notification permission when enabling list change notifications
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_show_list_notification))) {
+				if ((Boolean) value && !NotificationPermissionUtil.hasNotificationPermission(preference.getContext())) {
+					DialogUtil.displayConfirmationMessage(getActivity(), new ConfirmDialogListener() {
+						@Override
+						public void onDialogPositiveClick(final DialogFragment dialog) {
+							NotificationPermissionUtil.requestNotificationPermission(SettingsFragment.this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+						}
+
+						@Override
+						public void onDialogNegativeClick(final DialogFragment dialog) {
+							// do nothing
+						}
+					}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_notification_permission);
+					return false;
+				}
+				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, (Boolean) value);
 			}
 			// show/hide regex preferences in dependence of main setting
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_use_regex_filter))) {

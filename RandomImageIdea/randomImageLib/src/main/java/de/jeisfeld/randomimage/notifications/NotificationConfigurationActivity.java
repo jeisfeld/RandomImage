@@ -1,10 +1,15 @@
 package de.jeisfeld.randomimage.notifications;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import de.jeisfeld.randomimage.StartActivity;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.NotificationPermissionUtil;
+import de.jeisfeld.randomimagelib.R;
 
 /**
  * Activity for the configuration of a notification.
@@ -16,13 +21,27 @@ public class NotificationConfigurationActivity extends StartActivity {
 	private static final String FRAGMENT_TAG = "FRAGMENT_TAG";
 
 	/**
+	 * The request code used to query for notification permission.
+	 */
+	private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 4;
+
+	/**
 	 * The Intent used as result.
 	 */
 	private Intent mResultValue;
 
 	@Override
+	protected final boolean shouldRequestNotificationPermissionOnStartup() {
+		return false;
+	}
+
+	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (!NotificationPermissionUtil.hasNotificationPermission(this)) {
+			requestNotificationPermission();
+			return;
+		}
 		getWindow().getDecorView().setFitsSystemWindows(true);
 
 		setResult(RESULT_CANCELED);
@@ -52,6 +71,38 @@ public class NotificationConfigurationActivity extends StartActivity {
 
 			getFragmentManager().beginTransaction().replace(android.R.id.content, fragment, FRAGMENT_TAG).commit();
 			getFragmentManager().executePendingTransactions();
+		}
+	}
+
+	/**
+	 * Request the notification permission after explaining why it is required.
+	 */
+	private void requestNotificationPermission() {
+		DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+			@Override
+			public void onDialogPositiveClick(final DialogFragment dialog) {
+				NotificationPermissionUtil.requestNotificationPermission(NotificationConfigurationActivity.this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			}
+
+			@Override
+			public void onDialogNegativeClick(final DialogFragment dialog) {
+				finish();
+			}
+		}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_notification_permission);
+	}
+
+	@Override
+	public final void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
+			if (NotificationPermissionUtil.hasNotificationPermission(this)) {
+				recreate();
+			}
+			else {
+				finish();
+			}
+		}
+		else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 	}
 
