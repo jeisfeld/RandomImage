@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage;
 
+import android.Manifest.permission;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Build.VERSION;
@@ -26,7 +28,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.FileUtil;
@@ -46,6 +50,11 @@ import de.jeisfeld.randomimagelib.R;
  * Fragment for displaying the settings.
  */
 public class SettingsFragment extends PreferenceFragment {
+	/**
+	 * The request code used to get permission for notifications.
+	 */
+	private static final int REQUEST_CODE_PERMISSION_NOTIFICATION = 1;
+
 	/**
 	 * Field holding the value of the language preference, in order to detect a real change.
 	 */
@@ -429,6 +438,21 @@ public class SettingsFragment extends PreferenceFragment {
 		findPreference(context.getString(R.string.key_pref_hidden_lists_pattern)).setEnabled(booleanValue);
 	}
 
+	@Override
+	public final void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_PERMISSION_NOTIFICATION) {
+			CheckBoxPreference preference = (CheckBoxPreference) findPreference(getString(R.string.key_pref_show_list_notification));
+			boolean permissionGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, permissionGranted);
+			if (preference != null) {
+				preference.setChecked(permissionGranted);
+			}
+		}
+		else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
+	}
+
 	/**
 	 * Update the enabling of the "Show Hidden Folders" preference.
 	 *
@@ -497,6 +521,11 @@ public class SettingsFragment extends PreferenceFragment {
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_folder_selection_mechanism))) {
 				PreferenceUtil.setSharedPreferenceString(R.string.key_pref_folder_selection_mechanism, stringValue);
 				updateShowHiddenFoldersPreference(preference.getContext());
+			}
+			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_show_list_notification))
+					&& Boolean.parseBoolean(stringValue) && !NotificationUtil.hasNotificationPermission(getActivity())) {
+				requestPermissions(new String[]{permission.POST_NOTIFICATIONS}, REQUEST_CODE_PERMISSION_NOTIFICATION);
+				return false;
 			}
 
 			setSummary(preference, stringValue);

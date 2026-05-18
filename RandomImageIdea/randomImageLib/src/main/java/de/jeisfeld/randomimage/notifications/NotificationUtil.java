@@ -1,5 +1,6 @@
 package de.jeisfeld.randomimage.notifications;
 
+import android.Manifest.permission;
 import android.app.Notification;
 import android.app.Notification.BigPictureStyle;
 import android.app.Notification.Builder;
@@ -10,6 +11,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioAttributes;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.ConfigureImageListActivity;
 import de.jeisfeld.randomimage.DisplayRandomImageActivity;
@@ -50,6 +53,17 @@ import de.jeisfeld.randomimagelib.R;
  * Helper class to show notifications.
  */
 public final class NotificationUtil {
+	/**
+	 * Check if the app has permission to post notifications.
+	 *
+	 * @param context The context.
+	 * @return true if notifications may be posted.
+	 */
+	public static boolean hasNotificationPermission(final Context context) {
+		return !SystemUtil.isAtLeastVersion(VERSION_CODES.TIRAMISU)
+				|| ContextCompat.checkSelfPermission(context, permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+	}
+
 	/**
 	 * Prefix used before a list name.
 	 */
@@ -167,6 +181,10 @@ public final class NotificationUtil {
 	 */
 	public static void displayNotification(final Context context, final String notificationTag, final NotificationType notificationType,
 										   final int titleResource, final int messageResource, final Object... args) {
+		if (!hasNotificationPermission(context)) {
+			return;
+		}
+
 		String message = DialogUtil.capitalizeFirst(context.getString(messageResource, args));
 		String title = context.getString(titleResource, notificationTag);
 
@@ -224,6 +242,10 @@ public final class NotificationUtil {
 	 * @param notificationId the id of the configured notification.
 	 */
 	public static void displayRandomImageNotification(final Context context, final int notificationId) {
+		if (!hasNotificationPermission(context)) {
+			return;
+		}
+
 		if (!isMiniWidgetLinkedNotificationActive(notificationId)) {
 			NotificationAlarmReceiver.cancelAlarm(context, notificationId, false);
 			PreferenceUtil.removeIndexedSharedPreference(R.string.key_notification_current_alarm_timestamp, notificationId);

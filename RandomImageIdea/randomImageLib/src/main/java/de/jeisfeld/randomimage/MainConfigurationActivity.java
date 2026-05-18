@@ -1,8 +1,10 @@
 package de.jeisfeld.randomimage;
 
+import android.Manifest.permission;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -21,10 +23,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.ItemType;
 import de.jeisfeld.randomimage.DisplayImageListAdapter.SelectionMode;
 import de.jeisfeld.randomimage.notifications.NotificationSettingsActivity;
+import de.jeisfeld.randomimage.notifications.NotificationUtil;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.DialogUtil.RequestInputDialogFragment.RequestInputDialogListener;
@@ -51,6 +56,10 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	 * The request code used to get permission for show activities in foreground.
 	 */
 	private static final int REQUEST_CODE_PERMISSION_FOREGROUND = 10;
+	/**
+	 * The request code used to get permission for notifications.
+	 */
+	private static final int REQUEST_CODE_PERMISSION_NOTIFICATION = 14;
 	/**
 	 * The requestCode with which the storage access framework is triggered for backup folder.
 	 */
@@ -173,17 +182,25 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 		buttonWidgets.setOnClickListener(v -> WidgetSettingsActivity.startActivity(MainConfigurationActivity.this));
 
 		Button buttonNotifications = findViewById(R.id.buttonNotifications);
-		buttonNotifications.setOnClickListener(v -> {
-			if (VERSION.SDK_INT >= VERSION_CODES.M && !Settings.canDrawOverlays(MainConfigurationActivity.this)) {
-				DialogUtil.displayInfo(MainConfigurationActivity.this, () -> {
-					Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-					startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION_FOREGROUND);
-				}, 0, R.string.dialog_info_permission_foreground);
-			}
-			else {
-				NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
-			}
-		});
+		buttonNotifications.setOnClickListener(v -> startNotificationSettingsActivity());
+	}
+
+	/**
+	 * Start the notification settings activity after ensuring required permissions are granted.
+	 */
+	private void startNotificationSettingsActivity() {
+		if (!NotificationUtil.hasNotificationPermission(this)) {
+			ActivityCompat.requestPermissions(this, new String[]{permission.POST_NOTIFICATIONS}, REQUEST_CODE_PERMISSION_NOTIFICATION);
+		}
+		else if (VERSION.SDK_INT >= VERSION_CODES.M && !Settings.canDrawOverlays(MainConfigurationActivity.this)) {
+			DialogUtil.displayInfo(MainConfigurationActivity.this, () -> {
+				Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+				startActivityForResult(permissionIntent, REQUEST_CODE_PERMISSION_FOREGROUND);
+			}, 0, R.string.dialog_info_permission_foreground);
+		}
+		else {
+			NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
+		}
 	}
 
 	/**
@@ -742,6 +759,18 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 	}
 
 	@Override
+	public final void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_PERMISSION_NOTIFICATION) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				startNotificationSettingsActivity();
+			}
+		}
+		else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
+	}
+
+	@Override
 	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
@@ -749,7 +778,7 @@ public class MainConfigurationActivity extends DisplayImageListActivity {
 				handleListInfoResult(resultCode, data);
 				break;
 			case REQUEST_CODE_PERMISSION_FOREGROUND:
-				NotificationSettingsActivity.startActivity(MainConfigurationActivity.this);
+				startNotificationSettingsActivity();
 				break;
 			case REQUEST_CODE_STORAGE_ACCESS_BACKUP:
 			case REQUEST_CODE_STORAGE_ACCESS_RESTORE:

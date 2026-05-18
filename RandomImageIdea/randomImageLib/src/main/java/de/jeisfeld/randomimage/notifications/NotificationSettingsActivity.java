@@ -1,10 +1,12 @@
 package de.jeisfeld.randomimage.notifications;
 
+import android.Manifest.permission;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -12,6 +14,9 @@ import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.BasePreferenceActivity;
@@ -25,6 +30,11 @@ import de.jeisfeld.randomimagelib.R;
  * Activity to display the settings page.
  */
 public class NotificationSettingsActivity extends BasePreferenceActivity {
+	/**
+	 * The request code used to get permission for notifications.
+	 */
+	private static final int REQUEST_CODE_PERMISSION_NOTIFICATION = 1;
+
 	/**
 	 * Resource String for the hash code parameter used to identify the instance of the activity.
 	 */
@@ -61,6 +71,18 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 
 		mActivityMap.put(hashCode(), this);
 
+		checkRequiredPermissions();
+	}
+
+	/**
+	 * Check the mandatory permissions for random image notifications.
+	 */
+	private void checkRequiredPermissions() {
+		if (!NotificationUtil.hasNotificationPermission(this)) {
+			ActivityCompat.requestPermissions(this, new String[]{permission.POST_NOTIFICATIONS}, REQUEST_CODE_PERMISSION_NOTIFICATION);
+			return;
+		}
+
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		if (SystemUtil.isAtLeastVersion(VERSION_CODES.UPSIDE_DOWN_CAKE) && alarmMgr != null && !alarmMgr.canScheduleExactAlarms()) {
 			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
@@ -75,6 +97,21 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 					finish();
 				}
 			}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_alarm_permission);
+		}
+	}
+
+	@Override
+	public final void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_PERMISSION_NOTIFICATION) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				checkRequiredPermissions();
+			}
+			else {
+				finish();
+			}
+		}
+		else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 	}
 
