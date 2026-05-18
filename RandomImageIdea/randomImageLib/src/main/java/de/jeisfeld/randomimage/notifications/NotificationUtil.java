@@ -42,6 +42,7 @@ import de.jeisfeld.randomimage.util.ImageRegistry;
 import de.jeisfeld.randomimage.util.ImageRegistry.ListFiltering;
 import de.jeisfeld.randomimage.util.ImageUtil;
 import de.jeisfeld.randomimage.util.MediaStoreUtil;
+import de.jeisfeld.randomimage.util.NotificationPermissionUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -167,6 +168,9 @@ public final class NotificationUtil {
 	 */
 	public static void displayNotification(final Context context, final String notificationTag, final NotificationType notificationType,
 										   final int titleResource, final int messageResource, final Object... args) {
+		if (!NotificationPermissionUtil.hasNotificationPermission(context)) {
+			return;
+		}
 		String message = DialogUtil.capitalizeFirst(context.getString(messageResource, args));
 		String title = context.getString(titleResource, notificationTag);
 
@@ -414,6 +418,10 @@ public final class NotificationUtil {
 			notificationBuilder.setVibrate(VIBRATION_PATTERN);
 		}
 
+		if (!NotificationPermissionUtil.hasNotificationPermission(context)) {
+			return;
+		}
+
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(notificationTag, notificationType.intValue(), notificationBuilder.build());
 
@@ -538,7 +546,7 @@ public final class NotificationUtil {
 										 final List<String> nestedLists, final List<String> folders, final List<String> files) {
 		// Do not show notification if globally disabled.
 		boolean showNotification = PreferenceUtil.getSharedPreferenceBoolean(R.string.key_pref_show_list_notification);
-		if (!showNotification) {
+		if (!showNotification || !NotificationPermissionUtil.hasNotificationPermission(context)) {
 			return;
 		}
 

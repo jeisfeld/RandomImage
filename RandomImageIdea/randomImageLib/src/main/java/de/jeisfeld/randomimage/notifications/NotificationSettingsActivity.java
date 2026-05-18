@@ -17,6 +17,7 @@ import de.jeisfeld.randomimage.Application;
 import de.jeisfeld.randomimage.BasePreferenceActivity;
 import de.jeisfeld.randomimage.util.DialogUtil;
 import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
+import de.jeisfeld.randomimage.util.NotificationPermissionUtil;
 import de.jeisfeld.randomimage.util.PreferenceUtil;
 import de.jeisfeld.randomimage.util.SystemUtil;
 import de.jeisfeld.randomimagelib.R;
@@ -29,6 +30,11 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 	 * Resource String for the hash code parameter used to identify the instance of the activity.
 	 */
 	public static final String STRING_HASH_CODE = "de.jeisfeld.randomimage.HASH_CODE";
+
+	/**
+	 * The request code used to query for notification permission.
+	 */
+	private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 4;
 
 	/**
 	 * The headers that are displayed.
@@ -61,6 +67,18 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 
 		mActivityMap.put(hashCode(), this);
 
+		if (!NotificationPermissionUtil.hasNotificationPermission(this)) {
+			NotificationPermissionUtil.requestNotificationPermission(this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			return;
+		}
+
+		requestAlarmPermissionIfRequired();
+	}
+
+	/**
+	 * Request exact alarm permission, if required.
+	 */
+	private void requestAlarmPermissionIfRequired() {
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		if (SystemUtil.isAtLeastVersion(VERSION_CODES.UPSIDE_DOWN_CAKE) && alarmMgr != null && !alarmMgr.canScheduleExactAlarms()) {
 			DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
@@ -75,6 +93,18 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 					finish();
 				}
 			}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_alarm_permission);
+		}
+	}
+
+	@Override
+	public final void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
+			if (NotificationPermissionUtil.hasNotificationPermission(this)) {
+				requestAlarmPermissionIfRequired();
+			}
+			else {
+				finish();
+			}
 		}
 	}
 

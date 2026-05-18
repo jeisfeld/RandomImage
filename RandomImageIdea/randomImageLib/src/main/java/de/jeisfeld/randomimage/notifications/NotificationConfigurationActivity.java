@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import de.jeisfeld.randomimage.StartActivity;
+import de.jeisfeld.randomimage.util.NotificationPermissionUtil;
 
 /**
  * Activity for the configuration of a notification.
@@ -16,13 +17,27 @@ public class NotificationConfigurationActivity extends StartActivity {
 	private static final String FRAGMENT_TAG = "FRAGMENT_TAG";
 
 	/**
+	 * The request code used to query for notification permission.
+	 */
+	private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 4;
+
+	/**
 	 * The Intent used as result.
 	 */
 	private Intent mResultValue;
 
 	@Override
+	protected final boolean shouldRequestNotificationPermissionOnStartup() {
+		return false;
+	}
+
+	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (!NotificationPermissionUtil.hasNotificationPermission(this)) {
+			NotificationPermissionUtil.requestNotificationPermission(this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			return;
+		}
 		getWindow().getDecorView().setFitsSystemWindows(true);
 
 		setResult(RESULT_CANCELED);
@@ -52,6 +67,21 @@ public class NotificationConfigurationActivity extends StartActivity {
 
 			getFragmentManager().beginTransaction().replace(android.R.id.content, fragment, FRAGMENT_TAG).commit();
 			getFragmentManager().executePendingTransactions();
+		}
+	}
+
+	@Override
+	public final void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
+			if (NotificationPermissionUtil.hasNotificationPermission(this)) {
+				recreate();
+			}
+			else {
+				finish();
+			}
+		}
+		else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 	}
 
