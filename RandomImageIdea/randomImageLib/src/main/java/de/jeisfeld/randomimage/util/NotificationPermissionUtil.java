@@ -55,13 +55,24 @@ public final class NotificationPermissionUtil {
 	}
 
 	/**
+	 * Request notification permission from an activity during app startup.
+	 * This method records that the startup-only request has already happened, so startup does not nag again.
+	 *
+	 * @param activity    The activity.
+	 * @param requestCode The request code.
+	 */
+	public static void requestStartupNotificationPermission(final Activity activity, final int requestCode) {
+		markNotificationPermissionRequested();
+		requestNotificationPermission(activity, requestCode);
+	}
+
+	/**
 	 * Request notification permission from an activity.
 	 *
 	 * @param activity    The activity.
 	 * @param requestCode The request code.
 	 */
 	public static void requestNotificationPermission(final Activity activity, final int requestCode) {
-		markNotificationPermissionRequested();
 		ActivityCompat.requestPermissions(activity, new String[]{permission.POST_NOTIFICATIONS}, requestCode);
 	}
 
@@ -72,7 +83,6 @@ public final class NotificationPermissionUtil {
 	 * @param requestCode The request code.
 	 */
 	public static void requestNotificationPermission(final Fragment fragment, final int requestCode) {
-		markNotificationPermissionRequested();
 		fragment.requestPermissions(new String[]{permission.POST_NOTIFICATIONS}, requestCode);
 	}
 

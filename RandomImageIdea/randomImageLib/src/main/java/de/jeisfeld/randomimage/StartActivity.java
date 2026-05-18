@@ -61,7 +61,7 @@ public abstract class StartActivity extends BaseActivity {
 					? R.string.dialog_confirmation_need_image_permission : R.string.dialog_confirmation_need_read_permission);
 		}
 		else if (shouldRequestNotificationPermissionOnStartup() && NotificationPermissionUtil.shouldRequestStartupNotificationPermission(this)) {
-			NotificationPermissionUtil.requestNotificationPermission(this, REQUEST_CODE_STARTUP_NOTIFICATION_PERMISSION);
+			NotificationPermissionUtil.requestStartupNotificationPermission(this, REQUEST_CODE_STARTUP_NOTIFICATION_PERMISSION);
 		}
 	}
 
