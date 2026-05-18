@@ -68,11 +68,28 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 		mActivityMap.put(hashCode(), this);
 
 		if (!NotificationPermissionUtil.hasNotificationPermission(this)) {
-			NotificationPermissionUtil.requestNotificationPermission(this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			requestNotificationPermission();
 			return;
 		}
 
 		requestAlarmPermissionIfRequired();
+	}
+
+	/**
+	 * Request the notification permission after explaining why it is required.
+	 */
+	private void requestNotificationPermission() {
+		DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+			@Override
+			public void onDialogPositiveClick(final DialogFragment dialog) {
+				NotificationPermissionUtil.requestNotificationPermission(NotificationSettingsActivity.this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			}
+
+			@Override
+			public void onDialogNegativeClick(final DialogFragment dialog) {
+				finish();
+			}
+		}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_notification_permission);
 	}
 
 	/**
@@ -103,7 +120,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 				requestAlarmPermissionIfRequired();
 			}
 			else {
-				finish();
+				DialogUtil.displayInfo(this, () -> finish(), 0, R.string.dialog_confirmation_need_notification_permission);
 			}
 		}
 	}

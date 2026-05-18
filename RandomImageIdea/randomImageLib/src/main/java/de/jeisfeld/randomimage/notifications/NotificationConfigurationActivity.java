@@ -1,11 +1,15 @@
 package de.jeisfeld.randomimage.notifications;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import de.jeisfeld.randomimage.StartActivity;
+import de.jeisfeld.randomimage.util.DialogUtil;
+import de.jeisfeld.randomimage.util.DialogUtil.ConfirmDialogFragment.ConfirmDialogListener;
 import de.jeisfeld.randomimage.util.NotificationPermissionUtil;
+import de.jeisfeld.randomimagelib.R;
 
 /**
  * Activity for the configuration of a notification.
@@ -35,7 +39,7 @@ public class NotificationConfigurationActivity extends StartActivity {
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (!NotificationPermissionUtil.hasNotificationPermission(this)) {
-			NotificationPermissionUtil.requestNotificationPermission(this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			requestNotificationPermission();
 			return;
 		}
 		getWindow().getDecorView().setFitsSystemWindows(true);
@@ -70,6 +74,23 @@ public class NotificationConfigurationActivity extends StartActivity {
 		}
 	}
 
+	/**
+	 * Request the notification permission after explaining why it is required.
+	 */
+	private void requestNotificationPermission() {
+		DialogUtil.displayConfirmationMessage(this, new ConfirmDialogListener() {
+			@Override
+			public void onDialogPositiveClick(final DialogFragment dialog) {
+				NotificationPermissionUtil.requestNotificationPermission(NotificationConfigurationActivity.this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+			}
+
+			@Override
+			public void onDialogNegativeClick(final DialogFragment dialog) {
+				finish();
+			}
+		}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_notification_permission);
+	}
+
 	@Override
 	public final void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
 		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
@@ -77,7 +98,7 @@ public class NotificationConfigurationActivity extends StartActivity {
 				recreate();
 			}
 			else {
-				finish();
+				DialogUtil.displayInfo(this, () -> finish(), 0, R.string.dialog_confirmation_need_notification_permission);
 			}
 		}
 		else {

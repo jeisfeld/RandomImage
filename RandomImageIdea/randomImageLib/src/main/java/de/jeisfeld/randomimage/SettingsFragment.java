@@ -149,11 +149,16 @@ public class SettingsFragment extends PreferenceFragment {
 
 	@Override
 	public final void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
-		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION && NotificationPermissionUtil.hasNotificationPermission(getActivity())) {
-			CheckBoxPreference showListNotificationPreference =
-					(CheckBoxPreference) findPreference(getString(R.string.key_pref_show_list_notification));
-			showListNotificationPreference.setChecked(true);
-			PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, true);
+		if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
+			if (NotificationPermissionUtil.hasNotificationPermission(getActivity())) {
+				CheckBoxPreference showListNotificationPreference =
+						(CheckBoxPreference) findPreference(getString(R.string.key_pref_show_list_notification));
+				showListNotificationPreference.setChecked(true);
+				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, true);
+			}
+			else {
+				DialogUtil.displayInfo(getActivity(), R.string.dialog_confirmation_need_notification_permission);
+			}
 		}
 	}
 
@@ -481,7 +486,17 @@ public class SettingsFragment extends PreferenceFragment {
 			// enforce notification permission when enabling list change notifications
 			else if (preference.getKey().equals(preference.getContext().getString(R.string.key_pref_show_list_notification))) {
 				if ((Boolean) value && !NotificationPermissionUtil.hasNotificationPermission(preference.getContext())) {
-					NotificationPermissionUtil.requestNotificationPermission(SettingsFragment.this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+					DialogUtil.displayConfirmationMessage(getActivity(), new ConfirmDialogListener() {
+						@Override
+						public void onDialogPositiveClick(final DialogFragment dialog) {
+							NotificationPermissionUtil.requestNotificationPermission(SettingsFragment.this, REQUEST_CODE_NOTIFICATION_PERMISSION);
+						}
+
+						@Override
+						public void onDialogNegativeClick(final DialogFragment dialog) {
+							// do nothing
+						}
+					}, R.string.title_dialog_request_permission, R.string.button_continue, R.string.dialog_confirmation_need_notification_permission);
 					return false;
 				}
 				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, (Boolean) value);
