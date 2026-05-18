@@ -157,7 +157,7 @@ public class SettingsFragment extends PreferenceFragment {
 				PreferenceUtil.setSharedPreferenceBoolean(R.string.key_pref_show_list_notification, true);
 			}
 			else {
-				DialogUtil.displayInfo(getActivity(), R.string.dialog_confirmation_need_notification_permission);
+				// keep the preference disabled
 			}
 		}
 	}

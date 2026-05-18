@@ -98,7 +98,7 @@ public class NotificationConfigurationActivity extends StartActivity {
 				recreate();
 			}
 			else {
-				DialogUtil.displayInfo(this, () -> finish(), 0, R.string.dialog_confirmation_need_notification_permission);
+				finish();
 			}
 		}
 		else {

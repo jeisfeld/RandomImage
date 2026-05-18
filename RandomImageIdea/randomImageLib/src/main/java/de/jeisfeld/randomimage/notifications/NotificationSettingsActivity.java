@@ -120,7 +120,7 @@ public class NotificationSettingsActivity extends BasePreferenceActivity {
 				requestAlarmPermissionIfRequired();
 			}
 			else {
-				DialogUtil.displayInfo(this, () -> finish(), 0, R.string.dialog_confirmation_need_notification_permission);
+				finish();
 			}
 		}
 	}
