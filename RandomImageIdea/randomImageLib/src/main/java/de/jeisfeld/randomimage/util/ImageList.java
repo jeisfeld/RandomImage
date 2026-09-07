@@ -68,9 +68,7 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @param toastIfFilesMissing Flag indicating if a toast should be shown if files are missing.
 	 */
 	protected ImageList(final File configFile, final boolean toastIfFilesMissing) {
-		init(toastIfFilesMissing); // OVERRIDABLE
 		this.mConfigFile = configFile;
-		load(toastIfFilesMissing); // OVERRIDABLE
 	}
 
 	/**
@@ -81,21 +79,16 @@ public abstract class ImageList implements RandomFileProvider {
 	 * @param cloneFile  If existing, then the new list will be cloned from this file.
 	 */
 	protected ImageList(final File configFile, final String listName, final File cloneFile) {
-		init(false); // OVERRIDABLE
-		if (configFile.exists()) {
-			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
-			this.mConfigFile = configFile;
-			load(false); // OVERRIDABLE
-		}
-		else {
-			if (cloneFile != null) {
-				this.mConfigFile = cloneFile;
-				load(false); // OVERRIDABLE
-			}
-			this.mConfigFile = configFile;
-			setListName(listName);
-			update(false); // OVERRIDABLE
-		}
+		this.mConfigFile = configFile;
+	}
+
+	/**
+	 * Change the backing config file while creating a cloned list.
+	 *
+	 * @param configFile The new backing config file.
+	 */
+	protected final void setConfigFile(final File configFile) {
+		mConfigFile = configFile;
 	}
 
 	/**
@@ -674,7 +667,7 @@ public abstract class ImageList implements RandomFileProvider {
 	 *
 	 * @param listName The new name of the list.
 	 */
-	private void setListName(final String listName) {
+	protected final void setListName(final String listName) {
 		if (listName == null) {
 			mProperties.remove(PROP_LIST_NAME);
 		}

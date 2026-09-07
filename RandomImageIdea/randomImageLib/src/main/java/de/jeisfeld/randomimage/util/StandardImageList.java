@@ -71,6 +71,8 @@ public final class StandardImageList extends ImageList {
 	 */
 	protected StandardImageList(final File configFile, final boolean toastIfFilesMissing) {
 		super(configFile, toastIfFilesMissing);
+		init(toastIfFilesMissing);
+		load(toastIfFilesMissing);
 	}
 
 	/**
@@ -82,11 +84,25 @@ public final class StandardImageList extends ImageList {
 	 */
 	protected StandardImageList(final File configFile, final String listName, final File cloneFile) {
 		super(configFile, listName, cloneFile);
+		init(false);
+		if (configFile.exists()) {
+			Log.e(Application.TAG, "Tried to overwrite existing image list file " + configFile.getAbsolutePath());
+			load(false);
+		}
+		else {
+			if (cloneFile != null) {
+				setConfigFile(cloneFile);
+				StandardImageList.super.load(false);
+			}
+			setConfigFile(configFile);
+			setListName(listName);
+			update(false);
+			load(false);
+		}
 	}
 
 	@Override
 	public synchronized void load(final boolean toastIfFilesMissing) {
-		super.load(toastIfFilesMissing);
 		mAsyncLoader.load();
 	}
 
@@ -487,6 +503,9 @@ public final class StandardImageList extends ImageList {
 	 */
 	private Runnable getAsyncRunnable(final boolean toastIfFilesMissing) {
 		return () -> {
+			// Config files may reside on slow or temporarily unavailable storage. Keep all
+			// parsing and file-system checks away from the main thread.
+			StandardImageList.super.load(toastIfFilesMissing);
 			final long timestamp = System.currentTimeMillis();
 			final ArrayList<ListElement> folders = getElements(FOLDER);
 			final ArrayList<String> fileNames = getElementNames(FILE);

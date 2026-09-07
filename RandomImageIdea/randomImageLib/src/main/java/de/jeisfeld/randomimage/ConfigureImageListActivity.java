@@ -514,7 +514,13 @@ public class ConfigureImageListActivity extends DisplayImageListActivity {
 		mListName = name;
 		boolean success = ImageRegistry.switchToImageList(name, creationStyle, true);
 		if (success) {
-			fillListOfImages();
+			ImageList imageList = ImageRegistry.getCurrentImageList(true);
+			imageList.executeWhenReady(null, () -> {
+				// A user may switch lists again before the background load completes.
+				if (imageList == ImageRegistry.getCurrentImageList(false)) {
+					fillListOfImages();
+				}
+			}, null);
 		}
 		return success;
 	}
