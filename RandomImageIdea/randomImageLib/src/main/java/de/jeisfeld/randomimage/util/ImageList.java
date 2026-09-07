@@ -667,7 +667,7 @@ public abstract class ImageList implements RandomFileProvider {
 	 *
 	 * @param listName The new name of the list.
 	 */
-	private void setListName(final String listName) {
+	protected final void setListName(final String listName) {
 		if (listName == null) {
 			mProperties.remove(PROP_LIST_NAME);
 		}
