@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -153,7 +154,14 @@ public abstract class GenericImageWidget extends GenericWidget {
 			configureBackground(remoteViews, appWidgetId);
 		}
 
-		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+		try {
+			appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+		}
+		catch (IllegalArgumentException e) {
+			// The launcher may reject a stale or otherwise invalid RemoteViews update.
+			Log.w(Application.TAG, "Could not configure buttons for ImageWidget " + appWidgetId, e);
+			return;
+		}
 
 		if (buttonStyle == ButtonStyle.NARROW || buttonStyle == ButtonStyle.WIDE) {
 			new ButtonAnimator(appWidgetManager, appWidgetId, remoteViews, R.id.buttonNextImage, R.id.buttonSettings).start();
