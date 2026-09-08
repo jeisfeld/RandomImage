@@ -19,6 +19,13 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	private static final int RETRIES_FOR_AVOIDING_REPETITIONS = 10;
 
 	/**
+	 * Maximum number of paths persisted in activity instance state. Android limits
+	 * saved-state transactions, so serializing a huge cyclical list can crash the
+	 * activity even though the in-memory list itself still fits in the heap.
+	 */
+	private static final int MAX_PERSISTED_CACHE_SIZE = 100;
+
+	/**
 	 * Creator used for creating the object from a Parcel.
 	 */
 	public static final Parcelable.Creator<CachedRandomFileProvider> CREATOR = new Parcelable.Creator<CachedRandomFileProvider>() {
@@ -368,8 +375,19 @@ public class CachedRandomFileProvider implements RandomFileListProvider {
 	@Override
 	public final void writeToParcel(final Parcel dest, final int flags) {
 		dest.writeByte((byte) (mHasFile ? 1 : 0));
-		dest.writeInt(mCurrentPosition);
-		dest.writeStringList(mCachedFileNames);
+		List<String> persistedFileNames = mCachedFileNames;
+		int persistedCurrentPosition = mCurrentPosition;
+		synchronized (mCachedFileNames) {
+			if (mCachedFileNames.size() > MAX_PERSISTED_CACHE_SIZE) {
+				int fromIndex = Math.max(0, Math.min(mCurrentPosition - MAX_PERSISTED_CACHE_SIZE / 2,
+						mCachedFileNames.size() - MAX_PERSISTED_CACHE_SIZE));
+				persistedFileNames = new ArrayList<>(mCachedFileNames.subList(fromIndex,
+						fromIndex + MAX_PERSISTED_CACHE_SIZE));
+				persistedCurrentPosition -= fromIndex;
+			}
+			dest.writeInt(persistedCurrentPosition);
+			dest.writeStringList(persistedFileNames);
+		}
 		dest.writeInt(mFlipType.getResourceValue());
 		dest.writeInt(mCacheSize);
 		dest.writeByte((byte) (mHasCachSizeDetermined ? 1 : 0));

@@ -31,7 +31,7 @@ public final class StandardImageList extends ImageList {
 	/**
 	 * The image files contained in folders of the list, either weighted or dummy.
 	 */
-	private final HashMap<String, ArrayList<String>> mImageFilesInFolders = new HashMap<>();
+	private final HashMap<String, List<String>> mImageFilesInFolders = new HashMap<>();
 
 	/**
 	 * The image files contained in the list, including nested lists.
@@ -511,42 +511,73 @@ public final class StandardImageList extends ImageList {
 			final ArrayList<String> fileNames = getElementNames(FILE);
 			final ArrayList<ListElement> nestedLists = getElements(NESTED_LIST);
 			final Map<ListElement, ImageList> nestedListMap = new HashMap<>();
+			final Map<ListElement, Double> customWeights = new HashMap<>();
 
-			Set<String> imageFileSet = new HashSet<>(fileNames);
-			Set<String> allImageFileSet = new HashSet<>(fileNames);
+			// Build the non-weighted part first. Apart from avoiding a second directory scan,
+			// this lets the common case (folders without custom weights or nested lists)
+			// use the very same array for random selection and for the complete list.
+			Set<String> allImageFileSet = new HashSet<>();
+			ArrayList<String> imageFiles = new ArrayList<>();
+			addNewFiles(fileNames, allImageFileSet, imageFiles);
+			Map<String, List<String>> weightedFolderFiles = new HashMap<>();
 			for (ListElement folder : folders) {
-				allImageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
+				List<String> filesInFolder = ImageUtil.getImagesInFolder(folder.getName());
 				String customWeightString = folder.getProperties().getProperty(PARAM_WEIGHT);
 				if (customWeightString == null) {
-					imageFileSet.addAll(ImageUtil.getImagesInFolder(folder.getName()));
+					addNewFiles(filesInFolder, allImageFileSet, imageFiles);
 				}
 				else {
-					mImageFilesInFolders.put(folder.getName(), ImageUtil.getImagesInFolder(folder.getName()));
-					if (mCustomWeights != null) {
-						mCustomWeights.put(folder, Double.parseDouble(customWeightString));
-					}
+					weightedFolderFiles.put(folder.getName(), filesInFolder);
+					customWeights.put(folder, Double.parseDouble(customWeightString));
 				}
+			}
+
+			boolean hasAdditionalFiles = !weightedFolderFiles.isEmpty() || !nestedLists.isEmpty();
+			ArrayList<String> allImageFiles = hasAdditionalFiles ? new ArrayList<>(imageFiles) : imageFiles;
+			for (Map.Entry<String, List<String>> weightedFolder : weightedFolderFiles.entrySet()) {
+				addNewFiles(weightedFolder.getValue(), allImageFileSet, allImageFiles);
 			}
 
 			for (ListElement nestedList : nestedLists) {
 				ImageList nestedImageList = ImageRegistry.getImageListByName(nestedList.getName(), toastIfFilesMissing);
 				if (nestedImageList != null && nestedImageList.getAllImageFiles() != null) {
 					nestedListMap.put(nestedList, nestedImageList);
-					allImageFileSet.addAll(nestedImageList.getAllImageFiles());
+					addNewFiles(nestedImageList.getAllImageFiles(), allImageFileSet, allImageFiles);
 				}
 				String customWeightString = nestedList.getProperties().getProperty(PARAM_WEIGHT);
 				if (customWeightString != null) {
 					double customWeight = Double.parseDouble(customWeightString);
-					mCustomWeights.put(nestedList, customWeight);
+					customWeights.put(nestedList, customWeight);
 				}
 			}
 
 			// Set it only here so that it is only visible when completed, and has always a complete state.
-			mAllImageFilesInList = new ArrayList<>(allImageFileSet);
-			mImageFilesInFolders.put(DUMMY_NESTED_FOLDER.getName(), new ArrayList<>(imageFileSet));
+			mImageFilesInFolders.clear();
+			mImageFilesInFolders.putAll(weightedFolderFiles);
+			mImageFilesInFolders.put(DUMMY_NESTED_FOLDER.getName(), imageFiles);
+			mAllImageFilesInList = allImageFiles;
 			mNestedLists = nestedListMap;
+			synchronized (mCustomWeights) {
+				mCustomWeights.clear();
+				mCustomWeights.putAll(customWeights);
+			}
 
 			calculateWeights();
 		};
+	}
+
+	/**
+	 * Add files which have not already been encountered to a result list.
+	 *
+	 * @param source The files to inspect.
+	 * @param knownFiles The set used for de-duplication.
+	 * @param result The compact result list.
+	 */
+	private static void addNewFiles(final List<String> source, final Set<String> knownFiles, final List<String> result) {
+		for (String fileName : source) {
+			if (knownFiles.add(fileName)) {
+				result.add(fileName);
+			}
+		}
 	}
 }
