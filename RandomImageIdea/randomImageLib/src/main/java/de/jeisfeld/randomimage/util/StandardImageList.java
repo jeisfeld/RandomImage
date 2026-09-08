@@ -153,7 +153,7 @@ public final class StandardImageList extends ImageList {
 		}
 		else {
 			// Folder or dummy
-			ArrayList<String> filesInFolder = mImageFilesInFolders.get(weightedElement.getName());
+			List<String> filesInFolder = mImageFilesInFolders.get(weightedElement.getName());
 			if (filesInFolder == null || filesInFolder.isEmpty()) {
 				Log.w(Application.TAG, "No files contained in selected folder.");
 				return getRandomFileNameFromAllFiles();
